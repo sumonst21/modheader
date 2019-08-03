@@ -4,6 +4,47 @@ const MAX_PROFILES_IN_CLOUD = 50;
 const CHROME_VERSION = getChromeVersion();
 const EXTRA_REQUEST_HEADERS = new Set(['accept-language', 'accept-encoding', 'referer', 'cookie']);
 const EXTRA_RESPONSE_HEADERS = new Set(['set-cookie']);
+const CORS_ALLOWED_METHODS = new Set(['get', 'head', 'post']);
+const CORS_SAFELISTED_HEADERS = new Set([
+  'accept',
+  'accept-charset',
+  'accept-encoding',
+  'access-control-request-headers',
+  'access-control-request-method',
+  'cache-control',
+  'connection',
+  'content-language',
+  'content-length',
+  'content-type',
+  'cookie',
+  'cookie2',
+  'date',
+  'dnt',
+  'dpr',
+  'downlink',
+  'expect',
+  'expires',
+  'host',
+  'keep-alive',
+  'last-modified',
+  'origin',
+  'pragma',
+  'referer',
+  'save-data',
+  'te',
+  'trailer',
+  'transfer-encoding',
+  'upgrade',
+  'user-agent',
+  'via',
+  'viewport-width',
+  'width',
+]);
+const CORS_ALLOWED_CONTENT_TYPES = new Set([
+  'application/x-www-form-urlencoded',
+  'multipart/form-data',
+  'text/plain',
+]);
 let currentProfile;
 let tabUrls = {};
 
@@ -124,6 +165,37 @@ function modifyHeader(source, dest) {
   }
 };
 
+function canTriggerCorsPreflight_(details) {
+  const map = new Map();
+  for (let header of details.requestHeaders) {
+    const name = header.name.toLowerCase();
+    // Non-cors request will not trigger cors preflight.
+    // https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
+    if (name === 'sec-fetch-mode' && header.value !== 'cors') {
+      return false;
+    }
+    // Ignore these reserved forbidden header names.
+    // https://fetch.spec.whatwg.org/#cors-safelisted-request-header
+    if (name.startsWith('proxy-') || name.startsWith('sec-')) {
+      continue;
+    }
+    map.set(name, header.value);
+  }
+  if (!CORS_ALLOWED_METHODS.has(details.method.toLowerCase())) {
+    return true;
+  }
+  for (let header of map.keys()) {
+    if (!CORS_SAFELISTED_HEADERS.has(header)) {
+      return true;
+    }
+  }
+  const contentType = CORS_SAFELISTED_HEADERS.get('content-type');
+  if (contentType && !CORS_ALLOWED_CONTENT_TYPES.has(contentType)) {
+    return true;
+  }
+  return false;
+}
+
 function modifyRequestHeaderHandler_(details) {
   if (localStorage.isPaused) {
     return {};
@@ -135,9 +207,19 @@ function modifyRequestHeaderHandler_(details) {
   }
   if (!localStorage.lockedTabId
       || localStorage.lockedTabId == details.tabId) {
+    const canOriginalRequestTriggerCorsPreflight =
+        canTriggerCorsPreflight_(details);
     if (currentProfile
         && passFilters_(details.url, details.type, currentProfile.filters)) {
       modifyHeader(currentProfile.headers, details.requestHeaders);
+    }
+    // Do not modify request headers if the modification will trigger preflight.
+    // https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
+    // The preflight request can cause an additional OPTIONS request to be sent,
+    // which may error out, causing the page to not load correctly.
+    if (!canOriginalRequestTriggerCorsPreflight &&
+        canTriggerCorsPreflight_(details)) {
+      return {};
     }
   }
   return {requestHeaders: details.requestHeaders};
@@ -155,7 +237,9 @@ function modifyResponseHeaderHandler_(details) {
       const responseHeaders = JSON.parse(serializedOriginalResponseHeaders);
       modifyHeader(currentProfile.respHeaders, responseHeaders);
       if (JSON.stringify(responseHeaders) != serializedOriginalResponseHeaders) {
-        return {responseHeaders: responseHeaders};
+        return {
+          responseHeaders: responseHeaders
+        };
       }
     }
   }

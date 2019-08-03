@@ -45,7 +45,7 @@ function generateTipOfDay() {
     {
       text: 'If you like ModHeader, please consider donating',
       buttonText: 'Donate',
-      url: 'https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=3XFKZ8PCRB8P6&currency_code=USD&amount=5&source=url'
+      url: 'https://www.paypal.com/pools/c/84aPpFIA0Z'
     },
     {
       text: 'Enjoying ModHeader, leave us a review',
