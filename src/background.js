@@ -86,6 +86,7 @@ function loadSelectedProfile_() {
   let headers = [];
   let respHeaders = [];
   let filters = [];
+  let alwaysModifyCorsRequest = false;
   if (localStorage.profiles) {
     const profiles = JSON.parse(localStorage.profiles);
     if (!localStorage.selectedProfile) {
@@ -123,6 +124,7 @@ function loadSelectedProfile_() {
       filters.push(filter);
     }
     appendMode = selectedProfile.appendMode;
+    alwaysModifyCorsRequest = selectedProfile.alwaysModifyCorsRequest;
     headers = filterEnabledHeaders_(selectedProfile.headers);
     respHeaders = filterEnabledHeaders_(selectedProfile.respHeaders);
   }
@@ -130,7 +132,8 @@ function loadSelectedProfile_() {
       appendMode: appendMode,
       headers: headers,
       respHeaders: respHeaders,
-      filters: filters
+      filters: filters,
+      alwaysModifyCorsRequest: alwaysModifyCorsRequest
   };
 };
 
@@ -193,7 +196,7 @@ function canTriggerCorsPreflight_(details) {
       return true;
     }
   }
-  const contentType = CORS_SAFELISTED_HEADERS.get('content-type');
+  const contentType = map.get('content-type');
   if (contentType && !CORS_ALLOWED_CONTENT_TYPES.has(contentType)) {
     return true;
   }
@@ -212,7 +215,7 @@ function modifyRequestHeaderHandler_(details) {
   if (!localStorage.lockedTabId
       || localStorage.lockedTabId == details.tabId) {
     const canOriginalRequestTriggerCorsPreflight =
-        canTriggerCorsPreflight_(details);
+        !currentProfile.alwaysModifyCorsRequest && canTriggerCorsPreflight_(details);
     if (currentProfile
         && passFilters_(details.url, details.type, currentProfile.filters)) {
       modifyHeader(currentProfile.headers, details.requestHeaders);
@@ -221,7 +224,8 @@ function modifyRequestHeaderHandler_(details) {
     // https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
     // The preflight request can cause an additional OPTIONS request to be sent,
     // which may error out, causing the page to not load correctly.
-    if (!canOriginalRequestTriggerCorsPreflight &&
+    if (!currentProfile.alwaysModifyCorsRequest &&
+        !canOriginalRequestTriggerCorsPreflight &&
         canTriggerCorsPreflight_(details)) {
       return {};
     }
