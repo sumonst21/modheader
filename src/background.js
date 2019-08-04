@@ -167,12 +167,13 @@ function modifyHeader(source, dest) {
 
 function canTriggerCorsPreflight_(details) {
   const map = new Map();
+  let setFetchMode = undefined;
   for (let header of details.requestHeaders) {
     const name = header.name.toLowerCase();
     // Non-cors request will not trigger cors preflight.
     // https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
-    if (name === 'sec-fetch-mode' && header.value !== 'cors') {
-      return false;
+    if (name === 'sec-fetch-mode') {
+      setFetchMode = header.value;
     }
     // Ignore these reserved forbidden header names.
     // https://fetch.spec.whatwg.org/#cors-safelisted-request-header
@@ -180,6 +181,9 @@ function canTriggerCorsPreflight_(details) {
       continue;
     }
     map.set(name, header.value);
+  }
+  if (setFetchMode !== 'cors') {
+    return false;
   }
   if (!CORS_ALLOWED_METHODS.has(details.method.toLowerCase())) {
     return true;
