@@ -173,8 +173,7 @@ modHeader.factory('dataSource', function($mdToast) {
         headers: [],
         respHeaders: [],
         filters: [],
-        appendMode: '',
-        alwaysModifyCorsRequest: ''
+        appendMode: ''
     };
     dataSource.addHeader(profile.headers);
     return profile;
@@ -211,9 +210,6 @@ modHeader.factory('dataSource', function($mdToast) {
     }
     if (!profile.appendMode) {
       profile.appendMode = '';
-    }
-    if (!profile.alwaysModifyCorsRequest) {
-      profile.alwaysModifyCorsRequest = '';
     }
   }
   if (localStorage.selectedProfile) {

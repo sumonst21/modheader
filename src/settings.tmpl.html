@@ -21,18 +21,6 @@
         <md-option value="true">Hide</md-option>
       </md-select>
     </div>
-
-    <div>
-    CORS request modification:
-      <md-select ng-model="profile.alwaysModifyCorsRequest" flex>
-        <md-option value="">Safe default</md-option>
-        <md-option value="true">Always</md-option>
-      </md-select>
-      <br>
-      (In case of "Safe default", CORS request will only be modified if it does not result
-      in additional preflight http OPTIONS request, which may cause some resources to not
-      load properly.)
-    </div>
   </md-dialog-content>
   <div class="md-actions" layout="row">
     <md-button ng-click="closeDialog()" class="md-primary">
