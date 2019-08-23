@@ -4,17 +4,17 @@
   ModHeader is a browser extension that allow you to modify HTTP request and response headers.
 </h3>
 <h3 align="center">
-  <img src="https://mod-header.appspot.com/android-icon-96x96.png" width="24px" alt="ModHeader" />
-  <a href="https://mod-header.appspot.com/">
+  <img src="https://bewisse.com/modheader/android-icon-96x96.png" width="24px" alt="ModHeader" />
+  <a href="https://bewisse.com/modheader/">
     Official Website
   </a>
 </h3>
 <p align="center">
   <a href="https://chrome.google.com/webstore/detail/modheader/idgpnmonknjnojddfkpgkljpfnnfcklj">
-    <img src="https://mod-header.appspot.com/images/chrome_1x.png" srcset="https://mod-header.appspot.com/images/chrome_2x.png 2x">
+    <img src="https://bewisse.com/chrome_1x.png" srcset="https://bewisse.com/chrome_2x.png 2x">
   </a>
   <a href="https://addons.mozilla.org/firefox/addon/modheader-firefox/">
-    <img src="https://mod-header.appspot.com/images/firefox_1x.png" srcset="https://mod-header.appspot.com/images/firefox_2x.png 2x">
+    <img src="https://bewisse.com/firefox_1x.png" srcset="https://bewisse.com/firefox_2x.png 2x">
   </a>
 </p>
 
@@ -39,7 +39,7 @@ If you find ModHeader useful, please consider making a donation. If you use it f
 
 ## Screenshots
 
-<img src="https://mod-header.appspot.com/images/ss1.png">
+<img src="https://bewisse.com/modheader/ss1.png">
 
 ## Forking and contribution
 
