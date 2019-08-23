@@ -53,4 +53,4 @@ ModHeader does not require any extra tool for building. Simply load the src dire
 
 ## Selenium usage
 
-If you need to use ModHeader for Selenium tests, please visit: https://github.com/hao1300/modheader_selenium
+If you need to use ModHeader for Selenium tests, please visit: [modheader_selenium](https://github.com/bewisse/modheader_selenium)
