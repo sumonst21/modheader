@@ -368,6 +368,110 @@ modHeader.factory('profileService', function(
     }
   };
 
+  profileService.sortProfiles = function() {
+    function compare( a, b ) {
+      if ( a.title.toLowerCase() < b.title.toLowerCase() ){
+        return -1;
+      }
+      if ( a.title.toLowerCase() > b.title.toLowerCase() ){
+        return 1;
+      }
+      return 0;
+    }
+    try {
+      dataSource.profiles = dataSource.profiles.sort(compare);
+      $mdToast.show(
+        $mdToast.simple()
+          .content('Profiles sorted successfully')
+          .position('top')
+      );
+    } catch (e) {
+      $mdToast.show(
+        $mdToast.simple()
+          .content('Failed to sort profiles')
+          .position('top')
+          .hideDelay(1000)
+      );
+    }
+  }
+
+  profileService.importProfiles = function(event, profile) {
+    var parentEl = angular.element(document.body);
+    $mdDialog.show({
+      parent: parentEl,
+      targetEvent: event,
+      focusOnOpen: false,
+      templateUrl: 'importdialog.tmpl.html',
+      locals: {
+        profile: profile
+      },
+      controller: DialogController_
+    }).then(function(importProfile) {
+      try {
+        var profileArray = angular.fromJson(importProfile)
+        for (let p of profileArray) {
+          fixProfile(p);
+          dataSource.profiles.push(p);
+        }
+        
+        $mdToast.show(
+          $mdToast.simple()
+            .content('Profiles successfully import')
+            .position('top')
+            .hideDelay(1000)
+        );
+      } catch (e) {
+        $mdToast.show(
+          $mdToast.simple()
+            .content('Failed to import profiles')
+            .position('top')
+            .hideDelay(1000)
+        );
+      }
+    });
+    function DialogController_($scope, $mdDialog, profile) {
+      $scope.importProfile = '';
+
+      $scope.closeDialog = function() {
+        $mdDialog.hide($scope.importProfile);
+      };
+    }
+  };
+
+  profileService.exportProfiles = function(event) {
+    var parentEl = angular.element(document.body);
+    $mdDialog.show({
+      parent: parentEl,
+      targetEvent: event,
+      focusOnOpen: false,
+      templateUrl: 'exportdialog.tmpl.html',
+      locals: {
+        title: 'All',
+        profile: dataSource.profiles
+      },
+      controller: DialogController_
+    });
+    function DialogController_($scope, $mdDialog, $mdToast, title, profile) {
+      $scope.title = title;
+      $scope.profile = profile;
+
+      $scope.copy = function() {
+        document.getElementById('exportedProfile').select();
+        document.execCommand('copy');
+        $mdToast.show(
+          $mdToast.simple()
+            .content('Copied to clipboard!')
+            .position('top')
+            .hideDelay(1000)
+        );
+      };
+
+      $scope.closeDialog = function() {
+        $mdDialog.hide();
+      };
+    }
+  };
+
   profileService.openCloudBackup = (event) => {
     const parentEl = angular.element(document.body);
     $mdDialog.show({
