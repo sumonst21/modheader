@@ -157,6 +157,18 @@
         <md-icon md-svg-src="images/ic_add_18px.svg"></md-icon>
         <p>Add Profile</p>
       </md-list-item>
+      <md-list-item ng-click="profileService.sortProfiles()">
+        <md-icon md-svg-src="images/ic_sort_24px.svg"></md-icon>
+        <p>Sort Profiles</p>
+      </md-list-item>
+      <md-list-item ng-click="profileService.importProfiles($event)">
+        <md-icon md-svg-src="images/ic_file_upload_24px.svg"></md-icon>
+        <p>Import Multiple Profiles</p>
+      </md-list-item>
+      <md-list-item ng-click="profileService.exportProfiles($event)">
+        <md-icon md-svg-src="images/ic_file_download_24px.svg"></md-icon>
+        <p>Export All Profiles</p>
+      </md-list-item>
       <md-list-item ng-click="profileService.openCloudBackup($event)">
         <md-icon md-svg-src="images/ic_cloud_download_18px.svg"></md-icon>
         <p>Cloud backup</p>
