@@ -1,9 +1,19 @@
 const SPECIAL_CHARS = '^$&+?.()|{}[]/'.split('');
 const browser = chrome;
-const modHeader = angular.module('modheader-popup', ['ngMaterial']);
-modHeader.config(['$compileProvider', function ($compileProvider) {
-  $compileProvider.debugInfoEnabled(false);
-}]);
+const modHeader = angular
+  .module('modheader-popup', ['ngMaterial', 'ngMessages'])
+  .config(function($compileProvider) {
+    $compileProvider.debugInfoEnabled(false);
+  })
+  .config(function($mdGestureProvider) {
+    $mdGestureProvider.disableAll();
+  })
+  .config(function($mdAriaProvider) {
+    $mdAriaProvider.disableWarnings();
+  })
+  .config(function($mdInkRippleProvider) {
+    $mdInkRippleProvider.disableInkRipple();
+  });
 
 function fixProfile(profile) {
   if (profile.filters) {
@@ -27,35 +37,6 @@ function fixProfile(profile) {
       }
     }
   }
-}
-
-function generateTipOfDay() {
-  const tips = [
-    {text: 'Tip: You can switch between multiple profile'},
-    {text: 'Tip: You can export your profile to share with others'},
-    {text: 'Tip: Tab lock will apply the modification only to locked tab'},
-    {text: 'Tip: Add filter will let you use regex to limit modification'},
-    {text: 'Tip: Use the checkbox to quickly toggle header modification'},
-    {text: 'Tip: Click on the column name to sort'},
-    {text: 'Tip: Add filter also allows you to filter by resource type'},
-    {text: 'Tip: Go to profile setting to toggle comment column'},
-    {text: 'Tip: Append header value to existing one in profile setting'},
-    {text: 'Tip: Pause button will temporarily pause all modifications'},
-    {text: 'Tip: Go to cloud backup to retrieve your auto-synced profile'},
-    {
-      text: 'If you like ModHeader, please consider donating',
-      buttonText: 'Donate',
-      url: 'https://www.paypal.com/pools/c/84aPpFIA0Z'
-    },
-    {
-      text: 'Enjoying ModHeader, leave us a review',
-      buttonText: 'Review',
-      url: navigator.userAgent.indexOf('Firefox') >= 0
-          ? 'https://addons.mozilla.org/firefox/addon/modheader-firefox/'
-          : 'https://chrome.google.com/webstore/detail/modheader/idgpnmonknjnojddfkpgkljpfnnfcklj'
-    },
-  ];
-  return tips[Math.floor(Math.random() * tips.length)];
 }
 
 modHeader.factory('dataSource', function($mdToast) {
@@ -112,7 +93,8 @@ modHeader.factory('dataSource', function($mdToast) {
     dataSource.isPaused = true;
     localStorage.isPaused = true;
     $mdToast.show(
-      $mdToast.simple()
+      $mdToast
+        .simple()
         .content('ModHeader paused')
         .position('bottom')
         .hideDelay(1000)
@@ -123,7 +105,8 @@ modHeader.factory('dataSource', function($mdToast) {
     dataSource.isPaused = false;
     localStorage.removeItem('isPaused');
     $mdToast.show(
-      $mdToast.simple()
+      $mdToast
+        .simple()
         .content('ModHeader unpaused')
         .position('bottom')
         .hideDelay(1000)
@@ -134,7 +117,8 @@ modHeader.factory('dataSource', function($mdToast) {
     dataSource.lockedTabId = localStorage.activeTabId;
     localStorage.lockedTabId = dataSource.lockedTabId;
     $mdToast.show(
-      $mdToast.simple()
+      $mdToast
+        .simple()
         .content('Restricted ModHeader to the current tab')
         .position('bottom')
         .hideDelay(1000)
@@ -145,7 +129,8 @@ modHeader.factory('dataSource', function($mdToast) {
     dataSource.lockedTabId = null;
     localStorage.removeItem('lockedTabId');
     $mdToast.show(
-      $mdToast.simple()
+      $mdToast
+        .simple()
         .content('Applying ModHeader to all tabs')
         .position('bottom')
         .hideDelay(1000)
@@ -168,12 +153,12 @@ modHeader.factory('dataSource', function($mdToast) {
       ++index;
     }
     const profile = {
-        title: 'Profile ' + index,
-        hideComment: true,
-        headers: [],
-        respHeaders: [],
-        filters: [],
-        appendMode: ''
+      title: 'Profile ' + index,
+      hideComment: true,
+      headers: [],
+      respHeaders: [],
+      filters: [],
+      appendMode: 'false'
     };
     dataSource.addHeader(profile.headers);
     return profile;
@@ -209,11 +194,12 @@ modHeader.factory('dataSource', function($mdToast) {
       profile.filters = [];
     }
     if (!profile.appendMode) {
-      profile.appendMode = '';
+      profile.appendMode = 'false';
     }
   }
   if (localStorage.selectedProfile) {
-    dataSource.selectedProfile = dataSource.profiles[Number(localStorage.selectedProfile)];
+    dataSource.selectedProfile =
+      dataSource.profiles[Number(localStorage.selectedProfile)];
   }
   if (!dataSource.selectedProfile) {
     dataSource.selectedProfile = dataSource.profiles[0];
@@ -226,7 +212,9 @@ modHeader.factory('dataSource', function($mdToast) {
   }
   dataSource.save = function() {
     var serializedProfiles = angular.toJson(dataSource.profiles);
-    var selectedProfileIndex = dataSource.profiles.indexOf(dataSource.selectedProfile);
+    var selectedProfileIndex = dataSource.profiles.indexOf(
+      dataSource.selectedProfile
+    );
     localStorage.profiles = serializedProfiles;
     localStorage.selectedProfile = selectedProfileIndex;
   };
@@ -234,16 +222,22 @@ modHeader.factory('dataSource', function($mdToast) {
 });
 
 modHeader.factory('profileService', function(
-    $timeout, $mdSidenav, $mdUtil, $mdDialog, $mdToast, dataSource) {
+  $timeout,
+  $mdSidenav,
+  $mdDialog,
+  $mdToast,
+  dataSource
+) {
   var profileService = {};
-  
+
   var closeOptionsPanel_ = function() {
     $mdSidenav('left').close();
   };
 
   var updateSelectedProfile_ = function() {
-   $timeout(function() {
-      dataSource.selectedProfile = dataSource.profiles[dataSource.profiles.length - 1];
+    $timeout(function() {
+      dataSource.selectedProfile =
+        dataSource.profiles[dataSource.profiles.length - 1];
     }, 1);
   };
 
@@ -295,7 +289,8 @@ modHeader.factory('profileService', function(
         document.getElementById('exportedProfile').select();
         document.execCommand('copy');
         $mdToast.show(
-          $mdToast.simple()
+          $mdToast
+            .simple()
             .content('Copied to clipboard!')
             .position('top')
             .hideDelay(1000)
@@ -310,34 +305,38 @@ modHeader.factory('profileService', function(
 
   profileService.importProfile = function(event, profile) {
     var parentEl = angular.element(document.body);
-    $mdDialog.show({
-      parent: parentEl,
-      targetEvent: event,
-      focusOnOpen: false,
-      templateUrl: 'importdialog.tmpl.html',
-      locals: {
-        profile: profile
-      },
-      controller: DialogController_
-    }).then(function(importProfile) {
-      try {
-        angular.copy(angular.fromJson(importProfile), profile);
-        fixProfile(profile);
-        $mdToast.show(
-          $mdToast.simple()
-            .content('Profile successfully import')
-            .position('top')
-            .hideDelay(1000)
-        );
-      } catch (e) {
-        $mdToast.show(
-          $mdToast.simple()
-            .content('Failed to import profile')
-            .position('top')
-            .hideDelay(1000)
-        );
-      }
-    });
+    $mdDialog
+      .show({
+        parent: parentEl,
+        targetEvent: event,
+        focusOnOpen: false,
+        templateUrl: 'importdialog.tmpl.html',
+        locals: {
+          profile: profile
+        },
+        controller: DialogController_
+      })
+      .then(function(importProfile) {
+        try {
+          angular.copy(angular.fromJson(importProfile), profile);
+          fixProfile(profile);
+          $mdToast.show(
+            $mdToast
+              .simple()
+              .content('Profile successfully import')
+              .position('top')
+              .hideDelay(1000)
+          );
+        } catch (e) {
+          $mdToast.show(
+            $mdToast
+              .simple()
+              .content('Failed to import profile')
+              .position('top')
+              .hideDelay(1000)
+          );
+        }
+      });
     function DialogController_($scope, $mdDialog, profile) {
       $scope.importProfile = '';
 
@@ -369,11 +368,11 @@ modHeader.factory('profileService', function(
   };
 
   profileService.sortProfiles = function() {
-    function compare( a, b ) {
-      if ( a.title.toLowerCase() < b.title.toLowerCase() ){
+    function compare(a, b) {
+      if (a.title.toLowerCase() < b.title.toLowerCase()) {
         return -1;
       }
-      if ( a.title.toLowerCase() > b.title.toLowerCase() ){
+      if (a.title.toLowerCase() > b.title.toLowerCase()) {
         return 1;
       }
       return 0;
@@ -381,54 +380,60 @@ modHeader.factory('profileService', function(
     try {
       dataSource.profiles = dataSource.profiles.sort(compare);
       $mdToast.show(
-        $mdToast.simple()
+        $mdToast
+          .simple()
           .content('Profiles sorted successfully')
           .position('top')
       );
     } catch (e) {
       $mdToast.show(
-        $mdToast.simple()
+        $mdToast
+          .simple()
           .content('Failed to sort profiles')
           .position('top')
           .hideDelay(1000)
       );
     }
-  }
+  };
 
   profileService.importProfiles = function(event, profile) {
     var parentEl = angular.element(document.body);
-    $mdDialog.show({
-      parent: parentEl,
-      targetEvent: event,
-      focusOnOpen: false,
-      templateUrl: 'importdialog.tmpl.html',
-      locals: {
-        profile: profile
-      },
-      controller: DialogController_
-    }).then(function(importProfile) {
-      try {
-        var profileArray = angular.fromJson(importProfile)
-        for (let p of profileArray) {
-          fixProfile(p);
-          dataSource.profiles.push(p);
+    $mdDialog
+      .show({
+        parent: parentEl,
+        targetEvent: event,
+        focusOnOpen: false,
+        templateUrl: 'importdialog.tmpl.html',
+        locals: {
+          profile: profile
+        },
+        controller: DialogController_
+      })
+      .then(function(importProfile) {
+        try {
+          var profileArray = angular.fromJson(importProfile);
+          for (let p of profileArray) {
+            fixProfile(p);
+            dataSource.profiles.push(p);
+          }
+
+          $mdToast.show(
+            $mdToast
+              .simple()
+              .content('Profiles successfully import')
+              .position('top')
+              .hideDelay(1000)
+          );
+        } catch (e) {
+          $mdToast.show(
+            $mdToast
+              .simple()
+              .content('Failed to import profiles')
+              .position('top')
+              .hideDelay(1000)
+          );
         }
-        
-        $mdToast.show(
-          $mdToast.simple()
-            .content('Profiles successfully import')
-            .position('top')
-            .hideDelay(1000)
-        );
-      } catch (e) {
-        $mdToast.show(
-          $mdToast.simple()
-            .content('Failed to import profiles')
-            .position('top')
-            .hideDelay(1000)
-        );
-      }
-    });
+      });
     function DialogController_($scope, $mdDialog, profile) {
       $scope.importProfile = '';
 
@@ -459,7 +464,8 @@ modHeader.factory('profileService', function(
         document.getElementById('exportedProfile').select();
         document.execCommand('copy');
         $mdToast.show(
-          $mdToast.simple()
+          $mdToast
+            .simple()
             .content('Copied to clipboard!')
             .position('top')
             .hideDelay(1000)
@@ -472,61 +478,65 @@ modHeader.factory('profileService', function(
     }
   };
 
-  profileService.openCloudBackup = (event) => {
+  profileService.openCloudBackup = event => {
     const parentEl = angular.element(document.body);
-    $mdDialog.show({
-      parent: parentEl,
-      targetEvent: event,
-      focusOnOpen: false,
-      templateUrl: 'cloudbackupdialog.tmpl.html',
-      controller: DialogController_
-    }).then((profiles) => {
-      if (!profiles) {
-        return;
-      }
-      try {
-        dataSource.profiles = profiles;
-        dataSource.selectedProfile = dataSource.profiles[0];
-        dataSource.save();
+    $mdDialog
+      .show({
+        parent: parentEl,
+        targetEvent: event,
+        focusOnOpen: false,
+        templateUrl: 'cloudbackupdialog.tmpl.html',
+        controller: DialogController_
+      })
+      .then(profiles => {
+        if (!profiles) {
+          return;
+        }
+        try {
+          dataSource.profiles = profiles;
+          dataSource.selectedProfile = dataSource.profiles[0];
+          dataSource.save();
 
-        $mdToast.show(
-          $mdToast.simple()
-            .content('Profiles successfully import')
-            .position('top')
-            .hideDelay(1000)
-        );
-      } catch (e) {
-        $mdToast.show(
-          $mdToast.simple()
-            .content('Failed to import profiles')
-            .position('top')
-            .hideDelay(1000)
-        );
-      }
-    });
+          $mdToast.show(
+            $mdToast
+              .simple()
+              .content('Profiles successfully import')
+              .position('top')
+              .hideDelay(1000)
+          );
+        } catch (e) {
+          $mdToast.show(
+            $mdToast
+              .simple()
+              .content('Failed to import profiles')
+              .position('top')
+              .hideDelay(1000)
+          );
+        }
+      });
     function DialogController_($scope, $mdDialog) {
-      browser.storage.sync.get(null, (items) => {
-          let savedData = [];
-          if (!items) {
-            items = [];
-          }
-          for (const key in items) {
-            try {
-              const serializedProfiles = items[key];
-              const profiles = angular.fromJson(serializedProfiles);
-              for (let profile of profiles) {
-                fixProfile(profile);
-              }
-              savedData.push({
-                'timeInMs': key,
-                'profiles': profiles,
-              });
-            } catch(e) {
-              // skip invalid profile.
+      browser.storage.sync.get(null, items => {
+        let savedData = [];
+        if (!items) {
+          items = [];
+        }
+        for (const key in items) {
+          try {
+            const serializedProfiles = items[key];
+            const profiles = angular.fromJson(serializedProfiles);
+            for (let profile of profiles) {
+              fixProfile(profile);
             }
+            savedData.push({
+              timeInMs: key,
+              profiles: profiles
+            });
+          } catch (e) {
+            // skip invalid profile.
           }
-          $scope.savedData = savedData;
-        });
+        }
+        $scope.savedData = savedData;
+      });
 
       $scope.selectProfiles = function(profiles) {
         $mdDialog.hide(profiles);
@@ -540,8 +550,7 @@ modHeader.factory('profileService', function(
   return profileService;
 });
 
-modHeader.factory('autocompleteService', function(
-    dataSource) {
+modHeader.factory('autocompleteService', function(dataSource) {
   var autocompleteService = {};
 
   autocompleteService.requestHeaderNames = [
@@ -588,7 +597,8 @@ modHeader.factory('autocompleteService', function(
     'X-ATT-DeviceId',
     'X-Wap-Profile',
     'X-UIDH',
-    'X-Csrf-Token'];
+    'X-Csrf-Token'
+  ];
   autocompleteService.requestHeaderValues = [];
   autocompleteService.responseHeaderNames = [
     'Access-Control-Allow-Origin',
@@ -635,14 +645,14 @@ modHeader.factory('autocompleteService', function(
     'X-UA-Compatible',
     'X-Content-Duration',
     'X-Content-Security-Policy',
-    'X-WebKit-CSP',
+    'X-WebKit-CSP'
   ];
   autocompleteService.responseHeaderValues = [];
 
   function createFilterFor_(query) {
     const lowercaseQuery = query.toLowerCase();
     return function filterFn(item) {
-      return (item.toLowerCase().indexOf(lowercaseQuery) == 0);
+      return item.toLowerCase().indexOf(lowercaseQuery) == 0;
     };
   }
 
@@ -662,20 +672,32 @@ modHeader.factory('autocompleteService', function(
 
 modHeader.controller('SortingController', function($filter, dataSource) {
   this.order = function(profile, predicate) {
-    dataSource.reverse = (dataSource.predicate === predicate)
-        ? !dataSource.reverse : false;
+    dataSource.reverse =
+      dataSource.predicate === predicate ? !dataSource.reverse : false;
     dataSource.predicate = predicate;
     var orderBy = $filter('orderBy');
     profile.headers = orderBy(
-        profile.headers, dataSource.predicate, dataSource.reverse);
+      profile.headers,
+      dataSource.predicate,
+      dataSource.reverse
+    );
     profile.respHeaders = orderBy(
-        profile.respHeaders, dataSource.predicate, dataSource.reverse);
+      profile.respHeaders,
+      dataSource.predicate,
+      dataSource.reverse
+    );
   };
 });
 
 modHeader.controller('AppController', function(
-    $scope, $mdSidenav, $mdUtil, $window, $mdToast,
-    dataSource, profileService, autocompleteService) {
+  $scope,
+  $mdSidenav,
+  $mdUtil,
+  $window,
+  dataSource,
+  profileService,
+  autocompleteService
+) {
   $scope.toggleSidenav = $mdUtil.debounce(function() {
     $mdSidenav('left').toggle();
   }, 300);
@@ -685,41 +707,10 @@ modHeader.controller('AppController', function(
   };
 
   $scope.openLink = function(link) {
-    browser.tabs.create({url: link});
+    browser.tabs.create({ url: link });
   };
 
   $scope.autocompleteService = autocompleteService;
   $scope.dataSource = dataSource;
   $scope.profileService = profileService;
-
-  // If user dismiss tooltip too many times, then don't show again.
-  if (!localStorage.numTipDismiss || localStorage.numTipDismiss < 3) {
-    const tip = generateTipOfDay();
-    $mdToast.show({
-      position: 'bottom',
-      controller: 'ToastCtrl',
-      controllerAs: 'ctrl',
-      bindToController: true,
-      locals: {toastMessage: tip.text, buttonText: tip.buttonText, url: tip.url},
-      templateUrl: 'footer.tmpl.html'
-    });
-  }
-});
-
-
-modHeader.controller('ToastCtrl', function($mdToast, $scope) {
-  let ctrl = this;
-
-  ctrl.goToUrl = function(url) {
-    browser.tabs.create({url: url});
-  };
-
-  ctrl.dismiss = function() {
-    if (localStorage.numTipDismiss) {
-      localStorage.numTipDismiss++;
-    } else {
-      localStorage.numTipDismiss = 1;
-    }
-    $mdToast.hide();
-  };
 });

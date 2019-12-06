@@ -34,9 +34,10 @@ function passFilters_(url, type, filters) {
       }
     }
   }
-  return (!hasUrlFilters || allowUrls)
-      && (!hasResourceTypeFilters || allowTypes);
-};
+  return (
+    (!hasUrlFilters || allowUrls) && (!hasResourceTypeFilters || allowTypes)
+  );
+}
 
 function loadSelectedProfile_() {
   let appendMode = false;
@@ -55,11 +56,11 @@ function loadSelectedProfile_() {
       for (let header of headers) {
         // Overrides the header if it is enabled and its name is not empty.
         if (header.enabled && header.name) {
-          output.push({name: header.name, value: header.value});
+          output.push({ name: header.name, value: header.value });
         }
       }
       return output;
-    };
+    }
     for (let filter of selectedProfile.filters) {
       if (filter.urlPattern) {
         const urlPattern = filter.urlPattern;
@@ -84,12 +85,12 @@ function loadSelectedProfile_() {
     respHeaders = filterEnabledHeaders_(selectedProfile.respHeaders);
   }
   return {
-      appendMode: appendMode,
-      headers: headers,
-      respHeaders: respHeaders,
-      filters: filters
+    appendMode: appendMode,
+    headers: headers,
+    respHeaders: respHeaders,
+    filters: filters
   };
-};
+}
 
 function modifyHeader(source, dest) {
   if (!source.length) {
@@ -105,7 +106,7 @@ function modifyHeader(source, dest) {
   for (let header of source) {
     const index = indexMap[header.name.toLowerCase()];
     if (index !== undefined) {
-      if (!currentProfile.appendMode) {
+      if (!currentProfile.appendMode || currentProfile.appendMode === 'false') {
         dest[index].value = header.value;
       } else if (currentProfile.appendMode == 'comma') {
         if (dest[index].value) {
@@ -116,11 +117,11 @@ function modifyHeader(source, dest) {
         dest[index].value += header.value;
       }
     } else {
-      dest.push({name: header.name, value: header.value});
+      dest.push({ name: header.name, value: header.value });
       indexMap[header.name.toLowerCase()] = dest.length - 1;
     }
   }
-};
+}
 
 function modifyRequestHeaderHandler_(details) {
   if (localStorage.isPaused) {
@@ -131,53 +132,65 @@ function modifyRequestHeaderHandler_(details) {
     localStorage.activeTabId = details.tabId;
     browser.tabs.get(details.tabId, onTabUpdated);
   }
-  if (!localStorage.lockedTabId
-      || localStorage.lockedTabId == details.tabId) {
-    if (currentProfile
-        && passFilters_(details.url, details.type, currentProfile.filters)) {
+  if (!localStorage.lockedTabId || localStorage.lockedTabId == details.tabId) {
+    if (
+      currentProfile &&
+      passFilters_(details.url, details.type, currentProfile.filters)
+    ) {
       modifyHeader(currentProfile.headers, details.requestHeaders);
     }
   }
-  return {requestHeaders: details.requestHeaders};
-};
+  return { requestHeaders: details.requestHeaders };
+}
 
 function modifyResponseHeaderHandler_(details) {
   if (localStorage.isPaused) {
     return {};
   }
-  if (!localStorage.lockedTabId
-      || localStorage.lockedTabId == details.tabId) {
-    if (currentProfile
-        && passFilters_(details.url, details.type, currentProfile.filters)) {
-      const serializedOriginalResponseHeaders = JSON.stringify(details.responseHeaders);
+  if (!localStorage.lockedTabId || localStorage.lockedTabId == details.tabId) {
+    if (
+      currentProfile &&
+      passFilters_(details.url, details.type, currentProfile.filters)
+    ) {
+      const serializedOriginalResponseHeaders = JSON.stringify(
+        details.responseHeaders
+      );
       const responseHeaders = JSON.parse(serializedOriginalResponseHeaders);
       modifyHeader(currentProfile.respHeaders, responseHeaders);
-      if (JSON.stringify(responseHeaders) != serializedOriginalResponseHeaders) {
+      if (
+        JSON.stringify(responseHeaders) != serializedOriginalResponseHeaders
+      ) {
         return {
           responseHeaders: responseHeaders
         };
       }
     }
   }
-};
+}
 
 function getChromeVersion() {
-  let pieces = navigator.userAgent.match(/Chrom(?:e|ium)\/([0-9]+)\.([0-9]+)\.([0-9]+)\.([0-9]+)/);
+  let pieces = navigator.userAgent.match(
+    /Chrom(?:e|ium)\/([0-9]+)\.([0-9]+)\.([0-9]+)\.([0-9]+)/
+  );
   if (pieces == null || pieces.length != 5) {
-      return {};
+    return {};
   }
   pieces = pieces.map(piece => parseInt(piece, 10));
   return {
-      major: pieces[1],
-      minor: pieces[2],
-      build: pieces[3],
-      patch: pieces[4]
+    major: pieces[1],
+    minor: pieces[2],
+    build: pieces[3],
+    patch: pieces[4]
   };
 }
 
 function setupHeaderModListener() {
-  browser.webRequest.onBeforeSendHeaders.removeListener(modifyRequestHeaderHandler_);
-  browser.webRequest.onHeadersReceived.removeListener(modifyResponseHeaderHandler_);
+  browser.webRequest.onBeforeSendHeaders.removeListener(
+    modifyRequestHeaderHandler_
+  );
+  browser.webRequest.onHeadersReceived.removeListener(
+    modifyResponseHeaderHandler_
+  );
 
   // Chrome 72+ requires 'extraHeaders' to be added for some headers to be modifiable.
   // Older versions break with it.
@@ -188,8 +201,10 @@ function setupHeaderModListener() {
     }
     browser.webRequest.onBeforeSendHeaders.addListener(
       modifyRequestHeaderHandler_,
-      {urls: ["<all_urls>"]},
-      requiresExtraRequestHeaders ? ['requestHeaders', 'blocking', 'extraHeaders'] : ['requestHeaders', 'blocking']
+      { urls: ['<all_urls>'] },
+      requiresExtraRequestHeaders
+        ? ['requestHeaders', 'blocking', 'extraHeaders']
+        : ['requestHeaders', 'blocking']
     );
   }
   if (currentProfile.respHeaders.length > 0) {
@@ -199,8 +214,10 @@ function setupHeaderModListener() {
     }
     browser.webRequest.onHeadersReceived.addListener(
       modifyResponseHeaderHandler_,
-      {urls: ["<all_urls>"]},
-      requiresExtraResponseHeaders ? ['responseHeaders', 'blocking', 'extraHeaders'] : ['responseHeaders', 'blocking']
+      { urls: ['<all_urls>'] },
+      requiresExtraResponseHeaders
+        ? ['responseHeaders', 'blocking', 'extraHeaders']
+        : ['responseHeaders', 'blocking']
     );
   }
 }
@@ -221,7 +238,7 @@ function onTabUpdated(tab) {
 
     // Only set the currentTabUrl property if the tab is active and the window
     // is in focus.
-    browser.windows.get(tab.windowId, {}, (win) => {
+    browser.windows.get(tab.windowId, {}, win => {
       if (win.focused) {
         localStorage.currentTabUrl = url;
       }
@@ -237,15 +254,15 @@ browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   onTabUpdated(tab);
 });
 
-browser.tabs.onActivated.addListener((activeInfo) => {
+browser.tabs.onActivated.addListener(activeInfo => {
   browser.tabs.get(activeInfo.tabId, onTabUpdated);
 });
 
-browser.windows.onFocusChanged.addListener((windowId) => {
+browser.windows.onFocusChanged.addListener(windowId => {
   if (windowId == browser.windows.WINDOW_ID_NONE) {
     return;
   }
-  browser.windows.get(windowId, {populate: true}, (win) => {
+  browser.windows.get(windowId, { populate: true }, win => {
     for (let tab of win.tabs) {
       onTabUpdated(tab);
     }
@@ -253,90 +270,89 @@ browser.windows.onFocusChanged.addListener((windowId) => {
 });
 
 function saveStorageToCloud() {
-  browser.storage.sync.get(null, (items) => {
-      const keys = items ? Object.keys(items) : [];
-      keys.sort();
-      if (keys.length == 0 ||
-          items[keys[keys.length - 1]] != localStorage.profiles) {
-        const data = {};
-        data[Date.now()] = localStorage.profiles;
-        browser.storage.sync.set(data);
-        localStorage.savedToCloud = true;
-      }
-      if (keys.length >= MAX_PROFILES_IN_CLOUD) {
-        browser.storage.sync.remove(keys.slice(0, keys.length - MAX_PROFILES_IN_CLOUD));
-      }
-    });
+  browser.storage.sync.get(null, items => {
+    const keys = items ? Object.keys(items) : [];
+    keys.sort();
+    if (
+      keys.length == 0 ||
+      items[keys[keys.length - 1]] != localStorage.profiles
+    ) {
+      const data = {};
+      data[Date.now()] = localStorage.profiles;
+      browser.storage.sync.set(data);
+      localStorage.savedToCloud = true;
+    }
+    if (keys.length >= MAX_PROFILES_IN_CLOUD) {
+      browser.storage.sync.remove(
+        keys.slice(0, keys.length - MAX_PROFILES_IN_CLOUD)
+      );
+    }
+  });
 }
 
 function createContextMenu() {
   if (localStorage.isPaused) {
-    browser.contextMenus.update(
-      'pause',
-      {
-        title: 'Unpause ModHeader',
-        contexts: ['browser_action'],
-        onclick: () => {
-          localStorage.removeItem('isPaused');
-          resetBadgeAndContextMenu();
-        }
-      });
+    browser.contextMenus.update('pause', {
+      title: 'Unpause ModHeader',
+      contexts: ['browser_action'],
+      onclick: () => {
+        localStorage.removeItem('isPaused');
+        resetBadgeAndContextMenu();
+      }
+    });
   } else {
-    browser.contextMenus.update(
-      'pause',
-      {
-        title: 'Pause ModHeader',
-        contexts: ['browser_action'],
-        onclick: () => {
-          localStorage.isPaused = true;
-          resetBadgeAndContextMenu();
-        }
-      });
+    browser.contextMenus.update('pause', {
+      title: 'Pause ModHeader',
+      contexts: ['browser_action'],
+      onclick: () => {
+        localStorage.isPaused = true;
+        resetBadgeAndContextMenu();
+      }
+    });
   }
   if (localStorage.lockedTabId) {
-    browser.contextMenus.update(
-      'lock',
-      {
-        title: 'Unlock to all tabs',
-        contexts: ['browser_action'],
-        onclick: () => {
-          localStorage.removeItem('lockedTabId');
-          resetBadgeAndContextMenu();
-        }
-      });
+    browser.contextMenus.update('lock', {
+      title: 'Unlock to all tabs',
+      contexts: ['browser_action'],
+      onclick: () => {
+        localStorage.removeItem('lockedTabId');
+        resetBadgeAndContextMenu();
+      }
+    });
   } else {
-    browser.contextMenus.update(
-      'lock',
-      {
-        title: 'Lock to this tab',
-        contexts: ['browser_action'],
-        onclick: () => {
-          localStorage.lockedTabId = localStorage.activeTabId;
-          resetBadgeAndContextMenu();
-        }
-      });
+    browser.contextMenus.update('lock', {
+      title: 'Lock to this tab',
+      contexts: ['browser_action'],
+      onclick: () => {
+        localStorage.lockedTabId = localStorage.activeTabId;
+        resetBadgeAndContextMenu();
+      }
+    });
   }
 }
 
 function resetBadgeAndContextMenu() {
   if (localStorage.isPaused) {
-    browser.browserAction.setIcon({path: 'icon_bw.png'});
-    browser.browserAction.setBadgeText({text: '\u275A\u275A'});
-    browser.browserAction.setBadgeBackgroundColor({color: '#666'});
+    browser.browserAction.setIcon({ path: 'icon_bw.png' });
+    browser.browserAction.setBadgeText({ text: '\u275A\u275A' });
+    browser.browserAction.setBadgeBackgroundColor({ color: '#666' });
   } else {
-    const numHeaders = (currentProfile.headers.length + currentProfile.respHeaders.length);
+    const numHeaders =
+      currentProfile.headers.length + currentProfile.respHeaders.length;
     if (numHeaders == 0) {
-      browser.browserAction.setBadgeText({text: ''});
-      browser.browserAction.setIcon({path: 'icon_bw.png'});
-    } else if (localStorage.lockedTabId
-        && localStorage.lockedTabId != localStorage.activeTabId) {
-      browser.browserAction.setIcon({path: 'icon_bw.png'});
-      browser.browserAction.setBadgeText({text: '\uD83D\uDD12'});
-      browser.browserAction.setBadgeBackgroundColor({color: '#ff8e8e'});
+      browser.browserAction.setBadgeText({ text: '' });
+      browser.browserAction.setIcon({ path: 'icon_bw.png' });
+    } else if (
+      localStorage.lockedTabId &&
+      localStorage.lockedTabId != localStorage.activeTabId
+    ) {
+      browser.browserAction.setIcon({ path: 'icon_bw.png' });
+      browser.browserAction.setBadgeText({ text: '\uD83D\uDD12' });
+      browser.browserAction.setBadgeBackgroundColor({ color: '#ff8e8e' });
     } else {
-      browser.browserAction.setIcon({path: 'icon.png'});
-      browser.browserAction.setBadgeText({text: numHeaders.toString()});
-      browser.browserAction.setBadgeBackgroundColor({color: '#db4343'});
+      browser.browserAction.setIcon({ path: 'icon.png' });
+      browser.browserAction.setBadgeText({ text: numHeaders.toString() });
+      browser.browserAction.setBadgeBackgroundColor({ color: '#db4343' });
     }
   }
   createContextMenu();
@@ -362,7 +378,7 @@ function initializeStorage() {
     }
 
     if (!localStorage.profiles) {
-      browser.storage.sync.get(null, (items) => {
+      browser.storage.sync.get(null, items => {
         const keys = items ? Object.keys(items) : [];
         keys.sort();
         if (keys.length > 0) {
@@ -376,12 +392,12 @@ function initializeStorage() {
 browser.contextMenus.create({
   id: 'pause',
   title: 'Pause',
-  contexts: ['browser_action'],
+  contexts: ['browser_action']
 });
 browser.contextMenus.create({
   id: 'lock',
   title: 'Lock',
-  contexts: ['browser_action'],
+  contexts: ['browser_action']
 });
 initializeStorage();
 resetBadgeAndContextMenu();
