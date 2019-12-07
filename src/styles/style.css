@@ -4,36 +4,6 @@ body {
   width: 600px;
 }
 
-a {
-  outline: 0;
-  cursor: pointer;
-}
-
-[ng\:cloak],
-[ng-cloak],
-[data-ng-cloak],
-[x-ng-cloak],
-.ng-cloak,
-.x-ng-cloak,
-.ng-hide:not(.ng-hide-animate) {
-  display: none !important;
-}
-
-/* 
-@-moz-document url-prefix() {
-	md-input-container .md-input {
-		border-color: #000;
-	}
-
-	md-backdrop, md-backdrop.md-select-backdrop {
-		z-index: 99;
-	}
-
-	.md-select-menu-container {
-		z-index: 100;
-	}
-} */
-
 .disabled {
   opacity: 0.5;
   pointer-events: none;
@@ -127,4 +97,12 @@ md-autocomplete.autocomplete md-autocomplete-wrap .md-whiteframe-1dp,
 
 .large-textarea {
   width: 100%;
+}
+
+/* Firefox doesn't show the menu properly (scaled down and jump around). */
+@-moz-document url-prefix() {
+  .md-open-menu-container {
+    transform: none !important;
+    top: 12px !important;
+  }
 }
