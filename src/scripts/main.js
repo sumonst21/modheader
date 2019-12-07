@@ -5,14 +5,8 @@ const modHeader = angular
   .config(function($compileProvider) {
     $compileProvider.debugInfoEnabled(false);
   })
-  .config(function($mdGestureProvider) {
-    $mdGestureProvider.disableAll();
-  })
   .config(function($mdAriaProvider) {
     $mdAriaProvider.disableWarnings();
-  })
-  .config(function($mdInkRippleProvider) {
-    $mdInkRippleProvider.disableInkRipple();
   });
 
 function fixProfile(profile) {
@@ -427,8 +421,31 @@ modHeader.factory('profileService', function(
     }
   };
 
+  profileService.expandHeaderEditor = function(event, profile, header) {
+    const parentEl = angular.element(document.body);
+    $mdDialog.show({
+      parent: parentEl,
+      targetEvent: event,
+      focusOnOpen: true,
+      templateUrl: 'editor.tmpl.html',
+      locals: {
+        showComment: !profile.hideComment,
+        header
+      },
+      controller: DialogController_
+    });
+    function DialogController_($scope, $mdDialog, showComment, header) {
+      $scope.showComment = showComment;
+      $scope.header = header;
+
+      $scope.closeDialog = function() {
+        $mdDialog.hide();
+      };
+    }
+  };
+
   profileService.exportProfiles = function(event) {
-    var parentEl = angular.element(document.body);
+    const parentEl = angular.element(document.body);
     $mdDialog.show({
       parent: parentEl,
       targetEvent: event,
@@ -632,6 +649,7 @@ modHeader.factory('autocompleteService', function(dataSource) {
     'X-WebKit-CSP'
   ];
   autocompleteService.responseHeaderValues = [];
+  autocompleteService.commentValues = [];
 
   function createFilterFor_(query) {
     const lowercaseQuery = query.toLowerCase();

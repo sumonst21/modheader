@@ -22,7 +22,6 @@
       <md-button
         class="md-icon-button"
         aria-label="Settings"
-        md-no-ink
         ng-click="toggleSidenav()"
       >
         <md-icon md-svg-src="images/ic_menu_18px.svg"></md-icon>
@@ -43,7 +42,6 @@
 
       <md-button
         aria-label="Tab"
-        md-no-ink
         ng-if="!dataSource.lockedTabId"
         ng-click="dataSource.lockToTab()"
       >
@@ -53,7 +51,6 @@
 
       <md-button
         aria-label="Tab"
-        md-no-ink
         ng-if="dataSource.lockedTabId"
         ng-click="dataSource.unlockAllTab()"
       >
@@ -64,7 +61,6 @@
       <md-button
         class="md-icon-button"
         aria-label="Pause"
-        md-no-ink
         ng-if="!dataSource.isPaused"
         ng-click="dataSource.pause()"
       >
@@ -74,7 +70,6 @@
       <md-button
         class="md-icon-button"
         aria-label="Play"
-        md-no-ink
         ng-if="dataSource.isPaused"
         ng-click="dataSource.play()"
       >
@@ -85,7 +80,6 @@
         <md-button
           class="md-icon-button"
           aria-label="Add"
-          md-no-ink
           ng-click="$mdOpenMenu()"
         >
           <md-icon md-svg-src="images/ic_add_18px.svg"></md-icon>
@@ -93,7 +87,6 @@
         <md-menu-content width="4">
           <md-menu-item>
             <md-button
-              md-no-ink
               ng-click="dataSource.addHeader(dataSource.selectedProfile.headers)"
             >
               Request header
@@ -101,7 +94,6 @@
           </md-menu-item>
           <md-menu-item>
             <md-button
-              md-no-ink
               ng-click="dataSource.addHeader(dataSource.selectedProfile.respHeaders)"
             >
               Response header
@@ -109,7 +101,6 @@
           </md-menu-item>
           <md-menu-item>
             <md-button
-              md-no-ink
               ng-click="dataSource.addFilter(dataSource.selectedProfile.filters)"
             >
               Filter
@@ -129,7 +120,6 @@
         <md-menu-content width="4">
           <md-menu-item>
             <md-button
-              md-no-ink
               ng-click="profileService.toggleComment(dataSource.selectedProfile)"
             >
               <md-icon
@@ -143,7 +133,6 @@
           <md-menu-divider></md-menu-divider>
           <md-menu-item>
             <md-button
-              md-no-ink
               ng-click="profileService.deleteProfile(dataSource.selectedProfile)"
             >
               <md-icon
@@ -155,7 +144,6 @@
           </md-menu-item>
           <md-menu-item>
             <md-button
-              md-no-ink
               ng-click="profileService.cloneProfile(dataSource.selectedProfile)"
             >
               <md-icon
@@ -166,7 +154,6 @@
           </md-menu-item>
           <md-menu-item>
             <md-button
-              md-no-ink
               ng-click="profileService.exportProfile($event, dataSource.selectedProfile)"
             >
               <md-icon md-svg-src="images/ic_file_download_24px.svg"></md-icon>
@@ -175,7 +162,6 @@
           </md-menu-item>
           <md-menu-item>
             <md-button
-              md-no-ink
               ng-click="profileService.importProfile($event, dataSource.selectedProfile)"
             >
               <md-icon md-svg-src="images/ic_file_upload_24px.svg"></md-icon>
@@ -187,7 +173,6 @@
           <md-subheader>Header override mode</md-subheader>
           <md-menu-item>
             <md-button
-              md-no-ink
               ng-click="profileService.setAppendMode(dataSource.selectedProfile, false)"
             >
               <md-icon
@@ -199,7 +184,6 @@
           </md-menu-item>
           <md-menu-item>
             <md-button
-              md-no-ink
               ng-click="profileService.setAppendMode(dataSource.selectedProfile, true)"
             >
               <md-icon
@@ -211,7 +195,6 @@
           </md-menu-item>
           <md-menu-item>
             <md-button
-              md-no-ink
               ng-click="profileService.setAppendMode(dataSource.selectedProfile, 'comma')"
             >
               <md-icon
@@ -226,7 +209,7 @@
     </div>
     <div class="info-section" ng-if="dataSource.isPaused">
       ModHeader is paused
-      <md-button aria-label="Play" md-no-ink ng-click="dataSource.play()">
+      <md-button aria-label="Play" ng-click="dataSource.play()">
         <md-icon md-svg-src="images/ic_play_arrow_18px.svg"></md-icon>
         Click to unpause
       </md-button>
@@ -236,25 +219,16 @@
       ng-if="dataSource.lockedTabId && !dataSource.isPaused"
     >
       Tab lock is active
-      <md-button
-        aria-label="Tab"
-        md-no-ink
-        ng-click="dataSource.unlockAllTab()"
-      >
+      <md-button aria-label="Tab" ng-click="dataSource.unlockAllTab()">
         <md-icon md-svg-src="images/ic_lock_open_18px.svg"></md-icon>
         Click to unlock tab
       </md-button>
     </div>
   </md-toolbar>
-  <md-sidenav
-    md-no-ink
-    class="md-sidenav-left md-whiteframe-z2"
-    md-component-id="left"
-  >
+  <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left">
     <md-toolbar class="md-theme-indigo">
       <div class="md-toolbar-tools">
         <md-button
-          md-no-ink
           class="md-icon-button"
           aria-label="Settings"
           ng-click="toggleSidenav()"
@@ -270,7 +244,6 @@
       >
         <md-checkbox
           aria-label="{{profile.title}}"
-          md-no-ink
           ng-checked="profile === dataSource.selectedProfile"
         >
         </md-checkbox>
@@ -370,7 +343,6 @@
       >
         <md-checkbox
           ng-model="header.enabled"
-          md-no-ink
           flex="5"
           aria-label="Enabled"
         ></md-checkbox>
@@ -387,7 +359,7 @@
             md-item-text="item"
             md-autoselect="true"
             placeholder="Name"
-            class="autocomplete-text-input name-input"
+            class="autocomplete-text-input"
             md-input-class="autocomplete"
             md-clear-button="false"
           >
@@ -409,7 +381,7 @@
             md-item-text="item"
             md-autoselect="true"
             placeholder="Value"
-            class="autocomplete-text-input value-input"
+            class="autocomplete-text-input"
             md-input-class="autocomplete"
             md-clear-button="false"
           >
@@ -427,18 +399,34 @@
           <md-autocomplete
             md-search-text="header.comment"
             input-name="headerComment"
-            md-items="[]"
+            md-items="item in autocompleteService.query(
+              autocompleteService.commentValues,
+              dataSource.selectedProfile.headers,
+              'comment',
+              header.comment)"
+            md-item-text="item"
+            md-autoselect="true"
             placeholder="Comment"
-            class="autocomplete-text-input comment-input"
+            class="autocomplete-text-input"
             md-input-class="autocomplete"
             md-clear-button="false"
           >
+            <md-item-template>
+              <span md-highlight-text="header.comment">{{item}}</span>
+            </md-item-template>
           </md-autocomplete>
         </md-input-container>
 
         <md-button
           class="md-icon-button"
-          md-no-ink
+          flex="5"
+          ng-click="profileService.expandHeaderEditor($event, dataSource.selectedProfile, header)"
+        >
+          <md-icon md-svg-src="images/ic_arrow-expand_24px.svg"></md-icon>
+        </md-button>
+
+        <md-button
+          class="md-icon-button"
           flex="5"
           ng-click="dataSource.removeHeaderEnsureNonEmpty(dataSource.selectedProfile.headers, header)"
         >
@@ -456,7 +444,6 @@
       >
         <md-checkbox
           ng-model="header.enabled"
-          md-no-ink
           flex="5"
           class="enable-checkbox"
           aria-label="Enabled"
@@ -474,7 +461,7 @@
             md-item-text="item"
             md-autoselect="true"
             placeholder="Name"
-            class="autocomplete-text-input name-input"
+            class="autocomplete-text-input"
             md-input-class="autocomplete"
             md-clear-button="false"
           >
@@ -496,7 +483,7 @@
             md-item-text="item"
             md-autoselect="true"
             placeholder="Value"
-            class="autocomplete-text-input value-input"
+            class="autocomplete-text-input"
             md-input-class="autocomplete"
             md-clear-button="false"
             flex
@@ -515,18 +502,34 @@
           <md-autocomplete
             md-search-text="header.comment"
             input-name="headerComment"
-            md-items="[]"
+            md-items="item in autocompleteService.query(
+          autocompleteService.commentValues,
+          dataSource.selectedProfile.respHeaders,
+          'comment',
+          header.comment)"
+            md-item-text="item"
+            md-autoselect="true"
             placeholder="Comment"
-            class="autocomplete-text-input comment-input"
+            class="autocomplete-text-input"
             md-input-class="autocomplete"
             md-clear-button="false"
           >
+            <md-item-template>
+              <span md-highlight-text="header.comment">{{item}}</span>
+            </md-item-template>
           </md-autocomplete>
         </md-input-container>
 
         <md-button
           class="md-icon-button"
-          md-no-ink
+          flex="5"
+          ng-click="profileService.expandHeaderEditor($event, dataSource.selectedProfile, header)"
+        >
+          <md-icon md-svg-src="images/ic_arrow-expand_24px.svg"></md-icon>
+        </md-button>
+
+        <md-button
+          class="md-icon-button"
           flex="5"
           ng-click="dataSource.removeHeader(dataSource.selectedProfile.respHeaders, header)"
         >
@@ -544,7 +547,6 @@
       >
         <md-checkbox
           ng-model="filter.enabled"
-          md-no-ink
           flex="5"
           class="enable-checkbox"
           aria-label="Enabled"
@@ -573,7 +575,6 @@
         <md-button
           class="md-icon-button"
           aria-label="Help"
-          md-no-ink
           flex="none"
           ng-if="filter.type === 'urls'"
           ng-click="openLink('https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions')"
@@ -599,7 +600,6 @@
         </md-select>
         <md-button
           class="md-icon-button"
-          md-no-ink
           flex="5"
           ng-click="dataSource.removeFilter(dataSource.selectedProfile.filters, filter)"
         >
