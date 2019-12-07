@@ -158,7 +158,7 @@ modHeader.factory('dataSource', function($mdToast) {
       headers: [],
       respHeaders: [],
       filters: [],
-      appendMode: 'false'
+      appendMode: false
     };
     dataSource.addHeader(profile.headers);
     return profile;
@@ -192,9 +192,6 @@ modHeader.factory('dataSource', function($mdToast) {
     }
     if (!profile.filters) {
       profile.filters = [];
-    }
-    if (!profile.appendMode) {
-      profile.appendMode = 'false';
     }
   }
   if (localStorage.selectedProfile) {
@@ -266,6 +263,14 @@ modHeader.factory('profileService', function(
     } else {
       updateSelectedProfile_();
     }
+  };
+
+  profileService.toggleComment = function(profile) {
+    profile.hideComment = !profile.hideComment;
+  };
+
+  profileService.setAppendMode = function(profile, appendMode) {
+    profile.appendMode = appendMode;
   };
 
   profileService.exportProfile = function(event, profile) {
@@ -342,27 +347,6 @@ modHeader.factory('profileService', function(
 
       $scope.closeDialog = function() {
         $mdDialog.hide($scope.importProfile);
-      };
-    }
-  };
-
-  profileService.openSettings = function(event, profile) {
-    var parentEl = angular.element(document.body);
-    $mdDialog.show({
-      parent: parentEl,
-      targetEvent: event,
-      focusOnOpen: false,
-      templateUrl: 'settings.tmpl.html',
-      locals: {
-        profile: profile
-      },
-      controller: DialogController_
-    });
-    function DialogController_($scope, $mdDialog, profile) {
-      $scope.profile = profile;
-
-      $scope.closeDialog = function() {
-        $mdDialog.hide();
       };
     }
   };

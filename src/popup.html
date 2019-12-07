@@ -130,12 +130,16 @@
           <md-menu-item>
             <md-button
               md-no-ink
-              ng-click="profileService.openSettings($event, dataSource.selectedProfile)"
+              ng-click="profileService.toggleComment(dataSource.selectedProfile)"
             >
-              <md-icon md-svg-src="images/ic_settings_24px.svg"></md-icon>
-              Profile settings
+              <md-icon
+                md-svg-src="{{ dataSource.selectedProfile.hideComment ?
+                  'images/ic_checkbox-blank-outline_24px.svg' : 'images/ic_check-box-outline_24px.svg' }}"
+              ></md-icon>
+              Toggle comment column
             </md-button>
           </md-menu-item>
+
           <md-menu-divider></md-menu-divider>
           <md-menu-item>
             <md-button
@@ -176,6 +180,45 @@
             >
               <md-icon md-svg-src="images/ic_file_upload_24px.svg"></md-icon>
               Import profile
+            </md-button>
+          </md-menu-item>
+
+          <md-menu-divider></md-menu-divider>
+          <md-subheader>Header override mode</md-subheader>
+          <md-menu-item>
+            <md-button
+              md-no-ink
+              ng-click="profileService.setAppendMode(dataSource.selectedProfile, false)"
+            >
+              <md-icon
+                md-svg-src="{{ !dataSource.selectedProfile.appendMode || dataSource.selectedProfile.appendMode.length === 0 ?
+                  'images/ic_radiobox-marked_24px.svg' : 'images/ic_radiobox-blank_24px.svg' }}"
+              ></md-icon>
+              Override existing value
+            </md-button>
+          </md-menu-item>
+          <md-menu-item>
+            <md-button
+              md-no-ink
+              ng-click="profileService.setAppendMode(dataSource.selectedProfile, true)"
+            >
+              <md-icon
+                md-svg-src="{{ dataSource.selectedProfile.appendMode && dataSource.selectedProfile.appendMode !== 'comma' ?
+                   'images/ic_radiobox-marked_24px.svg' : 'images/ic_radiobox-blank_24px.svg' }}"
+              ></md-icon>
+              Value concatenation
+            </md-button>
+          </md-menu-item>
+          <md-menu-item>
+            <md-button
+              md-no-ink
+              ng-click="profileService.setAppendMode(dataSource.selectedProfile, 'comma')"
+            >
+              <md-icon
+                md-svg-src="{{ dataSource.selectedProfile.appendMode === 'comma' ?
+                    'images/ic_radiobox-marked_24px.svg' : 'images/ic_radiobox-blank_24px.svg' }}"
+              ></md-icon>
+              Comma separated concatenation
             </md-button>
           </md-menu-item>
         </md-menu-content>
@@ -228,7 +271,7 @@
         <md-checkbox
           aria-label="{{profile.title}}"
           md-no-ink
-          ng-checked="profile == dataSource.selectedProfile"
+          ng-checked="profile === dataSource.selectedProfile"
         >
         </md-checkbox>
         <p>{{profile.title}}</p>
@@ -303,7 +346,7 @@
         <a
           class="comment-header"
           flex
-          ng-if="dataSource.selectedProfile.hideComment !== 'true'"
+          ng-if="!dataSource.selectedProfile.hideComment"
           ng-click="sortCtrl.order(dataSource.selectedProfile, 'comment')"
         >
           Comment
@@ -378,7 +421,7 @@
 
         <md-input-container
           md-no-float
-          ng-if="dataSource.selectedProfile.hideComment !== 'true'"
+          ng-if="!dataSource.selectedProfile.hideComment"
           flex
         >
           <md-autocomplete
@@ -466,7 +509,7 @@
 
         <md-input-container
           md-no-float
-          ng-if="dataSource.selectedProfile.hideComment !== 'true'"
+          ng-if="!dataSource.selectedProfile.hideComment"
           flex
         >
           <md-autocomplete
@@ -515,7 +558,7 @@
           <md-option value="urls">URL Pattern</md-option>
           <md-option value="types">Resource Type</md-option>
         </md-select>
-        <md-input-container md-no-float flex ng-if="filter.type == 'urls'">
+        <md-input-container md-no-float flex ng-if="filter.type === 'urls'">
           <md-autocomplete
             md-search-text="filter.urlRegex"
             md-items="[]"
@@ -532,7 +575,7 @@
           aria-label="Help"
           md-no-ink
           flex="none"
-          ng-if="filter.type == 'urls'"
+          ng-if="filter.type === 'urls'"
           ng-click="openLink('https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions')"
         >
           <md-icon md-svg-src="images/ic_help_24px.svg"></md-icon>
@@ -542,7 +585,7 @@
           placeholder="Resource Type"
           class="resource-type"
           flex
-          ng-if="filter.type == 'types'"
+          ng-if="filter.type === 'types'"
           multiple="true"
         >
           <md-option value="main_frame">Main Frame</md-option>
