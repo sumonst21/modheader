@@ -80,7 +80,7 @@
         <md-button
           class="md-icon-button"
           aria-label="Add"
-          ng-click="$mdOpenMenu()"
+          ng-click="$mdMenu.open($event)"
         >
           <md-icon md-svg-src="images/ic_add_18px.svg"></md-icon>
         </md-button>
@@ -113,7 +113,7 @@
         <md-button
           class="md-icon-button"
           aria-label="More"
-          ng-click="$mdOpenMenu()"
+          ng-click="$mdMenu.open($event)"
         >
           <md-icon md-svg-src="images/ic_more_vert_18px.svg"></md-icon>
         </md-button>
@@ -360,7 +360,7 @@
             md-autoselect="true"
             placeholder="Name"
             class="autocomplete-text-input"
-            md-input-class="autocomplete"
+            md-input-class="text-input"
             md-clear-button="false"
           >
             <md-item-template>
@@ -382,7 +382,7 @@
             md-autoselect="true"
             placeholder="Value"
             class="autocomplete-text-input"
-            md-input-class="autocomplete"
+            md-input-class="text-input"
             md-clear-button="false"
           >
             <md-item-template>
@@ -408,7 +408,7 @@
             md-autoselect="true"
             placeholder="Comment"
             class="autocomplete-text-input"
-            md-input-class="autocomplete"
+            md-input-class="text-input"
             md-clear-button="false"
           >
             <md-item-template>
@@ -419,7 +419,6 @@
 
         <md-button
           class="md-icon-button"
-          flex="5"
           ng-click="profileService.expandHeaderEditor($event, dataSource.selectedProfile, header)"
         >
           <md-icon md-svg-src="images/ic_arrow-expand_24px.svg"></md-icon>
@@ -427,7 +426,6 @@
 
         <md-button
           class="md-icon-button"
-          flex="5"
           ng-click="dataSource.removeHeaderEnsureNonEmpty(dataSource.selectedProfile.headers, header)"
         >
           <md-icon md-svg-icon="images/ic_clear_red_18px.svg"></md-icon>
@@ -462,7 +460,7 @@
             md-autoselect="true"
             placeholder="Name"
             class="autocomplete-text-input"
-            md-input-class="autocomplete"
+            md-input-class="text-input"
             md-clear-button="false"
           >
             <md-item-template>
@@ -484,7 +482,7 @@
             md-autoselect="true"
             placeholder="Value"
             class="autocomplete-text-input"
-            md-input-class="autocomplete"
+            md-input-class="text-input"
             md-clear-button="false"
             flex
           >
@@ -511,7 +509,7 @@
             md-autoselect="true"
             placeholder="Comment"
             class="autocomplete-text-input"
-            md-input-class="autocomplete"
+            md-input-class="text-input"
             md-clear-button="false"
           >
             <md-item-template>
@@ -522,7 +520,6 @@
 
         <md-button
           class="md-icon-button"
-          flex="5"
           ng-click="profileService.expandHeaderEditor($event, dataSource.selectedProfile, header)"
         >
           <md-icon md-svg-src="images/ic_arrow-expand_24px.svg"></md-icon>
@@ -530,7 +527,6 @@
 
         <md-button
           class="md-icon-button"
-          flex="5"
           ng-click="dataSource.removeHeader(dataSource.selectedProfile.respHeaders, header)"
         >
           <md-icon md-svg-icon="images/ic_clear_red_18px.svg"></md-icon>
@@ -558,16 +554,19 @@
           flex="none"
         >
           <md-option value="urls">URL Pattern</md-option>
+          <md-option value="excludeUrls">Exclude URL Pattern</md-option>
           <md-option value="types">Resource Type</md-option>
         </md-select>
-        <md-input-container md-no-float flex ng-if="filter.type === 'urls'">
-          <md-autocomplete
-            md-search-text="filter.urlRegex"
-            md-items="[]"
+        <md-input-container
+          md-no-float
+          flex
+          class="text-input"
+          ng-if="filter.type === 'urls' || filter.type === 'excludeUrls'"
+        >
+          <input
+            ng-model="filter.urlRegex"
             placeholder=".*://.*.google.com/.*"
-            class="autocomplete-text-input"
-            md-input-class="autocomplete"
-            md-clear-button="false"
+            class="regular-text-input"
             flex
           >
           </md-autocomplete>
@@ -575,8 +574,7 @@
         <md-button
           class="md-icon-button"
           aria-label="Help"
-          flex="none"
-          ng-if="filter.type === 'urls'"
+          ng-if="filter.type === 'urls' || filter.type === 'excludeUrls'"
           ng-click="openLink('https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions')"
         >
           <md-icon md-svg-src="images/ic_help_24px.svg"></md-icon>
@@ -600,7 +598,6 @@
         </md-select>
         <md-button
           class="md-icon-button"
-          flex="5"
           ng-click="dataSource.removeFilter(dataSource.selectedProfile.filters, filter)"
         >
           <md-icon md-svg-icon="images/ic_clear_red_18px.svg"></md-icon>

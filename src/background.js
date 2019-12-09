@@ -12,7 +12,7 @@ function passFilters_(url, type, filters) {
   if (!filters) {
     return true;
   }
-  let allowUrls = false;
+  let allowUrls = undefined;
   let hasUrlFilters = false;
   let allowTypes = false;
   let hasResourceTypeFilters = false;
@@ -21,8 +21,20 @@ function passFilters_(url, type, filters) {
       switch (filter.type) {
         case 'urls':
           hasUrlFilters = true;
+          if (allowUrls === undefined) {
+            allowUrls = false;
+          }
           if (url.search(filter.urlRegex) == 0) {
             allowUrls = true;
+          }
+          break;
+        case 'excludeUrls':
+          hasUrlFilters = true;
+          if (allowUrls === undefined) {
+            allowUrls = true;
+          }
+          if (url.search(filter.urlRegex) == 0) {
+            allowUrls = false;
           }
           break;
         case 'types':
@@ -401,3 +413,9 @@ browser.contextMenus.create({
 });
 initializeStorage();
 resetBadgeAndContextMenu();
+
+chrome.runtime.onInstalled.addListener(details => {
+  if (details.reason === 'install') {
+    chrome.tabs.create({ url: 'https://r.bewisse.com/modheader/postinstall' });
+  }
+});

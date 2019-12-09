@@ -29,7 +29,7 @@ body::-webkit-scrollbar {
   width: 100%;
 }
 
-.autocomplete {
+.text-input {
   height: 30px !important;
   min-height: 30px !important;
 }
@@ -37,6 +37,10 @@ body::-webkit-scrollbar {
 .autocomplete-text-input {
   margin-top: 4px !important;
   min-width: 140px;
+}
+
+.regular-text-input {
+  margin-top: -5px !important;
 }
 
 .sortorder:after {
