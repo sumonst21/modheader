@@ -1,7 +1,9 @@
 html,
 body {
   height: 460px;
-  width: 600px;
+  /** Fix FF popup disappearance on long window. */
+  width: 600px !important;
+  position: relative !important;
 }
 
 .disabled {
