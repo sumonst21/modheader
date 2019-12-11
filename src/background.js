@@ -56,6 +56,7 @@ function loadSelectedProfile_() {
   let headers = [];
   let respHeaders = [];
   let filters = [];
+  let urlReplacements = [];
   if (localStorage.profiles) {
     const profiles = JSON.parse(localStorage.profiles);
     if (!localStorage.selectedProfile) {
@@ -63,12 +64,12 @@ function loadSelectedProfile_() {
     }
     const selectedProfile = profiles[localStorage.selectedProfile];
 
-    function filterEnabledHeaders_(headers) {
+    function filterEnabled_(rows) {
       let output = [];
-      for (let header of headers) {
+      for (let row of rows) {
         // Overrides the header if it is enabled and its name is not empty.
-        if (header.enabled && header.name) {
-          output.push({ name: header.name, value: header.value });
+        if (row.enabled && row.name) {
+          output.push({ name: row.name, value: row.value });
         }
       }
       return output;
@@ -93,15 +94,26 @@ function loadSelectedProfile_() {
       filters.push(filter);
     }
     appendMode = selectedProfile.appendMode;
-    headers = filterEnabledHeaders_(selectedProfile.headers);
-    respHeaders = filterEnabledHeaders_(selectedProfile.respHeaders);
+    headers = filterEnabled_(selectedProfile.headers);
+    respHeaders = filterEnabled_(selectedProfile.respHeaders);
+    urlReplacements = filterEnabled_(selectedProfile.urlReplacements);
   }
   return {
-    appendMode: appendMode,
-    headers: headers,
-    respHeaders: respHeaders,
-    filters: filters
+    appendMode,
+    headers,
+    respHeaders,
+    urlReplacements,
+    filters
   };
+}
+
+function replaceUrls(urlReplacements, url) {
+  if (urlReplacements) {
+    for (const replacement of urlReplacements) {
+      url = url.replace(replacement.name, replacement.value);
+    }
+  }
+  return url;
 }
 
 function modifyHeader(source, dest) {
@@ -135,14 +147,32 @@ function modifyHeader(source, dest) {
   }
 }
 
-function modifyRequestHeaderHandler_(details) {
+function modifyRequestHandler_(details) {
   if (localStorage.isPaused) {
     return {};
   }
-  if (details.type == 'main_frame' && details.url && details.tabId) {
+  if (details.type == 'main_frame' && details.url && details.tabId >= 0) {
     tabUrls[details.tabId] = details.url;
     localStorage.activeTabId = details.tabId;
     browser.tabs.get(details.tabId, onTabUpdated);
+  }
+  if (!localStorage.lockedTabId || localStorage.lockedTabId == details.tabId) {
+    if (
+      currentProfile &&
+      passFilters_(details.url, details.type, currentProfile.filters)
+    ) {
+      const newUrl = replaceUrls(currentProfile.urlReplacements, details.url);
+      if (newUrl !== details.url) {
+        return { redirectUrl: newUrl };
+      }
+    }
+  }
+  return {};
+}
+
+function modifyRequestHeaderHandler_(details) {
+  if (localStorage.isPaused) {
+    return {};
   }
   if (!localStorage.lockedTabId || localStorage.lockedTabId == details.tabId) {
     if (
@@ -197,6 +227,7 @@ function getChromeVersion() {
 }
 
 function setupHeaderModListener() {
+  browser.webRequest.onBeforeRequest.removeListener(modifyRequestHandler_);
   browser.webRequest.onBeforeSendHeaders.removeListener(
     modifyRequestHeaderHandler_
   );
@@ -232,6 +263,12 @@ function setupHeaderModListener() {
         : ['responseHeaders', 'blocking']
     );
   }
+
+  browser.webRequest.onBeforeRequest.addListener(
+    modifyRequestHandler_,
+    { urls: ['<all_urls>'] },
+    ['blocking']
+  );
 }
 
 function onTabUpdated(tab) {

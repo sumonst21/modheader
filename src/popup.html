@@ -101,6 +101,13 @@
           </md-menu-item>
           <md-menu-item>
             <md-button
+              ng-click="dataSource.addUrlReplacement(dataSource.selectedProfile.urlReplacements)"
+            >
+              Replace URL
+            </md-button>
+          </md-menu-item>
+          <md-menu-item>
+            <md-button
               ng-click="dataSource.addFilter(dataSource.selectedProfile.filters)"
             >
               Filter
@@ -291,7 +298,7 @@
       <span layout="row" layout-align="stretch center">
         <span flex="5"></span>
         <a
-          class="name-header"
+          class="sorting-header"
           flex
           ng-click="sortCtrl.order(dataSource.selectedProfile, 'name')"
         >
@@ -304,7 +311,7 @@
           </span>
         </a>
         <a
-          class="value-header"
+          class="sorting-header"
           flex
           ng-click="sortCtrl.order(dataSource.selectedProfile, 'value')"
         >
@@ -317,7 +324,7 @@
           </span>
         </a>
         <a
-          class="comment-header"
+          class="sorting-header"
           flex
           ng-if="!dataSource.selectedProfile.hideComment"
           ng-click="sortCtrl.order(dataSource.selectedProfile, 'comment')"
@@ -419,7 +426,7 @@
 
         <md-button
           class="md-icon-button"
-          ng-click="profileService.expandHeaderEditor($event, dataSource.selectedProfile, header)"
+          ng-click="profileService.expandEditor($event, dataSource.selectedProfile, header, 'Request Header', 'Name', 'Value')"
         >
           <md-icon md-svg-src="images/ic_arrow-expand_24px.svg"></md-icon>
         </md-button>
@@ -520,7 +527,7 @@
 
         <md-button
           class="md-icon-button"
-          ng-click="profileService.expandHeaderEditor($event, dataSource.selectedProfile, header)"
+          ng-click="profileService.expandEditor($event, dataSource.selectedProfile, header, 'Response Header', 'Name', 'Value')"
         >
           <md-icon md-svg-src="images/ic_arrow-expand_24px.svg"></md-icon>
         </md-button>
@@ -533,6 +540,92 @@
         </md-button>
       </md-list-item>
     </md-list>
+
+    <md-list ng-if="dataSource.selectedProfile.urlReplacements.length">
+      <div class="section-title">URL replacements</div>
+      <md-list-item
+        ng-repeat="replacement in dataSource.selectedProfile.urlReplacements"
+        class="header-row md-no-proxy"
+        layout="row"
+        layout-align="stretch center"
+      >
+        <md-checkbox
+          ng-model="replacement.enabled"
+          flex="5"
+          class="enable-checkbox"
+          aria-label="Enabled"
+        ></md-checkbox>
+
+        <md-input-container
+          md-no-float
+          flex
+          class="text-input"
+        >
+          <input
+            ng-model="replacement.name"
+            placeholder="Original URL regex"
+            class="regular-text-input"
+            flex
+          >
+          </md-autocomplete>
+        </md-input-container>
+
+        <md-input-container
+          md-no-float
+          flex
+          class="text-input"
+        >
+          <input
+            ng-model="replacement.value"
+            placeholder="Replacement URL"
+            class="regular-text-input"
+            flex
+          >
+          </md-autocomplete>
+        </md-input-container>
+
+        <md-input-container
+          md-no-float
+          ng-if="!dataSource.selectedProfile.hideComment"
+          flex
+        >
+          <md-autocomplete
+            md-search-text="replacement.comment"
+            input-name="headerComment"
+            md-items="item in autocompleteService.query(
+          autocompleteService.commentValues,
+          dataSource.selectedProfile.urlReplacements,
+          'comment',
+          replacement.comment)"
+            md-item-text="item"
+            md-autoselect="true"
+            placeholder="Comment"
+            class="autocomplete-text-input"
+            md-input-class="text-input"
+            md-clear-button="false"
+          >
+            <md-item-template>
+              <span md-highlight-text="replacement.comment">{{item}}</span>
+            </md-item-template>
+          </md-autocomplete>
+        </md-input-container>
+
+        <md-button
+          class="md-icon-button"
+          ng-click="profileService.expandEditor($event, dataSource.selectedProfile, replacement, 'URL replacement', 'Original', 'Replacement')"
+        >
+          <md-icon md-svg-src="images/ic_arrow-expand_24px.svg"></md-icon>
+        </md-button>
+
+        <md-button
+          class="md-icon-button"
+          ng-click="dataSource.removeUrlReplacement(dataSource.selectedProfile.urlReplacements, replacement)"
+        >
+          <md-icon md-svg-icon="images/ic_clear_red_18px.svg"></md-icon>
+        </md-button>
+      </md-list-item>
+    </md-list>
+
     <md-list ng-if="dataSource.selectedProfile.filters.length">
       <div class="section-title">Filters</div>
       <md-list-item

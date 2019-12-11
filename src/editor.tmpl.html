@@ -1,22 +1,22 @@
 <md-dialog flex="70">
   <md-toolbar>
     <div class="md-toolbar-tools">
-      <h2>Header editor</h2>
+      <h2>{{ title }}</h2>
     </div>
   </md-toolbar>
   <md-dialog-content class="md-padding">
-    <label class="md-subhead">Name</label>
+    <label class="md-subhead">{{ nameLabel }}</label>
     <md-input-container flex class="large-textarea">
-      <textarea ng-model="header.name"></textarea>
+      <textarea ng-model="content.name"></textarea>
     </md-input-container>
-    <label class="md-subhead">Value</label>
+    <label class="md-subhead">{{ valueLabel }}</label>
     <md-input-container flex class="large-textarea">
-      <textarea ng-model="header.value"></textarea>
+      <textarea ng-model="content.value"></textarea>
     </md-input-container>
     <div ng-if="showComment">
       <label class="md-subhead">Comment</label>
       <md-input-container flex class="large-textarea">
-        <textarea ng-model="header.comment"></textarea>
+        <textarea ng-model="content.comment"></textarea>
       </md-input-container>
     </div>
   </md-dialog-content>

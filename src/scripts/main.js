@@ -68,12 +68,31 @@ modHeader.factory('dataSource', function($mdToast) {
     });
   };
 
+  dataSource.addUrlReplacement = function(replacements) {
+    let domain = '';
+    if (localStorage.currentTabUrl) {
+      const parser = document.createElement('a');
+      parser.href = localStorage.currentTabUrl;
+      domain = parser.origin;
+    }
+    replacements.push({
+      enabled: true,
+      name: domain,
+      value: domain,
+      comment: ''
+    });
+  };
+
   dataSource.removeFilter = function(filters, filter) {
     filters.splice(filters.indexOf(filter), 1);
   };
 
   dataSource.removeHeader = function(headers, header) {
     headers.splice(headers.indexOf(header), 1);
+  };
+
+  dataSource.removeUrlReplacement = function(urlReplacements, replacement) {
+    urlReplacements.splice(urlReplacements.indexOf(replacement), 1);
   };
 
   dataSource.removeHeaderEnsureNonEmpty = function(headers, header) {
@@ -152,6 +171,7 @@ modHeader.factory('dataSource', function($mdToast) {
       headers: [],
       respHeaders: [],
       filters: [],
+      urlReplacements: [],
       appendMode: false
     };
     dataSource.addHeader(profile.headers);
@@ -183,6 +203,10 @@ modHeader.factory('dataSource', function($mdToast) {
     if (!profile.respHeaders) {
       profile.respHeaders = [];
       dataSource.addHeader(profile.respHeaders);
+    }
+    if (!profile.urlReplacements) {
+      profile.urlReplacements = [];
+      dataSource.addUrlReplacement(profile.urlReplacements);
     }
     if (!profile.filters) {
       profile.filters = [];
@@ -421,7 +445,14 @@ modHeader.factory('profileService', function(
     }
   };
 
-  profileService.expandHeaderEditor = function(event, profile, header) {
+  profileService.expandEditor = function(
+    event,
+    profile,
+    content,
+    title,
+    nameLabel,
+    valueLabel
+  ) {
     const parentEl = angular.element(document.body);
     $mdDialog.show({
       parent: parentEl,
@@ -430,13 +461,16 @@ modHeader.factory('profileService', function(
       templateUrl: 'editor.tmpl.html',
       locals: {
         showComment: !profile.hideComment,
-        header
+        content
       },
       controller: DialogController_
     });
-    function DialogController_($scope, $mdDialog, showComment, header) {
+    function DialogController_($scope, $mdDialog, showComment, content) {
       $scope.showComment = showComment;
-      $scope.header = header;
+      $scope.content = content;
+      $scope.title = title;
+      $scope.nameLabel = nameLabel;
+      $scope.valueLabel = valueLabel;
 
       $scope.closeDialog = function() {
         $mdDialog.hide();
@@ -677,7 +711,7 @@ modHeader.controller('SortingController', function($filter, dataSource) {
     dataSource.reverse =
       dataSource.predicate === predicate ? !dataSource.reverse : false;
     dataSource.predicate = predicate;
-    var orderBy = $filter('orderBy');
+    const orderBy = $filter('orderBy');
     profile.headers = orderBy(
       profile.headers,
       dataSource.predicate,
@@ -685,6 +719,11 @@ modHeader.controller('SortingController', function($filter, dataSource) {
     );
     profile.respHeaders = orderBy(
       profile.respHeaders,
+      dataSource.predicate,
+      dataSource.reverse
+    );
+    profile.urlReplacements = orderBy(
+      profile.urlReplacements,
       dataSource.predicate,
       dataSource.reverse
     );
