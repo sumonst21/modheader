@@ -66,10 +66,12 @@ function loadSelectedProfile_() {
 
     function filterEnabled_(rows) {
       let output = [];
-      for (let row of rows) {
-        // Overrides the header if it is enabled and its name is not empty.
-        if (row.enabled && row.name) {
-          output.push({ name: row.name, value: row.value });
+      if (rows) {
+        for (let row of rows) {
+          // Overrides the header if it is enabled and its name is not empty.
+          if (row.enabled && row.name) {
+            output.push({ name: row.name, value: row.value });
+          }
         }
       }
       return output;
