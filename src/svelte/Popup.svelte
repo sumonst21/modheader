@@ -7,6 +7,10 @@
     addHeader,
     removeHeader
   } from "../js/datasource";
+  import {
+    KNOWN_REQUEST_HEADERS,
+    KNOWN_RESPONSE_HEADERS
+  } from "../js/constants";
 
   window.addEventListener("unload", () => {
     save();
@@ -30,7 +34,7 @@
   }
 
   :global(.extra-gap) {
-    margin-bottom: 5px;
+    margin: 2px;
   }
 
   .top-app-bar-container {
@@ -45,6 +49,7 @@
   headers={requestHeaders}
   class="extra-gap"
   title="Request headers"
+  autocompleteNames={KNOWN_REQUEST_HEADERS}
   profile={selectedProfile}
   on:add={() => (requestHeaders = addHeader(requestHeaders))}
   on:remove={event => (requestHeaders = removeHeader(requestHeaders, event.detail))} />
@@ -52,6 +57,7 @@
   headers={responseHeaders}
   class="extra-gap"
   title="Response headers"
+  autocompleteNames={KNOWN_RESPONSE_HEADERS}
   profile={selectedProfile}
   on:add={() => (responseHeaders = addHeader(responseHeaders))}
   on:remove={event => (responseHeaders = removeHeader(responseHeaders, event.detail))} />
