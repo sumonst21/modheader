@@ -4,17 +4,17 @@
   ModHeader is a browser extension that allow you to modify HTTP request and response headers.
 </h3>
 <h3 align="center">
-  <img src="https://bewisse.com/modheader/android-icon-96x96.png" width="24px" alt="ModHeader" />
+  <img src="https://static.bewisse.com/modheader/logo_2x.png" width="24px" alt="ModHeader" />
   <a href="https://bewisse.com/modheader/">
     Official Website
   </a>
 </h3>
 <p align="center">
   <a href="https://chrome.google.com/webstore/detail/modheader/idgpnmonknjnojddfkpgkljpfnnfcklj">
-    <img src="https://bewisse.com/chrome_1x.png" srcset="https://bewisse.com/chrome_2x.png 2x">
+    <img src="https://static.bewisse.com/chrome_1x.png" srcset="https://static.bewisse.com/chrome_2x.png 2x">
   </a>
   <a href="https://addons.mozilla.org/firefox/addon/modheader-firefox/">
-    <img src="https://bewisse.com/firefox_1x.png" srcset="https://bewisse.com/firefox_2x.png 2x">
+    <img src="https://static.bewisse.com/firefox_1x.png" srcset="https://static.bewisse.com/firefox_2x.png 2x">
   </a>
 </p>
 
@@ -39,7 +39,7 @@ If you find ModHeader useful, please consider making a donation. If you use it f
 
 ## Screenshots
 
-<img src="https://bewisse.com/modheader/ss1.png">
+<img src="https://static.bewisse.com/modheader/ss1.png">
 
 ## Forking and contribution
 
