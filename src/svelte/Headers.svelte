@@ -5,7 +5,7 @@
   import AutoComplete from "./Autocomplete.svelte";
   import Checkbox from "@smui/checkbox";
   import MdiIcon from "./MdiIcon.svelte";
-  import { mdiPlus, mdiTrashCan } from "@mdi/js";
+  import { mdiPlus, mdiTrashCan, mdiArrowExpand } from "@mdi/js";
   import { createEventDispatcher } from "svelte";
   import _ from "lodash";
 
@@ -25,6 +25,8 @@
   function removeHeader(header) {
     dispatch("remove", header);
   }
+
+  function expand(header) {}
 
   function toggleAll() {
     if (!allChecked) {
@@ -136,6 +138,15 @@
               placeholder="Comment" />
           </Cell>
         {/if}
+        <Cell class="header-table-cell">
+          <IconButton
+            dense
+            aria-label="Expand"
+            class="small-icon-button"
+            on:click={expand(header)}>
+            <MdiIcon size="24" icon={mdiArrowExpand} />
+          </IconButton>
+        </Cell>
         <Cell class="header-table-cell">
           <IconButton
             dense
