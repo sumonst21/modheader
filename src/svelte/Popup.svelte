@@ -1,16 +1,20 @@
 <script>
   import TopBar from "./TopBar.svelte";
+  import Filters from "./Filters.svelte";
   import Headers from "./Headers.svelte";
   import {
     selectedProfile,
     save,
     addHeader,
-    removeHeader
+    removeHeader,
+    addFilter,
+    removeFilter
   } from "../js/datasource";
   import {
     KNOWN_REQUEST_HEADERS,
     KNOWN_RESPONSE_HEADERS
   } from "../js/constants";
+  import lodashClone from "lodash/clone";
 
   window.addEventListener("unload", () => {
     save();
@@ -18,9 +22,11 @@
 
   let requestHeaders = selectedProfile.headers;
   let responseHeaders = selectedProfile.respHeaders;
+  let filters = selectedProfile.filters;
 
   $: selectedProfile.headers = requestHeaders;
   $: selectedProfile.respHeaders = responseHeaders;
+  $: selectedProfile.filters = filters;
 </script>
 
 <style lang="scss">
@@ -37,6 +43,23 @@
     margin: 2px;
   }
 
+  :global(.small-icon-button) {
+    width: 32px;
+    height: 32px;
+    padding: 5px;
+  }
+
+  :global(.autocomplete-input) {
+    border: none;
+    border-bottom: 1px solid #ddd;
+    height: 32px;
+    width: 100%;
+    background: none;
+    margin: 0;
+    outline: none;
+    padding: 0;
+  }
+
   .top-app-bar-container {
     height: 48px;
   }
@@ -51,16 +74,44 @@
   title="Request headers"
   autocompleteNames={KNOWN_REQUEST_HEADERS}
   profile={selectedProfile}
-  on:add={() => (requestHeaders = addHeader(requestHeaders))}
-  on:remove={event => (requestHeaders = removeHeader(requestHeaders, event.detail))} />
+  on:add={() => {
+    addHeader(requestHeaders);
+    requestHeaders = lodashClone(requestHeaders);
+  }}
+  on:remove={event => {
+    removeHeader(requestHeaders, event.detail);
+    requestHeaders = lodashClone(requestHeaders);
+  }}
+  on:refresh={event => (requestHeaders = event.detail)} />
 <Headers
   headers={responseHeaders}
   class="extra-gap"
   title="Response headers"
   autocompleteNames={KNOWN_RESPONSE_HEADERS}
   profile={selectedProfile}
-  on:add={() => (responseHeaders = addHeader(responseHeaders))}
-  on:remove={event => (responseHeaders = removeHeader(responseHeaders, event.detail))} />
+  on:add={() => {
+    addHeader(responseHeaders);
+    responseHeaders = lodashClone(responseHeaders);
+  }}
+  on:remove={event => {
+    removeHeader(responseHeaders, event.detail);
+    responseHeaders = lodashClone(responseHeaders);
+  }}
+  on:refresh={event => (responseHeaders = event.detail)} />
+
+<Filters
+  {filters}
+  class="extra-gap"
+  profile={selectedProfile}
+  on:add={() => {
+    addFilter(filters);
+    filters = lodashClone(filters);
+  }}
+  on:remove={event => {
+    removeFilter(filters, event.detail);
+    filters = lodashClone(filters);
+  }}
+  on:refresh={event => (filters = event.detail)} />
 
 <!-- <md-toolbar class="md-padding">
     <div class="md-toolbar-tools">
@@ -339,52 +390,6 @@
     </md-list>
   </md-sidenav>
   <md-content class="main-content" ng-class="{disabled: dataSource.isPaused}">
-    <md-subheader ng-controller="SortingController as sortCtrl">
-      <span layout="row" layout-align="stretch center">
-        <span flex="5"></span>
-        <a
-          class="sorting-header"
-          flex
-          ng-click="sortCtrl.order(dataSource.selectedProfile, 'name')"
-        >
-          Name
-          <span
-            class="sortorder"
-            ng-if="dataSource.predicate === 'name'"
-            ng-class="{reverse: dataSource.reverse}"
-          >
-          </span>
-        </a>
-        <a
-          class="sorting-header"
-          flex
-          ng-click="sortCtrl.order(dataSource.selectedProfile, 'value')"
-        >
-          Value
-          <span
-            class="sortorder"
-            ng-if="dataSource.predicate === 'value'"
-            ng-class="{reverse: dataSource.reverse}"
-          >
-          </span>
-        </a>
-        <a
-          class="sorting-header"
-          flex
-          ng-if="!dataSource.selectedProfile.hideComment"
-          ng-click="sortCtrl.order(dataSource.selectedProfile, 'comment')"
-        >
-          Comment
-          <span
-            class="sortorder"
-            ng-if="dataSource.predicate === 'comment'"
-            ng-class="{reverse: dataSource.reverse}"
-          >
-          </span>
-        </a>
-        <span flex="5"></span>
-      </span>
-    </md-subheader>
 
     <md-list ng-if="dataSource.selectedProfile.urlReplacements.length">
       <div class="section-title">URL replacements</div>
@@ -465,78 +470,6 @@
         <md-button
           class="md-icon-button"
           ng-click="dataSource.removeUrlReplacement(dataSource.selectedProfile.urlReplacements, replacement)"
-        >
-          <md-icon md-svg-icon="images/ic_clear_red_18px.svg"></md-icon>
-        </md-button>
-      </md-list-item>
-    </md-list>
-
-    <md-list ng-if="dataSource.selectedProfile.filters.length">
-      <div class="section-title">Filters</div>
-      <md-list-item
-        ng-repeat="filter in dataSource.selectedProfile.filters"
-        class="header-row md-no-proxy"
-        layout="row"
-        layout-align="stretch center"
-      >
-        <md-checkbox
-          ng-model="filter.enabled"
-          flex="5"
-          class="enable-checkbox"
-          aria-label="Enabled"
-        ></md-checkbox>
-        <md-select
-          ng-model="filter.type"
-          placeholder="Type"
-          class="filter-type"
-          flex="none"
-        >
-          <md-option value="urls">URL Pattern</md-option>
-          <md-option value="excludeUrls">Exclude URL Pattern</md-option>
-          <md-option value="types">Resource Type</md-option>
-        </md-select>
-        <md-input-container
-          md-no-float
-          flex
-          class="text-input"
-          ng-if="filter.type === 'urls' || filter.type === 'excludeUrls'"
-        >
-          <input
-            ng-model="filter.urlRegex"
-            placeholder=".*://.*.google.com/.*"
-            class="regular-text-input"
-            flex
-          >
-          </md-autocomplete>
-        </md-input-container>
-        <md-button
-          class="md-icon-button"
-          aria-label="Help"
-          ng-if="filter.type === 'urls' || filter.type === 'excludeUrls'"
-          ng-click="openLink('https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions')"
-        >
-          <md-icon md-svg-src="images/ic_help_24px.svg"></md-icon>
-        </md-button>
-        <md-select
-          ng-model="filter.resourceType"
-          placeholder="Resource Type"
-          class="resource-type"
-          flex
-          ng-if="filter.type === 'types'"
-          multiple="true"
-        >
-          <md-option value="main_frame">Main Frame</md-option>
-          <md-option value="sub_frame">Sub Frame</md-option>
-          <md-option value="stylesheet">Stylesheet</md-option>
-          <md-option value="script">Script</md-option>
-          <md-option value="image">Image</md-option>
-          <md-option value="object">Object</md-option>
-          <md-option value="xmlhttprequest">XmlHttpRequest</md-option>
-          <md-option value="other">Other</md-option>
-        </md-select>
-        <md-button
-          class="md-icon-button"
-          ng-click="dataSource.removeFilter(dataSource.selectedProfile.filters, filter)"
         >
           <md-icon md-svg-icon="images/ic_clear_red_18px.svg"></md-icon>
         </md-button>

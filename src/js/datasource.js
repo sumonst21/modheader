@@ -1,10 +1,6 @@
-import { clone } from 'lodash';
-
 export let profiles = [];
 let isPaused = false;
 let lockedTabId;
-let predicate = '';
-let reverse = false;
 export let selectedProfile;
 
 function isExistingProfileTitle_(title) {
@@ -31,14 +27,12 @@ export function addFilter(filters) {
 }
 
 export function addHeader(headers) {
-  const copy = clone(headers);
-  copy.push({
+  headers.push({
     enabled: true,
     name: '',
     value: '',
     comment: ''
   });
-  return copy;
 }
 
 export function addUrlReplacement(replacements) {
@@ -59,9 +53,7 @@ export function removeFilter(filters, filter) {
 }
 
 export function removeHeader(headers, header) {
-  const copy = clone(headers);
-  copy.splice(copy.indexOf(header), 1);
-  return copy;
+  headers.splice(headers.indexOf(header), 1);
 }
 
 export function removeUrlReplacement(urlReplacements, replacement) {
@@ -123,16 +115,6 @@ export function unlockAllTab() {
   // );
 }
 
-function hasDuplicateHeaderName(headers, name) {
-  for (const i = 0; i < headers.length; ++i) {
-    const header = headers[i];
-    if (header.enabled && header.name == name) {
-      return true;
-    }
-  }
-  return false;
-}
-
 export function createProfile() {
   let index = 1;
   while (isExistingProfileTitle_('Profile ' + index)) {
@@ -170,6 +152,9 @@ function fixProfile(profile) {
         }
         delete filter.urlPattern;
         filter.urlRegex = joiner.join('');
+      }
+      if (!filter.resourceType) {
+        filter.resourceType = [];
       }
     }
   }

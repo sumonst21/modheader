@@ -1,0 +1,59 @@
+<script>
+  import Button, { Label } from "@smui/button";
+  import Menu from "@smui/menu";
+  import List, { Item, Separator, Text } from "@smui/list";
+  import lodashWithout from "lodash/without";
+
+  const KNOWN_RESOURCE_TYPES = {
+    main_frame: "Main Frame",
+    sub_frame: "Sub Frame",
+    stylesheet: "Stylesheet",
+    image: "Image",
+    object: "Object",
+    xmlhttprequest: "XmlHttpRequest",
+    other: "Other"
+  };
+  let resourceTypeMenu;
+  let resourceTypeMenuLocation;
+  export let resourceType;
+</script>
+
+<style scoped>
+  :global(.resource-type-menu-button) {
+    display: inline;
+    text-align: left;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 240px;
+  }
+</style>
+
+<Button
+  class="resource-type-menu-button"
+  on:click={() => {
+    resourceTypeMenu.hoistMenuToBody();
+    resourceTypeMenu.setAnchorElement(resourceTypeMenuLocation);
+    resourceTypeMenu.setOpen(true);
+  }}>
+  {resourceType && resourceType.length > 0 ? resourceType
+        .map(rt => KNOWN_RESOURCE_TYPES[rt])
+        .join(', ') : 'Select Resource Type'}
+</Button>
+<div bind:this={resourceTypeMenuLocation} />
+<Menu bind:this={resourceTypeMenu}>
+  <List>
+    {#each Object.entries(KNOWN_RESOURCE_TYPES) as [value, label]}
+      <Item
+        on:SMUI:action={() => {
+          if (resourceType.includes(value)) {
+            resourceType = lodashWithout(resourceType, value);
+          } else {
+            resourceType = resourceType.concat([value]);
+          }
+        }}
+        activated={resourceType.includes(value)}>
+        {label}
+      </Item>
+    {/each}
+  </List>
+</Menu>
