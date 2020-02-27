@@ -2,7 +2,6 @@
   import TopBar from "./TopBar.svelte";
   import Filters from "./Filters.svelte";
   import Headers from "./Headers.svelte";
-  import UrlReplacements from "./UrlReplacements.svelte";
   import {
     selectedProfile,
     save,
