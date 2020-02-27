@@ -60,6 +60,10 @@
     padding: 0;
   }
 
+  :global(.hidden) {
+    display: none !important;
+  }
+
   .top-app-bar-container {
     height: 48px;
   }

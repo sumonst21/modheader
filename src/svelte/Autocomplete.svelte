@@ -451,8 +451,8 @@
   .autocomplete-list {
     background: #fff;
     position: absolute;
-    width: 200px;
-    overflow-y: auto;
+    width: 230px;
+    overflow: auto;
     z-index: 99;
     padding: 10px 0;
     border: 1px solid #999;
@@ -467,6 +467,8 @@
     color: #333;
     cursor: pointer;
     line-height: 1;
+    width: fit-content;
+    min-width: 210px;
   }
   .autocomplete-list-item:hover,
   .autocomplete-list-item.selected {

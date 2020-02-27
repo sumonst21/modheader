@@ -198,30 +198,30 @@
             </Option>
           </Select>
         </Cell>
-        {#if filter.type === 'urls' || filter.type === 'excludeUrls'}
-          <Cell class="filter-table-cell">
-            <AutoComplete
-              className="mdc-text-field__input filter-text-field"
-              items={knownUrlRegexes}
-              bind:value={filter.urlRegex}
-              bind:selectedItem={filter.urlRegex}
-              placeholder=".*://.*.google.com/.*" />
-          </Cell>
-          <Cell class="filter-table-cell">
-            <IconButton
-              dense
-              aria-label="Help"
-              class="small-icon-button"
-              on:click={() => openLink('https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions')}>
-              <MdiIcon size="24" icon={mdiHelpCircleOutline} color="#1976d2" />
-            </IconButton>
-          </Cell>
-        {/if}
-        {#if filter.type === 'types'}
-          <Cell class="filter-table-cell" colspan="2">
-            <ResourceTypeMenu bind:resourceType={filter.resourceType} />
-          </Cell>
-        {/if}
+        <Cell
+          class="filter-table-cell {filter.type === 'urls' || filter.type === 'excludeUrls' ? '' : 'hidden'}">
+          <AutoComplete
+            className="mdc-text-field__input filter-text-field"
+            items={knownUrlRegexes}
+            bind:value={filter.urlRegex}
+            bind:selectedItem={filter.urlRegex}
+            placeholder=".*://.*.google.com/.*" />
+        </Cell>
+        <Cell
+          class="filter-table-cell {filter.type === 'urls' || filter.type === 'excludeUrls' ? '' : 'hidden'}">
+          <IconButton
+            dense
+            aria-label="Help"
+            class="small-icon-button"
+            on:click={() => openLink('https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions')}>
+            <MdiIcon size="24" icon={mdiHelpCircleOutline} color="#1976d2" />
+          </IconButton>
+        </Cell>
+        <Cell
+          class="filter-table-cell {filter.type === 'types' ? '' : 'hidden'}"
+          colspan="2">
+          <ResourceTypeMenu bind:resourceType={filter.resourceType} />
+        </Cell>
         <Cell class="filter-table-cell">
           <IconButton
             dense

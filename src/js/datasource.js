@@ -22,7 +22,8 @@ export function addFilter(filters) {
   filters.push({
     enabled: true,
     type: 'urls',
-    urlRegex: urlRegex
+    urlRegex: urlRegex,
+    resourceType: []
   });
 }
 
