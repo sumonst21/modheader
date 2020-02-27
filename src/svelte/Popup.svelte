@@ -2,11 +2,14 @@
   import TopBar from "./TopBar.svelte";
   import Filters from "./Filters.svelte";
   import Headers from "./Headers.svelte";
+  import UrlReplacements from "./UrlReplacements.svelte";
   import {
     selectedProfile,
     save,
     addHeader,
     removeHeader,
+    addUrlReplacement,
+    removeUrlReplacement,
     addFilter,
     removeFilter
   } from "../js/datasource";
@@ -23,10 +26,12 @@
   let requestHeaders = selectedProfile.headers;
   let responseHeaders = selectedProfile.respHeaders;
   let filters = selectedProfile.filters;
+  let urlReplacements = selectedProfile.urlReplacements;
 
   $: selectedProfile.headers = requestHeaders;
   $: selectedProfile.respHeaders = responseHeaders;
   $: selectedProfile.filters = filters;
+  $: selectedProfile.urlReplacements = urlReplacements;
 </script>
 
 <style lang="scss">
@@ -47,6 +52,23 @@
     width: 32px;
     height: 32px;
     padding: 5px;
+  }
+
+  :global(.data-table) {
+    border-color: #bbb;
+    width: calc(100% - 4px);
+  }
+
+  :global(.data-table-row) {
+    height: 20px;
+    margin: 0;
+    padding: 0;
+    border-top-color: #eee;
+  }
+
+  :global(.data-table-cell) {
+    padding-left: 5px;
+    padding-right: 5px;
   }
 
   :global(.autocomplete-input) {
@@ -102,7 +124,21 @@
     responseHeaders = lodashClone(responseHeaders);
   }}
   on:refresh={event => (responseHeaders = event.detail)} />
-
+<Headers
+  headers={urlReplacements}
+  class="extra-gap"
+  title="Redirect URLs"
+  autocompleteNames={[]}
+  profile={selectedProfile}
+  on:add={() => {
+    addUrlReplacement(urlReplacements);
+    urlReplacements = lodashClone(urlReplacements);
+  }}
+  on:remove={event => {
+    removeUrlReplacement(urlReplacements, event.detail);
+    urlReplacements = lodashClone(urlReplacements);
+  }}
+  on:refresh={event => (urlReplacements = event.detail)} />
 <Filters
   {filters}
   class="extra-gap"
@@ -395,88 +431,4 @@
   </md-sidenav>
   <md-content class="main-content" ng-class="{disabled: dataSource.isPaused}">
 
-    <md-list ng-if="dataSource.selectedProfile.urlReplacements.length">
-      <div class="section-title">URL replacements</div>
-      <md-list-item
-        ng-repeat="replacement in dataSource.selectedProfile.urlReplacements"
-        class="header-row md-no-proxy"
-        layout="row"
-        layout-align="stretch center"
-      >
-        <md-checkbox
-          ng-model="replacement.enabled"
-          flex="5"
-          class="enable-checkbox"
-          aria-label="Enabled"
-        ></md-checkbox>
-
-        <md-input-container
-          md-no-float
-          flex
-          class="text-input"
-        >
-          <input
-            ng-model="replacement.name"
-            placeholder="Original URL regex"
-            class="regular-text-input"
-            flex
-          >
-          </md-autocomplete>
-        </md-input-container>
-
-        <md-input-container
-          md-no-float
-          flex
-          class="text-input"
-        >
-          <input
-            ng-model="replacement.value"
-            placeholder="Replacement URL"
-            class="regular-text-input"
-            flex
-          >
-          </md-autocomplete>
-        </md-input-container>
-
-        <md-input-container
-          md-no-float
-          ng-if="!dataSource.selectedProfile.hideComment"
-          flex
-        >
-          <md-autocomplete
-            md-search-text="replacement.comment"
-            input-name="headerComment"
-            md-items="item in autocompleteService.query(
-          autocompleteService.commentValues,
-          dataSource.selectedProfile.urlReplacements,
-          'comment',
-          replacement.comment)"
-            md-item-text="item"
-            md-autoselect="true"
-            placeholder="Comment"
-            class="autocomplete-text-input"
-            md-input-class="text-input"
-            md-clear-button="false"
-          >
-            <md-item-template>
-              <span md-highlight-text="replacement.comment">{{item}}</span>
-            </md-item-template>
-          </md-autocomplete>
-        </md-input-container>
-
-        <md-button
-          class="md-icon-button"
-          ng-click="profileService.expandEditor($event, dataSource.selectedProfile, replacement, 'URL replacement', 'Original', 'Replacement')"
-        >
-          <md-icon md-svg-src="images/ic_arrow-expand_24px.svg"></md-icon>
-        </md-button>
-
-        <md-button
-          class="md-icon-button"
-          ng-click="dataSource.removeUrlReplacement(dataSource.selectedProfile.urlReplacements, replacement)"
-        >
-          <md-icon md-svg-icon="images/ic_clear_red_18px.svg"></md-icon>
-        </md-button>
-      </md-list-item>
-    </md-list>
   </md-content> -->

@@ -6,15 +6,21 @@
 <h3 align="center">
   <img src="https://static.bewisse.com/modheader/logo_2x.png" width="24px" alt="ModHeader" />
   <a href="https://bewisse.com/modheader/">
+
     Official Website
+
   </a>
 </h3>
 <p align="center">
   <a href="https://chrome.google.com/webstore/detail/modheader/idgpnmonknjnojddfkpgkljpfnnfcklj">
+
     <img src="https://static.bewisse.com/chrome_1x.png" srcset="https://static.bewisse.com/chrome_2x.png 2x">
+
   </a>
   <a href="https://addons.mozilla.org/firefox/addon/modheader-firefox/">
+
     <img src="https://static.bewisse.com/firefox_1x.png" srcset="https://static.bewisse.com/firefox_2x.png 2x">
+
   </a>
 </p>
 
@@ -49,8 +55,11 @@ You may fork and redistribute ModHeader for a small group of friends / colleague
 
 ## Installation
 
-ModHeader does not require any extra tool for building. Simply load the src directory into Chrome / Firefox to start local development.
+For v3.0+ (still WIP), run `npm install` first, then run `npm run start` to start development. The built packages will be in the build/ directory.
+
+For older version, load the legacy/ package into Chrome.
 
 ## Selenium usage
 
 If you need to use ModHeader for Selenium tests, please visit: [modheader_selenium](https://github.com/bewisse/modheader_selenium)
+

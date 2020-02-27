@@ -68,23 +68,6 @@
 </script>
 
 <style scoped>
-  :global(.filter-table) {
-    border-color: #bbb;
-    width: calc(100% - 4px);
-  }
-
-  :global(.filter-table-row) {
-    height: 20px;
-    margin: 0;
-    padding: 0;
-    border-top-color: #eee;
-  }
-
-  :global(.filter-table-cell) {
-    padding-left: 5px;
-    padding-right: 5px;
-  }
-
   :global(.filter-select) {
     height: 32px;
   }
@@ -101,20 +84,20 @@
   }
 </style>
 
-<DataTable class="filter-table {clazz}">
+<DataTable class="data-table {clazz}">
   <Head>
-    <Row class="filter-table-row">
-      <Cell checkbox class="filter-table-cell">
+    <Row class="data-table-row">
+      <Cell checkbox class="data-table-cell">
         <Checkbox
           bind:checked={allChecked}
           indeterminate={!allChecked && !allUnchecked}
           on:click={toggleAll}
           disabled={filters.length === 0} />
       </Cell>
-      <Cell class="filter-table-cell">
-        <h4 class="filter-table-row">Filters</h4>
+      <Cell class="data-table-cell">
+        <h4 class="data-table-row">Filters</h4>
       </Cell>
-      <Cell class="filter-table-cell" colspan="3">
+      <Cell class="data-table-cell" colspan="3">
         <Button on:click={addFilter(filters)}>
           <MdiIcon size="20" icon={mdiPlus} color="#1976d2" middle />
           Add
@@ -176,11 +159,11 @@
   </Head>
   <Body>
     {#each filters as filter}
-      <Row class="filter-table-row">
-        <Cell checkbox class="filter-table-cell">
+      <Row class="data-table-row">
+        <Cell checkbox class="data-table-cell">
           <Checkbox bind:checked={filter.enabled} indeterminate={false} />
         </Cell>
-        <Cell class="filter-table-cell">
+        <Cell class="data-table-cell">
           <Select
             bind:value={filter.type}
             class="filter-select"
@@ -199,7 +182,7 @@
           </Select>
         </Cell>
         <Cell
-          class="filter-table-cell {filter.type === 'urls' || filter.type === 'excludeUrls' ? '' : 'hidden'}">
+          class="data-table-cell {filter.type === 'urls' || filter.type === 'excludeUrls' ? '' : 'hidden'}">
           <AutoComplete
             className="mdc-text-field__input filter-text-field"
             items={knownUrlRegexes}
@@ -208,7 +191,7 @@
             placeholder=".*://.*.google.com/.*" />
         </Cell>
         <Cell
-          class="filter-table-cell {filter.type === 'urls' || filter.type === 'excludeUrls' ? '' : 'hidden'}">
+          class="data-table-cell {filter.type === 'urls' || filter.type === 'excludeUrls' ? '' : 'hidden'}">
           <IconButton
             dense
             aria-label="Help"
@@ -218,11 +201,11 @@
           </IconButton>
         </Cell>
         <Cell
-          class="filter-table-cell {filter.type === 'types' ? '' : 'hidden'}"
+          class="data-table-cell {filter.type === 'types' ? '' : 'hidden'}"
           colspan="2">
           <ResourceTypeMenu bind:resourceType={filter.resourceType} />
         </Cell>
-        <Cell class="filter-table-cell">
+        <Cell class="data-table-cell">
           <IconButton
             dense
             aria-label="Delete"

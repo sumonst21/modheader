@@ -72,23 +72,6 @@
 </script>
 
 <style scoped>
-  :global(.header-table) {
-    border-color: #bbb;
-    width: calc(100% - 4px);
-  }
-
-  :global(.header-table-row) {
-    height: 20px;
-    margin: 0;
-    padding: 0;
-    border-top-color: #eee;
-  }
-
-  :global(.header-table-cell) {
-    padding-left: 5px;
-    padding-right: 5px;
-  }
-
   .large-textarea {
     width: 100%;
     height: 50px;
@@ -133,20 +116,20 @@
   </Actions>
 </Dialog>
 
-<DataTable class="header-table {clazz}">
+<DataTable class="data-table {clazz}">
   <Head>
-    <Row class="header-table-row">
-      <Cell checkbox class="header-table-cell">
+    <Row class="data-table-row">
+      <Cell checkbox class="data-table-cell">
         <Checkbox
           bind:checked={allChecked}
           indeterminate={!allChecked && !allUnchecked}
           on:click={toggleAll}
           disabled={headers.length === 0} />
       </Cell>
-      <Cell class="header-table-cell">
-        <h4 class="header-table-row">{title}</h4>
+      <Cell class="data-table-cell">
+        <h4 class="data-table-row">{title}</h4>
       </Cell>
-      <Cell class="header-table-cell" colspan="3">
+      <Cell class="data-table-cell" colspan="3">
         <Button on:click={addHeader(headers)}>
           <MdiIcon size="20" icon={mdiPlus} color="#1976d2" middle />
           Add
@@ -208,11 +191,11 @@
   </Head>
   <Body>
     {#each headers as header}
-      <Row class="header-table-row">
-        <Cell checkbox class="header-table-cell">
+      <Row class="data-table-row">
+        <Cell checkbox class="data-table-cell">
           <Checkbox bind:checked={header.enabled} indeterminate={false} />
         </Cell>
-        <Cell class="header-table-cell">
+        <Cell class="data-table-cell">
           <AutoComplete
             className="mdc-text-field__input"
             items={knownHeaderNames}
@@ -220,7 +203,7 @@
             bind:selectedItem={header.name}
             placeholder="Name" />
         </Cell>
-        <Cell class="header-table-cell">
+        <Cell class="data-table-cell">
           <AutoComplete
             className="mdc-text-field__input"
             items={knownHeaderValues}
@@ -229,7 +212,7 @@
             placeholder="Value" />
         </Cell>
         {#if !profile.hideComment}
-          <Cell class="header-table-cell">
+          <Cell class="data-table-cell">
             <AutoComplete
               className="mdc-text-field__input"
               items={knownHeaderComments}
@@ -238,7 +221,7 @@
               placeholder="Comment" />
           </Cell>
         {/if}
-        <Cell class="header-table-cell">
+        <Cell class="data-table-cell">
           <IconButton
             dense
             aria-label="Expand"
@@ -247,7 +230,7 @@
             <MdiIcon size="24" icon={mdiArrowExpand} />
           </IconButton>
         </Cell>
-        <Cell class="header-table-cell">
+        <Cell class="data-table-cell">
           <IconButton
             dense
             aria-label="Delete"
