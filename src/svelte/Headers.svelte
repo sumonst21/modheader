@@ -2,9 +2,10 @@
   import Dialog, { Title, Content, Actions } from "@smui/dialog";
   import IconButton from "@smui/icon-button";
   import Button, { Label } from "@smui/button";
-  import DataTable, { Head, Body, Row, Cell } from "@smui/data-table";
+  import DataTable, { Head, Body, Cell } from "@smui/data-table";
   import Menu from "@smui/menu";
   import List, { Item, Separator, Text } from "@smui/list";
+  import Row from "./Row.svelte";
   import AutoComplete from "./Autocomplete.svelte";
   import Checkbox from "@smui/checkbox";
   import MdiIcon from "./MdiIcon.svelte";
@@ -127,7 +128,7 @@
           disabled={headers.length === 0} />
       </Cell>
       <Cell class="data-table-cell">
-        <h4 class="data-table-row">{title}</h4>
+        <h4 class="data-table-title">{title}</h4>
       </Cell>
       <Cell class="data-table-cell" colspan="3">
         <Button on:click={addHeader(headers)}>

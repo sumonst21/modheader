@@ -58,6 +58,13 @@
     width: calc(100% - 4px);
   }
 
+  :global(.data-table-title) {
+    height: 20px;
+    margin: 0;
+    padding: 0;
+    width: 200px;
+  }
+
   :global(.data-table-row) {
     height: 20px;
     margin: 0;
