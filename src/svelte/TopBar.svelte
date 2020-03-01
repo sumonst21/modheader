@@ -12,7 +12,7 @@
     border: none;
     background: none;
     color: #fff;
-    margin: 0;
+    margin: 0 10px;
     font-size: 1.5em;
     outline: none;
     padding: 0;
@@ -22,10 +22,6 @@
 <TopAppBar variant dense color="primary">
   <Row>
     <Section toolbar>
-      <IconButton aria-label="Menu">
-        <MdiIcon size="48" icon={mdiMenu} color="white" />
-      </IconButton>
-
       <input
         class="mdc-text-field__input profile-title"
         bind:value={profile.title} />

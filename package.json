@@ -11,6 +11,7 @@
     "@smui/button": "^1.0.0-beta.20",
     "@smui/data-table": "^1.0.0-beta.20",
     "@smui/dialog": "^1.0.0-beta.20",
+    "@smui/drawer": "^1.0.0-beta.20",
     "@smui/icon-button": "^1.0.0-beta.20",
     "@smui/list": "^1.0.0-beta.20",
     "@smui/menu": "^1.0.0-beta.20",

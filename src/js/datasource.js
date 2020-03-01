@@ -4,7 +4,7 @@ let lockedTabId;
 export let selectedProfile;
 
 function isExistingProfileTitle_(title) {
-  for (const i = 0; i < profiles.length; ++i) {
+  for (let i = 0; i < profiles.length; ++i) {
     if (profiles[i].title == title) {
       return true;
     }
@@ -133,6 +133,17 @@ export function createProfile() {
   addHeader(profile.headers);
   return profile;
 };
+
+export function addProfile() {
+  const newProfile = createProfile();
+  profiles.push(newProfile);
+  selectedProfile = newProfile;
+  return newProfile;
+}
+
+export function selectProfile(profile) {
+  selectedProfile = profile;
+}
 
 function fixProfile(profile) {
   if (profile.filters) {

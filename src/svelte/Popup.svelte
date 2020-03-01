@@ -1,10 +1,15 @@
 <script>
+  import { AppContent, Scrim } from "@smui/drawer";
   import TopBar from "./TopBar.svelte";
+  import Drawer from "./Drawer.svelte";
   import Filters from "./Filters.svelte";
   import Headers from "./Headers.svelte";
   import {
-    selectedProfile,
+    selectedProfile as dataSelectedProfile,
+    profiles as dataProfiles,
     save,
+    addProfile,
+    selectProfile,
     addHeader,
     removeHeader,
     addUrlReplacement,
@@ -18,19 +23,21 @@
   } from "../js/constants";
   import lodashClone from "lodash/clone";
 
+  let selectedProfile = dataSelectedProfile;
+  let profiles = dataProfiles;
+
   window.addEventListener("unload", () => {
     save();
   });
 
-  let requestHeaders = selectedProfile.headers;
-  let responseHeaders = selectedProfile.respHeaders;
-  let filters = selectedProfile.filters;
-  let urlReplacements = selectedProfile.urlReplacements;
-
-  $: selectedProfile.headers = requestHeaders;
-  $: selectedProfile.respHeaders = responseHeaders;
-  $: selectedProfile.filters = filters;
-  $: selectedProfile.urlReplacements = urlReplacements;
+  $: requestHeaders = selectedProfile.headers;
+  $: responseHeaders = selectedProfile.respHeaders;
+  $: filters = selectedProfile.filters;
+  $: urlReplacements = selectedProfile.urlReplacements;
+  $: dataSelectedProfile.headers = requestHeaders;
+  $: dataSelectedProfile.respHeaders = responseHeaders;
+  $: dataSelectedProfile.filters = filters;
+  $: dataSelectedProfile.urlReplacements = urlReplacements;
 </script>
 
 <style lang="scss">
@@ -92,73 +99,93 @@
     display: none !important;
   }
 
+  :global(.app-content) {
+    margin-left: 0 !important;
+    position: absolute;
+    left: 36px;
+  }
+
   .top-app-bar-container {
     height: 48px;
   }
 </style>
 
-<div class="top-app-bar-container">
-  <TopBar profile={selectedProfile} />
-</div>
-<Headers
-  headers={requestHeaders}
-  class="extra-gap"
-  title="Request headers"
-  autocompleteNames={KNOWN_REQUEST_HEADERS}
-  profile={selectedProfile}
+<Drawer
+  {profiles}
+  {selectedProfile}
   on:add={() => {
-    addHeader(requestHeaders);
-    requestHeaders = lodashClone(requestHeaders);
+    addProfile();
+    profiles = dataProfiles;
+    selectedProfile = dataSelectedProfile;
   }}
-  on:remove={event => {
-    removeHeader(requestHeaders, event.detail);
-    requestHeaders = lodashClone(requestHeaders);
-  }}
-  on:refresh={event => (requestHeaders = event.detail)} />
-<Headers
-  headers={responseHeaders}
-  class="extra-gap"
-  title="Response headers"
-  autocompleteNames={KNOWN_RESPONSE_HEADERS}
-  profile={selectedProfile}
-  on:add={() => {
-    addHeader(responseHeaders);
-    responseHeaders = lodashClone(responseHeaders);
-  }}
-  on:remove={event => {
-    removeHeader(responseHeaders, event.detail);
-    responseHeaders = lodashClone(responseHeaders);
-  }}
-  on:refresh={event => (responseHeaders = event.detail)} />
-<Headers
-  headers={urlReplacements}
-  class="extra-gap"
-  title="Redirect URLs"
-  autocompleteNames={[]}
-  profile={selectedProfile}
-  on:add={() => {
-    addUrlReplacement(urlReplacements);
-    urlReplacements = lodashClone(urlReplacements);
-  }}
-  on:remove={event => {
-    removeUrlReplacement(urlReplacements, event.detail);
-    urlReplacements = lodashClone(urlReplacements);
-  }}
-  on:refresh={event => (urlReplacements = event.detail)} />
-<Filters
-  {filters}
-  class="extra-gap"
-  profile={selectedProfile}
-  on:add={() => {
-    addFilter(filters);
-    filters = lodashClone(filters);
-  }}
-  on:remove={event => {
-    removeFilter(filters, event.detail);
-    filters = lodashClone(filters);
-  }}
-  on:refresh={event => (filters = event.detail)} />
+  on:select={event => {
+    selectProfile(event.detail);
+    selectedProfile = dataSelectedProfile;
+  }} />
 
+<AppContent class="app-content">
+  <div class="top-app-bar-container">
+    <TopBar profile={selectedProfile} />
+  </div>
+  <Headers
+    headers={requestHeaders}
+    class="extra-gap"
+    title="Request headers"
+    autocompleteNames={KNOWN_REQUEST_HEADERS}
+    profile={selectedProfile}
+    on:add={() => {
+      addHeader(requestHeaders);
+      requestHeaders = lodashClone(requestHeaders);
+    }}
+    on:remove={event => {
+      removeHeader(requestHeaders, event.detail);
+      requestHeaders = lodashClone(requestHeaders);
+    }}
+    on:refresh={event => (requestHeaders = event.detail)} />
+  <Headers
+    headers={responseHeaders}
+    class="extra-gap"
+    title="Response headers"
+    autocompleteNames={KNOWN_RESPONSE_HEADERS}
+    profile={selectedProfile}
+    on:add={() => {
+      addHeader(responseHeaders);
+      responseHeaders = lodashClone(responseHeaders);
+    }}
+    on:remove={event => {
+      removeHeader(responseHeaders, event.detail);
+      responseHeaders = lodashClone(responseHeaders);
+    }}
+    on:refresh={event => (responseHeaders = event.detail)} />
+  <Headers
+    headers={urlReplacements}
+    class="extra-gap"
+    title="Redirect URLs"
+    autocompleteNames={[]}
+    profile={selectedProfile}
+    on:add={() => {
+      addUrlReplacement(urlReplacements);
+      urlReplacements = lodashClone(urlReplacements);
+    }}
+    on:remove={event => {
+      removeUrlReplacement(urlReplacements, event.detail);
+      urlReplacements = lodashClone(urlReplacements);
+    }}
+    on:refresh={event => (urlReplacements = event.detail)} />
+  <Filters
+    {filters}
+    class="extra-gap"
+    profile={selectedProfile}
+    on:add={() => {
+      addFilter(filters);
+      filters = lodashClone(filters);
+    }}
+    on:remove={event => {
+      removeFilter(filters, event.detail);
+      filters = lodashClone(filters);
+    }}
+    on:refresh={event => (filters = event.detail)} />
+</AppContent>
 <!-- <md-toolbar class="md-padding">
     <div class="md-toolbar-tools">
       <md-button
@@ -217,46 +244,6 @@
       >
         <md-icon md-svg-src="images/ic_play_arrow_18px.svg"></md-icon>
       </md-button>
-
-      <md-menu>
-        <md-button
-          class="md-icon-button"
-          aria-label="Add"
-          ng-click="$mdMenu.open($event)"
-        >
-          <md-icon md-svg-src="images/ic_add_18px.svg"></md-icon>
-        </md-button>
-        <md-menu-content width="4">
-          <md-menu-item>
-            <md-button
-              ng-click="dataSource.addHeader(dataSource.selectedProfile.headers)"
-            >
-              Request header
-            </md-button>
-          </md-menu-item>
-          <md-menu-item>
-            <md-button
-              ng-click="dataSource.addHeader(dataSource.selectedProfile.respHeaders)"
-            >
-              Response header
-            </md-button>
-          </md-menu-item>
-          <md-menu-item>
-            <md-button
-              ng-click="dataSource.addUrlReplacement(dataSource.selectedProfile.urlReplacements)"
-            >
-              Replace URL
-            </md-button>
-          </md-menu-item>
-          <md-menu-item>
-            <md-button
-              ng-click="dataSource.addFilter(dataSource.selectedProfile.filters)"
-            >
-              Filter
-            </md-button>
-          </md-menu-item>
-        </md-menu-content>
-      </md-menu>
 
       <md-menu>
         <md-button
@@ -419,20 +406,6 @@
         <p>Cloud backup</p>
       </md-list-item>
       <md-divider></md-divider>
-      <md-list-item
-        ng-click="openLink('https://www.paypal.com/pools/c/84aPpFIA0Z')"
-      >
-        <md-icon md-svg-src="images/ic_attach_money_18px.svg"></md-icon>
-        <p>Donate</p>
-      </md-list-item>
-      <md-list-item ng-click="openLink('https://github.com/bewisse/modheader')">
-        <md-icon md-svg-src="images/ic_code_18px.svg"></md-icon>
-        <p>Source code</p>
-      </md-list-item>
-      <md-list-item ng-click="openLink('https://bewisse.com/modheader/help/')">
-        <md-icon md-svg-src="images/ic_help_24px.svg"></md-icon>
-        <p>Help</p>
-      </md-list-item>
     </md-list>
   </md-sidenav>
   <md-content class="main-content" ng-class="{disabled: dataSource.isPaused}">
