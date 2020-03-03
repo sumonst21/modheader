@@ -1,4 +1,5 @@
 <script>
+  // Forked from https://github.com/pstanoev/simple-svelte-autocomplete
   import { fade } from "svelte/transition";
 
   // the list of items  the user can select from

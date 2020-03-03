@@ -94,6 +94,7 @@
   class="main-drawer {expand ? 'main-drawer-expand' : 'main-drawer-collapsed'}"
   variant="dismissible"
   on:mouseenter={onMouseenter}
+  on:mouseover={onMouseenter}
   on:mouseleave={onMouseleave}
   bind:this={drawer}
   bind:open={drawerOpen}>
@@ -114,6 +115,7 @@
       {#each profiles as profile}
         <Item
           class="main-drawer-item"
+          selected={selectedProfile === profile}
           on:click={() => {
             selectProfile(profile);
             expand = false;
@@ -123,7 +125,7 @@
               size="24"
               class="main-drawer-icon"
               icon={mdiCircle}
-              color="#1976d2" />
+              color={profile.color} />
           </span>
           <Text class="main-drawer-item-text">{profile.title}</Text>
         </Item>

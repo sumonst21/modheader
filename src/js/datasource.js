@@ -1,3 +1,5 @@
+import lodashRandom from 'lodash/random';
+
 export let profiles = [];
 let isPaused = false;
 let lockedTabId;
@@ -10,6 +12,13 @@ function isExistingProfileTitle_(title) {
     }
   }
   return false;
+}
+
+function generateColor() {
+  const hue = Math.floor(Math.random() * 360);
+  const saturation =  Math.floor(Math.random() * 100);
+  const lightness =  Math.floor(Math.random() * 50);
+  return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
 }
 
 export function addFilter(filters) {
@@ -128,7 +137,8 @@ export function createProfile() {
     respHeaders: [],
     filters: [],
     urlReplacements: [],
-    appendMode: false
+    appendMode: false,
+    color: generateColor()
   };
   addHeader(profile.headers);
   return profile;
@@ -138,11 +148,19 @@ export function addProfile() {
   const newProfile = createProfile();
   profiles.push(newProfile);
   selectedProfile = newProfile;
-  return newProfile;
 }
 
 export function selectProfile(profile) {
   selectedProfile = profile;
+}
+
+export function removeProfile(profile) {
+  profiles.splice(profiles.indexOf(profile), 1);
+  if (profiles.length == 0) {
+    addProfile();
+  } else {
+    selectedProfile = profiles[profiles.length - 1];
+  }
 }
 
 function fixProfile(profile) {
@@ -169,6 +187,9 @@ function fixProfile(profile) {
         filter.resourceType = [];
       }
     }
+  }
+  if (!profile.color) {
+    profile.color = generateColor();
   }
 }
 

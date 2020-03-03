@@ -10,6 +10,7 @@
     save,
     addProfile,
     selectProfile,
+    removeProfile,
     addHeader,
     removeHeader,
     addUrlReplacement,
@@ -125,7 +126,16 @@
 
 <AppContent class="app-content">
   <div class="top-app-bar-container">
-    <TopBar profile={selectedProfile} />
+    <TopBar
+      profile={selectedProfile}
+      on:refresh={event => {
+        profiles = dataProfiles;
+      }}
+      on:remove={event => {
+        removeProfile(event.detail);
+        profiles = dataProfiles;
+        selectedProfile = dataSelectedProfile;
+      }} />
   </div>
   <Headers
     headers={requestHeaders}
