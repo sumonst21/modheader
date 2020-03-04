@@ -1,4 +1,4 @@
-import lodashRandom from 'lodash/random';
+import lodashTakeRight from 'lodash/takeRight';
 
 export let profiles = [];
 let isPaused = false;
@@ -14,11 +14,37 @@ function isExistingProfileTitle_(title) {
   return false;
 }
 
+function hslToRgb(h, s, l){
+  let r, g, b;
+  if (s == 0){
+      r = g = b = l; // achromatic
+  } else {
+      function hue2rgb(p, q, t) {
+          if (t < 0) t += 1;
+          if (t > 1) t -= 1;
+          if (t < 1/6) return p + (q - p) * 6 * t;
+          if (t < 1/2) return q;
+          if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+          return p;
+      }
+      const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+      const p = 2 * l - q;
+      r = hue2rgb(p, q, h + 1/3);
+      g = hue2rgb(p, q, h);
+      b = hue2rgb(p, q, h - 1/3);
+  }
+  function toHex(v) {
+    return Math.round(v * 255).toString(16).padStart(2, '0');
+  }
+  return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+}
+
 function generateColor() {
-  const hue = Math.floor(Math.random() * 360);
-  const saturation =  Math.floor(Math.random() * 100);
-  const lightness =  Math.floor(Math.random() * 50);
-  return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+  const hue = Math.random();
+  const saturation =  Math.random();
+  const lightness =  Math.random() * .5;
+  const rgb = hslToRgb(hue, saturation, lightness);
+  return  rgb;
 }
 
 export function addFilter(filters) {
@@ -138,7 +164,8 @@ export function createProfile() {
     filters: [],
     urlReplacements: [],
     appendMode: false,
-    color: generateColor()
+    color: generateColor(),
+    char: lodashTakeRight(index.toString(), 1),
   };
   addHeader(profile.headers);
   return profile;
@@ -203,8 +230,13 @@ export function save() {
 function init() {
   if (localStorage.profiles) {
     profiles = JSON.parse(localStorage.profiles);
+    let index = 1;
     for (let profile of profiles) {
       fixProfile(profile);
+      if (!profile.char) {
+        profile.char = lodashTakeRight(index, 1);
+      }
+      index++;
     }
   } else {
     profiles = [];

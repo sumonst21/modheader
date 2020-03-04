@@ -55,7 +55,7 @@
     left: 0;
     top: 0;
     overflow-x: hidden;
-    transition: width 0.1s;
+    transition: width 0.2s ease-out;
   }
 
   :global(.main-drawer)::-webkit-scrollbar {
@@ -81,12 +81,25 @@
   }
 
   .main-drawer-icon-container {
-    width: 32px;
-    height: 32px;
+    color: white;
+    font-size: 16px;
+    border-radius: 25px;
+    margin: 6px;
   }
 
-  :global(.main-drawer-icon) {
-    margin: 4px;
+  .main-drawer-profile-icon-text {
+    width: 24px;
+    height: 24px;
+    margin: 10px 7px;
+  }
+
+  :global(.main-drawer-list) {
+    margin: 2px 0;
+    padding: 0;
+  }
+
+  .profiles-list {
+    min-height: 280px;
   }
 </style>
 
@@ -94,14 +107,13 @@
   class="main-drawer {expand ? 'main-drawer-expand' : 'main-drawer-collapsed'}"
   variant="dismissible"
   on:mouseenter={onMouseenter}
-  on:mouseover={onMouseenter}
   on:mouseleave={onMouseleave}
   bind:this={drawer}
   bind:open={drawerOpen}>
 
   <Content
     class="main-drawer {expand ? 'main-drawer-expand' : 'main-drawer-collapsed'}">
-    <List>
+    <List class="main-drawer-list">
       <Item
         class="main-drawer-item"
         on:click={() => openLink('https://bewisse.com/modheader/')}>
@@ -112,39 +124,39 @@
       </Item>
       <Separator nav />
 
-      {#each profiles as profile}
+      <div class="profiles-list">
         <Item
           class="main-drawer-item"
-          selected={selectedProfile === profile}
           on:click={() => {
-            selectProfile(profile);
+            addProfile();
             expand = false;
           }}>
           <span class="main-drawer-icon-container">
             <MdiIcon
               size="24"
               class="main-drawer-icon"
-              icon={mdiCircle}
-              color={profile.color} />
+              icon={mdiPlus}
+              color="#1976d2" />
           </span>
-          <Text class="main-drawer-item-text">{profile.title}</Text>
+          <Text class="main-drawer-item-text">Add Profile</Text>
         </Item>
-      {/each}
-      <Item
-        class="main-drawer-item"
-        on:click={() => {
-          addProfile();
-          expand = false;
-        }}>
-        <span class="main-drawer-icon-container">
-          <MdiIcon
-            size="24"
-            class="main-drawer-icon"
-            icon={mdiPlus}
-            color="#1976d2" />
-        </span>
-        <Text class="main-drawer-item-text">Add Profile</Text>
-      </Item>
+        {#each profiles as profile}
+          <Item
+            class="main-drawer-item"
+            selected={selectedProfile === profile}
+            on:click={() => {
+              selectProfile(profile);
+              expand = false;
+            }}>
+            <span
+              class="main-drawer-icon-container"
+              style="background: {profile.color}">
+              <span class="main-drawer-profile-icon-text">{profile.char}</span>
+            </span>
+            <Text class="main-drawer-item-text">{profile.title}</Text>
+          </Item>
+        {/each}
+      </div>
 
       <Separator nav />
       <Item

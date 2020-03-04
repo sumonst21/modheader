@@ -384,21 +384,6 @@
       </div>
     </md-toolbar>
     <md-list>
-      <md-list-item
-        ng-repeat="profile in dataSource.profiles"
-        ng-click="profileService.selectProfile(profile)"
-      >
-        <md-checkbox
-          aria-label="{{profile.title}}"
-          ng-checked="profile === dataSource.selectedProfile"
-        >
-        </md-checkbox>
-        <p>{{profile.title}}</p>
-      </md-list-item>
-      <md-list-item ng-click="profileService.addProfile()">
-        <md-icon md-svg-src="images/ic_add_18px.svg"></md-icon>
-        <p>Add Profile</p>
-      </md-list-item>
       <md-list-item ng-click="profileService.sortProfiles()">
         <md-icon md-svg-src="images/ic_sort_24px.svg"></md-icon>
         <p>Sort Profiles</p>

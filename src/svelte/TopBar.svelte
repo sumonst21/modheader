@@ -30,7 +30,6 @@
   }
 
   .color-picker {
-    background: none;
     height: 18px;
     margin: 0;
     padding: 0;
