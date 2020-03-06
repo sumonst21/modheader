@@ -7,6 +7,7 @@
   import {
     selectedProfile as dataSelectedProfile,
     profiles as dataProfiles,
+    isPaused as dataIsPaused,
     save,
     addProfile,
     selectProfile,
@@ -26,6 +27,7 @@
 
   let selectedProfile = dataSelectedProfile;
   let profiles = dataProfiles;
+  let isPaused = dataIsPaused;
 
   window.addEventListener("unload", () => {
     save();
@@ -106,6 +108,11 @@
     left: 36px;
   }
 
+  :global(.disabled) {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
   .top-app-bar-container {
     height: 48px;
   }
@@ -130,6 +137,7 @@
       profile={selectedProfile}
       on:refresh={event => {
         profiles = dataProfiles;
+        isPaused = dataIsPaused;
       }}
       on:remove={event => {
         removeProfile(event.detail);
@@ -137,64 +145,66 @@
         selectedProfile = dataSelectedProfile;
       }} />
   </div>
-  <Headers
-    headers={requestHeaders}
-    class="extra-gap"
-    title="Request headers"
-    autocompleteNames={KNOWN_REQUEST_HEADERS}
-    profile={selectedProfile}
-    on:add={() => {
-      addHeader(requestHeaders);
-      requestHeaders = lodashClone(requestHeaders);
-    }}
-    on:remove={event => {
-      removeHeader(requestHeaders, event.detail);
-      requestHeaders = lodashClone(requestHeaders);
-    }}
-    on:refresh={event => (requestHeaders = event.detail)} />
-  <Headers
-    headers={responseHeaders}
-    class="extra-gap"
-    title="Response headers"
-    autocompleteNames={KNOWN_RESPONSE_HEADERS}
-    profile={selectedProfile}
-    on:add={() => {
-      addHeader(responseHeaders);
-      responseHeaders = lodashClone(responseHeaders);
-    }}
-    on:remove={event => {
-      removeHeader(responseHeaders, event.detail);
-      responseHeaders = lodashClone(responseHeaders);
-    }}
-    on:refresh={event => (responseHeaders = event.detail)} />
-  <Headers
-    headers={urlReplacements}
-    class="extra-gap"
-    title="Redirect URLs"
-    autocompleteNames={[]}
-    profile={selectedProfile}
-    on:add={() => {
-      addUrlReplacement(urlReplacements);
-      urlReplacements = lodashClone(urlReplacements);
-    }}
-    on:remove={event => {
-      removeUrlReplacement(urlReplacements, event.detail);
-      urlReplacements = lodashClone(urlReplacements);
-    }}
-    on:refresh={event => (urlReplacements = event.detail)} />
-  <Filters
-    {filters}
-    class="extra-gap"
-    profile={selectedProfile}
-    on:add={() => {
-      addFilter(filters);
-      filters = lodashClone(filters);
-    }}
-    on:remove={event => {
-      removeFilter(filters, event.detail);
-      filters = lodashClone(filters);
-    }}
-    on:refresh={event => (filters = event.detail)} />
+  <div class={isPaused ? 'disabled' : ''}>
+    <Headers
+      headers={requestHeaders}
+      class="extra-gap"
+      title="Request headers"
+      autocompleteNames={KNOWN_REQUEST_HEADERS}
+      profile={selectedProfile}
+      on:add={() => {
+        addHeader(requestHeaders);
+        requestHeaders = lodashClone(requestHeaders);
+      }}
+      on:remove={event => {
+        removeHeader(requestHeaders, event.detail);
+        requestHeaders = lodashClone(requestHeaders);
+      }}
+      on:refresh={event => (requestHeaders = event.detail)} />
+    <Headers
+      headers={responseHeaders}
+      class="extra-gap"
+      title="Response headers"
+      autocompleteNames={KNOWN_RESPONSE_HEADERS}
+      profile={selectedProfile}
+      on:add={() => {
+        addHeader(responseHeaders);
+        responseHeaders = lodashClone(responseHeaders);
+      }}
+      on:remove={event => {
+        removeHeader(responseHeaders, event.detail);
+        responseHeaders = lodashClone(responseHeaders);
+      }}
+      on:refresh={event => (responseHeaders = event.detail)} />
+    <Headers
+      headers={urlReplacements}
+      class="extra-gap"
+      title="Redirect URLs"
+      autocompleteNames={[]}
+      profile={selectedProfile}
+      on:add={() => {
+        addUrlReplacement(urlReplacements);
+        urlReplacements = lodashClone(urlReplacements);
+      }}
+      on:remove={event => {
+        removeUrlReplacement(urlReplacements, event.detail);
+        urlReplacements = lodashClone(urlReplacements);
+      }}
+      on:refresh={event => (urlReplacements = event.detail)} />
+    <Filters
+      {filters}
+      class="extra-gap"
+      profile={selectedProfile}
+      on:add={() => {
+        addFilter(filters);
+        filters = lodashClone(filters);
+      }}
+      on:remove={event => {
+        removeFilter(filters, event.detail);
+        filters = lodashClone(filters);
+      }}
+      on:refresh={event => (filters = event.detail)} />
+  </div>
 </AppContent>
 <!-- <md-toolbar class="md-padding">
     <div class="md-toolbar-tools">
@@ -218,42 +228,6 @@
         </span>
       </h2>
       <span flex></span>
-
-      <md-button
-        aria-label="Tab"
-        ng-if="!dataSource.lockedTabId"
-        ng-click="dataSource.lockToTab()"
-      >
-        <md-icon md-svg-src="images/ic_lock_18px.svg"></md-icon>
-        Tab lock
-      </md-button>
-
-      <md-button
-        aria-label="Tab"
-        ng-if="dataSource.lockedTabId"
-        ng-click="dataSource.unlockAllTab()"
-      >
-        <md-icon md-svg-src="images/ic_lock_open_18px.svg"></md-icon>
-        Unlock
-      </md-button>
-
-      <md-button
-        class="md-icon-button"
-        aria-label="Pause"
-        ng-if="!dataSource.isPaused"
-        ng-click="dataSource.pause()"
-      >
-        <md-icon md-svg-src="images/ic_pause_18px.svg"></md-icon>
-      </md-button>
-
-      <md-button
-        class="md-icon-button"
-        aria-label="Play"
-        ng-if="dataSource.isPaused"
-        ng-click="dataSource.play()"
-      >
-        <md-icon md-svg-src="images/ic_play_arrow_18px.svg"></md-icon>
-      </md-button>
 
       <md-menu>
         <md-button
@@ -353,36 +327,8 @@
         </md-menu-content>
       </md-menu>
     </div>
-    <div class="info-section" ng-if="dataSource.isPaused">
-      ModHeader is paused
-      <md-button aria-label="Play" ng-click="dataSource.play()">
-        <md-icon md-svg-src="images/ic_play_arrow_18px.svg"></md-icon>
-        Click to unpause
-      </md-button>
-    </div>
-    <div
-      class="info-section"
-      ng-if="dataSource.lockedTabId && !dataSource.isPaused"
-    >
-      Tab lock is active
-      <md-button aria-label="Tab" ng-click="dataSource.unlockAllTab()">
-        <md-icon md-svg-src="images/ic_lock_open_18px.svg"></md-icon>
-        Click to unlock tab
-      </md-button>
-    </div>
   </md-toolbar>
   <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left">
-    <md-toolbar class="md-theme-indigo">
-      <div class="md-toolbar-tools">
-        <md-button
-          class="md-icon-button"
-          aria-label="Settings"
-          ng-click="toggleSidenav()"
-        >
-          <md-icon md-svg-src="images/ic_arrow_back_18px.svg"></md-icon>
-        </md-button>
-      </div>
-    </md-toolbar>
     <md-list>
       <md-list-item ng-click="profileService.sortProfiles()">
         <md-icon md-svg-src="images/ic_sort_24px.svg"></md-icon>
@@ -402,7 +348,4 @@
       </md-list-item>
       <md-divider></md-divider>
     </md-list>
-  </md-sidenav>
-  <md-content class="main-content" ng-class="{disabled: dataSource.isPaused}">
-
-  </md-content> -->
+  </md-sidenav> -->

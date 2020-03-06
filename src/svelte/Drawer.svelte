@@ -151,7 +151,9 @@
             <span
               class="main-drawer-icon-container"
               style="background: {profile.color}">
-              <span class="main-drawer-profile-icon-text">{profile.char}</span>
+              <span class="main-drawer-profile-icon-text">
+                {profile.shortTitle}
+              </span>
             </span>
             <Text class="main-drawer-item-text">{profile.title}</Text>
           </Item>

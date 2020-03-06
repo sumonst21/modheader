@@ -1,8 +1,6 @@
-import lodashTakeRight from 'lodash/takeRight';
-
 export let profiles = [];
-let isPaused = false;
-let lockedTabId;
+export let isPaused = false;
+export let lockedTabId;
 export let selectedProfile;
 
 function isExistingProfileTitle_(title) {
@@ -42,9 +40,14 @@ function hslToRgb(h, s, l){
 function generateColor() {
   const hue = Math.random();
   const saturation =  Math.random();
-  const lightness =  Math.random() * .5;
+  const lightness =  Math.random() * .4;
   const rgb = hslToRgb(hue, saturation, lightness);
   return  rgb;
+}
+
+function takeRight(v) {
+  const s = v.toString();
+  return s[s.length - 1];
 }
 
 export function addFilter(filters) {
@@ -165,7 +168,7 @@ export function createProfile() {
     urlReplacements: [],
     appendMode: false,
     color: generateColor(),
-    char: lodashTakeRight(index.toString(), 1),
+    shortTitle: takeRight(index),
   };
   addHeader(profile.headers);
   return profile;
@@ -230,13 +233,8 @@ export function save() {
 function init() {
   if (localStorage.profiles) {
     profiles = JSON.parse(localStorage.profiles);
-    let index = 1;
     for (let profile of profiles) {
       fixProfile(profile);
-      if (!profile.char) {
-        profile.char = lodashTakeRight(index, 1);
-      }
-      index++;
     }
   } else {
     profiles = [];
@@ -248,6 +246,9 @@ function init() {
     const profile = profiles[index];
     if (!profile.title) {
       profile.title = 'Profile ' + (index + 1);
+    }
+    if (!profile.shortTitle) {
+      profile.shortTitle = takeRight(index + 1);
     }
     if (!profile.headers) {
       profile.headers = [];
