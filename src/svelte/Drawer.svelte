@@ -8,9 +8,7 @@
     Scrim
   } from "@smui/drawer";
   import IconButton from "@smui/icon-button";
-  import MdiIcon from "./MdiIcon.svelte";
   import List, { Item, Text, Separator, Subheader } from "@smui/list";
-  import { createEventDispatcher } from "svelte";
   import H6 from "@smui/common/H6.svelte";
   import {
     mdiHelpCircleOutline,
@@ -19,10 +17,14 @@
     mdiCircle,
     mdiPlus
   } from "@mdi/js";
+  import MdiIcon from "./MdiIcon.svelte";
+  import {
+    addProfile,
+    selectProfile,
+    selectedProfile,
+    profiles
+  } from "../js/datasource";
 
-  const dispatch = createEventDispatcher();
-  export let profiles;
-  export let selectedProfile;
   let drawer;
   let drawerOpen = true;
   let expand = false;
@@ -37,14 +39,6 @@
 
   function openLink(url) {
     chrome.tabs.create({ url });
-  }
-
-  function addProfile() {
-    dispatch("add");
-  }
-
-  function selectProfile(profile) {
-    dispatch("select", profile);
   }
 </script>
 
@@ -140,12 +134,12 @@
           </span>
           <Text class="main-drawer-item-text">Add Profile</Text>
         </Item>
-        {#each profiles as profile}
+        {#each $profiles as profile, profileIndex}
           <Item
             class="main-drawer-item"
-            selected={selectedProfile === profile}
+            selected={$selectedProfile === profile}
             on:click={() => {
-              selectProfile(profile);
+              selectProfile(profileIndex);
               expand = false;
             }}>
             <span

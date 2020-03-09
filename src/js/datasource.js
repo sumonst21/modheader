@@ -1,11 +1,23 @@
-export let profiles = [];
-export let isPaused = false;
-export let lockedTabId;
-export let selectedProfile;
+import { writable, derived, get } from 'svelte/store';
+
+export const profiles = writable([]);
+export const selectedProfileIndex = writable(0);
+export const selectedProfile = derived(
+  [
+    profiles,
+    selectedProfileIndex
+  ],
+  ([$profiles, $selectedProfileIndex]) => $profiles[$selectedProfileIndex],
+  {},
+);
+
+export let isPaused = writable(false);
+export let isLocked = writable(false);
 
 function isExistingProfileTitle_(title) {
-  for (let i = 0; i < profiles.length; ++i) {
-    if (profiles[i].title == title) {
+  const innerProfiles = get(profiles);
+  for (let i = 0; i < innerProfiles.length; ++i) {
+    if (innerProfiles[i].title == title) {
       return true;
     }
   }
@@ -50,19 +62,21 @@ function takeRight(v) {
   return s[s.length - 1];
 }
 
-export function addFilter(filters) {
+export function addFilter() {
   let urlRegex = '';
   if (localStorage.currentTabUrl) {
     const parser = document.createElement('a');
     parser.href = localStorage.currentTabUrl;
     urlRegex = parser.origin + '/.*';
   }
+  const filters = get(selectedProfile).filters;
   filters.push({
     enabled: true,
     type: 'urls',
     urlRegex: urlRegex,
     resourceType: []
   });
+  commitChange({ filters });
 }
 
 export function addHeader(headers) {
@@ -87,8 +101,10 @@ export function addUrlReplacement(replacements) {
   });
 }
 
-export function removeFilter(filters, filter) {
+export function removeFilter(filter) {
+  const filters = get(selectedProfile).filters;
   filters.splice(filters.indexOf(filter), 1);
+  commitChange({ filters });
 }
 
 export function removeHeader(headers, header) {
@@ -99,15 +115,15 @@ export function removeUrlReplacement(urlReplacements, replacement) {
   urlReplacements.splice(urlReplacements.indexOf(replacement), 1);
 }
 
-export function removeHeaderEnsureNonEmpty(headers, header) {
-  removeHeader(headers, header);
-  if (!headers.length) {
-    addHeader(headers);
-  }
+export function commitChange(change) {
+  const innerProfiles = get(profiles);
+  const index = get(selectedProfileIndex);
+  innerProfiles[index] = Object.assign(innerProfiles[index], change);
+  profiles.set(innerProfiles);
 }
 
 export function pause() {
-  isPaused = true;
+  isPaused.set(true);
   localStorage.isPaused = true;
   // $mdToast.show(
   //   $mdToast
@@ -119,7 +135,7 @@ export function pause() {
 }
 
 export function play() {
-  isPaused = false;
+  isPaused.set(false);
   localStorage.removeItem('isPaused');
   // $mdToast.show(
   //   $mdToast
@@ -131,8 +147,8 @@ export function play() {
 }
 
 export function lockToTab() {
-  lockedTabId = localStorage.activeTabId;
-  localStorage.lockedTabId = lockedTabId;
+  isLocked.set(true);
+  localStorage.lockedTabId = localStorage.activeTabId;
   // $mdToast.show(
   //   $mdToast
   //     .simple()
@@ -143,7 +159,7 @@ export function lockToTab() {
 }
 
 export function unlockAllTab() {
-  lockedTabId = null;
+  isLocked.set(false);
   localStorage.removeItem('lockedTabId');
   // $mdToast.show(
   //   $mdToast
@@ -176,20 +192,24 @@ export function createProfile() {
 
 export function addProfile() {
   const newProfile = createProfile();
-  profiles.push(newProfile);
-  selectedProfile = newProfile;
+  const innerProfiles = get(profiles);
+  innerProfiles.push(newProfile);
+  profiles.set(innerProfiles);
+  selectedProfileIndex.set(innerProfiles.length - 1);
 }
 
-export function selectProfile(profile) {
-  selectedProfile = profile;
+export function selectProfile(profileIndex) {
+  selectedProfileIndex.set(profileIndex);
 }
 
 export function removeProfile(profile) {
-  profiles.splice(profiles.indexOf(profile), 1);
-  if (profiles.length == 0) {
+  const innerProfiles = get(profiles);
+  innerProfiles.splice(innerProfiles.indexOf(profile), 1);
+  profiles.set(innerProfiles);
+  if (innerProfiles.length == 0) {
     addProfile();
   } else {
-    selectedProfile = profiles[profiles.length - 1];
+    selectedProfileIndex.set(innerProfiles.length - 1);
   }
 }
 
@@ -224,26 +244,23 @@ function fixProfile(profile) {
 }
 
 export function save() {
-  const serializedProfiles = JSON.stringify(profiles);
-  const selectedProfileIndex = profiles.indexOf(selectedProfile);
-  localStorage.profiles = serializedProfiles;
-  localStorage.selectedProfile = selectedProfileIndex;
+  localStorage.profiles = JSON.stringify(get(profiles));
+  localStorage.selectedProfile = get(selectedProfileIndex);
 }
 
 function init() {
+  let innerProfiles = [];
   if (localStorage.profiles) {
-    profiles = JSON.parse(localStorage.profiles);
-    for (let profile of profiles) {
+    innerProfiles = JSON.parse(localStorage.profiles);
+    for (let profile of innerProfiles) {
       fixProfile(profile);
     }
-  } else {
-    profiles = [];
   }
-  if (profiles.length == 0) {
-    profiles.push(createProfile());
+  if (innerProfiles.length == 0) {
+    innerProfiles.push(createProfile());
   }
-  for (let index in profiles) {
-    const profile = profiles[index];
+  for (let index in innerProfiles) {
+    const profile = innerProfiles[index];
     if (!profile.title) {
       profile.title = 'Profile ' + (index + 1);
     }
@@ -266,18 +283,21 @@ function init() {
       profile.filters = [];
     }
   }
+  let profileIndex = 0;
   if (localStorage.selectedProfile) {
-    selectedProfile = profiles[Number(localStorage.selectedProfile)];
+    profileIndex = Number(localStorage.selectedProfile);
   }
-  if (!selectedProfile) {
-    selectedProfile = profiles[0];
+  if (selectedProfileIndex >= innerProfiles.length) {
+    profileIndex = innerProfiles.length - 1;
   }
+  selectedProfileIndex.set(profileIndex);
   if (localStorage.isPaused) {
-    isPaused = localStorage.isPaused;
+    isPaused.set(true);
   }
   if (localStorage.lockedTabId) {
-    lockedTabId = localStorage.lockedTabId;
+    isLocked.set(true);
   }
+  profiles.set(innerProfiles);
 }
 
 init();

@@ -5,19 +5,26 @@
   import DataTable, { Head, Body, Cell } from "@smui/data-table";
   import Menu from "@smui/menu";
   import List, { Item, Separator, Text } from "@smui/list";
+  import {
+    mdiPlus,
+    mdiCommentCheckOutline,
+    mdiCommentRemoveOutline,
+    mdiTrashCan,
+    mdiArrowExpand,
+    mdiSort
+  } from "@mdi/js";
+  import { createEventDispatcher } from "svelte";
+  import lodashUniq from "lodash/uniq";
+  import lodashOrderBy from "lodash/orderBy";
+  import { selectedProfile, commitChange } from "../js/datasource";
   import Row from "./Row.svelte";
   import AutoComplete from "./Autocomplete.svelte";
   import Checkbox from "@smui/checkbox";
   import MdiIcon from "./MdiIcon.svelte";
-  import { mdiPlus, mdiTrashCan, mdiArrowExpand, mdiSort } from "@mdi/js";
-  import { createEventDispatcher } from "svelte";
-  import lodashUniq from "lodash/uniq";
-  import lodashOrderBy from "lodash/orderBy";
 
   const dispatch = createEventDispatcher();
   const disabledColor = "rgba(0, 0, 0, 0.37)";
 
-  export let profile;
   export let headers;
   export let title;
   export let autocompleteNames;
@@ -44,6 +51,12 @@
   function sort(field, order) {
     headers = lodashOrderBy(headers, [field], [order]);
     refreshHeaders();
+  }
+
+  function toggleComment() {
+    commitChange({
+      hideComment: !$selectedProfile.hideComment
+    });
   }
 
   function refreshHeaders() {
@@ -130,8 +143,10 @@
       <Cell class="data-table-cell">
         <h4 class="data-table-title">{title}</h4>
       </Cell>
-      <Cell class="data-table-cell" colspan="3">
-        <Button on:click={addHeader(headers)}>
+      <Cell
+        class="data-table-cell"
+        colspan={$selectedProfile.hideComment ? 3 : 4}>
+        <Button on:click={() => addHeader(headers)}>
           <MdiIcon size="20" icon={mdiPlus} color="#1976d2" middle />
           Add
         </Button>
@@ -162,6 +177,13 @@
             middle />
           Clear
         </Button>
+        <Button on:click={() => toggleComment()}>
+          <MdiIcon
+            size="20"
+            icon={$selectedProfile.hideComment ? mdiCommentCheckOutline : mdiCommentRemoveOutline}
+            color="#1976d2" />
+          Comment
+        </Button>
         <div bind:this={sortMenuLocation} />
         <Menu bind:this={sortMenu}>
           <List>
@@ -177,7 +199,7 @@
             <Item on:SMUI:action={() => sort('value', 'desc')}>
               <Text>Value - descending</Text>
             </Item>
-            {#if !profile.hideComment}
+            {#if !$selectedProfile.hideComment}
               <Item on:SMUI:action={() => sort('comment', 'asc')}>
                 <Text>Comment - ascending</Text>
               </Item>
@@ -212,7 +234,7 @@
             bind:selectedItem={header.value}
             placeholder="Value" />
         </Cell>
-        {#if !profile.hideComment}
+        {#if !$selectedProfile.hideComment}
           <Cell class="data-table-cell">
             <AutoComplete
               className="mdc-text-field__input"

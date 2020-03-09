@@ -3,16 +3,6 @@
   import Snackbar, { Actions, Label } from "@smui/snackbar";
   import IconButton from "@smui/icon-button";
   import Button from "@smui/button";
-  import MdiIcon from "./MdiIcon.svelte";
-  import {
-    play,
-    pause,
-    isPaused as dataIsPaused,
-    lockToTab,
-    unlockAllTab,
-    lockedTabId
-  } from "../js/datasource";
-  import { createEventDispatcher } from "svelte";
   import {
     mdiTrashCan,
     mdiClose,
@@ -21,45 +11,41 @@
     mdiLock,
     mdiLockOpen
   } from "@mdi/js";
+  import MdiIcon from "./MdiIcon.svelte";
+  import {
+    selectedProfile,
+    commitChange,
+    removeProfile,
+    play,
+    pause,
+    isPaused,
+    lockToTab,
+    unlockAllTab,
+    isLocked
+  } from "../js/datasource";
 
-  const dispatch = createEventDispatcher();
-  export let profile;
   let colorPicker;
-  let isPaused = dataIsPaused;
-  let isLocked = !!lockedTabId;
   let tabLockSnackbar;
 
   function togglePause() {
-    if (isPaused) {
+    if ($isPaused) {
       play();
     } else {
       pause();
     }
-    isPaused = dataIsPaused;
-    dispatch("refresh");
   }
 
   function toggleLock() {
-    if (!isLocked) {
-      lockToTab();
-    } else {
+    if ($isLocked) {
       unlockAllTab();
+    } else {
+      lockToTab();
     }
-    isLocked = !!lockedTabId;
-    dispatch("refresh");
-  }
-
-  function refreshProfile() {
-    dispatch("refresh");
-  }
-
-  function deleteProfile() {
-    dispatch("remove", profile);
   }
 
   $: {
     if (tabLockSnackbar) {
-      if (isLocked) {
+      if ($isLocked) {
         tabLockSnackbar.open();
       } else {
         tabLockSnackbar.close();
@@ -102,20 +88,20 @@
   }
 </style>
 
-<TopAppBar variant dense style="background-color: {profile.color};">
+<TopAppBar variant dense style="background-color: {$selectedProfile.color};">
   <Row>
     <Section toolbar>
       <input
         class="mdc-text-field__input profile-title"
-        bind:value={profile.title}
-        on:input={() => refreshProfile()} />
+        bind:value={$selectedProfile.title}
+        on:input={() => commitChange({ title: $selectedProfile.title })} />
     </Section>
     <Section align="end" toolbar />
     <IconButton
       dense
       on:click={() => togglePause()}
-      title={isPaused ? 'Resume ModHeader' : 'Pause ModHeader'}>
-      {#if isPaused}
+      title={$isPaused ? 'Resume ModHeader' : 'Pause ModHeader'}>
+      {#if $isPaused}
         <MdiIcon size="24" icon={mdiPlay} color="white" />
       {:else}
         <MdiIcon size="24" icon={mdiPause} color="white" />
@@ -124,14 +110,17 @@
     <IconButton
       dense
       on:click={() => toggleLock()}
-      title={isLocked ? 'Unlock tab' : 'Lock tab'}>
-      {#if isLocked}
+      title={$isLocked ? 'Unlock tab' : 'Lock tab'}>
+      {#if $isLocked}
         <MdiIcon size="24" icon={mdiLockOpen} color="white" />
       {:else}
         <MdiIcon size="24" icon={mdiLock} color="white" />
       {/if}
     </IconButton>
-    <IconButton dense on:click={() => deleteProfile()} title="Delete profile">
+    <IconButton
+      dense
+      on:click={() => removeProfile($selectedProfile)}
+      title="Delete profile">
       <MdiIcon size="24" icon={mdiTrashCan} color="white" />
     </IconButton>
     <IconButton
@@ -142,8 +131,8 @@
         bind:this={colorPicker}
         class="color-picker"
         type="color"
-        bind:value={profile.color}
-        on:change={() => refreshProfile()} />
+        bind:value={$selectedProfile.color}
+        on:change={() => commitChange({ color: $selectedProfile.color })} />
     </IconButton>
   </Row>
 </TopAppBar>

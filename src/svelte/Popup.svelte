@@ -5,19 +5,14 @@
   import Filters from "./Filters.svelte";
   import Headers from "./Headers.svelte";
   import {
-    selectedProfile as dataSelectedProfile,
-    profiles as dataProfiles,
-    isPaused as dataIsPaused,
+    selectedProfile,
+    isPaused,
     save,
-    addProfile,
-    selectProfile,
-    removeProfile,
     addHeader,
     removeHeader,
     addUrlReplacement,
     removeUrlReplacement,
-    addFilter,
-    removeFilter
+    commitChange
   } from "../js/datasource";
   import {
     KNOWN_REQUEST_HEADERS,
@@ -25,22 +20,9 @@
   } from "../js/constants";
   import lodashClone from "lodash/clone";
 
-  let selectedProfile = dataSelectedProfile;
-  let profiles = dataProfiles;
-  let isPaused = dataIsPaused;
-
   window.addEventListener("unload", () => {
     save();
   });
-
-  $: requestHeaders = selectedProfile.headers;
-  $: responseHeaders = selectedProfile.respHeaders;
-  $: filters = selectedProfile.filters;
-  $: urlReplacements = selectedProfile.urlReplacements;
-  $: dataSelectedProfile.headers = requestHeaders;
-  $: dataSelectedProfile.respHeaders = responseHeaders;
-  $: dataSelectedProfile.filters = filters;
-  $: dataSelectedProfile.urlReplacements = urlReplacements;
 </script>
 
 <style lang="scss">
@@ -72,7 +54,7 @@
     height: 20px;
     margin: 0;
     padding: 0;
-    width: 200px;
+    width: 100px;
   }
 
   :global(.data-table-row) {
@@ -83,8 +65,8 @@
   }
 
   :global(.data-table-cell) {
-    padding-left: 5px;
-    padding-right: 5px;
+    padding-left: 2px;
+    padding-right: 2px;
   }
 
   :global(.autocomplete-input) {
@@ -118,117 +100,68 @@
   }
 </style>
 
-<Drawer
-  {profiles}
-  {selectedProfile}
-  on:add={() => {
-    addProfile();
-    profiles = dataProfiles;
-    selectedProfile = dataSelectedProfile;
-  }}
-  on:select={event => {
-    selectProfile(event.detail);
-    selectedProfile = dataSelectedProfile;
-  }} />
+<Drawer />
 
 <AppContent class="app-content">
   <div class="top-app-bar-container">
-    <TopBar
-      profile={selectedProfile}
-      on:refresh={event => {
-        profiles = dataProfiles;
-        isPaused = dataIsPaused;
-      }}
-      on:remove={event => {
-        removeProfile(event.detail);
-        profiles = dataProfiles;
-        selectedProfile = dataSelectedProfile;
-      }} />
+    <TopBar />
   </div>
-  <div class={isPaused ? 'disabled' : ''}>
+  <div class={$isPaused ? 'disabled' : ''}>
     <Headers
-      headers={requestHeaders}
+      headers={$selectedProfile.headers}
       class="extra-gap"
       title="Request headers"
       autocompleteNames={KNOWN_REQUEST_HEADERS}
-      profile={selectedProfile}
       on:add={() => {
-        addHeader(requestHeaders);
-        requestHeaders = lodashClone(requestHeaders);
+        addHeader($selectedProfile.headers);
+        commitChange({ headers: $selectedProfile.headers });
       }}
       on:remove={event => {
-        removeHeader(requestHeaders, event.detail);
-        requestHeaders = lodashClone(requestHeaders);
+        removeHeader($selectedProfile.headers, event.detail);
+        commitChange({ headers: $selectedProfile.headers });
       }}
-      on:refresh={event => (requestHeaders = event.detail)} />
+      on:refresh={event => {
+        commitChange({ headers: event.detail });
+      }} />
     <Headers
-      headers={responseHeaders}
+      headers={$selectedProfile.respHeaders}
       class="extra-gap"
       title="Response headers"
       autocompleteNames={KNOWN_RESPONSE_HEADERS}
       profile={selectedProfile}
       on:add={() => {
-        addHeader(responseHeaders);
-        responseHeaders = lodashClone(responseHeaders);
+        addHeader($selectedProfile.respHeaders);
+        commitChange({ respHeaders: $selectedProfile.respHeaders });
       }}
       on:remove={event => {
-        removeHeader(responseHeaders, event.detail);
-        responseHeaders = lodashClone(responseHeaders);
+        removeHeader($selectedProfile.respHeaders, event.detail);
+        commitChange({ respHeaders: $selectedProfile.respHeaders });
       }}
-      on:refresh={event => (responseHeaders = event.detail)} />
+      on:refresh={event => {
+        commitChange({ respHeaders: event.detail });
+      }} />
     <Headers
-      headers={urlReplacements}
+      headers={$selectedProfile.urlReplacements}
       class="extra-gap"
       title="Redirect URLs"
       autocompleteNames={[]}
-      profile={selectedProfile}
+      profile={$selectedProfile}
       on:add={() => {
-        addUrlReplacement(urlReplacements);
-        urlReplacements = lodashClone(urlReplacements);
+        addHeader($selectedProfile.urlReplacements);
+        commitChange({ urlReplacements: $selectedProfile.urlReplacements });
       }}
       on:remove={event => {
-        removeUrlReplacement(urlReplacements, event.detail);
-        urlReplacements = lodashClone(urlReplacements);
+        removeHeader($selectedProfile.urlReplacements, event.detail);
+        commitChange({ urlReplacements: $selectedProfile.urlReplacements });
       }}
-      on:refresh={event => (urlReplacements = event.detail)} />
-    <Filters
-      {filters}
-      class="extra-gap"
-      profile={selectedProfile}
-      on:add={() => {
-        addFilter(filters);
-        filters = lodashClone(filters);
-      }}
-      on:remove={event => {
-        removeFilter(filters, event.detail);
-        filters = lodashClone(filters);
-      }}
-      on:refresh={event => (filters = event.detail)} />
+      on:refresh={event => {
+        commitChange({ urlReplacements: event.detail });
+      }} />
+    <Filters class="extra-gap" />
   </div>
 </AppContent>
 <!-- <md-toolbar class="md-padding">
     <div class="md-toolbar-tools">
-      <md-button
-        class="md-icon-button"
-        aria-label="Settings"
-        ng-click="toggleSidenav()"
-      >
-        <md-icon md-svg-src="images/ic_menu_18px.svg"></md-icon>
-      </md-button>
-      <h2>
-        <span>
-          <md-input-container md-no-float>
-            <input
-              ng-model="dataSource.selectedProfile.title"
-              type="text"
-              placeholder="Profile name"
-              class="profile-title"
-            />
-          </md-input-container>
-        </span>
-      </h2>
-      <span flex></span>
-
       <md-menu>
         <md-button
           class="md-icon-button"
