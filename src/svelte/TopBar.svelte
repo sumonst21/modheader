@@ -93,8 +93,8 @@
     <Section toolbar>
       <input
         class="mdc-text-field__input profile-title"
-        bind:value={$selectedProfile.title}
-        on:input={() => commitChange({ title: $selectedProfile.title })} />
+        value={$selectedProfile.title}
+        on:input={event => commitChange({ title: event.target.value })} />
     </Section>
     <Section align="end" toolbar />
     <IconButton
