@@ -243,6 +243,19 @@ function fixProfile(profile) {
   }
 }
 
+export function sortProfiles() {
+  function compare(a, b) {
+    if (a.title.toLowerCase() < b.title.toLowerCase()) {
+      return -1;
+    }
+    if (a.title.toLowerCase() > b.title.toLowerCase()) {
+      return 1;
+    }
+    return 0;
+  }
+  profiles.set(get(profiles).sort(compare));
+}
+
 export function save() {
   localStorage.profiles = JSON.stringify(get(profiles));
   localStorage.selectedProfile = get(selectedProfileIndex);

@@ -15,11 +15,13 @@
     mdiThumbUpOutline,
     mdiGiftOutline,
     mdiCircle,
+    mdiSortAscending,
     mdiPlus
   } from "@mdi/js";
   import MdiIcon from "./MdiIcon.svelte";
   import {
     addProfile,
+    sortProfiles,
     selectProfile,
     selectedProfile,
     profiles
@@ -78,7 +80,11 @@
     color: white;
     font-size: 16px;
     border-radius: 25px;
-    margin: 6px;
+    margin: 10px 6px;
+  }
+
+  :global(.main-drawer-icon) {
+    padding-top: 4px;
   }
 
   .main-drawer-profile-icon-text {
@@ -152,6 +158,21 @@
             <Text class="main-drawer-item-text">{profile.title}</Text>
           </Item>
         {/each}
+        <Item
+          class="main-drawer-item"
+          on:click={() => {
+            sortProfiles();
+            expand = false;
+          }}>
+          <span class="main-drawer-icon-container">
+            <MdiIcon
+              size="24"
+              class="main-drawer-icon"
+              icon={mdiSortAscending}
+              color="#1976d2" />
+          </span>
+          <Text class="main-drawer-item-text">Sort Profiles</Text>
+        </Item>
       </div>
 
       <Separator nav />

@@ -54,7 +54,7 @@
     height: 20px;
     margin: 0;
     padding: 0;
-    width: 100px;
+    width: 120px;
   }
 
   :global(.data-table-row) {
