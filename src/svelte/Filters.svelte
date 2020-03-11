@@ -27,6 +27,7 @@
   let sortMenu;
   let sortMenuLocation;
   let clazz;
+  let resourceTypeMenuLocation;
   export { clazz as class };
 
   function expandEditor(filter) {
@@ -62,18 +63,22 @@
 
 <style scoped>
   :global(.filter-select) {
-    height: 32px;
+    height: 26px;
   }
 
   :global(.filter-select-field) {
     font-size: 14px;
     padding: 0;
-    height: 32px;
+    height: 26px;
     border-bottom: 1px solid #ddd !important;
   }
 
   :global(.filter-select) :global(.mdc-select__dropdown-icon) {
     bottom: 8px;
+  }
+
+  :global(.data-table-value-cell) {
+    width: 350px;
   }
 </style>
 
@@ -90,7 +95,7 @@
       <Cell class="data-table-cell">
         <h4 class="data-table-title">Filters</h4>
       </Cell>
-      <Cell class="data-table-cell" colspan="3">
+      <Cell class="data-table-cell data-table-value-cell" colspan="3">
         <Button on:click={() => addFilter()}>
           <MdiIcon size="20" icon={mdiPlus} color="#1976d2" middle />
           Add
@@ -185,7 +190,9 @@
         <Cell
           class="data-table-cell {filter.type === 'types' ? '' : 'hidden'}"
           colspan="2">
-          <ResourceTypeMenu bind:resourceType={filter.resourceType} />
+          <ResourceTypeMenu
+            bind:resourceType={filter.resourceType}
+            {resourceTypeMenuLocation} />
         </Cell>
         <Cell class="data-table-cell">
           <IconButton

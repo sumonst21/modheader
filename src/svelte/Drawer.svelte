@@ -47,7 +47,7 @@
 <style scoped>
   :global(.main-drawer) {
     display: block;
-    position: absolute;
+    position: fixed;
     left: 0;
     top: 0;
     overflow-x: hidden;

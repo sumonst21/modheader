@@ -1,7 +1,7 @@
 <script>
   import Button, { Label } from "@smui/button";
   import Menu from "@smui/menu";
-  import List, { Item, Separator, Text } from "@smui/list";
+  import List, { Item } from "@smui/list";
   import lodashWithout from "lodash/without";
 
   const KNOWN_RESOURCE_TYPES = {
@@ -14,7 +14,6 @@
     other: "Other"
   };
   let resourceTypeMenu;
-  let resourceTypeMenuLocation;
   export let resourceType;
 </script>
 
@@ -32,14 +31,12 @@
   class="resource-type-menu-button"
   on:click={() => {
     resourceTypeMenu.hoistMenuToBody();
-    resourceTypeMenu.setAnchorElement(resourceTypeMenuLocation);
     resourceTypeMenu.setOpen(true);
   }}>
   {resourceType && resourceType.length > 0 ? resourceType
         .map(rt => KNOWN_RESOURCE_TYPES[rt])
         .join(', ') : 'Select Resource Type'}
 </Button>
-<div bind:this={resourceTypeMenuLocation} />
 <Menu bind:this={resourceTypeMenu}>
   <List>
     {#each Object.entries(KNOWN_RESOURCE_TYPES) as [value, label]}

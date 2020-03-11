@@ -29,8 +29,11 @@
   :global(html),
   :global(body) {
     height: 460px;
+    max-height: 460px;
+    overflow-x: hidden;
+    overflow-y: auto;
     /** Fix FF popup disappearance on long window. */
-    width: 600px !important;
+    width: 620px !important;
     position: relative !important;
     margin: 0;
   }
@@ -163,48 +166,7 @@
 <!-- <md-toolbar class="md-padding">
     <div class="md-toolbar-tools">
       <md-menu>
-        <md-button
-          class="md-icon-button"
-          aria-label="More"
-          ng-click="$mdMenu.open($event)"
-        >
-          <md-icon md-svg-src="images/ic_more_vert_18px.svg"></md-icon>
-        </md-button>
         <md-menu-content width="4">
-          <md-menu-item>
-            <md-button
-              ng-click="profileService.toggleComment(dataSource.selectedProfile)"
-            >
-              <md-icon
-                md-svg-src="{{ dataSource.selectedProfile.hideComment ?
-                  'images/ic_checkbox-blank-outline_24px.svg' : 'images/ic_check-box-outline_24px.svg' }}"
-              ></md-icon>
-              Toggle comment column
-            </md-button>
-          </md-menu-item>
-
-          <md-menu-divider></md-menu-divider>
-          <md-menu-item>
-            <md-button
-              ng-click="profileService.deleteProfile(dataSource.selectedProfile)"
-            >
-              <md-icon
-                md-svg-src="images/ic_delete_black_24px.svg"
-                md-menu-align-target
-              ></md-icon>
-              Delete profile
-            </md-button>
-          </md-menu-item>
-          <md-menu-item>
-            <md-button
-              ng-click="profileService.cloneProfile(dataSource.selectedProfile)"
-            >
-              <md-icon
-                md-svg-src="images/ic_content_copy_black_24px.svg"
-              ></md-icon>
-              Clone profile
-            </md-button>
-          </md-menu-item>
           <md-menu-item>
             <md-button
               ng-click="profileService.exportProfile($event, dataSource.selectedProfile)"
@@ -221,52 +183,12 @@
               Import profile
             </md-button>
           </md-menu-item>
-
-          <md-menu-divider></md-menu-divider>
-          <md-subheader>Header override mode</md-subheader>
-          <md-menu-item>
-            <md-button
-              ng-click="profileService.setAppendMode(dataSource.selectedProfile, false)"
-            >
-              <md-icon
-                md-svg-src="{{ !dataSource.selectedProfile.appendMode || dataSource.selectedProfile.appendMode.length === 0 ?
-                  'images/ic_radiobox-marked_24px.svg' : 'images/ic_radiobox-blank_24px.svg' }}"
-              ></md-icon>
-              Override existing value
-            </md-button>
-          </md-menu-item>
-          <md-menu-item>
-            <md-button
-              ng-click="profileService.setAppendMode(dataSource.selectedProfile, true)"
-            >
-              <md-icon
-                md-svg-src="{{ dataSource.selectedProfile.appendMode && dataSource.selectedProfile.appendMode !== 'comma' ?
-                   'images/ic_radiobox-marked_24px.svg' : 'images/ic_radiobox-blank_24px.svg' }}"
-              ></md-icon>
-              Value concatenation
-            </md-button>
-          </md-menu-item>
-          <md-menu-item>
-            <md-button
-              ng-click="profileService.setAppendMode(dataSource.selectedProfile, 'comma')"
-            >
-              <md-icon
-                md-svg-src="{{ dataSource.selectedProfile.appendMode === 'comma' ?
-                    'images/ic_radiobox-marked_24px.svg' : 'images/ic_radiobox-blank_24px.svg' }}"
-              ></md-icon>
-              Comma separated concatenation
-            </md-button>
-          </md-menu-item>
         </md-menu-content>
       </md-menu>
     </div>
   </md-toolbar>
   <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left">
     <md-list>
-      <md-list-item ng-click="profileService.sortProfiles()">
-        <md-icon md-svg-src="images/ic_sort_24px.svg"></md-icon>
-        <p>Sort Profiles</p>
-      </md-list-item>
       <md-list-item ng-click="profileService.importProfiles($event)">
         <md-icon md-svg-src="images/ic_file_upload_24px.svg"></md-icon>
         <p>Import Multiple Profiles</p>

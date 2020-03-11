@@ -1,4 +1,5 @@
 import { writable, derived, get } from 'svelte/store';
+import lodashCloneDeep from 'lodash/cloneDeep';
 
 export const profiles = writable([]);
 export const selectedProfileIndex = writable(0);
@@ -211,6 +212,15 @@ export function removeProfile(profile) {
   } else {
     selectedProfileIndex.set(innerProfiles.length - 1);
   }
+}
+
+export function cloneProfile(profile) {
+  const newProfile = lodashCloneDeep(profile);
+  newProfile.title = 'Copy of ' + newProfile.title;
+  const innerProfiles = get(profiles);
+  innerProfiles.push(newProfile);
+  profiles.set(innerProfiles);
+  selectedProfileIndex.set(innerProfiles.length - 1);
 }
 
 function fixProfile(profile) {
