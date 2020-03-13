@@ -29,9 +29,6 @@
   :global(html),
   :global(body) {
     height: 460px;
-    max-height: 460px;
-    overflow-x: hidden;
-    overflow-y: auto;
     /** Fix FF popup disappearance on long window. */
     width: 620px !important;
     position: relative !important;
@@ -96,6 +93,18 @@
   :global(.disabled) {
     opacity: 0.5;
     pointer-events: none;
+  }
+
+  :global(.large-textarea) {
+    width: 100%;
+    height: 50px;
+  }
+
+  :global(.extra-large-textarea) {
+    width: 400px;
+    height: 250px;
+    overflow-x: hidden;
+    overflow-y: auto;
   }
 
   .top-app-bar-container {

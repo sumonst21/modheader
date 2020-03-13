@@ -25,7 +25,6 @@
   let selectedFilter;
   let dialog;
   let sortMenu;
-  let sortMenuLocation;
   let clazz;
   let resourceTypeMenuLocation;
   export { clazz as class };
@@ -101,9 +100,10 @@
           Add
         </Button>
         <Button
-          on:click={() => {
-            sortMenu.hoistMenuToBody();
-            sortMenu.setAnchorElement(sortMenuLocation);
+          on:click={e => {
+            sortMenu.setFixedPosition(true);
+            const rect = e.target.getBoundingClientRect();
+            sortMenu.setAbsolutePosition(rect.left + window.scrollX, e.target.offsetParent.offsetTop + rect.top + window.scrollY);
             sortMenu.setOpen(true);
           }}
           disabled={$selectedProfile.filters.length === 0}>
@@ -124,8 +124,7 @@
             middle />
           Clear
         </Button>
-        <div bind:this={sortMenuLocation} />
-        <Menu bind:this={sortMenu}>
+        <Menu bind:this={sortMenu} quickOpen>
           <List>
             <Item on:SMUI:action={() => sort('type', 'asc')}>
               <Text>Type - ascending</Text>

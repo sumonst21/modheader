@@ -31,7 +31,6 @@
   let selectedHeader;
   let dialog;
   let sortMenu;
-  let sortMenuLocation;
   let clazz;
   export { clazz as class };
 
@@ -84,13 +83,6 @@
     headers.map(h => h.comment).filter(n => !!n)
   );
 </script>
-
-<style scoped>
-  .large-textarea {
-    width: 100%;
-    height: 50px;
-  }
-</style>
 
 <Dialog
   bind:this={dialog}
@@ -151,9 +143,10 @@
           Add
         </Button>
         <Button
-          on:click={() => {
-            sortMenu.hoistMenuToBody();
-            sortMenu.setAnchorElement(sortMenuLocation);
+          on:click={e => {
+            sortMenu.setFixedPosition(true);
+            const rect = e.target.getBoundingClientRect();
+            sortMenu.setAbsolutePosition(rect.left + window.scrollX, e.target.offsetParent.offsetTop + rect.top + window.scrollY);
             sortMenu.setOpen(true);
           }}
           disabled={headers.length === 0}>
@@ -164,29 +157,9 @@
             middle />
           Sort
         </Button>
-        <Button
-          on:click={() => {
-            headers = [];
-            refreshHeaders();
-          }}
-          disabled={headers.length === 0}>
-          <MdiIcon
-            size="20"
-            icon={mdiTrashCan}
-            color={headers.length === 0 ? disabledColor : 'red'}
-            middle />
-          Clear
-        </Button>
-        <Button on:click={() => toggleComment()}>
-          <MdiIcon
-            size="20"
-            icon={$selectedProfile.hideComment ? mdiCommentCheckOutline : mdiCommentRemoveOutline}
-            color="#1976d2" />
-          Comment
-        </Button>
-        <div bind:this={sortMenuLocation} />
-        <Menu bind:this={sortMenu}>
-          <List>
+
+        <Menu bind:this={sortMenu} quickOpen>
+          <List class="sort-menu">
             <Item on:SMUI:action={() => sort('name', 'asc')}>
               <Text>Name - ascending</Text>
             </Item>
@@ -209,6 +182,27 @@
             {/if}
           </List>
         </Menu>
+
+        <Button
+          on:click={() => {
+            headers = [];
+            refreshHeaders();
+          }}
+          disabled={headers.length === 0}>
+          <MdiIcon
+            size="20"
+            icon={mdiTrashCan}
+            color={headers.length === 0 ? disabledColor : 'red'}
+            middle />
+          Clear
+        </Button>
+        <Button on:click={() => toggleComment()}>
+          <MdiIcon
+            size="20"
+            icon={$selectedProfile.hideComment ? mdiCommentCheckOutline : mdiCommentRemoveOutline}
+            color="#1976d2" />
+          Comment
+        </Button>
       </Cell>
     </Row>
   </Head>
