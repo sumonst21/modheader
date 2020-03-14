@@ -177,30 +177,7 @@
     <Filters class="extra-gap" />
   </div>
 </AppContent>
-<!-- <md-toolbar class="md-padding">
-    <div class="md-toolbar-tools">
-      <md-menu>
-        <md-menu-content width="4">
-          <md-menu-item>
-            <md-button
-              ng-click="profileService.exportProfile($event, dataSource.selectedProfile)"
-            >
-              <md-icon md-svg-src="images/ic_file_download_24px.svg"></md-icon>
-              Export profile
-            </md-button>
-          </md-menu-item>
-          <md-menu-item>
-            <md-button
-              ng-click="profileService.importProfile($event, dataSource.selectedProfile)"
-            >
-              <md-icon md-svg-src="images/ic_file_upload_24px.svg"></md-icon>
-              Import profile
-            </md-button>
-          </md-menu-item>
-        </md-menu-content>
-      </md-menu>
-    </div>
-  </md-toolbar>
+<!-- 
   <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left">
     <md-list>
       <md-list-item ng-click="profileService.importProfiles($event)">

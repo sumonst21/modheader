@@ -1,6 +1,7 @@
 <script>
   import Dialog, { Title, Content, Actions } from "@smui/dialog";
   import Button, { Label } from "@smui/button";
+  import Snackbar, { Label as SnackbarLabel } from "@smui/snackbar";
   import IconButton from "@smui/icon-button";
   import Checkbox from "@smui/checkbox";
   import List, { Item, Separator, Text } from "@smui/list";
@@ -10,6 +11,7 @@
 
   let exportTextbox;
   let dialog;
+  let snackbar;
   let selectedProfiles = [];
 
   export function show() {
@@ -20,6 +22,7 @@
   function copyExportText() {
     exportTextbox.select();
     document.execCommand("copy");
+    snackbar.open();
   }
 
   $: exportedText = JSON.stringify(selectedProfiles);
@@ -77,3 +80,7 @@
     </Button>
   </div>
 </Dialog>
+
+<Snackbar timeoutMs={4000} bind:this={snackbar}>
+  <SnackbarLabel>Copied to clipboard!</SnackbarLabel>
+</Snackbar>

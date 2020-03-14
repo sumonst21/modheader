@@ -7,7 +7,7 @@
   import IconButton from "@smui/icon-button";
   import Button from "@smui/button";
   import {
-    mdiTrashCanOutline,
+    mdiTrashCan,
     mdiClose,
     mdiPlay,
     mdiPause,
@@ -134,6 +134,12 @@
       </IconButton>
       <IconButton
         dense
+        on:click={() => removeProfile($selectedProfile)}
+        title="Delete profile">
+        <MdiIcon size="24" icon={mdiTrashCan} color="white" />
+      </IconButton>
+      <IconButton
+        dense
         on:click={() => colorPicker.click()}
         title="Change profile color">
         <input
@@ -177,15 +183,6 @@
               Lock to tab
             </Item>
           {/if}
-          <Separator />
-          <Item on:SMUI:action={() => removeProfile($selectedProfile)}>
-            <MdiIcon
-              class="more-menu-icon"
-              size="24"
-              icon={mdiTrashCanOutline}
-              color="#666" />
-            Delete profile
-          </Item>
           <Item on:SMUI:action={() => cloneProfile($selectedProfile)}>
             <MdiIcon
               class="more-menu-icon"

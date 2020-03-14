@@ -1,5 +1,6 @@
 <script>
   import Dialog, { Title, Content, Actions } from "@smui/dialog";
+  import Snackbar, { Label as SnackbarLabel } from "@smui/snackbar";
   import Button, { Label } from "@smui/button";
   import IconButton from "@smui/icon-button";
   import { mdiClose, mdiCheck } from "@mdi/js";
@@ -9,6 +10,8 @@
   let importTextbox;
   let importText;
   let dialog;
+  let snackbar;
+  let snackbarMessage;
 
   export function show() {
     dialog.open();
@@ -18,6 +21,10 @@
     const importedProfiles = JSON.parse(importText);
     importProfiles(importedProfiles);
     dialog.close();
+    snackbarMessage = `${importedProfiles.length} ${
+      importedProfiles.length === 1 ? "profile" : "profiles"
+    } successfully imported!`;
+    snackbar.open();
   }
 </script>
 
@@ -52,3 +59,7 @@
     </Button>
   </div>
 </Dialog>
+
+<Snackbar timeoutMs={4000} bind:this={snackbar} labelText={snackbarMessage}>
+  <SnackbarLabel />
+</Snackbar>
