@@ -7,6 +7,7 @@
   import List, { Item, Separator, Text } from "@smui/list";
   import { mdiSelectAll, mdiContentCopy, mdiDownload, mdiClose } from "@mdi/js";
   import MdiIcon from "./MdiIcon.svelte";
+  import { DISABLED_COLOR, PRIMARY_COLOR } from "../js/constants";
   import { profiles, selectedProfile, commitChange } from "../js/datasource";
 
   let exportTextbox;
@@ -62,19 +63,28 @@
   </Content>
   <div class="mdc-dialog__actions">
     <Button on:click={() => (selectedProfiles = [...$profiles])}>
-      <MdiIcon size="24" icon={mdiSelectAll} color="#1976d2" />
+      <MdiIcon size="24" icon={mdiSelectAll} color={PRIMARY_COLOR} />
       &nbsp;
       <Label>Select all</Label>
     </Button>
-    <Button on:click={() => exportTextbox.focus()}>
-      <MdiIcon size="24" icon={mdiContentCopy} color="#1976d2" />
+    <Button
+      disabled={selectedProfiles.length === 0}
+      on:click={() => exportTextbox.focus()}>
+      <MdiIcon
+        size="24"
+        icon={mdiContentCopy}
+        color={selectedProfiles.length === 0 ? DISABLED_COLOR : PRIMARY_COLOR} />
       &nbsp;
       <Label>Copy</Label>
     </Button>
     <Button
-      href="data:application/json;base64,{window.btoa(exportedText)}"
+      disabled={selectedProfiles.length === 0}
+      href={selectedProfiles.length === 0 ? undefined : 'data:application/json;base64,{window.btoa(exportedText)}'}
       download="{selectedProfiles.map(p => p.title).join('+')}.json">
-      <MdiIcon size="24" icon={mdiDownload} color="#1976d2" />
+      <MdiIcon
+        size="24"
+        icon={mdiDownload}
+        color={selectedProfiles.length === 0 ? DISABLED_COLOR : PRIMARY_COLOR} />
       &nbsp;
       <Label>Download</Label>
     </Button>

@@ -15,8 +15,12 @@
     mdiGiftOutline,
     mdiCircle,
     mdiSortAscending,
+    mdiFileExportOutline,
+    mdiFileImportOutline,
     mdiPlus
   } from "@mdi/js";
+  import ExportDialog from "./ExportDialog.svelte";
+  import ImportDialog from "./ImportDialog.svelte";
   import MdiIcon from "./MdiIcon.svelte";
   import {
     addProfile,
@@ -25,10 +29,13 @@
     selectedProfile,
     profiles
   } from "../js/datasource";
+  import { PRIMARY_COLOR } from "../js/constants";
 
   let drawer;
   let drawerOpen = true;
   let expand = false;
+  let exportDialog;
+  let importDialog;
 
   function onMouseenter() {
     expand = true;
@@ -135,7 +142,7 @@
               size="24"
               class="main-drawer-icon"
               icon={mdiPlus}
-              color="#1976d2" />
+              color={PRIMARY_COLOR} />
           </span>
           <Text class="main-drawer-item-text">Add Profile</Text>
         </Item>
@@ -161,17 +168,47 @@
           class="main-drawer-item"
           on:click={() => {
             sortProfiles();
-            expand = false;
           }}>
           <span class="main-drawer-icon-container">
             <MdiIcon
               size="24"
               class="main-drawer-icon"
               icon={mdiSortAscending}
-              color="#1976d2" />
+              color={PRIMARY_COLOR} />
           </span>
           <Text class="main-drawer-item-text">Sort Profiles</Text>
         </Item>
+        <Item
+          class="main-drawer-item"
+          on:click={() => {
+            exportDialog.show();
+            expand = false;
+          }}>
+          <span class="main-drawer-icon-container">
+            <MdiIcon
+              size="24"
+              class="main-drawer-icon"
+              icon={mdiFileExportOutline}
+              color={PRIMARY_COLOR} />
+          </span>
+          <Text class="main-drawer-item-text">Export Profiles</Text>
+        </Item>
+        <Item
+          class="main-drawer-item"
+          on:click={() => {
+            importDialog.show();
+            expand = false;
+          }}>
+          <span class="main-drawer-icon-container">
+            <MdiIcon
+              size="24"
+              class="main-drawer-icon"
+              icon={mdiFileImportOutline}
+              color={PRIMARY_COLOR} />
+          </span>
+          <Text class="main-drawer-item-text">Import Profiles</Text>
+        </Item>
+
       </div>
 
       <Separator nav />
@@ -183,7 +220,7 @@
             size="24"
             class="main-drawer-icon"
             icon={mdiGiftOutline}
-            color="#1976d2" />
+            color={PRIMARY_COLOR} />
         </span>
         <Text class="main-drawer-item-text">Donate</Text>
       </Item>
@@ -195,7 +232,7 @@
             size="24"
             class="main-drawer-icon"
             icon={mdiThumbUpOutline}
-            color="#1976d2" />
+            color={PRIMARY_COLOR} />
         </span>
         <Text class="main-drawer-item-text">Rate us</Text>
       </Item>
@@ -207,7 +244,7 @@
             size="24"
             class="main-drawer-icon"
             icon={mdiHelpCircleOutline}
-            color="#1976d2" />
+            color={PRIMARY_COLOR} />
         </span>
 
         <Text class="main-drawer-item-text">Help</Text>
@@ -215,3 +252,6 @@
     </List>
   </Content>
 </Drawer>
+
+<ExportDialog bind:this={exportDialog} />
+<ImportDialog bind:this={importDialog} />

@@ -15,12 +15,11 @@
     selectedProfile,
     commitChange
   } from "../js/datasource";
+  import { DISABLED_COLOR, PRIMARY_COLOR } from "../js/constants";
   import Row from "./Row.svelte";
   import AutoComplete from "./Autocomplete.svelte";
   import MdiIcon from "./MdiIcon.svelte";
   import ResourceTypeMenu from "./ResourceTypeMenu.svelte";
-
-  const disabledColor = "rgba(0, 0, 0, 0.37)";
 
   let selectedFilter;
   let dialog;
@@ -96,7 +95,7 @@
       </Cell>
       <Cell class="data-table-cell data-table-value-cell" colspan="3">
         <Button on:click={() => addFilter()}>
-          <MdiIcon size="20" icon={mdiPlus} color="#1976d2" middle />
+          <MdiIcon size="20" icon={mdiPlus} color={PRIMARY_COLOR} middle />
           Add
         </Button>
         <Button
@@ -110,7 +109,7 @@
           <MdiIcon
             size="20"
             icon={mdiSort}
-            color={$selectedProfile.filters.length === 0 ? disabledColor : '#1976d2'}
+            color={$selectedProfile.filters.length === 0 ? DISABLED_COLOR : PRIMARY_COLOR}
             middle />
           Sort
         </Button>
@@ -120,7 +119,7 @@
           <MdiIcon
             size="20"
             icon={mdiTrashCan}
-            color={$selectedProfile.filters.length === 0 ? disabledColor : 'red'}
+            color={$selectedProfile.filters.length === 0 ? DISABLED_COLOR : 'red'}
             middle />
           Clear
         </Button>
@@ -183,7 +182,10 @@
             aria-label="Help"
             class="small-icon-button"
             on:click={() => openLink('https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions')}>
-            <MdiIcon size="24" icon={mdiHelpCircleOutline} color="#1976d2" />
+            <MdiIcon
+              size="24"
+              icon={mdiHelpCircleOutline}
+              color={PRIMARY_COLOR} />
           </IconButton>
         </Cell>
         <Cell

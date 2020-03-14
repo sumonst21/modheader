@@ -1,3 +1,6 @@
+export const DISABLED_COLOR = "rgba(0, 0, 0, 0.37)";
+export const PRIMARY_COLOR = "#1976d2";
+
 export const KNOWN_REQUEST_HEADERS = [
   'A-IM',
   'Accept',

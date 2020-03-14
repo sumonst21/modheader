@@ -1,10 +1,12 @@
 <script>
+  import lodashIsEmpty from "lodash/isEmpty";
   import Dialog, { Title, Content, Actions } from "@smui/dialog";
   import Snackbar, { Label as SnackbarLabel } from "@smui/snackbar";
   import Button, { Label } from "@smui/button";
   import IconButton from "@smui/icon-button";
   import { mdiClose, mdiCheck } from "@mdi/js";
   import MdiIcon from "./MdiIcon.svelte";
+  import { DISABLED_COLOR, PRIMARY_COLOR } from "../js/constants";
   import { overrideProfile, importProfiles } from "../js/datasource";
 
   let importTextbox;
@@ -50,12 +52,13 @@
       bind:value={importText} />
   </Content>
   <div class="mdc-dialog__actions">
-    <Button
-      :disabled={importText && importText.length > 0}
-      on:click={() => done()}>
-      <MdiIcon size="24" icon={mdiCheck} color="#1976d2" />
+    <Button disabled={lodashIsEmpty(importText)} on:click={() => done()}>
+      <MdiIcon
+        size="24"
+        icon={mdiCheck}
+        color={lodashIsEmpty(importText) ? DISABLED_COLOR : PRIMARY_COLOR} />
       &nbsp;
-      <Label>Done</Label>
+      <Label>Import</Label>
     </Button>
   </div>
 </Dialog>

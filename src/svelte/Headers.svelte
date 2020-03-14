@@ -3,6 +3,7 @@
   import IconButton from "@smui/icon-button";
   import Button, { Label } from "@smui/button";
   import DataTable, { Head, Body, Cell } from "@smui/data-table";
+  import Checkbox from "@smui/checkbox";
   import Menu from "@smui/menu";
   import List, { Item, Separator, Text } from "@smui/list";
   import {
@@ -17,13 +18,12 @@
   import lodashUniq from "lodash/uniq";
   import lodashOrderBy from "lodash/orderBy";
   import { selectedProfile, commitChange } from "../js/datasource";
+  import { DISABLED_COLOR, PRIMARY_COLOR } from "../js/constants";
   import Row from "./Row.svelte";
   import AutoComplete from "./Autocomplete.svelte";
-  import Checkbox from "@smui/checkbox";
   import MdiIcon from "./MdiIcon.svelte";
 
   const dispatch = createEventDispatcher();
-  const disabledColor = "rgba(0, 0, 0, 0.37)";
 
   export let headers;
   export let title;
@@ -139,7 +139,7 @@
         class="data-table-cell"
         colspan={$selectedProfile.hideComment ? 3 : 4}>
         <Button on:click={() => addHeader(headers)}>
-          <MdiIcon size="20" icon={mdiPlus} color="#1976d2" middle />
+          <MdiIcon size="20" icon={mdiPlus} color={PRIMARY_COLOR} middle />
           Add
         </Button>
         <Button
@@ -153,7 +153,7 @@
           <MdiIcon
             size="20"
             icon={mdiSort}
-            color={headers.length === 0 ? disabledColor : '#1976d2'}
+            color={headers.length === 0 ? DISABLED_COLOR : PRIMARY_COLOR}
             middle />
           Sort
         </Button>
@@ -192,7 +192,7 @@
           <MdiIcon
             size="20"
             icon={mdiTrashCan}
-            color={headers.length === 0 ? disabledColor : 'red'}
+            color={headers.length === 0 ? DISABLED_COLOR : 'red'}
             middle />
           Clear
         </Button>
@@ -200,7 +200,7 @@
           <MdiIcon
             size="20"
             icon={$selectedProfile.hideComment ? mdiCommentCheckOutline : mdiCommentRemoveOutline}
-            color="#1976d2" />
+            color={PRIMARY_COLOR} />
           Comment
         </Button>
       </Cell>
