@@ -191,6 +191,15 @@ export function createProfile() {
   return profile;
 };
 
+export function importProfiles(importProfiles) {
+  for (const p of importProfiles) {
+    fixProfile(p);
+  }
+  const innerProfiles = get(profiles).concat(importProfiles);
+  profiles.set(innerProfiles);
+  selectedProfileIndex.set(innerProfiles.length - 1);
+}
+
 export function addProfile() {
   const newProfile = createProfile();
   const innerProfiles = get(profiles);
@@ -306,11 +315,12 @@ function init() {
       profile.filters = [];
     }
   }
+  profiles.set(innerProfiles);
   let profileIndex = 0;
   if (localStorage.selectedProfile) {
     profileIndex = Number(localStorage.selectedProfile);
   }
-  if (selectedProfileIndex >= innerProfiles.length) {
+  if (profileIndex >= innerProfiles.length) {
     profileIndex = innerProfiles.length - 1;
   }
   selectedProfileIndex.set(profileIndex);
@@ -320,7 +330,6 @@ function init() {
   if (localStorage.lockedTabId) {
     isLocked.set(true);
   }
-  profiles.set(innerProfiles);
 }
 
 init();

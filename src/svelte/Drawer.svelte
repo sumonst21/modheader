@@ -7,7 +7,6 @@
     Subtitle,
     Scrim
   } from "@smui/drawer";
-  import IconButton from "@smui/icon-button";
   import List, { Item, Text, Separator, Subheader } from "@smui/list";
   import H6 from "@smui/common/H6.svelte";
   import {

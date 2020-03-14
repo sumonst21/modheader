@@ -80,6 +80,11 @@
     padding: 0;
   }
 
+  :global(.dialog-close-button) {
+    float: right;
+    top: 4px;
+  }
+
   :global(.hidden) {
     display: none !important;
   }

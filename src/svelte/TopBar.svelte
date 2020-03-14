@@ -7,7 +7,7 @@
   import IconButton from "@smui/icon-button";
   import Button from "@smui/button";
   import {
-    mdiTrashCan,
+    mdiTrashCanOutline,
     mdiClose,
     mdiPlay,
     mdiPause,
@@ -20,6 +20,7 @@
   } from "@mdi/js";
   import { get } from "svelte/store";
   import ExportDialog from "./ExportDialog.svelte";
+  import ImportDialog from "./ImportDialog.svelte";
   import MdiIcon from "./MdiIcon.svelte";
   import {
     selectedProfile,
@@ -39,6 +40,7 @@
   let moreMenuLocation;
   let moreMenu;
   let exportDialog;
+  let importDialog;
 
   function togglePause() {
     if ($isPaused) {
@@ -132,12 +134,6 @@
       </IconButton>
       <IconButton
         dense
-        on:click={() => removeProfile($selectedProfile)}
-        title="Delete profile">
-        <MdiIcon size="24" icon={mdiTrashCan} color="white" />
-      </IconButton>
-      <IconButton
-        dense
         on:click={() => colorPicker.click()}
         title="Change profile color">
         <input
@@ -181,6 +177,15 @@
               Lock to tab
             </Item>
           {/if}
+          <Separator />
+          <Item on:SMUI:action={() => removeProfile($selectedProfile)}>
+            <MdiIcon
+              class="more-menu-icon"
+              size="24"
+              icon={mdiTrashCanOutline}
+              color="#666" />
+            Delete profile
+          </Item>
           <Item on:SMUI:action={() => cloneProfile($selectedProfile)}>
             <MdiIcon
               class="more-menu-icon"
@@ -197,7 +202,7 @@
               color="#666" />
             Export profile
           </Item>
-          <Item on:SMUI:action={() => cloneProfile($selectedProfile)}>
+          <Item on:SMUI:action={() => importDialog.show()}>
             <MdiIcon
               class="more-menu-icon"
               size="24"
@@ -229,6 +234,7 @@
 </TopAppBar>
 
 <ExportDialog bind:this={exportDialog} />
+<ImportDialog bind:this={importDialog} />
 
 <Snackbar timeoutMs={10000} bind:this={tabLockSnackbar}>
   <Label>Tab lock is active</Label>

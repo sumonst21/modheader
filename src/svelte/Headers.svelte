@@ -129,7 +129,7 @@
         <Checkbox
           bind:checked={allChecked}
           indeterminate={!allChecked && !allUnchecked}
-          on:click={toggleAll}
+          on:click={() => toggleAll()}
           disabled={headers.length === 0} />
       </Cell>
       <Cell class="data-table-cell">
@@ -243,7 +243,7 @@
             dense
             aria-label="Expand"
             class="small-icon-button"
-            on:click={expandEditor(header)}>
+            on:click={() => expandEditor(header)}>
             <MdiIcon size="24" icon={mdiArrowExpand} />
           </IconButton>
         </Cell>
@@ -252,7 +252,7 @@
             dense
             aria-label="Delete"
             class="small-icon-button"
-            on:click={removeHeader(header)}>
+            on:click={() => removeHeader(header)}>
             <MdiIcon size="24" icon={mdiTrashCan} color="red" />
           </IconButton>
         </Cell>

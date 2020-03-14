@@ -29,8 +29,10 @@
 
 <Button
   class="resource-type-menu-button"
-  on:click={() => {
-    resourceTypeMenu.hoistMenuToBody();
+  on:click={e => {
+    resourceTypeMenu.setFixedPosition(true);
+    const rect = e.target.getBoundingClientRect();
+    resourceTypeMenu.setAbsolutePosition(rect.left + window.scrollX, e.target.offsetParent.offsetTop + rect.top + window.scrollY);
     resourceTypeMenu.setOpen(true);
   }}>
   {resourceType && resourceType.length > 0 ? resourceType
