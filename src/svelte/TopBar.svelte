@@ -16,7 +16,8 @@
     mdiDotsVertical,
     mdiContentCopy,
     mdiFileExportOutline,
-    mdiFileImportOutline
+    mdiFileImportOutline,
+    mdiUndo
   } from "@mdi/js";
   import { get } from "svelte/store";
   import ExportDialog from "./ExportDialog.svelte";
@@ -24,6 +25,7 @@
   import MdiIcon from "./MdiIcon.svelte";
   import {
     selectedProfile,
+    changesStack,
     cloneProfile,
     commitChange,
     removeProfile,
@@ -32,8 +34,10 @@
     isPaused,
     lockToTab,
     unlockAllTab,
-    isLocked
+    isLocked,
+    undo
   } from "../js/datasource";
+  import { DISABLED_COLOR } from "../js/constants";
 
   let colorPicker;
   let pauseSnackbar;
@@ -129,6 +133,11 @@
         on:input={event => commitChange({ title: event.target.value })} />
     </Section>
     <Section align="end">
+      {#if $changesStack.length > 1}
+        <IconButton dense on:click={() => undo()} title="Undo">
+          <MdiIcon size="24" icon={mdiUndo} color="white" />
+        </IconButton>
+      {/if}
       <IconButton
         dense
         on:click={() => togglePause()}

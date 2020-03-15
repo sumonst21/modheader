@@ -1,6 +1,7 @@
 import { writable, derived, get } from 'svelte/store';
 import lodashCloneDeep from 'lodash/cloneDeep';
 import lodashOrderBy from 'lodash/orderBy';
+import lodashLast from 'lodash/last';
 
 export const profiles = writable([]);
 export const selectedProfileIndex = writable(0);
@@ -12,6 +13,29 @@ export const selectedProfile = derived(
   ([$profiles, $selectedProfileIndex]) => $profiles[$selectedProfileIndex],
   {},
 );
+
+export const changesStack = writable([]);
+let ignoringChangeStack = true;
+profiles.subscribe($profiles => {
+  if (!ignoringChangeStack) {
+    const changes = get(changesStack);
+    const serializedProfiles = JSON.stringify($profiles);
+    if (changes.length === 0 || lodashLast(changes).profiles !== serializedProfiles) {
+      changes.push({profiles: serializedProfiles});
+      changesStack.set(changes);
+    }
+  }
+});
+selectedProfileIndex.subscribe($selectedProfileIndex => {
+  if (!ignoringChangeStack) {
+    const changes = get(changesStack);
+    if (changes.length === 0 || lodashLast(changes).selectedProfileIndex !== $selectedProfileIndex) {
+      changes.push({selectedProfileIndex: $selectedProfileIndex});
+      changesStack.set(changes);
+    }
+  }
+});
+ignoringChangeStack = false;
 
 export let isPaused = writable(false);
 export let isLocked = writable(false);
@@ -124,6 +148,30 @@ export function commitChange(change) {
   profiles.set(innerProfiles);
 }
 
+export function undo() {
+  const changes = get(changesStack);
+  if (changes.length === 0) {
+    return;
+  }
+  let lastChange;
+  const currentProfiles = get(profiles);
+  const serializedCurrentProfiles = JSON.stringify(currentProfiles);
+  const currentSelectedProfileIndex = get(selectedProfileIndex);
+  while (changes.length > 0) {
+    lastChange = changes.pop();
+    if (lastChange.profiles && lastChange.profiles !== serializedCurrentProfiles) {
+      break;
+    }
+    if (lastChange.selectedProfileIndex && lastChange.selectedProfileIndex !== currentSelectedProfileIndex) {
+      break;
+    }
+  }
+  changesStack.set(changes);
+  setProfilesAndIndex(
+      (lastChange.profiles && JSON.parse(lastChange.profiles)) || currentProfiles,
+      lastChange.selectedProfileIndex || currentSelectedProfileIndex);
+}
+
 export function pause() {
   isPaused.set(true);
   localStorage.isPaused = true;
@@ -164,21 +212,33 @@ export function createProfile() {
   return profile;
 };
 
+function setProfilesAndIndex(newProfiles, newIndex) {
+  ignoringChangeStack = true;
+  newIndex = Math.max(0, Math.min(newProfiles.length - 1, newIndex));
+  profiles.set(newProfiles);
+  selectedProfileIndex.set(newIndex);
+  const changes = get(changesStack);
+  changes.push({
+    profiles: JSON.stringify(newProfiles),
+    selectedProfileIndex: newIndex
+  });
+  changesStack.set(changes);
+  ignoringChangeStack = false;
+}
+
 export function importProfiles(importProfiles) {
   for (const p of importProfiles) {
     fixProfile(p);
   }
   const innerProfiles = get(profiles).concat(importProfiles);
-  profiles.set(innerProfiles);
-  selectedProfileIndex.set(innerProfiles.length - 1);
+  setProfilesAndIndex(innerProfiles, innerProfiles.length - 1);
 }
 
 export function addProfile() {
   const newProfile = createProfile();
   const innerProfiles = get(profiles);
   innerProfiles.push(newProfile);
-  profiles.set(innerProfiles);
-  selectedProfileIndex.set(innerProfiles.length - 1);
+  setProfilesAndIndex(innerProfiles, innerProfiles.length - 1);
 }
 
 export function selectProfile(profileIndex) {
@@ -186,14 +246,12 @@ export function selectProfile(profileIndex) {
 }
 
 export function removeProfile(profile) {
-  const innerProfiles = get(profiles);
+  let innerProfiles = get(profiles);
   innerProfiles.splice(innerProfiles.indexOf(profile), 1);
-  profiles.set(innerProfiles);
   if (innerProfiles.length == 0) {
-    addProfile();
-  } else {
-    selectedProfileIndex.set(innerProfiles.length - 1);
+    innerProfiles = [createProfile()];
   }
+  setProfilesAndIndex(innerProfiles, innerProfiles.length - 1);
 }
 
 export function cloneProfile(profile) {
@@ -201,8 +259,7 @@ export function cloneProfile(profile) {
   newProfile.title = 'Copy of ' + newProfile.title;
   const innerProfiles = get(profiles);
   innerProfiles.push(newProfile);
-  profiles.set(innerProfiles);
-  selectedProfileIndex.set(innerProfiles.length - 1);
+  setProfilesAndIndex(innerProfiles, innerProfiles.length - 1);
 }
 
 function fixProfile(profile) {
@@ -279,15 +336,14 @@ function init() {
       profile.filters = [];
     }
   }
-  profiles.set(innerProfiles);
   let profileIndex = 0;
   if (localStorage.selectedProfile) {
     profileIndex = Number(localStorage.selectedProfile);
   }
-  if (profileIndex >= innerProfiles.length) {
+  if (profileIndex < 0 || profileIndex >= innerProfiles.length) {
     profileIndex = innerProfiles.length - 1;
   }
-  selectedProfileIndex.set(profileIndex);
+  setProfilesAndIndex(innerProfiles, profileIndex);
   if (localStorage.isPaused) {
     isPaused.set(true);
   }
