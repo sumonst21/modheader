@@ -8,11 +8,11 @@
   import { mdiSelectAll, mdiContentCopy, mdiDownload, mdiClose } from "@mdi/js";
   import MdiIcon from "./MdiIcon.svelte";
   import { DISABLED_COLOR, PRIMARY_COLOR } from "../js/constants";
+  import { showMessage } from "../js/toast";
   import { profiles, selectedProfile, commitChange } from "../js/datasource";
 
   let exportTextbox;
   let dialog;
-  let snackbar;
   let selectedProfiles = [];
 
   export function show() {
@@ -23,7 +23,7 @@
   function copyExportText() {
     exportTextbox.select();
     document.execCommand("copy");
-    snackbar.open();
+    showMessage("Copied to clipboard!");
   }
 
   $: exportedText = JSON.stringify(selectedProfiles);
@@ -90,7 +90,3 @@
     </Button>
   </div>
 </Dialog>
-
-<Snackbar timeoutMs={4000} bind:this={snackbar}>
-  <SnackbarLabel>Copied to clipboard!</SnackbarLabel>
-</Snackbar>

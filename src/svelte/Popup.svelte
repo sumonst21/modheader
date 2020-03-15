@@ -1,5 +1,7 @@
 <script>
   import { AppContent, Scrim } from "@smui/drawer";
+  import Snackbar, { Label as SnackbarLabel } from "@smui/snackbar";
+  import { onDestroy } from "svelte";
   import TopBar from "./TopBar.svelte";
   import Drawer from "./Drawer.svelte";
   import Filters from "./Filters.svelte";
@@ -14,6 +16,7 @@
     removeUrlReplacement,
     commitChange
   } from "../js/datasource";
+  import { toastMessage } from "../js/toast";
   import {
     KNOWN_REQUEST_HEADERS,
     KNOWN_RESPONSE_HEADERS
@@ -23,6 +26,18 @@
   window.addEventListener("unload", () => {
     save();
   });
+
+  let snackbar;
+  let snackbarMessage;
+
+  const unsubscribeToastMessage = toastMessage.subscribe(message => {
+    if (snackbar) {
+      snackbarMessage = message;
+      snackbar.open();
+    }
+  });
+
+  onDestroy(unsubscribeToastMessage);
 </script>
 
 <style lang="scss">
@@ -177,6 +192,11 @@
     <Filters class="extra-gap" />
   </div>
 </AppContent>
+
+<Snackbar timeoutMs={4000} bind:this={snackbar} labelText={snackbarMessage}>
+  <SnackbarLabel />
+</Snackbar>
+
 <!-- 
   <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left">
     <md-list>

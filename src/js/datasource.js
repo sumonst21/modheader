@@ -1,5 +1,6 @@
 import { writable, derived, get } from 'svelte/store';
 import lodashCloneDeep from 'lodash/cloneDeep';
+import lodashOrderBy from 'lodash/orderBy';
 
 export const profiles = writable([]);
 export const selectedProfileIndex = writable(0);
@@ -126,49 +127,21 @@ export function commitChange(change) {
 export function pause() {
   isPaused.set(true);
   localStorage.isPaused = true;
-  // $mdToast.show(
-  //   $mdToast
-  //     .simple()
-  //     .content('ModHeader paused')
-  //     .position('bottom')
-  //     .hideDelay(1000)
-  // );
 }
 
 export function play() {
   isPaused.set(false);
   localStorage.removeItem('isPaused');
-  // $mdToast.show(
-  //   $mdToast
-  //     .simple()
-  //     .content('ModHeader unpaused')
-  //     .position('bottom')
-  //     .hideDelay(1000)
-  // );
 }
 
 export function lockToTab() {
   isLocked.set(true);
   localStorage.lockedTabId = localStorage.activeTabId;
-  // $mdToast.show(
-  //   $mdToast
-  //     .simple()
-  //     .content('Restricted ModHeader to the current tab')
-  //     .position('bottom')
-  //     .hideDelay(1000)
-  // );
 }
 
 export function unlockAllTab() {
   isLocked.set(false);
   localStorage.removeItem('lockedTabId');
-  // $mdToast.show(
-  //   $mdToast
-  //     .simple()
-  //     .content('Applying ModHeader to all tabs')
-  //     .position('bottom')
-  //     .hideDelay(1000)
-  // );
 }
 
 export function createProfile() {
@@ -262,17 +235,8 @@ function fixProfile(profile) {
   }
 }
 
-export function sortProfiles() {
-  function compare(a, b) {
-    if (a.title.toLowerCase() < b.title.toLowerCase()) {
-      return -1;
-    }
-    if (a.title.toLowerCase() > b.title.toLowerCase()) {
-      return 1;
-    }
-    return 0;
-  }
-  profiles.set(get(profiles).sort(compare));
+export function sortProfiles(sortOrder) {
+  profiles.set(lodashOrderBy(get(profiles), ['title'], [sortOrder]));
 }
 
 export function save() {

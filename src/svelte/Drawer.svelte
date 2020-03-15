@@ -15,12 +15,9 @@
     mdiGiftOutline,
     mdiCircle,
     mdiSortAscending,
-    mdiFileExportOutline,
-    mdiFileImportOutline,
+    mdiSortDescending,
     mdiPlus
   } from "@mdi/js";
-  import ExportDialog from "./ExportDialog.svelte";
-  import ImportDialog from "./ImportDialog.svelte";
   import MdiIcon from "./MdiIcon.svelte";
   import {
     addProfile,
@@ -29,13 +26,13 @@
     selectedProfile,
     profiles
   } from "../js/datasource";
+  import { showMessage } from "../js/toast";
   import { PRIMARY_COLOR } from "../js/constants";
 
   let drawer;
   let drawerOpen = true;
   let expand = false;
-  let exportDialog;
-  let importDialog;
+  let sortOrder = "asc";
 
   function onMouseenter() {
     expand = true;
@@ -144,7 +141,7 @@
               icon={mdiPlus}
               color={PRIMARY_COLOR} />
           </span>
-          <Text class="main-drawer-item-text">Add Profile</Text>
+          <Text class="main-drawer-item-text">Add profile</Text>
         </Item>
         {#each $profiles as profile, profileIndex}
           <Item
@@ -167,48 +164,23 @@
         <Item
           class="main-drawer-item"
           on:click={() => {
-            sortProfiles();
+            sortProfiles(sortOrder);
+            if (sortOrder === 'asc') {
+              showMessage('Profiles sorted in ascending order');
+            } else {
+              showMessage('Profiles sorted in descending order');
+            }
+            sortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
           }}>
           <span class="main-drawer-icon-container">
             <MdiIcon
               size="24"
               class="main-drawer-icon"
-              icon={mdiSortAscending}
+              icon={sortOrder === 'asc' ? mdiSortAscending : mdiSortDescending}
               color={PRIMARY_COLOR} />
           </span>
-          <Text class="main-drawer-item-text">Sort Profiles</Text>
+          <Text class="main-drawer-item-text">Sort profiles</Text>
         </Item>
-        <Item
-          class="main-drawer-item"
-          on:click={() => {
-            exportDialog.show();
-            expand = false;
-          }}>
-          <span class="main-drawer-icon-container">
-            <MdiIcon
-              size="24"
-              class="main-drawer-icon"
-              icon={mdiFileExportOutline}
-              color={PRIMARY_COLOR} />
-          </span>
-          <Text class="main-drawer-item-text">Export Profiles</Text>
-        </Item>
-        <Item
-          class="main-drawer-item"
-          on:click={() => {
-            importDialog.show();
-            expand = false;
-          }}>
-          <span class="main-drawer-icon-container">
-            <MdiIcon
-              size="24"
-              class="main-drawer-icon"
-              icon={mdiFileImportOutline}
-              color={PRIMARY_COLOR} />
-          </span>
-          <Text class="main-drawer-item-text">Import Profiles</Text>
-        </Item>
-
       </div>
 
       <Separator nav />
@@ -252,6 +224,3 @@
     </List>
   </Content>
 </Drawer>
-
-<ExportDialog bind:this={exportDialog} />
-<ImportDialog bind:this={importDialog} />

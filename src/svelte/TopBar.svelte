@@ -36,6 +36,7 @@
   } from "../js/datasource";
 
   let colorPicker;
+  let pauseSnackbar;
   let tabLockSnackbar;
   let moreMenuLocation;
   let moreMenu;
@@ -51,11 +52,17 @@
   }
 
   $: {
-    if (tabLockSnackbar) {
-      if ($isLocked) {
-        tabLockSnackbar.open();
-      } else {
+    if (pauseSnackbar && tabLockSnackbar) {
+      if ($isPaused) {
         tabLockSnackbar.close();
+        pauseSnackbar.open();
+      } else {
+        pauseSnackbar.close();
+        if ($isLocked) {
+          tabLockSnackbar.open();
+        } else {
+          tabLockSnackbar.close();
+        }
       }
     }
   }
@@ -183,6 +190,7 @@
               Lock to tab
             </Item>
           {/if}
+          <Separator nav />
           <Item on:SMUI:action={() => cloneProfile($selectedProfile)}>
             <MdiIcon
               class="more-menu-icon"
@@ -207,9 +215,7 @@
               color="#666" />
             Import profile
           </Item>
-        </List>
-        <List radiolist>
-          <Separator />
+          <Separator nav />
           <Subheader>Header override mode</Subheader>
           <Item on:SMUI:action={() => commitChange({ appendMode: false })}>
             <Radio bind:group={appendMode} value="false" />
@@ -233,6 +239,15 @@
 <ExportDialog bind:this={exportDialog} />
 <ImportDialog bind:this={importDialog} />
 
+<Snackbar timeoutMs={10000} bind:this={pauseSnackbar}>
+  <Label>ModHeader is Paused</Label>
+  <Actions>
+    <Button on:click={() => play()}>Resume</Button>
+    <IconButton dense on:click={() => pauseSnackbar.close()} title="Dismiss">
+      <MdiIcon size="24" icon={mdiClose} color="white" />
+    </IconButton>
+  </Actions>
+</Snackbar>
 <Snackbar timeoutMs={10000} bind:this={tabLockSnackbar}>
   <Label>Tab lock is active</Label>
   <Actions>
