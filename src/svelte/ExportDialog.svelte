@@ -64,8 +64,7 @@
   <div class="mdc-dialog__actions">
     <Button on:click={() => (selectedProfiles = [...$profiles])}>
       <MdiIcon size="24" icon={mdiSelectAll} color={PRIMARY_COLOR} />
-      &nbsp;
-      <Label>Select all</Label>
+      <Label class="ml-small">Select all</Label>
     </Button>
     <Button
       disabled={selectedProfiles.length === 0}
@@ -74,19 +73,20 @@
         size="24"
         icon={mdiContentCopy}
         color={selectedProfiles.length === 0 ? DISABLED_COLOR : PRIMARY_COLOR} />
-      &nbsp;
-      <Label>Copy</Label>
+      <Label class="ml-small">Copy</Label>
     </Button>
-    <Button
-      disabled={selectedProfiles.length === 0}
-      href={selectedProfiles.length === 0 ? undefined : 'data:application/json;base64,{window.btoa(exportedText)}'}
-      download="{selectedProfiles.map(p => p.title).join('+')}.json">
-      <MdiIcon
-        size="24"
-        icon={mdiDownload}
-        color={selectedProfiles.length === 0 ? DISABLED_COLOR : PRIMARY_COLOR} />
-      &nbsp;
-      <Label>Download</Label>
-    </Button>
+    {#if selectedProfiles.length === 0}
+      <Button disabled>
+        <MdiIcon size="24" icon={mdiDownload} color={DISABLED_COLOR} />
+        <Label class="ml-small">Download</Label>
+      </Button>
+    {:else}
+      <Button
+        href="data:application/json;base64,{window.btoa(exportedText)}"
+        download="{selectedProfiles.map(p => p.title).join('+')}.json">
+        <MdiIcon size="24" icon={mdiDownload} color={PRIMARY_COLOR} />
+        <Label class="ml-small">Download</Label>
+      </Button>
+    {/if}
   </div>
 </Dialog>

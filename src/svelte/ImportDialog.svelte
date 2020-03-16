@@ -1,9 +1,10 @@
 <script>
   import lodashIsEmpty from "lodash/isEmpty";
+  import lodashIsArray from "lodash/isArray";
   import Dialog, { Title, Content, Actions } from "@smui/dialog";
   import Button, { Label } from "@smui/button";
   import IconButton from "@smui/icon-button";
-  import { mdiClose, mdiCheck } from "@mdi/js";
+  import { mdiClose, mdiFileImport, mdiCheck } from "@mdi/js";
   import MdiIcon from "./MdiIcon.svelte";
   import { DISABLED_COLOR, PRIMARY_COLOR } from "../js/constants";
   import { showMessage } from "../js/toast";
@@ -12,20 +13,37 @@
   let importTextbox;
   let importText;
   let dialog;
+  let uploadFileInput;
 
   export function show() {
+    importText = "";
     dialog.open();
   }
 
   function done() {
-    const importedProfiles = JSON.parse(importText);
-    importProfiles(importedProfiles);
-    dialog.close();
-    showMessage(
-      `${importedProfiles.length} ${
-        importedProfiles.length === 1 ? "profile" : "profiles"
-      } successfully imported!`
-    );
+    try {
+      let importedProfiles = JSON.parse(importText);
+      if (!lodashIsArray(importedProfiles)) {
+        importedProfiles = [importedProfiles];
+      }
+      importProfiles(importedProfiles);
+      dialog.close();
+      showMessage(
+        `Imported profiles: ${importedProfiles.map(p => p.title).join(", ")}`
+      );
+    } catch (err) {
+      showMessage(
+        "Failed to import profiles. Please double check your exported profile."
+      );
+    }
+  }
+
+  function loadFile(event) {
+    const reader = new FileReader();
+    reader.onload = event => {
+      importText = event.target.result;
+    };
+    reader.readAsText(event.target.files[0]);
   }
 </script>
 
@@ -51,13 +69,22 @@
       bind:value={importText} />
   </Content>
   <div class="mdc-dialog__actions">
+    <input
+      bind:this={uploadFileInput}
+      type="file"
+      class="hidden"
+      on:change={loadFile} />
+    <Button on:click={() => uploadFileInput.click()}>
+      <MdiIcon size="24" icon={mdiFileImport} color={PRIMARY_COLOR} />
+      <Label class="ml-small">Load from file</Label>
+    </Button>
     <Button disabled={lodashIsEmpty(importText)} on:click={() => done()}>
       <MdiIcon
         size="24"
         icon={mdiCheck}
         color={lodashIsEmpty(importText) ? DISABLED_COLOR : PRIMARY_COLOR} />
       &nbsp;
-      <Label>Import</Label>
+      <Label class="ml-small">Import</Label>
     </Button>
   </div>
 </Dialog>

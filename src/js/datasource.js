@@ -145,7 +145,7 @@ export function commitChange(change) {
   const innerProfiles = get(profiles);
   const index = get(selectedProfileIndex);
   innerProfiles[index] = Object.assign(innerProfiles[index], change);
-  profiles.set(innerProfiles);
+  setProfilesAndIndex(innerProfiles, index);
 }
 
 export function undo() {

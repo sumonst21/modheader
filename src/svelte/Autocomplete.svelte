@@ -1,6 +1,7 @@
 <script>
   // Forked from https://github.com/pstanoev/simple-svelte-autocomplete
   import { fade } from "svelte/transition";
+  import { createEventDispatcher } from "svelte";
 
   // the list of items  the user can select from
   export let items;
@@ -35,10 +36,12 @@
   export let beforeChange = function(oldSelectedItem, newSelectedItem) {
     return true;
   };
+  const dispatch = createEventDispatcher();
   export let onChange = function(newSelectedItem) {};
   export let selectFirstIfEmpty = false;
   export let minCharactersToSearch = 0;
   export let maxItemsToShowInList = 0;
+
   function safeStringFunction(theFunction, argument) {
     if (typeof theFunction !== "function") {
       console.error(
@@ -380,6 +383,7 @@
       highlightFilter = 0;
       selectItem();
     }
+    dispatch("change");
   }
   function isMinCharsToSearchReached() {
     return (

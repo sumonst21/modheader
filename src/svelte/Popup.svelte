@@ -127,6 +127,10 @@
     overflow-y: auto;
   }
 
+  :global(.ml-small) {
+    margin-left: 5px;
+  }
+
   .top-app-bar-container {
     height: 48px;
   }

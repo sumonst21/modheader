@@ -60,6 +60,7 @@
 
   function refreshHeaders() {
     dispatch("refresh", headers);
+    console.log("refresh");
   }
 
   function toggleAll() {
@@ -68,6 +69,7 @@
     } else {
       headers.forEach(h => (h.enabled = false));
     }
+    refreshHeaders();
   }
 
   $: allChecked = headers.every(h => h.enabled);
@@ -210,7 +212,10 @@
     {#each headers as header}
       <Row class="data-table-row">
         <Cell checkbox class="data-table-cell">
-          <Checkbox bind:checked={header.enabled} indeterminate={false} />
+          <Checkbox
+            bind:checked={header.enabled}
+            on:click={refreshHeaders}
+            indeterminate={false} />
         </Cell>
         <Cell class="data-table-cell">
           <AutoComplete
@@ -218,6 +223,7 @@
             items={knownHeaderNames}
             bind:value={header.name}
             bind:selectedItem={header.name}
+            on:change={refreshHeaders}
             placeholder="Name" />
         </Cell>
         <Cell class="data-table-cell">
@@ -226,6 +232,7 @@
             items={knownHeaderValues}
             bind:value={header.value}
             bind:selectedItem={header.value}
+            on:change={refreshHeaders}
             placeholder="Value" />
         </Cell>
         {#if !$selectedProfile.hideComment}
@@ -235,6 +242,7 @@
               items={knownHeaderComments}
               bind:value={header.comment}
               bind:selectedItem={header.comment}
+              on:change={refreshHeaders}
               placeholder="Comment" />
           </Cell>
         {/if}
