@@ -2,6 +2,7 @@ import { writable, derived, get } from 'svelte/store';
 import lodashCloneDeep from 'lodash/cloneDeep';
 import lodashOrderBy from 'lodash/orderBy';
 import lodashLast from 'lodash/last';
+import lodashIsUndefined from 'lodash/isUndefined';
 
 export const profiles = writable([]);
 export const selectedProfileIndex = writable(0);
@@ -13,6 +14,8 @@ export const selectedProfile = derived(
   ([$profiles, $selectedProfileIndex]) => $profiles[$selectedProfileIndex],
   {},
 );
+export const isPaused = writable(false);
+export const isLocked = writable(false);
 
 export const changesStack = writable([]);
 let ignoringChangeStack = true;
@@ -35,10 +38,26 @@ selectedProfileIndex.subscribe($selectedProfileIndex => {
     }
   }
 });
+isPaused.subscribe($isPaused => {
+  if (!ignoringChangeStack) {
+    const changes = get(changesStack);
+    if (changes.length === 0 || lodashLast(changes).isPaused !== $isPaused) {
+      changes.push({isPaused: $isPaused});
+      changesStack.set(changes);
+    }
+  }
+});
+isLocked.subscribe($isLocked => {
+  if (!ignoringChangeStack) {
+    const changes = get(changesStack);
+    if (changes.length === 0 || lodashLast(changes).isLocked !== $isLocked) {
+      changes.push({isLocked: $isLocked});
+      changesStack.set(changes);
+    }
+  }
+});
 ignoringChangeStack = false;
 
-export let isPaused = writable(false);
-export let isLocked = writable(false);
 
 function isExistingProfileTitle_(title) {
   const innerProfiles = get(profiles);
@@ -156,20 +175,33 @@ export function undo() {
   let lastChange;
   const currentProfiles = get(profiles);
   const serializedCurrentProfiles = JSON.stringify(currentProfiles);
-  const currentSelectedProfileIndex = get(selectedProfileIndex);
+  let currentSelectedProfileIndex = get(selectedProfileIndex);
+  let currentIsLocked = get(isLocked);
+  let currentIsPaused = get(isPaused);
   while (changes.length > 0) {
     lastChange = changes.pop();
-    if (lastChange.profiles && lastChange.profiles !== serializedCurrentProfiles) {
+    if (!lodashIsUndefined(lastChange.profiles) &&
+        lastChange.profiles !== serializedCurrentProfiles) {
       break;
     }
-    if (lastChange.selectedProfileIndex && lastChange.selectedProfileIndex !== currentSelectedProfileIndex) {
+    if (!lodashIsUndefined(lastChange.selectedProfileIndex) &&
+        lastChange.selectedProfileIndex !== currentSelectedProfileIndex) {
+      break;
+    }
+    if (!lodashIsUndefined(lastChange.isLocked) &&
+        lastChange.isLocked !== currentIsLocked) {
+      break;
+    }
+    if (!lodashIsUndefined(lastChange.isPaused) &&
+        lastChange.isPaused !== currentIsPaused) {
       break;
     }
   }
   changesStack.set(changes);
   setProfilesAndIndex(
       (lastChange.profiles && JSON.parse(lastChange.profiles)) || currentProfiles,
-      lastChange.selectedProfileIndex || currentSelectedProfileIndex);
+      lastChange.selectedProfileIndex || currentSelectedProfileIndex,
+      { newIsLocked: lastChange.isLocked, newIsPaused: lastChange.isPaused });
 }
 
 export function pause() {
@@ -212,16 +244,35 @@ export function createProfile() {
   return profile;
 };
 
-function setProfilesAndIndex(newProfiles, newIndex) {
+function setProfilesAndIndex(newProfiles, newIndex, { newIsLocked, newIsPaused } = {}) {
   ignoringChangeStack = true;
   newIndex = Math.max(0, Math.min(newProfiles.length - 1, newIndex));
+  if (lodashIsUndefined(newIsLocked)) {
+    newIsLocked = get(isLocked);
+  }
+  if (lodashIsUndefined(newIsPaused)) {
+    newIsPaused = get(isPaused);
+  }
   profiles.set(newProfiles);
   selectedProfileIndex.set(newIndex);
+  if (newIsLocked) {
+    lockToTab();
+  } else {
+    unlockAllTab();
+  }
+  if (newIsPaused) {
+    pause();
+  } else {
+    play();
+  }
   const changes = get(changesStack);
   changes.push({
     profiles: JSON.stringify(newProfiles),
-    selectedProfileIndex: newIndex
+    selectedProfileIndex: newIndex,
+    isLocked: newIsLocked,
+    isPaused: newIsPaused,
   });
+
   changesStack.set(changes);
   ignoringChangeStack = false;
 }
@@ -340,16 +391,11 @@ function init() {
   if (localStorage.selectedProfile) {
     profileIndex = Number(localStorage.selectedProfile);
   }
-  if (profileIndex < 0 || profileIndex >= innerProfiles.length) {
+  if (!(profileIndex > 0 && profileIndex < innerProfiles.length)) {
     profileIndex = innerProfiles.length - 1;
   }
-  setProfilesAndIndex(innerProfiles, profileIndex);
-  if (localStorage.isPaused) {
-    isPaused.set(true);
-  }
-  if (localStorage.lockedTabId) {
-    isLocked.set(true);
-  }
+  setProfilesAndIndex(innerProfiles, profileIndex,
+    { newIsLocked: !!localStorage.lockedTabId, newIsPaused: localStorage.isPaused });
 }
 
 init();
