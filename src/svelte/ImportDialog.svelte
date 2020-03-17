@@ -83,7 +83,6 @@
         size="24"
         icon={mdiCheck}
         color={lodashIsEmpty(importText) ? DISABLED_COLOR : PRIMARY_COLOR} />
-      &nbsp;
       <Label class="ml-small">Import</Label>
     </Button>
   </div>

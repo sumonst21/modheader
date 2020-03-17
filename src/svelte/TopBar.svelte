@@ -17,11 +17,13 @@
     mdiContentCopy,
     mdiFileExportOutline,
     mdiFileImportOutline,
+    mdiCloudDownloadOutline,
     mdiUndo
   } from "@mdi/js";
   import { get } from "svelte/store";
   import ExportDialog from "./ExportDialog.svelte";
   import ImportDialog from "./ImportDialog.svelte";
+  import CloudBackupDialog from "./CloudBackupDialog.svelte";
   import MdiIcon from "./MdiIcon.svelte";
   import {
     selectedProfile,
@@ -46,6 +48,7 @@
   let moreMenu;
   let exportDialog;
   let importDialog;
+  let cloudBackupDialog;
 
   function togglePause() {
     if ($isPaused) {
@@ -214,7 +217,7 @@
               size="24"
               icon={mdiFileExportOutline}
               color="#666" />
-            Export profile
+            Export profile(s)
           </Item>
           <Item on:SMUI:action={() => importDialog.show()}>
             <MdiIcon
@@ -222,7 +225,15 @@
               size="24"
               icon={mdiFileImportOutline}
               color="#666" />
-            Import profile
+            Import profile(s)
+          </Item>
+          <Item on:SMUI:action={() => cloudBackupDialog.show()}>
+            <MdiIcon
+              class="more-menu-icon"
+              size="24"
+              icon={mdiCloudDownloadOutline}
+              color="#666" />
+            Restore from cloud backup
           </Item>
           <Separator nav />
           <Subheader>Header override mode</Subheader>
@@ -247,6 +258,7 @@
 
 <ExportDialog bind:this={exportDialog} />
 <ImportDialog bind:this={importDialog} />
+<CloudBackupDialog bind:this={cloudBackupDialog} />
 
 <Snackbar timeoutMs={10000} bind:this={pauseSnackbar}>
   <Label>ModHeader is Paused</Label>

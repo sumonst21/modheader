@@ -200,22 +200,3 @@
 <Snackbar timeoutMs={4000} bind:this={snackbar} labelText={snackbarMessage}>
   <SnackbarLabel />
 </Snackbar>
-
-<!-- 
-  <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left">
-    <md-list>
-      <md-list-item ng-click="profileService.importProfiles($event)">
-        <md-icon md-svg-src="images/ic_file_upload_24px.svg"></md-icon>
-        <p>Import Multiple Profiles</p>
-      </md-list-item>
-      <md-list-item ng-click="profileService.exportProfiles($event)">
-        <md-icon md-svg-src="images/ic_file_download_24px.svg"></md-icon>
-        <p>Export All Profiles</p>
-      </md-list-item>
-      <md-list-item ng-click="profileService.openCloudBackup($event)">
-        <md-icon md-svg-src="images/ic_cloud_download_18px.svg"></md-icon>
-        <p>Cloud backup</p>
-      </md-list-item>
-      <md-divider></md-divider>
-    </md-list>
-  </md-sidenav> -->

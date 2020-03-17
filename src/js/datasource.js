@@ -343,6 +343,13 @@ function fixProfile(profile) {
   }
 }
 
+export function restoreToProfiles(profilesToRestore) {
+  for (const profile of profilesToRestore) {
+    fixProfile(profile);
+  }
+  setProfilesAndIndex(profilesToRestore, 0);
+}
+
 export function sortProfiles(sortOrder) {
   profiles.set(lodashOrderBy(get(profiles), ['title'], [sortOrder]));
 }
