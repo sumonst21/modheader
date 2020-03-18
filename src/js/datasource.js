@@ -3,6 +3,7 @@ import lodashCloneDeep from 'lodash/cloneDeep';
 import lodashOrderBy from 'lodash/orderBy';
 import lodashLast from 'lodash/last';
 import lodashIsUndefined from 'lodash/isUndefined';
+import { showMessage, hideMessage } from './toast';
 
 export const profiles = writable([]);
 export const selectedProfileIndex = writable(0);
@@ -202,6 +203,7 @@ export function undo() {
       (lastChange.profiles && JSON.parse(lastChange.profiles)) || currentProfiles,
       lastChange.selectedProfileIndex || currentSelectedProfileIndex,
       { newIsLocked: lastChange.isLocked, newIsPaused: lastChange.isPaused });
+  hideMessage();
 }
 
 export function pause() {
@@ -283,6 +285,7 @@ export function importProfiles(importProfiles) {
   }
   const innerProfiles = get(profiles).concat(importProfiles);
   setProfilesAndIndex(innerProfiles, innerProfiles.length - 1);
+  showMessage(`Imported profiles: ${importProfiles.map(p => p.title).join(", ")}`, { canUndo: true });
 }
 
 export function addProfile() {
@@ -303,6 +306,7 @@ export function removeProfile(profile) {
     innerProfiles = [createProfile()];
   }
   setProfilesAndIndex(innerProfiles, innerProfiles.length - 1);
+  showMessage('Profile deleted', { canUndo: true });
 }
 
 export function cloneProfile(profile) {
@@ -311,6 +315,7 @@ export function cloneProfile(profile) {
   const innerProfiles = get(profiles);
   innerProfiles.push(newProfile);
   setProfilesAndIndex(innerProfiles, innerProfiles.length - 1);
+  showMessage('Profile cloned', { canUndo: true });
 }
 
 function fixProfile(profile) {
@@ -348,10 +353,16 @@ export function restoreToProfiles(profilesToRestore) {
     fixProfile(profile);
   }
   setProfilesAndIndex(profilesToRestore, 0);
+  showMessage('Profiles restored', { canUndo: true });
 }
 
 export function sortProfiles(sortOrder) {
   profiles.set(lodashOrderBy(get(profiles), ['title'], [sortOrder]));
+  if (sortOrder === 'asc') {
+    showMessage('Profiles sorted in ascending order', { canUndo: true });
+  } else {
+    showMessage('Profiles sorted in descending order', { canUndo: true });
+  }
 }
 
 export function save() {

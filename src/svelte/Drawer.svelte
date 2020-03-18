@@ -26,7 +26,6 @@
     selectedProfile,
     profiles
   } from "../js/datasource";
-  import { showMessage } from "../js/toast";
   import { PRIMARY_COLOR } from "../js/constants";
 
   let drawer;
@@ -165,11 +164,6 @@
           class="main-drawer-item"
           on:click={() => {
             sortProfiles(sortOrder);
-            if (sortOrder === 'asc') {
-              showMessage('Profiles sorted in ascending order');
-            } else {
-              showMessage('Profiles sorted in descending order');
-            }
             sortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
           }}>
           <span class="main-drawer-icon-container">

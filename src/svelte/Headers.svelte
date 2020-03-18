@@ -6,14 +6,7 @@
   import Checkbox from "@smui/checkbox";
   import Menu from "@smui/menu";
   import List, { Item, Separator, Text } from "@smui/list";
-  import {
-    mdiPlus,
-    mdiCommentCheckOutline,
-    mdiCommentRemoveOutline,
-    mdiTrashCan,
-    mdiArrowExpand,
-    mdiSort
-  } from "@mdi/js";
+  import { mdiPlus, mdiTrashCan, mdiArrowExpand, mdiSort } from "@mdi/js";
   import { createEventDispatcher } from "svelte";
   import lodashUniq from "lodash/uniq";
   import lodashOrderBy from "lodash/orderBy";
@@ -52,15 +45,8 @@
     refreshHeaders();
   }
 
-  function toggleComment() {
-    commitChange({
-      hideComment: !$selectedProfile.hideComment
-    });
-  }
-
   function refreshHeaders() {
     dispatch("refresh", headers);
-    console.log("refresh");
   }
 
   function toggleAll() {
@@ -197,13 +183,6 @@
             color={headers.length === 0 ? DISABLED_COLOR : 'red'}
             middle />
           Clear
-        </Button>
-        <Button on:click={() => toggleComment()}>
-          <MdiIcon
-            size="20"
-            icon={$selectedProfile.hideComment ? mdiCommentCheckOutline : mdiCommentRemoveOutline}
-            color={PRIMARY_COLOR} />
-          Comment
         </Button>
       </Cell>
     </Row>

@@ -28,9 +28,6 @@
       }
       importProfiles(importedProfiles);
       dialog.close();
-      showMessage(
-        `Imported profiles: ${importedProfiles.map(p => p.title).join(", ")}`
-      );
     } catch (err) {
       showMessage(
         "Failed to import profiles. Please double check your exported profile."

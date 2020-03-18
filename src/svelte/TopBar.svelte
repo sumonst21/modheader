@@ -18,6 +18,8 @@
     mdiFileExportOutline,
     mdiFileImportOutline,
     mdiCloudDownloadOutline,
+    mdiCommentCheckOutline,
+    mdiCommentRemoveOutline,
     mdiUndo
   } from "@mdi/js";
   import { get } from "svelte/store";
@@ -56,6 +58,12 @@
     } else {
       pause();
     }
+  }
+
+  function toggleComment() {
+    commitChange({
+      hideComment: !$selectedProfile.hideComment
+    });
   }
 
   $: {
@@ -141,6 +149,17 @@
           <MdiIcon size="24" icon={mdiUndo} color="white" />
         </IconButton>
       {/if}
+
+      <IconButton
+        dense
+        on:click={() => toggleComment()}
+        title={$selectedProfile.hideComment ? 'Show comment' : 'Hide comment'}>
+        <MdiIcon
+          size="24"
+          icon={$selectedProfile.hideComment ? mdiCommentCheckOutline : mdiCommentRemoveOutline}
+          color="white" />
+      </IconButton>
+
       <IconButton
         dense
         on:click={() => togglePause()}
@@ -176,7 +195,6 @@
         title="More">
         <MdiIcon size="24" icon={mdiDotsVertical} color="white" />
       </IconButton>
-
       <Menu
         bind:this={moreMenu}
         class="more-menu"

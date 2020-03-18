@@ -9,7 +9,7 @@
   import { mdiTrashCanOutline, mdiCancel, mdiClose } from "@mdi/js";
   import MdiIcon from "./MdiIcon.svelte";
   import { DISABLED_COLOR, PRIMARY_COLOR } from "../js/constants";
-  import { showMessage } from "../js/toast";
+
   import { restoreToProfiles } from "../js/datasource";
 
   let importTextbox;
@@ -58,7 +58,6 @@
 
   function restoreEntry(entry) {
     restoreToProfiles(entry.profiles);
-    showMessage(`Profiles restored to: ${formatEntry(entry)}`);
     dialog.close();
   }
 

@@ -1,6 +1,9 @@
 <script>
   import { AppContent, Scrim } from "@smui/drawer";
-  import Snackbar, { Label as SnackbarLabel } from "@smui/snackbar";
+  import Snackbar, { Actions, Label as SnackbarLabel } from "@smui/snackbar";
+  import IconButton from "@smui/icon-button";
+  import Button from "@smui/button";
+  import { mdiClose } from "@mdi/js";
   import { onDestroy } from "svelte";
   import TopBar from "./TopBar.svelte";
   import Drawer from "./Drawer.svelte";
@@ -14,9 +17,11 @@
     removeHeader,
     addUrlReplacement,
     removeUrlReplacement,
-    commitChange
+    commitChange,
+    undo
   } from "../js/datasource";
-  import { toastMessage } from "../js/toast";
+  import MdiIcon from "./MdiIcon.svelte";
+  import { toastMessage, undoable } from "../js/toast";
   import {
     KNOWN_REQUEST_HEADERS,
     KNOWN_RESPONSE_HEADERS
@@ -33,7 +38,11 @@
   const unsubscribeToastMessage = toastMessage.subscribe(message => {
     if (snackbar) {
       snackbarMessage = message;
-      snackbar.open();
+      if (message.length > 0) {
+        snackbar.open();
+      } else {
+        snackbar.close();
+      }
     }
   });
 
@@ -199,4 +208,12 @@
 
 <Snackbar timeoutMs={4000} bind:this={snackbar} labelText={snackbarMessage}>
   <SnackbarLabel />
+  <Actions>
+    {#if $undoable}
+      <Button on:click={() => undo()}>Undo</Button>
+    {/if}
+    <IconButton dense on:click={() => snackbar.close()} title="Dismiss">
+      <MdiIcon size="24" icon={mdiClose} color="white" />
+    </IconButton>
+  </Actions>
 </Snackbar>
