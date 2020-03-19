@@ -1,6 +1,6 @@
 <script>
   import Button, { Label } from "@smui/button";
-  import Menu from "@@material/menu";
+  import Menu from "@smui/menu";
   import List, { Item } from "@smui/list";
   import { createEventDispatcher } from "svelte";
   import lodashWithout from "lodash/without";
