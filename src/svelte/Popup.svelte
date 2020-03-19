@@ -81,6 +81,14 @@
     width: 120px;
   }
 
+  :global(.data-table-checkbox-cell) {
+    width: 32px;
+  }
+
+  :global(.data-table-title-cell) {
+    width: 140px;
+  }
+
   :global(.data-table-row) {
     height: 20px;
     margin: 0;

@@ -5,7 +5,14 @@
   import IconButton from "@smui/icon-button";
   import Checkbox from "@smui/checkbox";
   import List, { Item, Separator, Text } from "@smui/list";
-  import { mdiSelectAll, mdiContentCopy, mdiDownload, mdiClose } from "@mdi/js";
+  import lzString from "lz-string";
+  import {
+    mdiSelectAll,
+    mdiContentCopy,
+    mdiDownload,
+    mdiShare,
+    mdiClose
+  } from "@mdi/js";
   import MdiIcon from "./MdiIcon.svelte";
   import { DISABLED_COLOR, PRIMARY_COLOR } from "../js/constants";
   import { showMessage } from "../js/toast";
@@ -24,6 +31,14 @@
     exportTextbox.select();
     document.execCommand("copy");
     showMessage("Copied to clipboard!");
+  }
+
+  function shareUrl() {
+    chrome.tabs.create({
+      url: `https://bewisse.com/modheader/p/${lzString.compressToEncodedURIComponent(
+        exportedText
+      )}`
+    });
   }
 
   $: exportedText = JSON.stringify(selectedProfiles);
@@ -64,7 +79,16 @@
   <div class="mdc-dialog__actions">
     <Button on:click={() => (selectedProfiles = [...$profiles])}>
       <MdiIcon size="24" icon={mdiSelectAll} color={PRIMARY_COLOR} />
-      <Label class="ml-small">Select all</Label>
+      <Label class="ml-small">Select All</Label>
+    </Button>
+    <Button
+      disabled={selectedProfiles.length === 0}
+      on:click={() => shareUrl()}>
+      <MdiIcon
+        size="24"
+        icon={mdiShare}
+        color={selectedProfiles.length === 0 ? DISABLED_COLOR : PRIMARY_COLOR} />
+      <Label class="ml-small">Share</Label>
     </Button>
     <Button
       disabled={selectedProfiles.length === 0}

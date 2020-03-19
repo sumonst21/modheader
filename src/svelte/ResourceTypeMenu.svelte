@@ -1,7 +1,8 @@
 <script>
   import Button, { Label } from "@smui/button";
-  import Menu from "@smui/menu";
+  import Menu from "@@material/menu";
   import List, { Item } from "@smui/list";
+  import { createEventDispatcher } from "svelte";
   import lodashWithout from "lodash/without";
 
   const KNOWN_RESOURCE_TYPES = {
@@ -13,6 +14,7 @@
     xmlhttprequest: "XmlHttpRequest",
     other: "Other"
   };
+  const dispatch = createEventDispatcher();
   let resourceTypeMenu;
   export let resourceType;
 </script>
@@ -31,8 +33,6 @@
   class="resource-type-menu-button"
   on:click={e => {
     resourceTypeMenu.setFixedPosition(true);
-    const rect = e.target.getBoundingClientRect();
-    resourceTypeMenu.setAbsolutePosition(rect.left + window.scrollX, e.target.offsetParent.offsetTop + rect.top + window.scrollY);
     resourceTypeMenu.setOpen(true);
   }}>
   {resourceType && resourceType.length > 0 ? resourceType
@@ -49,6 +49,7 @@
           } else {
             resourceType = resourceType.concat([value]);
           }
+          dispatch('change');
         }}
         activated={resourceType.includes(value)}>
         {label}

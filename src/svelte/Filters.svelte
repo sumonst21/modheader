@@ -51,11 +51,18 @@
     }
   }
 
+  function refreshFilters() {
+    commitChange({ filters });
+  }
+
   $: filters = $selectedProfile.filters;
   $: allChecked = filters.every(f => f.enabled);
   $: allUnchecked = filters.every(f => !f.enabled);
   $: knownUrlRegexes = lodashUniq(
     filters.map(f => f.urlRegex).filter(n => !!n)
+  );
+  $: knownFilterComments = lodashUniq(
+    filters.map(f => f.comment).filter(n => !!n)
   );
 </script>
 
@@ -65,7 +72,9 @@
   }
 
   :global(.filter-select-field) {
+    width: 140px;
     font-size: 14px;
+    margin: 0;
     padding: 0;
     height: 26px;
     border-bottom: 1px solid #ddd !important;
@@ -83,14 +92,14 @@
 <DataTable class="data-table {clazz}">
   <Head>
     <Row class="data-table-row">
-      <Cell checkbox class="data-table-cell">
+      <Cell checkbox class="data-table-cell data-table-checkbox-cell">
         <Checkbox
           bind:checked={allChecked}
           indeterminate={!allChecked && !allUnchecked}
           on:click={toggleAll}
           disabled={$selectedProfile.filters.length === 0} />
       </Cell>
-      <Cell class="data-table-cell">
+      <Cell class="data-table-cell data-table-title-cell">
         <h4 class="data-table-title">Filters</h4>
       </Cell>
       <Cell class="data-table-cell data-table-value-cell" colspan="3">
@@ -152,7 +161,8 @@
           <Select
             bind:value={filter.type}
             class="filter-select"
-            input$class="filter-select-field">
+            input$class="filter-select-field"
+            on:change={refreshFilters}>
             <Option value="urls" selected={filter.type === 'urls'}>
               URL Pattern
             </Option>
@@ -173,6 +183,7 @@
             items={knownUrlRegexes}
             bind:value={filter.urlRegex}
             bind:selectedItem={filter.urlRegex}
+            on:change={refreshFilters}
             placeholder=".*://.*.google.com/.*" />
         </Cell>
         <Cell
@@ -188,12 +199,24 @@
               color={PRIMARY_COLOR} />
           </IconButton>
         </Cell>
+        {#if !$selectedProfile.hideComment && (filter.type === 'urls' || filter.type === 'excludeUrls')}
+          <Cell class="data-table-cell">
+            <AutoComplete
+              className="mdc-text-field__input"
+              items={knownFilterComments}
+              bind:value={filter.comment}
+              bind:selectedItem={filter.comment}
+              on:change={refreshFilters}
+              placeholder="Comment" />
+          </Cell>
+        {/if}
         <Cell
           class="data-table-cell {filter.type === 'types' ? '' : 'hidden'}"
-          colspan="2">
+          colspan={selectedProfile.hideComment ? 2 : 3}>
           <ResourceTypeMenu
             bind:resourceType={filter.resourceType}
-            {resourceTypeMenuLocation} />
+            {resourceTypeMenuLocation}
+            on:change={refreshFilters} />
         </Cell>
         <Cell class="data-table-cell">
           <IconButton

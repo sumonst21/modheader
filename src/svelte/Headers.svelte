@@ -113,14 +113,14 @@
 <DataTable class="data-table {clazz}">
   <Head>
     <Row class="data-table-row">
-      <Cell checkbox class="data-table-cell">
+      <Cell checkbox class="data-table-cell data-table-checkbox-cell">
         <Checkbox
           bind:checked={allChecked}
           indeterminate={!allChecked && !allUnchecked}
           on:click={() => toggleAll()}
           disabled={headers.length === 0} />
       </Cell>
-      <Cell class="data-table-cell">
+      <Cell class="data-table-cell data-table-title-cell">
         <h4 class="data-table-title">{title}</h4>
       </Cell>
       <Cell
