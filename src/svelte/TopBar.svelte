@@ -101,7 +101,6 @@
 
   :global(.more-menu) {
     width: 320px;
-    overflow: hidden;
   }
 
   :global(.more-menu-icon) {
@@ -149,17 +148,6 @@
           <MdiIcon size="24" icon={mdiUndo} color="white" />
         </IconButton>
       {/if}
-
-      <IconButton
-        dense
-        on:click={() => toggleComment()}
-        title={$selectedProfile.hideComment ? 'Show comment' : 'Hide comment'}>
-        <MdiIcon
-          size="24"
-          icon={$selectedProfile.hideComment ? mdiCommentCheckOutline : mdiCommentRemoveOutline}
-          color="white" />
-      </IconButton>
-
       <IconButton
         dense
         on:click={() => togglePause()}
@@ -169,12 +157,6 @@
         {:else}
           <MdiIcon size="24" icon={mdiPause} color="white" />
         {/if}
-      </IconButton>
-      <IconButton
-        dense
-        on:click={() => removeProfile($selectedProfile)}
-        title="Delete profile">
-        <MdiIcon size="24" icon={mdiTrashCan} color="white" />
       </IconButton>
       <IconButton
         dense
@@ -195,12 +177,16 @@
         title="More">
         <MdiIcon size="24" icon={mdiDotsVertical} color="white" />
       </IconButton>
-      <Menu
-        bind:this={moreMenu}
-        class="more-menu"
-        quickOpen
-        anchorCorner="BOTTOM_LEFT">
+      <Menu bind:this={moreMenu} class="more-menu" quickOpen>
         <List>
+          <Item on:SMUI:action={() => toggleComment()}>
+            <MdiIcon
+              class="more-menu-icon"
+              size="24"
+              icon={$selectedProfile.hideComment ? mdiCommentCheckOutline : mdiCommentRemoveOutline}
+              color="#666" />
+            {$selectedProfile.hideComment ? 'Show comment column' : 'Hide comment column'}
+          </Item>
           {#if $isLocked}
             <Item on:SMUI:action={() => unlockAllTab()}>
               <MdiIcon
@@ -221,6 +207,14 @@
             </Item>
           {/if}
           <Separator nav />
+          <Item on:SMUI:action={() => removeProfile($selectedProfile)}>
+            <MdiIcon
+              class="more-menu-icon"
+              size="24"
+              icon={mdiTrashCan}
+              color="#666" />
+            Delete profile
+          </Item>
           <Item on:SMUI:action={() => cloneProfile($selectedProfile)}>
             <MdiIcon
               class="more-menu-icon"

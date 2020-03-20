@@ -130,7 +130,8 @@ function modifyHeader(source, dest) {
     indexMap[header.name.toLowerCase()] = index;
   }
   for (let header of source) {
-    const index = indexMap[header.name.toLowerCase()];
+    const normalizedHeaderName = header.name.toLowerCase();
+    const index = indexMap[normalizedHeaderName];
     if (index !== undefined) {
       if (!currentProfile.appendMode || currentProfile.appendMode === 'false') {
         dest[index].value = header.value;
@@ -144,7 +145,7 @@ function modifyHeader(source, dest) {
       }
     } else {
       dest.push({ name: header.name, value: header.value });
-      indexMap[header.name.toLowerCase()] = dest.length - 1;
+      indexMap[normalizedHeaderName] = dest.length - 1;
     }
   }
 }
