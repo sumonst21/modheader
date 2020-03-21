@@ -6,13 +6,7 @@
   import Checkbox from "@smui/checkbox";
   import List, { Item, Separator, Text } from "@smui/list";
   import lzString from "lz-string";
-  import {
-    mdiSelectAll,
-    mdiContentCopy,
-    mdiDownload,
-    mdiShare,
-    mdiClose
-  } from "@mdi/js";
+  import { mdiSelectAll, mdiContentCopy, mdiClose } from "@mdi/js";
   import MdiIcon from "./MdiIcon.svelte";
   import { DISABLED_COLOR, PRIMARY_COLOR } from "../js/constants";
   import { showMessage } from "../js/toast";
@@ -27,22 +21,28 @@
     dialog.open();
   }
 
-  function copyExportText() {
+  async function copyExportText() {
     exportTextbox.select();
-    document.execCommand("copy");
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      await navigator.clipboard.writeText(exportedUrl);
+    } else {
+      document.execCommand("copy");
+    }
     showMessage("Copied to clipboard!");
   }
 
-  function shareUrl() {
-    chrome.tabs.create({
-      url: `https://bewisse.com/modheader/p/${lzString.compressToEncodedURIComponent(
-        exportedText
-      )}`
-    });
-  }
-
   $: exportedText = JSON.stringify(selectedProfiles);
+  $: exportedUrl = `https://bewisse.com/modheader/p/${lzString.compressToEncodedURIComponent(
+    exportedText
+  )}`;
 </script>
+
+<style scoped>
+  .export-text-field {
+    width: 100%;
+    font-size: 1.4em;
+  }
+</style>
 
 <Dialog
   bind:this={dialog}
@@ -50,7 +50,7 @@
   aria-labelledby="dialog-title"
   aria-describedby="dialog-content">
   <Title id="dialog-title">
-    Export profile
+    Export / share profile(s)
     <IconButton
       aria-label="Close"
       class="dialog-close-button"
@@ -59,7 +59,9 @@
     </IconButton>
   </Title>
   <Content id="dialog-content">
-    Select the profiles to export
+    Select 1 or more profiles to share / export.
+    <br />
+    Be careful about sharing sensitive data!
     <List checklist>
       {#each $profiles as profile}
         <Item>
@@ -68,27 +70,18 @@
         </Item>
       {/each}
     </List>
-    <textarea
+    <input
       bind:this={exportTextbox}
       on:focus={() => copyExportText()}
-      class="extra-large-textarea"
-      rows="40"
+      class="export-text-field"
+      type="url"
       readonly
-      value={exportedText} />
+      value={exportedUrl} />
   </Content>
   <div class="mdc-dialog__actions">
     <Button on:click={() => (selectedProfiles = [...$profiles])}>
       <MdiIcon size="24" icon={mdiSelectAll} color={PRIMARY_COLOR} />
       <Label class="ml-small">Select All</Label>
-    </Button>
-    <Button
-      disabled={selectedProfiles.length === 0}
-      on:click={() => shareUrl()}>
-      <MdiIcon
-        size="24"
-        icon={mdiShare}
-        color={selectedProfiles.length === 0 ? DISABLED_COLOR : PRIMARY_COLOR} />
-      <Label class="ml-small">Share</Label>
     </Button>
     <Button
       disabled={selectedProfiles.length === 0}
@@ -99,18 +92,5 @@
         color={selectedProfiles.length === 0 ? DISABLED_COLOR : PRIMARY_COLOR} />
       <Label class="ml-small">Copy</Label>
     </Button>
-    {#if selectedProfiles.length === 0}
-      <Button disabled>
-        <MdiIcon size="24" icon={mdiDownload} color={DISABLED_COLOR} />
-        <Label class="ml-small">Download</Label>
-      </Button>
-    {:else}
-      <Button
-        href="data:application/json;base64,{window.btoa(exportedText)}"
-        download="{selectedProfiles.map(p => p.title).join('+')}.json">
-        <MdiIcon size="24" icon={mdiDownload} color={PRIMARY_COLOR} />
-        <Label class="ml-small">Download</Label>
-      </Button>
-    {/if}
   </div>
 </Dialog>

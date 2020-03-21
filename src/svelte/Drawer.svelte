@@ -19,6 +19,7 @@
     mdiPlus
   } from "@mdi/js";
   import MdiIcon from "./MdiIcon.svelte";
+  import ProfileBadge from "./ProfileBadge.svelte";
   import {
     addProfile,
     sortProfiles,
@@ -89,12 +90,6 @@
     padding-top: 4px;
   }
 
-  .main-drawer-profile-icon-text {
-    width: 24px;
-    height: 24px;
-    margin: 10px 7px;
-  }
-
   :global(.main-drawer-list) {
     margin: 2px 0;
     padding: 0;
@@ -150,13 +145,7 @@
               selectProfile(profileIndex);
               expand = false;
             }}>
-            <span
-              class="main-drawer-icon-container"
-              style="background: {profile.color}">
-              <span class="main-drawer-profile-icon-text">
-                {profile.shortTitle}
-              </span>
-            </span>
+            <ProfileBadge {profile} />
             <Text class="main-drawer-item-text">{profile.title}</Text>
           </Item>
         {/each}

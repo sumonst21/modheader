@@ -17,6 +17,7 @@
     mdiContentCopy,
     mdiFileExportOutline,
     mdiFileImportOutline,
+    mdiShare,
     mdiCloudDownloadOutline,
     mdiCommentCheckOutline,
     mdiCommentRemoveOutline,
@@ -107,26 +108,14 @@
     margin: 0 8px 0 10px;
   }
 
-  .color-picker {
-    height: 18px;
-    margin: 0;
-    padding: 0;
-    width: 18px;
-    -webkit-appearance: none;
-    border: #fff 3px solid;
-    border-radius: 5px;
-  }
-
-  .color-picker:focus {
-    outline: none;
-  }
-
-  .color-picker::-webkit-color-swatch-wrapper {
-    padding: 0;
-    outline: 0;
-  }
-  .color-picker::-webkit-color-swatch {
-    border: none;
+  .top-bar-profile-badge {
+    border: 2px solid white;
+    border-radius: 32px;
+    padding: 0 6px;
+    font-size: 20px;
+    top: 11px;
+    position: absolute;
+    left: 11px;
   }
 </style>
 
@@ -137,6 +126,22 @@
   style="background-color: {$selectedProfile.color};">
   <Row>
     <Section>
+      <IconButton
+        dense
+        on:click={() => colorPicker.click()}
+        title="Change profile badge">
+        <span
+          class="top-bar-profile-badge"
+          style="background: {$selectedProfile.color}">
+          <span>{$selectedProfile.shortTitle}</span>
+        </span>
+        <input
+          bind:this={colorPicker}
+          class="hidden"
+          type="color"
+          bind:value={$selectedProfile.color}
+          on:change={() => commitChange({ color: $selectedProfile.color })} />
+      </IconButton>
       <input
         class="mdc-text-field__input profile-title"
         value={$selectedProfile.title}
@@ -160,14 +165,9 @@
       </IconButton>
       <IconButton
         dense
-        on:click={() => colorPicker.click()}
-        title="Change profile color">
-        <input
-          bind:this={colorPicker}
-          class="color-picker"
-          type="color"
-          bind:value={$selectedProfile.color}
-          on:change={() => commitChange({ color: $selectedProfile.color })} />
+        on:click={() => exportDialog.show()}
+        title="Export / share profile(s)">
+        <MdiIcon size="24" icon={mdiShare} color="white" />
       </IconButton>
       <IconButton
         dense
@@ -227,9 +227,9 @@
             <MdiIcon
               class="more-menu-icon"
               size="24"
-              icon={mdiFileExportOutline}
+              icon={mdiShare}
               color="#666" />
-            Export profile(s)
+            Export / share profile(s)
           </Item>
           <Item on:SMUI:action={() => importDialog.show()}>
             <MdiIcon

@@ -4,16 +4,17 @@
   import Dialog, { Title, Content, Actions } from "@smui/dialog";
   import Button, { Label } from "@smui/button";
   import IconButton from "@smui/icon-button";
-  import { mdiClose, mdiFileImport, mdiCheck } from "@mdi/js";
+  import { mdiClose, mdiCheck } from "@mdi/js";
+  import lzString from "lz-string";
   import MdiIcon from "./MdiIcon.svelte";
   import { DISABLED_COLOR, PRIMARY_COLOR } from "../js/constants";
   import { showMessage } from "../js/toast";
   import { overrideProfile, importProfiles } from "../js/datasource";
 
+  const SHARE_URL_PREFIX = "https://bewisse.com/modheader/p/";
   let importTextbox;
   let importText;
   let dialog;
-  let uploadFileInput;
 
   export function show() {
     importText = "";
@@ -22,9 +23,18 @@
 
   function done() {
     try {
-      let importedProfiles = JSON.parse(importText);
-      if (!lodashIsArray(importedProfiles)) {
-        importedProfiles = [importedProfiles];
+      let importedProfiles;
+      if (importText.startsWith(SHARE_URL_PREFIX)) {
+        importedProfiles = JSON.parse(
+          lzString.decompressFromEncodedURIComponent(
+            importText.substring(SHARE_URL_PREFIX.length)
+          )
+        );
+      } else {
+        importedProfiles = JSON.parse(importText);
+        if (!lodashIsArray(importedProfiles)) {
+          importedProfiles = [importedProfiles];
+        }
       }
       importProfiles(importedProfiles);
       dialog.close();
@@ -33,14 +43,6 @@
         "Failed to import profiles. Please double check your exported profile."
       );
     }
-  }
-
-  function loadFile(event) {
-    const reader = new FileReader();
-    reader.onload = event => {
-      importText = event.target.result;
-    };
-    reader.readAsText(event.target.files[0]);
   }
 </script>
 
@@ -59,6 +61,7 @@
     </IconButton>
   </Title>
   <Content id="dialog-content">
+    <div>Enter the URL / JSON encoded profile here to import</div>
     <textarea
       bind:this={importTextbox}
       class="extra-large-textarea"
@@ -66,15 +69,6 @@
       bind:value={importText} />
   </Content>
   <div class="mdc-dialog__actions">
-    <input
-      bind:this={uploadFileInput}
-      type="file"
-      class="hidden"
-      on:change={loadFile} />
-    <Button on:click={() => uploadFileInput.click()}>
-      <MdiIcon size="24" icon={mdiFileImport} color={PRIMARY_COLOR} />
-      <Label class="ml-small">Load from file</Label>
-    </Button>
     <Button disabled={lodashIsEmpty(importText)} on:click={() => done()}>
       <MdiIcon
         size="24"
