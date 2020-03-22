@@ -59,6 +59,10 @@
     margin: 0;
   }
 
+  :global(button::-moz-focus-inner) {
+    border: 0;
+  }
+
   :global(.extra-gap) {
     margin: 2px;
   }

@@ -114,7 +114,11 @@
       <Item
         class="main-drawer-item"
         on:click={() => openLink('https://bewisse.com/modheader/')}>
-        <img src="/images/icon_128.png" width="36px" alt="ModHeader" />
+        <img
+          src="/images/icon_128.png"
+          width="36"
+          height="36"
+          alt="ModHeader" />
         <Text class="main-drawer-item-text">
           <h1>ModHeader</h1>
         </Text>

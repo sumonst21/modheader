@@ -146,6 +146,14 @@
             <Item on:SMUI:action={() => sort('urlRegex', 'desc')}>
               <Text>URL regex - descending</Text>
             </Item>
+            {#if !$selectedProfile.hideComment}
+              <Item on:SMUI:action={() => sort('comment', 'asc')}>
+                <Text>Comment - ascending</Text>
+              </Item>
+              <Item on:SMUI:action={() => sort('comment', 'desc')}>
+                <Text>Comment - descending</Text>
+              </Item>
+            {/if}
           </List>
         </Menu>
       </Cell>
@@ -186,20 +194,13 @@
             on:change={refreshFilters}
             placeholder=".*://.*.google.com/.*" />
         </Cell>
-        <Cell
-          class="data-table-cell {filter.type === 'urls' || filter.type === 'excludeUrls' ? '' : 'hidden'}">
-          <IconButton
-            dense
-            aria-label="Help"
-            class="small-icon-button"
-            on:click={() => openLink('https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions')}>
-            <MdiIcon
-              size="24"
-              icon={mdiHelpCircleOutline}
-              color={PRIMARY_COLOR} />
-          </IconButton>
+        <Cell class="data-table-cell {filter.type === 'types' ? '' : 'hidden'}">
+          <ResourceTypeMenu
+            bind:resourceType={filter.resourceType}
+            {resourceTypeMenuLocation}
+            on:change={refreshFilters} />
         </Cell>
-        {#if !$selectedProfile.hideComment && (filter.type === 'urls' || filter.type === 'excludeUrls')}
+        {#if !$selectedProfile.hideComment}
           <Cell class="data-table-cell">
             <AutoComplete
               className="mdc-text-field__input"
@@ -210,14 +211,6 @@
               placeholder="Comment" />
           </Cell>
         {/if}
-        <Cell
-          class="data-table-cell {filter.type === 'types' ? '' : 'hidden'}"
-          colspan={selectedProfile.hideComment ? 2 : 3}>
-          <ResourceTypeMenu
-            bind:resourceType={filter.resourceType}
-            {resourceTypeMenuLocation}
-            on:change={refreshFilters} />
-        </Cell>
         <Cell class="data-table-cell">
           <IconButton
             dense

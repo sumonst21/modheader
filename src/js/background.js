@@ -1,3 +1,6 @@
+import lodashIsEqual from 'lodash/isEqual';
+import lodashClone from 'lodash/clone';
+
 const browser = chrome;
 const SPECIAL_CHARS = '^$&+?.()|{}[]/'.split('');
 const MAX_PROFILES_IN_CLOUD = 50;
@@ -197,14 +200,9 @@ function modifyResponseHeaderHandler_(details) {
       currentProfile &&
       passFilters_(details.url, details.type, currentProfile.filters)
     ) {
-      const serializedOriginalResponseHeaders = JSON.stringify(
-        details.responseHeaders
-      );
-      const responseHeaders = JSON.parse(serializedOriginalResponseHeaders);
+      const responseHeaders = lodashClone(details.responseHeaders);
       modifyHeader(currentProfile.respHeaders, responseHeaders);
-      if (
-        JSON.stringify(responseHeaders) != serializedOriginalResponseHeaders
-      ) {
+      if (!lodashIsEqual(responseHeaders, details.responseHeaders)) {
         return {
           responseHeaders: responseHeaders
         };
