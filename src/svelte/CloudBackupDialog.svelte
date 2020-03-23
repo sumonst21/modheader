@@ -25,8 +25,7 @@
       }
       for (const key in items) {
         try {
-          const serializedProfiles = items[key];
-          const profiles = JSON.parse(serializedProfiles);
+          const profiles = items[key];
           savedData.push({
             key,
             timeInMs: Number(key),

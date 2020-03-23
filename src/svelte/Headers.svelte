@@ -21,6 +21,8 @@
   export let headers;
   export let title;
   export let autocompleteNames;
+  export let nameLabel = "Name";
+  export let valueLabel = "Value";
   let selectedHeader;
   let dialog;
   let sortMenu;
@@ -82,17 +84,18 @@
   <Content id="dialog-content">
     {#if selectedHeader}
       <div class="mdc-text-field mdc-text-field--textarea">
-        <label>Name</label>
+        <label>{nameLabel}</label>
         <textarea
           class="mdc-text-field__input large-textarea"
-          bind:value={selectedHeader.name} />
+          bind:value={selectedHeader.name}
+          placeholder={nameLabel} />
       </div>
       <div class="mdc-text-field mdc-text-field--textarea">
-        <label>Value</label>
+        <label>{valueLabel}</label>
         <textarea
           class="mdc-text-field__input large-textarea"
           bind:value={selectedHeader.value}
-          placeholder="Value" />
+          placeholder={valueLabel} />
       </div>
       <div class="mdc-text-field mdc-text-field--textarea">
         <label>Comment</label>
@@ -149,16 +152,16 @@
         <Menu bind:this={sortMenu} quickOpen>
           <List class="sort-menu">
             <Item on:SMUI:action={() => sort('name', 'asc')}>
-              <Text>Name - ascending</Text>
+              <Text>{nameLabel} - ascending</Text>
             </Item>
             <Item on:SMUI:action={() => sort('name', 'desc')}>
-              <Text>Name - descending</Text>
+              <Text>{nameLabel} - descending</Text>
             </Item>
             <Item on:SMUI:action={() => sort('value', 'asc')}>
-              <Text>Value - ascending</Text>
+              <Text>{valueLabel} - ascending</Text>
             </Item>
             <Item on:SMUI:action={() => sort('value', 'desc')}>
-              <Text>Value - descending</Text>
+              <Text>{valueLabel} - descending</Text>
             </Item>
             {#if !$selectedProfile.hideComment}
               <Item on:SMUI:action={() => sort('comment', 'asc')}>
@@ -203,7 +206,7 @@
             bind:value={header.name}
             bind:selectedItem={header.name}
             on:change={refreshHeaders}
-            placeholder="Name" />
+            placeholder={nameLabel} />
         </Cell>
         <Cell class="data-table-cell">
           <AutoComplete
@@ -212,7 +215,7 @@
             bind:value={header.value}
             bind:selectedItem={header.value}
             on:change={refreshHeaders}
-            placeholder="Value" />
+            placeholder={valueLabel} />
         </Cell>
         {#if !$selectedProfile.hideComment}
           <Cell class="data-table-cell">

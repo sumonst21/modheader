@@ -12,13 +12,14 @@
   import {
     selectedProfile,
     isPaused,
-    save,
     addHeader,
     removeHeader,
     addUrlReplacement,
     removeUrlReplacement,
     commitChange,
-    undo
+    undo,
+    save,
+    init
   } from "../js/datasource";
   import MdiIcon from "./MdiIcon.svelte";
   import { toastMessage, undoable } from "../js/toast";
@@ -28,12 +29,10 @@
   } from "../js/constants";
   import lodashClone from "lodash/clone";
 
-  window.addEventListener("unload", () => {
-    save();
-  });
-
   let snackbar;
   let snackbarMessage;
+
+  window.addEventListener("unload", save);
 
   const unsubscribeToastMessage = toastMessage.subscribe(message => {
     if (snackbar) {
@@ -157,75 +156,79 @@
   }
 </style>
 
-<Drawer />
+{#await init() then initResult}
+  <Drawer />
 
-<AppContent class="app-content">
-  <div class="top-app-bar-container">
-    <TopBar />
-  </div>
-  <div class={$isPaused ? 'disabled' : ''}>
-    <Headers
-      headers={$selectedProfile.headers}
-      class="extra-gap"
-      title="Request headers"
-      autocompleteNames={KNOWN_REQUEST_HEADERS}
-      on:add={() => {
-        addHeader($selectedProfile.headers);
-        commitChange({ headers: $selectedProfile.headers });
-      }}
-      on:remove={event => {
-        removeHeader($selectedProfile.headers, event.detail);
-        commitChange({ headers: $selectedProfile.headers });
-      }}
-      on:refresh={event => {
-        commitChange({ headers: event.detail });
-      }} />
-    <Headers
-      headers={$selectedProfile.respHeaders}
-      class="extra-gap"
-      title="Response headers"
-      autocompleteNames={KNOWN_RESPONSE_HEADERS}
-      profile={selectedProfile}
-      on:add={() => {
-        addHeader($selectedProfile.respHeaders);
-        commitChange({ respHeaders: $selectedProfile.respHeaders });
-      }}
-      on:remove={event => {
-        removeHeader($selectedProfile.respHeaders, event.detail);
-        commitChange({ respHeaders: $selectedProfile.respHeaders });
-      }}
-      on:refresh={event => {
-        commitChange({ respHeaders: event.detail });
-      }} />
-    <Headers
-      headers={$selectedProfile.urlReplacements}
-      class="extra-gap"
-      title="Redirect URLs"
-      autocompleteNames={[]}
-      profile={$selectedProfile}
-      on:add={() => {
-        addHeader($selectedProfile.urlReplacements);
-        commitChange({ urlReplacements: $selectedProfile.urlReplacements });
-      }}
-      on:remove={event => {
-        removeHeader($selectedProfile.urlReplacements, event.detail);
-        commitChange({ urlReplacements: $selectedProfile.urlReplacements });
-      }}
-      on:refresh={event => {
-        commitChange({ urlReplacements: event.detail });
-      }} />
-    <Filters class="extra-gap" />
-  </div>
-</AppContent>
+  <AppContent class="app-content">
+    <div class="top-app-bar-container">
+      <TopBar />
+    </div>
+    <div class={$isPaused ? 'disabled' : ''}>
+      <Headers
+        headers={$selectedProfile.headers}
+        class="extra-gap"
+        title="Request headers"
+        autocompleteNames={KNOWN_REQUEST_HEADERS}
+        on:add={() => {
+          addHeader($selectedProfile.headers);
+          commitChange({ headers: $selectedProfile.headers });
+        }}
+        on:remove={event => {
+          removeHeader($selectedProfile.headers, event.detail);
+          commitChange({ headers: $selectedProfile.headers });
+        }}
+        on:refresh={event => {
+          commitChange({ headers: event.detail });
+        }} />
+      <Headers
+        headers={$selectedProfile.respHeaders}
+        class="extra-gap"
+        title="Response headers"
+        autocompleteNames={KNOWN_RESPONSE_HEADERS}
+        profile={selectedProfile}
+        on:add={() => {
+          addHeader($selectedProfile.respHeaders);
+          commitChange({ respHeaders: $selectedProfile.respHeaders });
+        }}
+        on:remove={event => {
+          removeHeader($selectedProfile.respHeaders, event.detail);
+          commitChange({ respHeaders: $selectedProfile.respHeaders });
+        }}
+        on:refresh={event => {
+          commitChange({ respHeaders: event.detail });
+        }} />
+      <Headers
+        headers={$selectedProfile.urlReplacements}
+        class="extra-gap"
+        title="Redirect URLs"
+        autocompleteNames={[]}
+        nameLabel="Original URL"
+        valueLabel="Redirect URL"
+        profile={$selectedProfile}
+        on:add={() => {
+          addHeader($selectedProfile.urlReplacements);
+          commitChange({ urlReplacements: $selectedProfile.urlReplacements });
+        }}
+        on:remove={event => {
+          removeHeader($selectedProfile.urlReplacements, event.detail);
+          commitChange({ urlReplacements: $selectedProfile.urlReplacements });
+        }}
+        on:refresh={event => {
+          commitChange({ urlReplacements: event.detail });
+        }} />
+      <Filters class="extra-gap" />
+    </div>
+  </AppContent>
 
-<Snackbar timeoutMs={4000} bind:this={snackbar} labelText={snackbarMessage}>
-  <SnackbarLabel />
-  <Actions>
-    {#if $undoable}
-      <Button on:click={() => undo()}>Undo</Button>
-    {/if}
-    <IconButton dense on:click={() => snackbar.close()} title="Dismiss">
-      <MdiIcon size="24" icon={mdiClose} color="white" />
-    </IconButton>
-  </Actions>
-</Snackbar>
+  <Snackbar timeoutMs={4000} bind:this={snackbar} labelText={snackbarMessage}>
+    <SnackbarLabel />
+    <Actions>
+      {#if $undoable}
+        <Button on:click={() => undo()}>Undo</Button>
+      {/if}
+      <IconButton dense on:click={() => snackbar.close()} title="Dismiss">
+        <MdiIcon size="24" icon={mdiClose} color="white" />
+      </IconButton>
+    </Actions>
+  </Snackbar>
+{/await}

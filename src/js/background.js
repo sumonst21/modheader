@@ -1,10 +1,13 @@
 import lodashIsEqual from 'lodash/isEqual';
 import lodashClone from 'lodash/clone';
+import { initStorage, getLocal, setLocal, removeLocal } from './storage';
 
-const browser = chrome;
 const SPECIAL_CHARS = '^$&+?.()|{}[]/'.split('');
 const MAX_PROFILES_IN_CLOUD = 50;
 const CHROME_VERSION = getChromeVersion();
+let chromeLocal = {
+  isPaused: true,
+};
 let currentProfile;
 let tabUrls = {};
 
@@ -54,18 +57,19 @@ function passFilters_(url, type, filters) {
   );
 }
 
-function loadSelectedProfile_() {
+async function loadSelectedProfile_() {
   let appendMode = false;
   let headers = [];
   let respHeaders = [];
   let filters = [];
   let urlReplacements = [];
-  if (localStorage.profiles) {
-    const profiles = JSON.parse(localStorage.profiles);
-    if (!localStorage.selectedProfile) {
-      localStorage.selectedProfile = 0;
+  chromeLocal = await getLocal(null);
+  if (chromeLocal.profiles) {
+    const profiles = chromeLocal.profiles;
+    if (!chromeLocal.selectedProfile) {
+      chromeLocal.selectedProfile = 0;
     }
-    const selectedProfile = profiles[localStorage.selectedProfile];
+    const selectedProfile = profiles[chromeLocal.selectedProfile];
 
     function filterEnabled_(rows) {
       let output = [];
@@ -154,15 +158,15 @@ function modifyHeader(source, dest) {
 }
 
 function modifyRequestHandler_(details) {
-  if (localStorage.isPaused) {
+  if (chromeLocal.isPaused) {
     return {};
   }
   if (details.type == 'main_frame' && details.url && details.tabId >= 0) {
     tabUrls[details.tabId] = details.url;
-    localStorage.activeTabId = details.tabId;
-    browser.tabs.get(details.tabId, onTabUpdated);
+    chromeLocal.activeTabId = details.tabId;
+    chrome.tabs.get(details.tabId, onTabUpdated);
   }
-  if (!localStorage.lockedTabId || localStorage.lockedTabId == details.tabId) {
+  if (!chromeLocal.lockedTabId || chromeLocal.lockedTabId == details.tabId) {
     if (
       currentProfile &&
       passFilters_(details.url, details.type, currentProfile.filters)
@@ -177,10 +181,10 @@ function modifyRequestHandler_(details) {
 }
 
 function modifyRequestHeaderHandler_(details) {
-  if (localStorage.isPaused) {
+  if (chromeLocal.isPaused) {
     return {};
   }
-  if (!localStorage.lockedTabId || localStorage.lockedTabId == details.tabId) {
+  if (!chromeLocal.lockedTabId || chromeLocal.lockedTabId == details.tabId) {
     if (
       currentProfile &&
       passFilters_(details.url, details.type, currentProfile.filters)
@@ -192,10 +196,10 @@ function modifyRequestHeaderHandler_(details) {
 }
 
 function modifyResponseHeaderHandler_(details) {
-  if (localStorage.isPaused) {
+  if (chromeLocal.isPaused) {
     return {};
   }
-  if (!localStorage.lockedTabId || localStorage.lockedTabId == details.tabId) {
+  if (!chromeLocal.lockedTabId || chromeLocal.lockedTabId == details.tabId) {
     if (
       currentProfile &&
       passFilters_(details.url, details.type, currentProfile.filters)
@@ -228,11 +232,11 @@ function getChromeVersion() {
 }
 
 function setupHeaderModListener() {
-  browser.webRequest.onBeforeRequest.removeListener(modifyRequestHandler_);
-  browser.webRequest.onBeforeSendHeaders.removeListener(
+  chrome.webRequest.onBeforeRequest.removeListener(modifyRequestHandler_);
+  chrome.webRequest.onBeforeSendHeaders.removeListener(
     modifyRequestHeaderHandler_
   );
-  browser.webRequest.onHeadersReceived.removeListener(
+  chrome.webRequest.onHeadersReceived.removeListener(
     modifyResponseHeaderHandler_
   );
 
@@ -243,7 +247,7 @@ function setupHeaderModListener() {
     if (CHROME_VERSION.major >= 72) {
       requiresExtraRequestHeaders = true;
     }
-    browser.webRequest.onBeforeSendHeaders.addListener(
+    chrome.webRequest.onBeforeSendHeaders.addListener(
       modifyRequestHeaderHandler_,
       { urls: ['<all_urls>'] },
       requiresExtraRequestHeaders
@@ -256,7 +260,7 @@ function setupHeaderModListener() {
     if (CHROME_VERSION.major >= 72) {
       requiresExtraResponseHeaders = true;
     }
-    browser.webRequest.onHeadersReceived.addListener(
+    chrome.webRequest.onHeadersReceived.addListener(
       modifyResponseHeaderHandler_,
       { urls: ['<all_urls>'] },
       requiresExtraResponseHeaders
@@ -265,16 +269,16 @@ function setupHeaderModListener() {
     );
   }
 
-  browser.webRequest.onBeforeRequest.addListener(
+  chrome.webRequest.onBeforeRequest.addListener(
     modifyRequestHandler_,
     { urls: ['<all_urls>'] },
     ['blocking']
   );
 }
 
-function onTabUpdated(tab) {
+async function onTabUpdated(tab) {
   if (tab.active) {
-    delete localStorage.currentTabUrl;
+    await removeLocal('currentTabUrl');
     // Since we don't have access to the "tabs" permission, we may not have
     // access to the url property all the time. So, match it against the URL
     // found during request modification.
@@ -284,13 +288,13 @@ function onTabUpdated(tab) {
     } else {
       url = tabUrls[tab.id];
     }
-    localStorage.activeTabId = tab.id;
+    await setLocal({ activeTabId: tab.id });
 
     // Only set the currentTabUrl property if the tab is active and the window
     // is in focus.
-    browser.windows.get(tab.windowId, {}, win => {
+    chrome.windows.get(tab.windowId, {}, async win => {
       if (win.focused) {
-        localStorage.currentTabUrl = url;
+        await setLocal({ currentTabUrl: url });
       }
     });
     if (!url) {
@@ -300,40 +304,42 @@ function onTabUpdated(tab) {
   }
 }
 
-browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  onTabUpdated(tab);
+chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
+  await onTabUpdated(tab);
 });
 
-browser.tabs.onActivated.addListener(activeInfo => {
-  browser.tabs.get(activeInfo.tabId, onTabUpdated);
+chrome.tabs.onActivated.addListener(activeInfo => {
+  chrome.tabs.get(activeInfo.tabId, onTabUpdated);
 });
 
-browser.windows.onFocusChanged.addListener(windowId => {
-  if (windowId == browser.windows.WINDOW_ID_NONE) {
+chrome.windows.onFocusChanged.addListener(windowId => {
+  if (windowId == chrome.windows.WINDOW_ID_NONE) {
     return;
   }
-  browser.windows.get(windowId, { populate: true }, win => {
+  chrome.windows.get(windowId, { populate: true }, async win => {
     for (let tab of win.tabs) {
-      onTabUpdated(tab);
+      await onTabUpdated(tab);
     }
   });
 });
 
 function saveStorageToCloud() {
-  browser.storage.sync.get(null, items => {
+  chrome.storage.sync.get(null, async items => {
     const keys = items ? Object.keys(items) : [];
     keys.sort();
     if (
       keys.length == 0 ||
-      items[keys[keys.length - 1]] != localStorage.profiles
+      items[keys[keys.length - 1]] != chromeLocal.profiles
     ) {
       const data = {};
-      data[Date.now()] = localStorage.profiles;
-      browser.storage.sync.set(data);
-      localStorage.savedToCloud = true;
+      data[Date.now()] = chromeLocal.profiles;
+      chrome.storage.sync.set(data);
+      await setLocal({
+        savedToCloud: true
+      });
     }
     if (keys.length >= MAX_PROFILES_IN_CLOUD) {
-      browser.storage.sync.remove(
+      chrome.storage.sync.remove(
         keys.slice(0, keys.length - MAX_PROFILES_IN_CLOUD)
       );
     }
@@ -341,40 +347,40 @@ function saveStorageToCloud() {
 }
 
 function createContextMenu() {
-  if (localStorage.isPaused) {
-    browser.contextMenus.update('pause', {
+  if (chromeLocal.isPaused) {
+    chrome.contextMenus.update('pause', {
       title: 'Unpause ModHeader',
       contexts: ['browser_action'],
       onclick: () => {
-        localStorage.removeItem('isPaused');
+        chromeLocal.removeItem('isPaused');
         resetBadgeAndContextMenu();
       }
     });
   } else {
-    browser.contextMenus.update('pause', {
+    chrome.contextMenus.update('pause', {
       title: 'Pause ModHeader',
       contexts: ['browser_action'],
       onclick: () => {
-        localStorage.isPaused = true;
+        chromeLocal.isPaused = true;
         resetBadgeAndContextMenu();
       }
     });
   }
-  if (localStorage.lockedTabId) {
-    browser.contextMenus.update('lock', {
+  if (chromeLocal.lockedTabId) {
+    chrome.contextMenus.update('lock', {
       title: 'Unlock to all tabs',
       contexts: ['browser_action'],
       onclick: () => {
-        localStorage.removeItem('lockedTabId');
+        chromeLocal.removeItem('lockedTabId');
         resetBadgeAndContextMenu();
       }
     });
   } else {
-    browser.contextMenus.update('lock', {
+    chrome.contextMenus.update('lock', {
       title: 'Lock to this tab',
       contexts: ['browser_action'],
       onclick: () => {
-        localStorage.lockedTabId = localStorage.activeTabId;
+        chromeLocal.lockedTabId = chromeLocal.activeTabId;
         resetBadgeAndContextMenu();
       }
     });
@@ -382,78 +388,84 @@ function createContextMenu() {
 }
 
 function resetBadgeAndContextMenu() {
-  if (localStorage.isPaused) {
-    browser.browserAction.setIcon({ path: 'images/icon_bw.png' });
-    browser.browserAction.setBadgeText({ text: '\u275A\u275A' });
-    browser.browserAction.setBadgeBackgroundColor({ color: '#666' });
+  if (chromeLocal.isPaused) {
+    chrome.browserAction.setIcon({ path: 'images/icon_bw.png' });
+    chrome.browserAction.setBadgeText({ text: '\u275A\u275A' });
+    chrome.browserAction.setBadgeBackgroundColor({ color: '#666' });
   } else {
     const numHeaders =
       currentProfile.headers.length + currentProfile.respHeaders.length;
     if (numHeaders == 0) {
-      browser.browserAction.setBadgeText({ text: '' });
-      browser.browserAction.setIcon({ path: 'images/icon_bw.png' });
+      chrome.browserAction.setBadgeText({ text: '' });
+      chrome.browserAction.setIcon({ path: 'images/icon_bw.png' });
     } else if (
-      localStorage.lockedTabId &&
-      localStorage.lockedTabId != localStorage.activeTabId
+      chromeLocal.lockedTabId &&
+      chromeLocal.lockedTabId != chromeLocal.activeTabId
     ) {
-      browser.browserAction.setIcon({ path: 'images/icon_bw.png' });
-      browser.browserAction.setBadgeText({ text: '\uD83D\uDD12' });
-      browser.browserAction.setBadgeBackgroundColor({ color: '#ff8e8e' });
+      chrome.browserAction.setIcon({ path: 'images/icon_bw.png' });
+      chrome.browserAction.setBadgeText({ text: '\uD83D\uDD12' });
+      chrome.browserAction.setBadgeBackgroundColor({ color: '#ff8e8e' });
     } else {
-      browser.browserAction.setIcon({ path: 'images/icon.png' });
-      browser.browserAction.setBadgeText({ text: numHeaders.toString() });
-      browser.browserAction.setBadgeBackgroundColor({ color: '#db4343' });
+      chrome.browserAction.setIcon({ path: 'images/icon.png' });
+      chrome.browserAction.setBadgeText({ text: numHeaders.toString() });
+      chrome.browserAction.setBadgeBackgroundColor({ color: '#db4343' });
     }
   }
   createContextMenu();
 }
 
-function initializeStorage() {
-  currentProfile = loadSelectedProfile_();
+async function initializeStorage() {
+  await initStorage();
+  currentProfile = await loadSelectedProfile_();
   setupHeaderModListener();
-
-  window.addEventListener('storage', function (e) {
-    currentProfile = loadSelectedProfile_();
-    setupHeaderModListener();
-    resetBadgeAndContextMenu();
-    if (e.key == 'profiles') {
-      saveStorageToCloud();
-    }
-  });
+  resetBadgeAndContextMenu();
 
   // Async initialization.
-  setTimeout(() => {
-    if (localStorage.profiles && !localStorage.savedToCloud) {
+  setTimeout(async () => {
+    if (chromeLocal.profiles && !chromeLocal.savedToCloud) {
       saveStorageToCloud();
     }
 
-    if (!localStorage.profiles) {
-      browser.storage.sync.get(null, items => {
+    if (!chromeLocal.profiles) {
+      chrome.storage.sync.get(null, async items => {
         const keys = items ? Object.keys(items) : [];
         keys.sort();
         if (keys.length > 0) {
-          localStorage.profiles = items[keys[keys.length - 1]];
-          localStorage.savedToCloud = true;
+          await setLocal({
+            profiles: items[keys[keys.length - 1]],
+            savedToCloud: true,
+          });
         }
       });
     }
   }, 100);
 }
-browser.contextMenus.create({
+chrome.contextMenus.create({
   id: 'pause',
   title: 'Pause',
   contexts: ['browser_action']
 });
-browser.contextMenus.create({
+chrome.contextMenus.create({
   id: 'lock',
   title: 'Lock',
   contexts: ['browser_action']
 });
 initializeStorage();
-resetBadgeAndContextMenu();
 
 chrome.runtime.onInstalled.addListener(details => {
   if (details.reason === 'install') {
     chrome.tabs.create({ url: 'https://r.bewisse.com/modheader/postinstall' });
   }
 });
+
+window.saveToStorage = async function(items) {
+  const profilesUpdated = !lodashIsEqual(chromeLocal.profiles, items.profiles);
+  const selectedProfileUpdated = !lodashIsEqual(chromeLocal.selectedProfile, items.selectedProfile);
+  await setLocal(items);
+  if (profilesUpdated || selectedProfileUpdated) {
+    currentProfile = await loadSelectedProfile_();
+    saveStorageToCloud();
+  }
+  setupHeaderModListener();
+  resetBadgeAndContextMenu();
+};

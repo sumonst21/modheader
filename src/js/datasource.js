@@ -1,9 +1,11 @@
 import { writable, derived, get } from 'svelte/store';
 import lodashCloneDeep from 'lodash/cloneDeep';
+import lodashIsEqual from 'lodash/isEqual';
 import lodashOrderBy from 'lodash/orderBy';
 import lodashLast from 'lodash/last';
 import lodashIsUndefined from 'lodash/isUndefined';
 import { showMessage, hideMessage } from './toast';
+import { getLocal, setLocal, removeLocal } from './storage';
 
 export const profiles = writable([]);
 export const selectedProfileIndex = writable(0);
@@ -20,17 +22,18 @@ export const isLocked = writable(false);
 
 export const changesStack = writable([]);
 let ignoringChangeStack = true;
-profiles.subscribe($profiles => {
+let isInitialized = false;
+profiles.subscribe(async $profiles => {
   if (!ignoringChangeStack) {
     const changes = get(changesStack);
-    const serializedProfiles = JSON.stringify($profiles);
-    if (changes.length === 0 || lodashLast(changes).profiles !== serializedProfiles) {
-      changes.push({profiles: serializedProfiles});
+    const profilesCopy = lodashCloneDeep($profiles);
+    if (changes.length === 0 || !lodashIsEqual(lodashLast(changes).profiles, profilesCopy)) {
+      changes.push({profiles: profilesCopy});
       changesStack.set(changes);
     }
   }
 });
-selectedProfileIndex.subscribe($selectedProfileIndex => {
+selectedProfileIndex.subscribe(async $selectedProfileIndex => {
   if (!ignoringChangeStack) {
     const changes = get(changesStack);
     if (changes.length === 0 || lodashLast(changes).selectedProfileIndex !== $selectedProfileIndex) {
@@ -39,7 +42,7 @@ selectedProfileIndex.subscribe($selectedProfileIndex => {
     }
   }
 });
-isPaused.subscribe($isPaused => {
+isPaused.subscribe(async $isPaused => {
   if (!ignoringChangeStack) {
     const changes = get(changesStack);
     if (changes.length === 0 || lodashLast(changes).isPaused !== $isPaused) {
@@ -48,7 +51,7 @@ isPaused.subscribe($isPaused => {
     }
   }
 });
-isLocked.subscribe($isLocked => {
+isLocked.subscribe(async $isLocked => {
   if (!ignoringChangeStack) {
     const changes = get(changesStack);
     if (changes.length === 0 || lodashLast(changes).isLocked !== $isLocked) {
@@ -108,11 +111,20 @@ function takeRight(v) {
   return s[s.length - 1];
 }
 
-export function addFilter() {
+export function save() {
+  const background = chrome.extension.getBackgroundPage();
+  background.saveToStorage({
+    profiles: get(profiles),
+    selectedProfile: get(selectedProfileIndex)
+  });
+}
+
+export async function addFilter() {
   let urlRegex = '';
-  if (localStorage.currentTabUrl) {
+  const currentTabUrl = await getLocal('currentTabUrl');
+  if (currentTabUrl) {
     const parser = document.createElement('a');
-    parser.href = localStorage.currentTabUrl;
+    parser.href = currentTabUrl;
     urlRegex = parser.origin + '/.*';
   }
   const filters = get(selectedProfile).filters;
@@ -134,10 +146,11 @@ export function addHeader(headers) {
   });
 }
 
-export function addUrlReplacement(replacements) {
+export async function addUrlReplacement(replacements) {
   let domain = '';
-  if (localStorage.currentTabUrl) {
-    domain = new URL(localStorage.currentTabUrl).origin;
+  const currentTabUrl = await getLocal('currentTabUrl');
+  if (currentTabUrl) {
+    domain = new URL(currentTabUrl).origin;
   }
   replacements.push({
     enabled: true,
@@ -175,14 +188,13 @@ export function undo() {
   }
   let lastChange;
   const currentProfiles = get(profiles);
-  const serializedCurrentProfiles = JSON.stringify(currentProfiles);
-  let currentSelectedProfileIndex = get(selectedProfileIndex);
-  let currentIsLocked = get(isLocked);
-  let currentIsPaused = get(isPaused);
+  const currentSelectedProfileIndex = get(selectedProfileIndex);
+  const currentIsLocked = get(isLocked);
+  const currentIsPaused = get(isPaused);
   while (changes.length > 0) {
     lastChange = changes.pop();
     if (!lodashIsUndefined(lastChange.profiles) &&
-        lastChange.profiles !== serializedCurrentProfiles) {
+        !lodashIsEqual(lastChange.profiles, currentProfiles)) {
       break;
     }
     if (!lodashIsUndefined(lastChange.selectedProfileIndex) &&
@@ -200,30 +212,33 @@ export function undo() {
   }
   changesStack.set(changes);
   setProfilesAndIndex(
-      (lastChange.profiles && JSON.parse(lastChange.profiles)) || currentProfiles,
+      lastChange.profiles || currentProfiles,
       lastChange.selectedProfileIndex || currentSelectedProfileIndex,
       { newIsLocked: lastChange.isLocked, newIsPaused: lastChange.isPaused });
   hideMessage();
 }
 
-export function pause() {
+export async function pause() {
   isPaused.set(true);
-  localStorage.isPaused = true;
+  await setLocal({ isPaused: true });
 }
 
-export function play() {
+export async function play() {
   isPaused.set(false);
-  localStorage.removeItem('isPaused');
+  await removeLocal('isPaused');
 }
 
-export function lockToTab() {
+export async function lockToTab() {
   isLocked.set(true);
-  localStorage.lockedTabId = localStorage.activeTabId;
+  if (isInitialized) {
+    const activeTabId = await getLocal('activeTabId');
+    await setLocal({ lockedTabId: activeTabId });
+  }
 }
 
-export function unlockAllTab() {
+export async function unlockAllTab() {
   isLocked.set(false);
-  localStorage.removeItem('lockedTabId');
+  await removeLocal('lockedTabId');
 }
 
 export function createProfile() {
@@ -269,7 +284,7 @@ function setProfilesAndIndex(newProfiles, newIndex, { newIsLocked, newIsPaused }
   }
   const changes = get(changesStack);
   changes.push({
-    profiles: JSON.stringify(newProfiles),
+    profiles: lodashCloneDeep(newProfiles),
     selectedProfileIndex: newIndex,
     isLocked: newIsLocked,
     isPaused: newIsPaused,
@@ -365,15 +380,12 @@ export function sortProfiles(sortOrder) {
   }
 }
 
-export function save() {
-  localStorage.profiles = JSON.stringify(get(profiles));
-  localStorage.selectedProfile = get(selectedProfileIndex);
-}
-
-function init() {
+export async function init() {
+  const chromeLocal = await getLocal([
+    'profiles', 'selectProfile', 'lockedTabId', 'isPaused']);
   let innerProfiles = [];
-  if (localStorage.profiles) {
-    innerProfiles = JSON.parse(localStorage.profiles);
+  if (chromeLocal.profiles) {
+    innerProfiles = chromeLocal.profiles;
     for (let profile of innerProfiles) {
       fixProfile(profile);
     }
@@ -395,25 +407,23 @@ function init() {
     }
     if (!profile.respHeaders) {
       profile.respHeaders = [];
-      addHeader(profile.respHeaders);
     }
     if (!profile.urlReplacements) {
       profile.urlReplacements = [];
-      addUrlReplacement(profile.urlReplacements);
     }
     if (!profile.filters) {
       profile.filters = [];
     }
   }
   let profileIndex = 0;
-  if (localStorage.selectedProfile) {
-    profileIndex = Number(localStorage.selectedProfile);
+  if (chromeLocal.selectProfile) {
+    profileIndex = Number(chromeLocal.selectProfile);
   }
-  if (!(profileIndex > 0 && profileIndex < innerProfiles.length)) {
+  if (!(profileIndex >= 0 && profileIndex < innerProfiles.length)) {
     profileIndex = innerProfiles.length - 1;
   }
   setProfilesAndIndex(innerProfiles, profileIndex,
-    { newIsLocked: !!localStorage.lockedTabId, newIsPaused: localStorage.isPaused });
+    { newIsLocked: !!chromeLocal.lockedTabId,
+      newIsPaused: !!chromeLocal.isPaused });
+  isInitialized = true;
 }
-
-init();

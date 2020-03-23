@@ -74,6 +74,10 @@
     margin: 0 !important;
   }
 
+  :global(.main-drawer-logo) {
+    min-width: 36px;
+  }
+
   :global(.main-drawer-item-text) {
     font-size: 16px;
     margin-left: 5px;
@@ -116,6 +120,7 @@
         on:click={() => openLink('https://bewisse.com/modheader/')}>
         <img
           src="/images/icon_128.png"
+          class="main-drawer-logo"
           width="36"
           height="36"
           alt="ModHeader" />
