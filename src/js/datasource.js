@@ -8,7 +8,9 @@ import { showMessage, hideMessage } from './toast';
 import { getLocal, setLocal, removeLocal } from './storage';
 
 export const profiles = writable([]);
+let latestProfiles = [];
 export const selectedProfileIndex = writable(0);
+let latestSelectedProfileIndex = 0;
 export const selectedProfile = derived(
   [
     profiles,
@@ -23,7 +25,8 @@ export const isLocked = writable(false);
 export const changesStack = writable([]);
 let ignoringChangeStack = true;
 let isInitialized = false;
-profiles.subscribe(async $profiles => {
+profiles.subscribe($profiles => {
+  latestProfiles = $profiles;
   if (!ignoringChangeStack) {
     const changes = get(changesStack);
     const profilesCopy = lodashCloneDeep($profiles);
@@ -33,7 +36,8 @@ profiles.subscribe(async $profiles => {
     }
   }
 });
-selectedProfileIndex.subscribe(async $selectedProfileIndex => {
+selectedProfileIndex.subscribe($selectedProfileIndex => {
+  latestSelectedProfileIndex = $selectedProfileIndex;
   if (!ignoringChangeStack) {
     const changes = get(changesStack);
     if (changes.length === 0 || lodashLast(changes).selectedProfileIndex !== $selectedProfileIndex) {
@@ -42,7 +46,7 @@ selectedProfileIndex.subscribe(async $selectedProfileIndex => {
     }
   }
 });
-isPaused.subscribe(async $isPaused => {
+isPaused.subscribe($isPaused => {
   if (!ignoringChangeStack) {
     const changes = get(changesStack);
     if (changes.length === 0 || lodashLast(changes).isPaused !== $isPaused) {
@@ -51,7 +55,7 @@ isPaused.subscribe(async $isPaused => {
     }
   }
 });
-isLocked.subscribe(async $isLocked => {
+isLocked.subscribe($isLocked => {
   if (!ignoringChangeStack) {
     const changes = get(changesStack);
     if (changes.length === 0 || lodashLast(changes).isLocked !== $isLocked) {
@@ -113,15 +117,24 @@ function takeRight(v) {
 
 export function save() {
   const background = chrome.extension.getBackgroundPage();
-  background.saveToStorage({
-    profiles: get(profiles),
-    selectedProfile: get(selectedProfileIndex)
-  });
+  if (background) {
+    background.saveToStorage({
+      profiles: latestProfiles,
+      selectedProfile: latestSelectedProfileIndex
+    });
+  } else {
+    // Firefox's private session cannot access background page, so just set
+    // directly to the browser storage.
+    browser.storage.local.set({
+      profiles: latestProfiles,
+      selectedProfile: latestSelectedProfileIndex
+    });
+  }
 }
 
 export async function addFilter() {
   let urlRegex = '';
-  const currentTabUrl = await getLocal('currentTabUrl');
+  const { currentTabUrl } = await getLocal('currentTabUrl');
   if (currentTabUrl) {
     const parser = document.createElement('a');
     parser.href = currentTabUrl;
@@ -148,7 +161,7 @@ export function addHeader(headers) {
 
 export async function addUrlReplacement(replacements) {
   let domain = '';
-  const currentTabUrl = await getLocal('currentTabUrl');
+  const { currentTabUrl } = await getLocal('currentTabUrl');
   if (currentTabUrl) {
     domain = new URL(currentTabUrl).origin;
   }

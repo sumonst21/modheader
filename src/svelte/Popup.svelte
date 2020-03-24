@@ -205,12 +205,12 @@
         nameLabel="Original URL"
         valueLabel="Redirect URL"
         profile={$selectedProfile}
-        on:add={() => {
-          addHeader($selectedProfile.urlReplacements);
+        on:add={async () => {
+          await addUrlReplacement($selectedProfile.urlReplacements);
           commitChange({ urlReplacements: $selectedProfile.urlReplacements });
         }}
         on:remove={event => {
-          removeHeader($selectedProfile.urlReplacements, event.detail);
+          removeUrlReplacement($selectedProfile.urlReplacements, event.detail);
           commitChange({ urlReplacements: $selectedProfile.urlReplacements });
         }}
         on:refresh={event => {

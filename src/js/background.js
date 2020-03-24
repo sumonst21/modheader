@@ -1,4 +1,5 @@
 import lodashIsEqual from 'lodash/isEqual';
+import lodashIsUndefined from 'lodash/isUndefined';
 import lodashClone from 'lodash/clone';
 import { initStorage, getLocal, setLocal, removeLocal } from './storage';
 
@@ -63,7 +64,6 @@ async function loadSelectedProfile_() {
   let respHeaders = [];
   let filters = [];
   let urlReplacements = [];
-  chromeLocal = await getLocal(null);
   if (chromeLocal.profiles) {
     const profiles = chromeLocal.profiles;
     if (!chromeLocal.selectedProfile) {
@@ -269,11 +269,13 @@ function setupHeaderModListener() {
     );
   }
 
-  chrome.webRequest.onBeforeRequest.addListener(
-    modifyRequestHandler_,
-    { urls: ['<all_urls>'] },
-    ['blocking']
-  );
+  if (currentProfile.urlReplacements.length > 0) {
+    chrome.webRequest.onBeforeRequest.addListener(
+      modifyRequestHandler_,
+      { urls: ['<all_urls>'] },
+      ['blocking']
+    );
+  }
 }
 
 async function onTabUpdated(tab) {
@@ -351,18 +353,16 @@ function createContextMenu() {
     chrome.contextMenus.update('pause', {
       title: 'Unpause ModHeader',
       contexts: ['browser_action'],
-      onclick: () => {
-        chromeLocal.removeItem('isPaused');
-        resetBadgeAndContextMenu();
+      onclick: async () => {
+        await removeLocal('isPaused');
       }
     });
   } else {
     chrome.contextMenus.update('pause', {
       title: 'Pause ModHeader',
       contexts: ['browser_action'],
-      onclick: () => {
-        chromeLocal.isPaused = true;
-        resetBadgeAndContextMenu();
+      onclick: async () => {
+        await setLocal({isPaused: true});
       }
     });
   }
@@ -370,18 +370,16 @@ function createContextMenu() {
     chrome.contextMenus.update('lock', {
       title: 'Unlock to all tabs',
       contexts: ['browser_action'],
-      onclick: () => {
-        chromeLocal.removeItem('lockedTabId');
-        resetBadgeAndContextMenu();
+      onclick: async () => {
+        await removeLocal('lockedTabId');
       }
     });
   } else {
     chrome.contextMenus.update('lock', {
       title: 'Lock to this tab',
       contexts: ['browser_action'],
-      onclick: () => {
-        chromeLocal.lockedTabId = chromeLocal.activeTabId;
-        resetBadgeAndContextMenu();
+      onclick: async () => {
+        await setLocal({lockedTabId: chromeLocal.activeTabId});
       }
     });
   }
@@ -416,6 +414,7 @@ function resetBadgeAndContextMenu() {
 
 async function initializeStorage() {
   await initStorage();
+  chromeLocal = await getLocal(null);
   currentProfile = await loadSelectedProfile_();
   setupHeaderModListener();
   resetBadgeAndContextMenu();
@@ -459,13 +458,24 @@ chrome.runtime.onInstalled.addListener(details => {
 });
 
 window.saveToStorage = async function(items) {
-  const profilesUpdated = !lodashIsEqual(chromeLocal.profiles, items.profiles);
-  const selectedProfileUpdated = !lodashIsEqual(chromeLocal.selectedProfile, items.selectedProfile);
   await setLocal(items);
+};
+
+chrome.storage.onChanged.addListener(async (changes, areaName) => {
+  if (areaName !== 'local') {
+    return;
+  }
+  const profilesUpdated = !lodashIsUndefined(changes.profiles)
+      && !lodashIsEqual(chromeLocal.profiles, changes.profiles.newValue);
+  const selectedProfileUpdated = !lodashIsUndefined(changes.selectedProfile)
+      && !lodashIsEqual(chromeLocal.selectedProfile, changes.selectedProfile.newValue);
+  for (const [key, value] of Object.entries(changes)) {
+    chromeLocal[key] = value.newValue;
+  }
   if (profilesUpdated || selectedProfileUpdated) {
     currentProfile = await loadSelectedProfile_();
     saveStorageToCloud();
   }
   setupHeaderModListener();
   resetBadgeAndContextMenu();
-};
+});
