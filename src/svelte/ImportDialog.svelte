@@ -9,6 +9,7 @@
   import MdiIcon from "./MdiIcon.svelte";
   import { DISABLED_COLOR, PRIMARY_COLOR } from "../js/constants";
   import { showMessage } from "../js/toast";
+  import { getLocal } from "../js/storage";
   import { overrideProfile, importProfiles } from "../js/datasource";
 
   const SHARE_URL_PREFIX = "https://bewisse.com/modheader/p/";
@@ -16,8 +17,13 @@
   let importText;
   let dialog;
 
-  export function show() {
-    importText = "";
+  export async function show() {
+    const { currentTabUrl } = await getLocal("currentTabUrl");
+    if (currentTabUrl && currentTabUrl.startsWith(SHARE_URL_PREFIX)) {
+      importText = currentTabUrl;
+    } else {
+      importText = "";
+    }
     dialog.open();
   }
 
@@ -25,9 +31,10 @@
     try {
       let importedProfiles;
       if (importText.startsWith(SHARE_URL_PREFIX)) {
+        const url = new URL(importText);
         importedProfiles = JSON.parse(
           lzString.decompressFromEncodedURIComponent(
-            importText.substring(SHARE_URL_PREFIX.length)
+            url.pathname.substring(url.pathname.lastIndexOf("/") + 1)
           )
         );
       } else {

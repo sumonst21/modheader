@@ -395,7 +395,7 @@ export function sortProfiles(sortOrder) {
 
 export async function init() {
   const chromeLocal = await getLocal([
-    'profiles', 'selectProfile', 'lockedTabId', 'isPaused']);
+    'profiles', 'selectedProfile', 'lockedTabId', 'isPaused']);
   let innerProfiles = [];
   if (chromeLocal.profiles) {
     innerProfiles = chromeLocal.profiles;
@@ -429,8 +429,8 @@ export async function init() {
     }
   }
   let profileIndex = 0;
-  if (chromeLocal.selectProfile) {
-    profileIndex = Number(chromeLocal.selectProfile);
+  if (chromeLocal.selectedProfile) {
+    profileIndex = Number(chromeLocal.selectedProfile);
   }
   if (!(profileIndex >= 0 && profileIndex < innerProfiles.length)) {
     profileIndex = innerProfiles.length - 1;
