@@ -59,17 +59,13 @@ function passFilters_(url, type, filters) {
 }
 
 async function loadSelectedProfile_() {
-  let appendMode = false;
-  let headers = [];
-  let respHeaders = [];
-  let filters = [];
-  let urlReplacements = [];
+  let selectedProfile;
   if (chromeLocal.profiles) {
     const profiles = chromeLocal.profiles;
     if (!chromeLocal.selectedProfile) {
       chromeLocal.selectedProfile = 0;
     }
-    const selectedProfile = profiles[chromeLocal.selectedProfile];
+    selectedProfile = profiles[chromeLocal.selectedProfile];
 
     function filterEnabled_(rows) {
       let output = [];
@@ -102,18 +98,11 @@ async function loadSelectedProfile_() {
       }
       filters.push(filter);
     }
-    appendMode = selectedProfile.appendMode;
-    headers = filterEnabled_(selectedProfile.headers);
-    respHeaders = filterEnabled_(selectedProfile.respHeaders);
-    urlReplacements = filterEnabled_(selectedProfile.urlReplacements);
+    selectedProfile.headers = filterEnabled_(selectedProfile.headers);
+    selectedProfile.respHeaders = filterEnabled_(selectedProfile.respHeaders);
+    selectedProfile.urlReplacements = filterEnabled_(selectedProfile.urlReplacements);
   }
-  return {
-    appendMode,
-    headers,
-    respHeaders,
-    urlReplacements,
-    filters
-  };
+  return selectedProfile;
 }
 
 function replaceUrls(urlReplacements, url) {
@@ -391,12 +380,7 @@ function resetBadgeAndContextMenu() {
     chrome.browserAction.setBadgeText({ text: '\u275A\u275A' });
     chrome.browserAction.setBadgeBackgroundColor({ color: '#666' });
   } else {
-    const numHeaders =
-      currentProfile.headers.length + currentProfile.respHeaders.length;
-    if (numHeaders == 0) {
-      chrome.browserAction.setBadgeText({ text: '' });
-      chrome.browserAction.setIcon({ path: 'images/icon_bw.png' });
-    } else if (
+    if (
       chromeLocal.lockedTabId &&
       chromeLocal.lockedTabId != chromeLocal.activeTabId
     ) {
@@ -405,8 +389,8 @@ function resetBadgeAndContextMenu() {
       chrome.browserAction.setBadgeBackgroundColor({ color: '#ff8e8e' });
     } else {
       chrome.browserAction.setIcon({ path: 'images/icon.png' });
-      chrome.browserAction.setBadgeText({ text: numHeaders.toString() });
-      chrome.browserAction.setBadgeBackgroundColor({ color: '#db4343' });
+      chrome.browserAction.setBadgeText({ text: currentProfile.shortTitle });
+      chrome.browserAction.setBadgeBackgroundColor({ color: currentProfile.backgroundColor });
     }
   }
   createContextMenu();

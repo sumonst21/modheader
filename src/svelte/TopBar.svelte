@@ -24,8 +24,10 @@
     mdiUndo
   } from "@mdi/js";
   import { get } from "svelte/store";
+  import { toRgbString } from "../js/utils";
   import ExportDialog from "./ExportDialog.svelte";
   import ImportDialog from "./ImportDialog.svelte";
+  import ProfileBadgeDialog from "./ProfileBadgeDialog.svelte";
   import CloudBackupDialog from "./CloudBackupDialog.svelte";
   import MdiIcon from "./MdiIcon.svelte";
   import {
@@ -52,6 +54,7 @@
   let exportDialog;
   let importDialog;
   let cloudBackupDialog;
+  let profileBadgeDialog;
 
   function togglePause() {
     if ($isPaused) {
@@ -110,40 +113,47 @@
 
   .top-bar-profile-badge {
     border: 2px solid white;
-    border-radius: 32px;
-    padding: 0 6px;
+    border-radius: 50%;
     font-size: 20px;
     top: 11px;
     position: absolute;
     left: 11px;
+    width: 24px;
+    height: 24px;
+  }
+
+  .top-bar-profile-badge-text {
+    width: 24px;
+    display: flex;
+    justify-content: center;
   }
 </style>
+
+<ProfileBadgeDialog bind:this={profileBadgeDialog} />
 
 <TopAppBar
   variant
   dense
   class="top-bar"
-  style="background-color: {$selectedProfile.color};">
+  style="background-color: {$selectedProfile.backgroundColor};">
   <Row>
     <Section>
       <IconButton
         dense
-        on:click={() => colorPicker.click()}
+        on:click={() => {
+          profileBadgeDialog.show();
+        }}
         title="Change profile badge">
         <span
           class="top-bar-profile-badge"
-          style="background: {$selectedProfile.color}">
-          <span>{$selectedProfile.shortTitle}</span>
+          style="background: {$selectedProfile.backgroundColor}">
+          <span class="top-bar-profile-badge-text" style="color: {$selectedProfile.textColor}">{$selectedProfile.shortTitle}</span>
         </span>
-        <input
-          bind:this={colorPicker}
-          class="hidden"
-          type="color"
-          bind:value={$selectedProfile.color}
-          on:change={() => commitChange({ color: $selectedProfile.color })} />
       </IconButton>
+
       <input
         class="mdc-text-field__input profile-title"
+        style="color: {$selectedProfile.textColor}"
         value={$selectedProfile.title}
         on:input={event => commitChange({ title: event.target.value })} />
     </Section>
