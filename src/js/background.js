@@ -130,7 +130,7 @@ function modifyRequestHandler_(details) {
   }
   if (details.type == 'main_frame' && details.url && details.tabId >= 0) {
     tabUrls[details.tabId] = details.url;
-    chromeLocal.activeTabId = details.tabId;
+    setLocal({ activeTabId: details.tabId });
     chrome.tabs.get(details.tabId, onTabUpdated);
   }
   if (!chromeLocal.lockedTabId || chromeLocal.lockedTabId == details.tabId) {
@@ -346,7 +346,7 @@ function createContextMenu() {
       title: 'Lock to this tab',
       contexts: ['browser_action'],
       onclick: async () => {
-        await setLocal({lockedTabId: chromeLocal.activeTabId});
+        await setLocal({ lockedTabId: chromeLocal.activeTabId });
       }
     });
   }

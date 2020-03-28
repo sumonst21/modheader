@@ -211,7 +211,7 @@ export async function play() {
 export async function lockToTab() {
   isLocked.set(true);
   if (isInitialized) {
-    const activeTabId = await getLocal('activeTabId');
+    const { activeTabId } = await getLocal('activeTabId');
     await setLocal({ lockedTabId: activeTabId });
   }
 }
