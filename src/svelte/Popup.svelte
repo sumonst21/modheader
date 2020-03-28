@@ -67,9 +67,9 @@
   }
 
   :global(.small-icon-button) {
-    width: 32px;
-    height: 32px;
-    padding: 5px;
+    width: 28px;
+    height: 28px;
+    padding: 0;
   }
 
   :global(.data-table) {
@@ -85,7 +85,7 @@
   }
 
   :global(.data-table-checkbox-cell) {
-    width: 32px;
+    width: 30px;
   }
 
   :global(.data-table-title-cell) {
@@ -93,21 +93,19 @@
   }
 
   :global(.data-table-row) {
-    height: 20px;
+    height: 30px;
     margin: 0;
     padding: 0;
     border-top-color: #eee;
   }
 
   :global(.data-table-cell) {
-    padding-left: 2px;
-    padding-right: 2px;
+    padding: 0 2px;
   }
 
   :global(.autocomplete-input) {
     border: none;
-    border-bottom: 1px solid #ddd;
-    height: 32px;
+    height: 30px;
     width: 100%;
     background: none;
     margin: 0;
@@ -149,6 +147,15 @@
 
   :global(.ml-small) {
     margin-left: 5px;
+  }
+
+  :global(.data-table) :global(.mdc-checkbox) {
+    padding: 2px;
+  }
+
+  :global(.data-table) :global(.mdc-checkbox) :global(.mdc-checkbox__background) {
+    top: 2px;
+    left: 2px;
   }
 
   .top-app-bar-container {
