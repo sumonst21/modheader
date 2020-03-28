@@ -399,6 +399,25 @@ async function initializeStorage() {
       });
     }
   }, 100);
+  
+  chrome.storage.onChanged.addListener(async (changes, areaName) => {
+    if (areaName !== 'local') {
+      return;
+    }
+    const profilesUpdated = !lodashIsUndefined(changes.profiles)
+        && !lodashIsEqual(chromeLocal.profiles, changes.profiles.newValue);
+    const selectedProfileUpdated = !lodashIsUndefined(changes.selectedProfile)
+        && !lodashIsEqual(chromeLocal.selectedProfile, changes.selectedProfile.newValue);
+    for (const [key, value] of Object.entries(changes)) {
+      chromeLocal[key] = value.newValue;
+    }
+    if (profilesUpdated || selectedProfileUpdated) {
+      currentProfile = await loadSelectedProfile_();
+      saveStorageToCloud();
+    }
+    setupHeaderModListener();
+    resetBadgeAndContextMenu();
+  });
 }
 chrome.contextMenus.create({
   id: 'pause',
@@ -421,22 +440,3 @@ chrome.runtime.onInstalled.addListener(details => {
 window.saveToStorage = async function(items) {
   await setLocal(items);
 };
-
-chrome.storage.onChanged.addListener(async (changes, areaName) => {
-  if (areaName !== 'local') {
-    return;
-  }
-  const profilesUpdated = !lodashIsUndefined(changes.profiles)
-      && !lodashIsEqual(chromeLocal.profiles, changes.profiles.newValue);
-  const selectedProfileUpdated = !lodashIsUndefined(changes.selectedProfile)
-      && !lodashIsEqual(chromeLocal.selectedProfile, changes.selectedProfile.newValue);
-  for (const [key, value] of Object.entries(changes)) {
-    chromeLocal[key] = value.newValue;
-  }
-  if (profilesUpdated || selectedProfileUpdated) {
-    currentProfile = await loadSelectedProfile_();
-    saveStorageToCloud();
-  }
-  setupHeaderModListener();
-  resetBadgeAndContextMenu();
-});

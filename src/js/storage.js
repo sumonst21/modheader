@@ -92,14 +92,14 @@ export async function initStorage() {
   const chromeLocal = await getLocal();
   let isMutated = false;
   if (lodashIsUndefined(chromeLocal.profiles)) {
-    profiles = [];
+    chromeLocal.profiles = [];
     isMutated = true;
-  } else {
-    isMutated = fixProfiles(chromeLocal.profiles);
   }
-  if (chromeLocal.selectedProfile < 0 ||
+  isMutated = fixProfiles(chromeLocal.profiles);
+  if (lodashIsUndefined(chromeLocal.selectedProfile) ||
+      chromeLocal.selectedProfile < 0 ||
       chromeLocal.selectedProfile >= chromeLocal.profiles.length) {
-    profileIndex = chromeLocal.profiles.length - 1;
+    chromeLocal.selectedProfile = chromeLocal.profiles.length - 1;
     isMutated = true;
   }
   if (isMutated) {
