@@ -160,7 +160,7 @@
     </Row>
   </Head>
   <Body>
-    {#each filters as filter}
+    {#each filters as filter, filterIndex}
       <Row class="data-table-row">
         <Cell checkbox class="data-table-cell">
           <Checkbox bind:checked={filter.enabled} indeterminate={false} />
@@ -216,7 +216,7 @@
             dense
             aria-label="Delete"
             class="small-icon-button"
-            on:click={() => removeFilter(filter)}>
+            on:click={() => removeFilter(filterIndex)}>
             <MdiIcon size="24" icon={mdiTrashCan} color="red" />
           </IconButton>
         </Cell>

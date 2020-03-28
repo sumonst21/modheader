@@ -62,9 +62,6 @@ async function loadSelectedProfile_() {
   let selectedProfile;
   if (chromeLocal.profiles) {
     const profiles = chromeLocal.profiles;
-    if (!chromeLocal.selectedProfile) {
-      chromeLocal.selectedProfile = 0;
-    }
     selectedProfile = profiles[chromeLocal.selectedProfile];
 
     function filterEnabled_(rows) {
@@ -78,25 +75,6 @@ async function loadSelectedProfile_() {
         }
       }
       return output;
-    }
-    for (let filter of selectedProfile.filters) {
-      if (filter.urlPattern) {
-        const urlPattern = filter.urlPattern;
-        const joiner = [];
-        for (let i = 0; i < urlPattern.length; ++i) {
-          let c = urlPattern.charAt(i);
-          if (SPECIAL_CHARS.indexOf(c) >= 0) {
-            c = '\\' + c;
-          } else if (c == '\\') {
-            c = '\\\\';
-          } else if (c == '*') {
-            c = '.*';
-          }
-          joiner.push(c);
-        }
-        filter.urlRegex = joiner.join('');
-      }
-      filters.push(filter);
     }
     selectedProfile.headers = filterEnabled_(selectedProfile.headers);
     selectedProfile.respHeaders = filterEnabled_(selectedProfile.respHeaders);
@@ -397,8 +375,7 @@ function resetBadgeAndContextMenu() {
 }
 
 async function initializeStorage() {
-  await initStorage();
-  chromeLocal = await getLocal(null);
+  chromeLocal = await initStorage();
   currentProfile = await loadSelectedProfile_();
   setupHeaderModListener();
   resetBadgeAndContextMenu();

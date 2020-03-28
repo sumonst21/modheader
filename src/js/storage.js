@@ -1,8 +1,80 @@
+import { createHeader, takeRight, generateBackgroundColor, generateTextColor } from './utils';
+import lodashIsUndefined from 'lodash/isUndefined';
+
+export function fixProfiles(profiles) {
+  let isMutated = false;
+  if (profiles.length == 0) {
+    profiles.push({
+      title: 'Profile 1',
+      hideComment: true,
+      headers: [createHeader()],
+      respHeaders: [],
+      filters: [],
+      urlReplacements: [],
+      appendMode: false,
+      backgroundColor: generateBackgroundColor(),
+      textColor: generateTextColor(),
+      shortTitle: '1',
+    });
+    isMutated = true;
+  }
+  for (let index in profiles) {
+    const profile = profiles[index];
+    if (!profile.title) {
+      profile.title = 'Profile ' + (index + 1);
+      isMutated = true;
+    }
+    if (!profile.shortTitle) {
+      profile.shortTitle = takeRight(index + 1);
+      isMutated = true;
+    }
+    if (!profile.headers) {
+      profile.headers = [createHeader()];
+      isMutated = true;
+    }
+    if (!profile.respHeaders) {
+      profile.respHeaders = [];
+      isMutated = true;
+    }
+    if (!profile.urlReplacements) {
+      profile.urlReplacements = [];
+      isMutated = true;
+    }
+    if (!profile.filters) {
+      profile.filters = [];
+    }
+    for (let filter of profile.filters) {
+      if (!filter.resourceType) {
+        filter.resourceType = [];
+        isMutated = true;
+      }
+    }
+    if (!profile.backgroundColor) {
+      profile.backgroundColor = generateBackgroundColor();
+      isMutated = true;
+    }
+    if (!!profile.textColor) {
+      profile.textColor = generateTextColor();
+      isMutated = true;
+    }
+  }
+  return isMutated;
+}
+
 export async function initStorage() {
   if (localStorage.profiles) {
+    const profiles = JSON.parse(localStorage.profiles);
+    fixProfiles(profiles);
+    let profileIndex = 0;
+    if (localStorage.selectedProfile) {
+      profileIndex = Number(localStorage.selectedProfile);
+    }
+    if (!(profileIndex >= 0 && profileIndex < profiles.length)) {
+      profileIndex = profiles.length - 1;
+    }
     await setLocal({
-      profiles: JSON.parse(localStorage.profiles),
-      selectedProfile: localStorage.selectedProfile,
+      profiles,
+      selectedProfile: profileIndex,
       lockedTabId: localStorage.lockedTabId,
       isPaused: localStorage.isPaused,
       activeTabId: localStorage.activeTabId,
@@ -17,6 +89,23 @@ export async function initStorage() {
     delete localStorage.savedToCloud;
     delete localStorage.currentTabUrl;
   }
+  const chromeLocal = await getLocal();
+  let isMutated = false;
+  if (lodashIsUndefined(chromeLocal.profiles)) {
+    profiles = [];
+    isMutated = true;
+  } else {
+    isMutated = fixProfiles(chromeLocal.profiles);
+  }
+  if (chromeLocal.selectedProfile < 0 ||
+      chromeLocal.selectedProfile >= chromeLocal.profiles.length) {
+    profileIndex = chromeLocal.profiles.length - 1;
+    isMutated = true;
+  }
+  if (isMutated) {
+    await setLocal(chromeLocal);
+  }
+  return chromeLocal;
 }
 
 export async function getLocal(keys) {

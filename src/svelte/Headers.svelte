@@ -33,8 +33,8 @@
     dispatch("add");
   }
 
-  function removeHeader(header) {
-    dispatch("remove", header);
+  function removeHeader(headerIndex) {
+    dispatch("remove", headerIndex);
   }
 
   function expandEditor(header) {
@@ -191,7 +191,7 @@
     </Row>
   </Head>
   <Body>
-    {#each headers as header}
+    {#each headers as header, headerIndex}
       <Row class="data-table-row">
         <Cell checkbox class="data-table-cell">
           <Checkbox
@@ -242,7 +242,7 @@
             dense
             aria-label="Delete"
             class="small-icon-button"
-            on:click={() => removeHeader(header)}>
+            on:click={() => removeHeader(headerIndex)}>
             <MdiIcon size="24" icon={mdiTrashCan} color="red" />
           </IconButton>
         </Cell>

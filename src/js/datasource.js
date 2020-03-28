@@ -5,8 +5,8 @@ import lodashOrderBy from 'lodash/orderBy';
 import lodashLast from 'lodash/last';
 import lodashIsUndefined from 'lodash/isUndefined';
 import { showMessage, hideMessage } from './toast';
-import { getLocal, setLocal, removeLocal } from './storage';
-import { takeRight, generateBackgroundColor, generateTextColor } from './utils';
+import { getLocal, setLocal, removeLocal, fixProfiles } from './storage';
+import { createHeader, takeRight, generateBackgroundColor, generateTextColor } from './utils';
 
 export const profiles = writable([]);
 let latestProfiles = [];
@@ -69,9 +69,8 @@ ignoringChangeStack = false;
 
 
 function isExistingProfileTitle_(title) {
-  const innerProfiles = get(profiles);
-  for (let i = 0; i < innerProfiles.length; ++i) {
-    if (innerProfiles[i].title == title) {
+  for (const profile of latestProfiles) {
+    if (profile.title === title) {
       return true;
     }
   }
@@ -103,23 +102,22 @@ export async function addFilter() {
     parser.href = currentTabUrl;
     urlRegex = parser.origin + '/.*';
   }
-  const filters = get(selectedProfile).filters;
-  filters.push({
-    enabled: true,
-    type: 'urls',
-    urlRegex: urlRegex,
-    resourceType: []
+  const filters = latestProfiles[latestSelectedProfileIndex].filters;
+  commitChange({
+    filters: [
+      ...filters,
+      {
+        enabled: true,
+        type: 'urls',
+        urlRegex: urlRegex,
+        resourceType: []
+      }
+    ]
   });
-  commitChange({ filters });
 }
 
 export function addHeader(headers) {
-  headers.push({
-    enabled: true,
-    name: '',
-    value: '',
-    comment: ''
-  });
+  return [...headers, createHeader()];
 }
 
 export async function addUrlReplacement(replacements) {
@@ -128,26 +126,30 @@ export async function addUrlReplacement(replacements) {
   if (currentTabUrl) {
     domain = new URL(currentTabUrl).origin;
   }
-  replacements.push({
+  return [...replacements, {
     enabled: true,
     name: domain,
     value: domain,
     comment: ''
-  });
+  }];
 }
 
-export function removeFilter(filter) {
-  const filters = get(selectedProfile).filters;
-  filters.splice(filters.indexOf(filter), 1);
+export function removeFilter(filterIndex) {
+  const filters = lodashCloneDeep(latestProfiles[latestSelectedProfileIndex].filters);
+  filters.splice(filterIndex, 1);
   commitChange({ filters });
 }
 
-export function removeHeader(headers, header) {
-  headers.splice(headers.indexOf(header), 1);
+export function removeHeader(headers, headerIndex) {
+  headers = lodashCloneDeep(headers)
+  headers.splice(headerIndex, 1);
+  return headers;
 }
 
-export function removeUrlReplacement(urlReplacements, replacement) {
-  urlReplacements.splice(urlReplacements.indexOf(replacement), 1);
+export function removeUrlReplacement(urlReplacements, replacementIndex) {
+  urlReplacements = lodashCloneDeep(urlReplacements);
+  urlReplacements.splice(replacementIndex, 1);
+  return urlReplacements;
 }
 
 export function commitChange(change) {
@@ -165,8 +167,8 @@ export function undo() {
     return;
   }
   let lastChange;
-  const currentProfiles = get(profiles);
-  const currentSelectedProfileIndex = get(selectedProfileIndex);
+  const currentProfiles = latestProfiles;
+  const currentSelectedProfileIndex = latestSelectedProfileIndex;
   const currentIsLocked = get(isLocked);
   const currentIsPaused = get(isPaused);
   while (changes.length > 0) {
@@ -227,7 +229,7 @@ export function createProfile() {
   const profile = {
     title: 'Profile ' + index,
     hideComment: true,
-    headers: [],
+    headers: [createHeader()],
     respHeaders: [],
     filters: [],
     urlReplacements: [],
@@ -236,7 +238,6 @@ export function createProfile() {
     textColor: generateTextColor(),
     shortTitle: takeRight(index),
   };
-  addHeader(profile.headers);
   return profile;
 };
 
@@ -274,19 +275,16 @@ function setProfilesAndIndex(newProfiles, newIndex, { newIsLocked, newIsPaused }
 }
 
 export function importProfiles(importProfiles) {
-  for (const p of importProfiles) {
-    fixProfile(p);
-  }
-  const innerProfiles = get(profiles).concat(importProfiles);
+  fixProfiles(importProfiles);
+  const innerProfiles = latestProfiles.concat(importProfiles);
   setProfilesAndIndex(innerProfiles, innerProfiles.length - 1);
   showMessage(`Imported profiles: ${importProfiles.map(p => p.title).join(", ")}`, { canUndo: true });
 }
 
 export function addProfile() {
   const newProfile = createProfile();
-  const innerProfiles = get(profiles);
-  innerProfiles.push(newProfile);
-  setProfilesAndIndex(innerProfiles, innerProfiles.length - 1);
+  latestProfiles.push(newProfile);
+  setProfilesAndIndex(latestProfiles, latestProfiles.length - 1);
 }
 
 export function selectProfile(profileIndex) {
@@ -294,67 +292,30 @@ export function selectProfile(profileIndex) {
 }
 
 export function removeProfile(profile) {
-  let innerProfiles = get(profiles);
-  innerProfiles.splice(innerProfiles.indexOf(profile), 1);
-  if (innerProfiles.length == 0) {
-    innerProfiles = [createProfile()];
+  latestProfiles.splice(latestProfiles.indexOf(profile), 1);
+  if (latestProfiles.length == 0) {
+    latestProfiles = [createProfile()];
   }
-  setProfilesAndIndex(innerProfiles, innerProfiles.length - 1);
+  setProfilesAndIndex(latestProfiles, latestProfiles.length - 1);
   showMessage('Profile deleted', { canUndo: true });
 }
 
 export function cloneProfile(profile) {
   const newProfile = lodashCloneDeep(profile);
   newProfile.title = 'Copy of ' + newProfile.title;
-  const innerProfiles = get(profiles);
-  innerProfiles.push(newProfile);
-  setProfilesAndIndex(innerProfiles, innerProfiles.length - 1);
+  latestProfiles.push(newProfile);
+  setProfilesAndIndex(latestProfiles, latestProfiles.length - 1);
   showMessage('Profile cloned', { canUndo: true });
 }
 
-function fixProfile(profile) {
-  if (profile.filters) {
-    for (let filter of profile.filters) {
-      if (filter.urlPattern) {
-        const urlPattern = filter.urlPattern;
-        const joiner = [];
-        for (let i = 0; i < urlPattern.length; ++i) {
-          let c = urlPattern.charAt(i);
-          if (SPECIAL_CHARS.indexOf(c) >= 0) {
-            c = '\\' + c;
-          } else if (c == '\\') {
-            c = '\\\\';
-          } else if (c == '*') {
-            c = '.*';
-          }
-          joiner.push(c);
-        }
-        delete filter.urlPattern;
-        filter.urlRegex = joiner.join('');
-      }
-      if (!filter.resourceType) {
-        filter.resourceType = [];
-      }
-    }
-  }
-  if (!profile.backgroundColor) {
-    profile.backgroundColor = generateBackgroundColor();
-  }
-  if (!!profile.textColor) {
-    profile.textColor = generateTextColor();
-  }
-}
-
 export function restoreToProfiles(profilesToRestore) {
-  for (const profile of profilesToRestore) {
-    fixProfile(profile);
-  }
+  fixProfiles(profilesToRestore);
   setProfilesAndIndex(profilesToRestore, 0);
   showMessage('Profiles restored', { canUndo: true });
 }
 
 export function sortProfiles(sortOrder) {
-  profiles.set(lodashOrderBy(get(profiles), ['title'], [sortOrder]));
+  profiles.set(lodashOrderBy(latestProfiles, ['title'], [sortOrder]));
   if (sortOrder === 'asc') {
     showMessage('Profiles sorted in ascending order', { canUndo: true });
   } else {
@@ -365,46 +326,8 @@ export function sortProfiles(sortOrder) {
 export async function init() {
   const chromeLocal = await getLocal([
     'profiles', 'selectedProfile', 'lockedTabId', 'isPaused']);
-  let innerProfiles = [];
-  if (chromeLocal.profiles) {
-    innerProfiles = chromeLocal.profiles;
-    for (let profile of innerProfiles) {
-      fixProfile(profile);
-    }
-  }
-  if (innerProfiles.length == 0) {
-    innerProfiles.push(createProfile());
-  }
-  for (let index in innerProfiles) {
-    const profile = innerProfiles[index];
-    if (!profile.title) {
-      profile.title = 'Profile ' + (index + 1);
-    }
-    if (!profile.shortTitle) {
-      profile.shortTitle = takeRight(index + 1);
-    }
-    if (!profile.headers) {
-      profile.headers = [];
-      addHeader(profile.headers);
-    }
-    if (!profile.respHeaders) {
-      profile.respHeaders = [];
-    }
-    if (!profile.urlReplacements) {
-      profile.urlReplacements = [];
-    }
-    if (!profile.filters) {
-      profile.filters = [];
-    }
-  }
-  let profileIndex = 0;
-  if (chromeLocal.selectedProfile) {
-    profileIndex = Number(chromeLocal.selectedProfile);
-  }
-  if (!(profileIndex >= 0 && profileIndex < innerProfiles.length)) {
-    profileIndex = innerProfiles.length - 1;
-  }
-  setProfilesAndIndex(innerProfiles, profileIndex,
+  setProfilesAndIndex(chromeLocal.profiles,
+    chromeLocal.selectedProfile,
     { newIsLocked: !!chromeLocal.lockedTabId,
       newIsPaused: !!chromeLocal.isPaused });
   isInitialized = true;

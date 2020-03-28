@@ -170,12 +170,10 @@
         title="Request headers"
         autocompleteNames={KNOWN_REQUEST_HEADERS}
         on:add={() => {
-          addHeader($selectedProfile.headers);
-          commitChange({ headers: $selectedProfile.headers });
+          commitChange({ headers: addHeader($selectedProfile.headers) });
         }}
         on:remove={event => {
-          removeHeader($selectedProfile.headers, event.detail);
-          commitChange({ headers: $selectedProfile.headers });
+          commitChange({ headers: removeHeader($selectedProfile.headers, event.detail) });
         }}
         on:refresh={event => {
           commitChange({ headers: event.detail });
@@ -187,12 +185,10 @@
         autocompleteNames={KNOWN_RESPONSE_HEADERS}
         profile={selectedProfile}
         on:add={() => {
-          addHeader($selectedProfile.respHeaders);
-          commitChange({ respHeaders: $selectedProfile.respHeaders });
+          commitChange({ respHeaders: addHeader($selectedProfile.respHeaders) });
         }}
         on:remove={event => {
-          removeHeader($selectedProfile.respHeaders, event.detail);
-          commitChange({ respHeaders: $selectedProfile.respHeaders });
+          commitChange({ respHeaders: removeHeader($selectedProfile.respHeaders, event.detail) });
         }}
         on:refresh={event => {
           commitChange({ respHeaders: event.detail });
@@ -206,12 +202,10 @@
         valueLabel="Redirect URL"
         profile={$selectedProfile}
         on:add={async () => {
-          await addUrlReplacement($selectedProfile.urlReplacements);
-          commitChange({ urlReplacements: $selectedProfile.urlReplacements });
+          commitChange({ urlReplacements: await addUrlReplacement($selectedProfile.urlReplacements) });
         }}
         on:remove={event => {
-          removeUrlReplacement($selectedProfile.urlReplacements, event.detail);
-          commitChange({ urlReplacements: $selectedProfile.urlReplacements });
+          commitChange({ urlReplacements: removeUrlReplacement($selectedProfile.urlReplacements, event.detail) });
         }}
         on:refresh={event => {
           commitChange({ urlReplacements: event.detail });
