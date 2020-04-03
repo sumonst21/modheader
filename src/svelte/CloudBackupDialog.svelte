@@ -2,7 +2,7 @@
   import Dialog, { Title, Content, Actions } from "@smui/dialog";
   import List, { Item, Separator, Text } from "@smui/list";
   import Button, { Label } from "@smui/button";
-  import Radio from "@smui/radio";
+
   import IconButton from "@smui/icon-button";
   import lodashRemove from "lodash/remove";
   import lodashOrderBy from "lodash/orderBy";

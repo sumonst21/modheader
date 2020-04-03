@@ -49,7 +49,6 @@
   let colorPicker;
   let pauseSnackbar;
   let tabLockSnackbar;
-  let moreMenuLocation;
   let moreMenu;
   let exportDialog;
   let importDialog;
@@ -273,7 +272,6 @@
           </Item>
         </List>
       </Menu>
-      <div bind:this={moreMenuLocation} />
     </Section>
   </Row>
 </TopAppBar>

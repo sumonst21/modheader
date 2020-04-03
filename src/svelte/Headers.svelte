@@ -2,17 +2,18 @@
   import Dialog, { Title, Content, Actions } from "@smui/dialog";
   import IconButton from "@smui/icon-button";
   import Button, { Label } from "@smui/button";
-  import DataTable, { Head, Body, Cell } from "@smui/data-table";
   import Checkbox from "@smui/checkbox";
   import Menu from "@smui/menu";
   import List, { Item, Separator, Text } from "@smui/list";
   import { mdiPlus, mdiTrashCan, mdiArrowExpand, mdiSort } from "@mdi/js";
   import { createEventDispatcher } from "svelte";
+  import { flip } from "svelte/animate";
+	import { quintOut } from 'svelte/easing';
+	import { crossfade } from 'svelte/transition';
   import lodashUniq from "lodash/uniq";
   import lodashOrderBy from "lodash/orderBy";
   import { selectedProfile, commitChange } from "../js/datasource";
   import { DISABLED_COLOR, PRIMARY_COLOR } from "../js/constants";
-  import Row from "./Row.svelte";
   import AutoComplete from "./Autocomplete.svelte";
   import MdiIcon from "./MdiIcon.svelte";
 
@@ -59,6 +60,24 @@
     }
     refreshHeaders();
   }
+
+	const [send, receive] = crossfade({
+		duration: d => Math.sqrt(d * 200),
+
+		fallback(node, params) {
+			const style = getComputedStyle(node);
+			const transform = style.transform === 'none' ? '' : style.transform;
+
+			return {
+				duration: 600,
+				easing: quintOut,
+				css: t => `
+					transform: ${transform} scaleY(${t});
+					opacity: ${t}
+				`
+			};
+		}
+  });
 
   $: allChecked = headers.every(h => h.enabled);
   $: allUnchecked = headers.every(h => !h.enabled);
@@ -113,140 +132,125 @@
   </Actions>
 </Dialog>
 
-<DataTable class="data-table {clazz}">
-  <Head>
-    <Row class="data-table-row">
-      <Cell checkbox class="data-table-cell data-table-checkbox-cell">
-        <Checkbox
-          bind:checked={allChecked}
-          indeterminate={!allChecked && !allUnchecked}
-          on:click={() => toggleAll()}
-          disabled={headers.length === 0} />
-      </Cell>
-      <Cell class="data-table-cell data-table-title-cell">
-        <h4 class="data-table-title">{title}</h4>
-      </Cell>
-      <Cell
-        class="data-table-cell"
-        colspan={$selectedProfile.hideComment ? 3 : 4}>
-        <Button on:click={() => addHeader(headers)}>
-          <MdiIcon size="20" icon={mdiPlus} color={PRIMARY_COLOR} middle />
-          Add
-        </Button>
-        <Button
-          on:click={e => {
-            sortMenu.setFixedPosition(true);
-            const rect = e.target.getBoundingClientRect();
-            sortMenu.setAbsolutePosition(rect.left + window.scrollX, e.target.offsetParent.offsetTop + rect.top + window.scrollY);
-            sortMenu.setOpen(true);
-          }}
-          disabled={headers.length === 0}>
-          <MdiIcon
-            size="20"
-            icon={mdiSort}
-            color={headers.length === 0 ? DISABLED_COLOR : PRIMARY_COLOR}
-            middle />
-          Sort
-        </Button>
+<div class="data-table {clazz}">
+  <div class="data-table-row data-table-title-row">
+    <Checkbox
+      class="data-table-cell flex-fixed-icon"
+      bind:checked={allChecked}
+      indeterminate={!allChecked && !allUnchecked}
+      on:click={() => toggleAll()}
+      disabled={headers.length === 0} />
+    <h3 class="data-table-title data-table-cell flex-grow">{title}</h3>
+    <div class="data-table-cell">
+      <Button on:click={() => addHeader(headers)} class="small-text-button">
+        <MdiIcon size="20" icon={mdiPlus} color={PRIMARY_COLOR} middle />
+        Add
+      </Button>
+    </div>
+    <div class="data-table-cell">
+      <Button
+        class="small-text-button"
+        on:click={e => sortMenu.setOpen(true)}
+        disabled={headers.length === 0}>
+        <MdiIcon
+          size="20"
+          icon={mdiSort}
+          color={headers.length === 0 ? DISABLED_COLOR : PRIMARY_COLOR}
+          middle />
+        Sort
+      </Button>
+      
+      <Menu bind:this={sortMenu} quickOpen>
+        <List class="sort-menu">
+          <Item on:SMUI:action={() => sort('name', 'asc')}>
+            <Text>{nameLabel} - ascending</Text>
+          </Item>
+          <Item on:SMUI:action={() => sort('name', 'desc')}>
+            <Text>{nameLabel} - descending</Text>
+          </Item>
+          <Item on:SMUI:action={() => sort('value', 'asc')}>
+            <Text>{valueLabel} - ascending</Text>
+          </Item>
+          <Item on:SMUI:action={() => sort('value', 'desc')}>
+            <Text>{valueLabel} - descending</Text>
+          </Item>
+          {#if !$selectedProfile.hideComment}
+            <Item on:SMUI:action={() => sort('comment', 'asc')}>
+              <Text>Comment - ascending</Text>
+            </Item>
+            <Item on:SMUI:action={() => sort('comment', 'desc')}>
+              <Text>Comment - descending</Text>
+            </Item>
+          {/if}
+        </List>
+      </Menu>
+    </div>
 
-        <Menu bind:this={sortMenu} quickOpen>
-          <List class="sort-menu">
-            <Item on:SMUI:action={() => sort('name', 'asc')}>
-              <Text>{nameLabel} - ascending</Text>
-            </Item>
-            <Item on:SMUI:action={() => sort('name', 'desc')}>
-              <Text>{nameLabel} - descending</Text>
-            </Item>
-            <Item on:SMUI:action={() => sort('value', 'asc')}>
-              <Text>{valueLabel} - ascending</Text>
-            </Item>
-            <Item on:SMUI:action={() => sort('value', 'desc')}>
-              <Text>{valueLabel} - descending</Text>
-            </Item>
-            {#if !$selectedProfile.hideComment}
-              <Item on:SMUI:action={() => sort('comment', 'asc')}>
-                <Text>Comment - ascending</Text>
-              </Item>
-              <Item on:SMUI:action={() => sort('comment', 'desc')}>
-                <Text>Comment - descending</Text>
-              </Item>
-            {/if}
-          </List>
-        </Menu>
 
-        <Button
-          on:click={() => {
-            headers = [];
-            refreshHeaders();
-          }}
-          disabled={headers.length === 0}>
-          <MdiIcon
-            size="20"
-            icon={mdiTrashCan}
-            color={headers.length === 0 ? DISABLED_COLOR : 'red'}
-            middle />
-          Clear
-        </Button>
-      </Cell>
-    </Row>
-  </Head>
-  <Body>
-    {#each headers as header, headerIndex}
-      <Row class="data-table-row">
-        <Cell checkbox class="data-table-cell">
-          <Checkbox
-            bind:checked={header.enabled}
-            on:click={refreshHeaders}
-            indeterminate={false} />
-        </Cell>
-        <Cell class="data-table-cell">
-          <AutoComplete
-            className="mdc-text-field__input"
-            items={knownHeaderNames}
-            bind:value={header.name}
-            bind:selectedItem={header.name}
-            on:change={refreshHeaders}
-            placeholder={nameLabel} />
-        </Cell>
-        <Cell class="data-table-cell">
-          <AutoComplete
-            className="mdc-text-field__input"
-            items={knownHeaderValues}
-            bind:value={header.value}
-            bind:selectedItem={header.value}
-            on:change={refreshHeaders}
-            placeholder={valueLabel} />
-        </Cell>
-        {#if !$selectedProfile.hideComment}
-          <Cell class="data-table-cell">
-            <AutoComplete
-              className="mdc-text-field__input"
-              items={knownHeaderComments}
-              bind:value={header.comment}
-              bind:selectedItem={header.comment}
-              on:change={refreshHeaders}
-              placeholder="Comment" />
-          </Cell>
-        {/if}
-        <Cell class="data-table-cell">
-          <IconButton
-            dense
-            aria-label="Expand"
-            class="small-icon-button"
-            on:click={() => expandEditor(header)}>
-            <MdiIcon size="24" icon={mdiArrowExpand} />
-          </IconButton>
-        </Cell>
-        <Cell class="data-table-cell">
-          <IconButton
-            dense
-            aria-label="Delete"
-            class="small-icon-button"
-            on:click={() => removeHeader(headerIndex)}>
-            <MdiIcon size="24" icon={mdiTrashCan} color="red" />
-          </IconButton>
-        </Cell>
-      </Row>
-    {/each}
-  </Body>
-</DataTable>
+    <div class="data-table-cell">
+      <Button
+        class="small-text-button"
+        on:click={() => {
+          headers = [];
+          refreshHeaders();
+        }}
+        disabled={headers.length === 0}>
+        <MdiIcon
+          size="20"
+          icon={mdiTrashCan}
+          color={headers.length === 0 ? DISABLED_COLOR : 'red'}
+          middle />
+        Clear
+      </Button>
+    </div>
+  </div>
+  {#each headers as header, headerIndex (headerIndex)}
+    <div 
+				in:receive="{{key: headerIndex}}"
+        animate:flip
+        class="data-table-row {header.enabled ? '' : 'data-table-row-unchecked'}">
+      <Checkbox
+        class="data-table-cell flex-fixed-icon"
+        bind:checked={header.enabled}
+        on:click={refreshHeaders}
+        indeterminate={false} />
+      <AutoComplete
+        className="mdc-text-field__input data-table-cell flex-grow"
+        items={knownHeaderNames}
+        bind:value={header.name}
+        bind:selectedItem={header.name}
+        on:change={refreshHeaders}
+        placeholder={nameLabel} />
+      <AutoComplete
+        className="mdc-text-field__input data-table-cell flex-grow"
+        items={knownHeaderValues}
+        bind:value={header.value}
+        bind:selectedItem={header.value}
+        on:change={refreshHeaders}
+        placeholder={valueLabel} />
+      {#if !$selectedProfile.hideComment}
+        <AutoComplete
+          className="mdc-text-field__input data-table-cell flex-grow"
+          items={knownHeaderComments}
+          bind:value={header.comment}
+          bind:selectedItem={header.comment}
+          on:change={refreshHeaders}
+          placeholder="Comment" />
+      {/if}
+      <IconButton
+        dense
+        aria-label="Expand"
+        class="small-icon-button data-table-cell flex-fixed-icon"
+        on:click={() => expandEditor(header)}>
+        <MdiIcon size="24" icon={mdiArrowExpand} />
+      </IconButton>
+      <IconButton
+        dense
+        aria-label="Delete"
+        class="small-icon-button data-table-cell flex-fixed-icon"
+        on:click={() => removeHeader(headerIndex)}>
+        <MdiIcon size="24" icon={mdiTrashCan} color="red" />
+      </IconButton>
+    </div>
+  {/each}
+</div>

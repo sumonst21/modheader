@@ -1,2 +1,118 @@
 $mdc-theme-primary: #1976d2;
 $mdc-theme--on-primary: #fff;
+
+html, body {
+  height: 460px;
+  /** Fix FF popup disappearance on long window. */
+  width: 620px !important;
+  position: relative !important;
+  margin: 0;
+}
+
+button::-moz-focus-inner {
+  border: 0;
+}
+
+.extra-gap {
+  margin: 2px;
+}
+
+.small-icon-button {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+}
+
+.small-text-button {
+  height: 28px;
+  margin: 0 2px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.app-content {
+  margin-left: 0 !important;
+  width: 580px;
+  position: absolute;
+  left: 36px;
+}
+
+.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.large-textarea {
+  width: 100%;
+  height: 50px;
+}
+
+.extra-large-textarea {
+  width: 400px;
+  height: 250px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.ml-small {
+  margin-left: 5px;
+}
+
+.autocomplete-input {
+  border: none;
+  height: 30px;
+  width: 100%;
+  background: none;
+  margin: 0;
+  outline: none;
+  padding: 0;
+}
+
+.dialog-close-button {
+  float: right;
+  top: 4px;
+}
+
+.data-table {
+  border-bottom: 1px solid #ddd;
+  width: 100%;
+}
+
+.data-table-title {
+  margin: 4px 0;
+}
+
+.data-table-row-unchecked {
+  background: #eee;
+}
+
+.data-table-row {
+  display: flex;
+  justify-content: start;
+  height: 30px;
+}
+
+.data-table-cell {
+  padding: 0 2px;
+}
+
+.data-table .mdc-checkbox {
+  padding: 2px;
+  margin-top: 4px;
+}
+
+.data-table .mdc-checkbox .mdc-checkbox__background {
+  top: 2px;
+  left: 8px;
+}
+
+.flex-grow {
+  flex-grow: 1;
+}
+
+.flex-fixed-icon {
+  flex-basis: 30px;
+  flex-shrink: 0;
+}
