@@ -1,9 +1,10 @@
 import lodashIsEqual from 'lodash/isEqual';
 import lodashIsUndefined from 'lodash/isUndefined';
 import lodashClone from 'lodash/clone';
-import { initStorage, getLocal, setLocal, removeLocal } from './storage';
+import { initStorage, setLocal, removeLocal, setSync, getSync, removeSync } from './storage';
+import { createContextMenu, updateContextMenu, clearContextMenu } from './context-menu';
+import { setBrowserAction } from './browser-action';
 
-const SPECIAL_CHARS = '^$&+?.()|{}[]/'.split('');
 const MAX_PROFILES_IN_CLOUD = 50;
 const CHROME_VERSION = getChromeVersion();
 let chromeLocal = {
@@ -58,7 +59,7 @@ function passFilters_(url, type, filters) {
   );
 }
 
-async function loadSelectedProfile_() {
+function loadSelectedProfile_() {
   let selectedProfile;
   if (chromeLocal.profiles) {
     const profiles = chromeLocal.profiles;
@@ -269,7 +270,7 @@ async function onTabUpdated(tab) {
     if (!url) {
       return;
     }
-    resetBadgeAndContextMenu();
+    await resetBadgeAndContextMenu();
   }
 }
 
@@ -292,32 +293,26 @@ chrome.windows.onFocusChanged.addListener(windowId => {
   });
 });
 
-function saveStorageToCloud() {
-  chrome.storage.sync.get(null, async items => {
-    const keys = items ? Object.keys(items) : [];
-    keys.sort();
-    if (
-      keys.length == 0 ||
-      items[keys[keys.length - 1]] != chromeLocal.profiles
-    ) {
-      const data = {};
-      data[Date.now()] = chromeLocal.profiles;
-      chrome.storage.sync.set(data);
-      await setLocal({
-        savedToCloud: true
-      });
-    }
-    if (keys.length >= MAX_PROFILES_IN_CLOUD) {
-      chrome.storage.sync.remove(
-        keys.slice(0, keys.length - MAX_PROFILES_IN_CLOUD)
-      );
-    }
-  });
+async function saveStorageToCloud() {
+  const items = await getSync();
+  const keys = items ? Object.keys(items) : [];
+  keys.sort();
+  if (
+    keys.length == 0 ||
+    items[keys[keys.length - 1]] != chromeLocal.profiles
+  ) {
+    const data = {};
+    data[Date.now()] = chromeLocal.profiles;
+    await Promise.all([setSync(data), setLocal({ savedToCloud: true })]);
+  }
+  if (keys.length >= MAX_PROFILES_IN_CLOUD) {
+    await removeSync(keys.slice(0, keys.length - MAX_PROFILES_IN_CLOUD));
+  }
 }
 
-function createContextMenu() {
+async function resetContextMenu() {
   if (chromeLocal.isPaused) {
-    chrome.contextMenus.update('pause', {
+    await updateContextMenu('pause', {
       title: 'Unpause ModHeader',
       contexts: ['browser_action'],
       onclick: async () => {
@@ -325,7 +320,7 @@ function createContextMenu() {
       }
     });
   } else {
-    chrome.contextMenus.update('pause', {
+    await updateContextMenu('pause', {
       title: 'Pause ModHeader',
       contexts: ['browser_action'],
       onclick: async () => {
@@ -334,7 +329,7 @@ function createContextMenu() {
     });
   }
   if (chromeLocal.lockedTabId) {
-    chrome.contextMenus.update('lock', {
+    await updateContextMenu('lock', {
       title: 'Unlock to all tabs',
       contexts: ['browser_action'],
       onclick: async () => {
@@ -342,7 +337,7 @@ function createContextMenu() {
       }
     });
   } else {
-    chrome.contextMenus.update('lock', {
+    await updateContextMenu('lock', {
       title: 'Lock to this tab',
       contexts: ['browser_action'],
       onclick: async () => {
@@ -352,53 +347,62 @@ function createContextMenu() {
   }
 }
 
-function resetBadgeAndContextMenu() {
+async function resetBadgeAndContextMenu() {
   if (chromeLocal.isPaused) {
-    chrome.browserAction.setIcon({ path: 'images/icon_bw.png' });
-    chrome.browserAction.setBadgeText({ text: '\u275A\u275A' });
-    chrome.browserAction.setBadgeBackgroundColor({ color: '#666' });
+    await setBrowserAction({
+      icon: 'images/icon_bw.png',
+      text: '\u275A\u275A',
+      color: '#666'
+    });
   } else {
     if (
       chromeLocal.lockedTabId &&
       chromeLocal.lockedTabId != chromeLocal.activeTabId
     ) {
-      chrome.browserAction.setIcon({ path: 'images/icon_bw.png' });
-      chrome.browserAction.setBadgeText({ text: '\uD83D\uDD12' });
-      chrome.browserAction.setBadgeBackgroundColor({ color: '#ff8e8e' });
+      await setBrowserAction({
+        icon: 'images/icon_bw.png',
+        text: '\uD83D\uDD12',
+        color: '#ff8e8e'
+      });
     } else {
-      chrome.browserAction.setIcon({ path: 'images/icon.png' });
-      chrome.browserAction.setBadgeText({ text: currentProfile.shortTitle });
-      chrome.browserAction.setBadgeBackgroundColor({ color: currentProfile.backgroundColor });
-    }
-  }
-  createContextMenu();
-}
-
-async function initializeStorage() {
-  chromeLocal = await initStorage();
-  currentProfile = await loadSelectedProfile_();
-  setupHeaderModListener();
-  resetBadgeAndContextMenu();
-
-  // Async initialization.
-  setTimeout(async () => {
-    if (chromeLocal.profiles && !chromeLocal.savedToCloud) {
-      saveStorageToCloud();
-    }
-
-    if (!chromeLocal.profiles) {
-      chrome.storage.sync.get(null, async items => {
-        const keys = items ? Object.keys(items) : [];
-        keys.sort();
-        if (keys.length > 0) {
-          await setLocal({
-            profiles: items[keys[keys.length - 1]],
-            savedToCloud: true,
-          });
-        }
+      await setBrowserAction({
+        icon: 'images/icon.png',
+        text: currentProfile.shortTitle,
+        color: currentProfile.backgroundColor
       });
     }
-  }, 100);
+  }
+  await resetContextMenu();
+}
+
+async function initialize() {
+  await clearContextMenu();
+  await createContextMenu({
+    id: 'pause',
+    title: 'Pause',
+    contexts: ['browser_action']
+  });
+  await createContextMenu({
+    id: 'lock',
+    title: 'Lock',
+    contexts: ['browser_action']
+  });
+  chromeLocal = await initStorage();
+  currentProfile = loadSelectedProfile_();
+  if (currentProfile) {
+    setupHeaderModListener();
+    await resetBadgeAndContextMenu();
+  } else {
+    const items = await getSync();
+    const keys = items ? Object.keys(items) : [];
+    keys.sort();
+    if (keys.length > 0) {
+      await setLocal({
+        profiles: items[keys[keys.length - 1]],
+        savedToCloud: true,
+      });
+    }
+  }
   
   chrome.storage.onChanged.addListener(async (changes, areaName) => {
     if (areaName !== 'local') {
@@ -412,24 +416,14 @@ async function initializeStorage() {
       chromeLocal[key] = value.newValue;
     }
     if (profilesUpdated || selectedProfileUpdated) {
-      currentProfile = await loadSelectedProfile_();
+      currentProfile = loadSelectedProfile_();
       saveStorageToCloud();
     }
     setupHeaderModListener();
-    resetBadgeAndContextMenu();
+    await resetBadgeAndContextMenu();
   });
 }
-chrome.contextMenus.create({
-  id: 'pause',
-  title: 'Pause',
-  contexts: ['browser_action']
-});
-chrome.contextMenus.create({
-  id: 'lock',
-  title: 'Lock',
-  contexts: ['browser_action']
-});
-initializeStorage();
+initialize();
 
 chrome.runtime.onInstalled.addListener(details => {
   if (details.reason === 'install') {
@@ -437,6 +431,6 @@ chrome.runtime.onInstalled.addListener(details => {
   }
 });
 
-window.saveToStorage = async function(items) {
-  await setLocal(items);
+window.saveToStorage = function(items) {
+  return setLocal(items);
 };

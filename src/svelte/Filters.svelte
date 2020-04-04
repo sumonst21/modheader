@@ -128,12 +128,7 @@
     </div>
     <div class="data-table-cell">
       <Button
-        on:click={e => {
-          sortMenu.setFixedPosition(true);
-          const rect = e.target.getBoundingClientRect();
-          sortMenu.setAbsolutePosition(rect.left + window.scrollX, e.target.offsetParent.offsetTop + rect.top + window.scrollY);
-          sortMenu.setOpen(true);
-        }}
+        on:click={e => sortMenu.setOpen(true)}
         disabled={$selectedProfile.filters.length === 0}
         class="small-text-button">
         <MdiIcon

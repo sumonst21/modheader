@@ -45,7 +45,7 @@
           .map(rt => KNOWN_RESOURCE_TYPES[rt])
           .join(', ') : 'Select Resource Type'}
   </Button>
-  <Menu bind:this={resourceTypeMenu}>
+  <Menu bind:this={resourceTypeMenu} quickOpen>
     <List>
       {#each Object.entries(KNOWN_RESOURCE_TYPES) as [value, label]}
         <Item
