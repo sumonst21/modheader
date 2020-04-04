@@ -392,16 +392,6 @@ async function initialize() {
   if (currentProfile) {
     setupHeaderModListener();
     await resetBadgeAndContextMenu();
-  } else {
-    const items = await getSync();
-    const keys = items ? Object.keys(items) : [];
-    keys.sort();
-    if (keys.length > 0) {
-      await setLocal({
-        profiles: items[keys[keys.length - 1]],
-        savedToCloud: true,
-      });
-    }
   }
   
   chrome.storage.onChanged.addListener(async (changes, areaName) => {
@@ -419,8 +409,10 @@ async function initialize() {
       currentProfile = loadSelectedProfile_();
       saveStorageToCloud();
     }
-    setupHeaderModListener();
-    await resetBadgeAndContextMenu();
+    if (currentProfile) {
+      setupHeaderModListener();
+      await resetBadgeAndContextMenu();
+    }
   });
 }
 initialize();

@@ -1,5 +1,6 @@
 import { createHeader, takeRight, generateBackgroundColor, generateTextColor } from './utils';
 import lodashIsUndefined from 'lodash/isUndefined';
+import lodashIsEmpty from 'lodash/isEmpty';
 
 export function fixProfiles(profiles) {
   let isMutated = false;
@@ -89,9 +90,22 @@ export async function initStorage() {
     delete localStorage.savedToCloud;
     delete localStorage.currentTabUrl;
   }
-  const chromeLocal = await getLocal();
+  let chromeLocal = await getLocal();
+  if (!chromeLocal.profiles) {
+    const items = await getSync();
+    const keys = items ? Object.keys(items) : [];
+    keys.sort();
+    if (keys.length > 0) {
+      chromeLocal = {
+        profiles: items[keys[keys.length - 1]],
+        selectedProfile: 0,
+        savedToCloud: true,
+      };
+      await setLocal(chromeLocal);
+    }
+  }
   let isMutated = false;
-  if (lodashIsUndefined(chromeLocal.profiles)) {
+  if (lodashIsEmpty(chromeLocal.profiles)) {
     chromeLocal.profiles = [];
     isMutated = true;
   }
