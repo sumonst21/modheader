@@ -4,7 +4,7 @@
   import IconButton from "@smui/icon-button";
   import Button from "@smui/button";
   import { mdiClose } from "@mdi/js";
-  import { onDestroy } from "svelte";
+  import { onMount, onDestroy } from "svelte";
   import TopBar from "./TopBar.svelte";
   import Drawer from "./Drawer.svelte";
   import Filters from "./Filters.svelte";
@@ -22,17 +22,35 @@
     init
   } from "../js/datasource";
   import MdiIcon from "./MdiIcon.svelte";
+  import ReviewDialog from './ReviewDialog.svelte';
   import { toastMessage, undoable } from "../js/toast";
+  import { getSync, setSync } from "../js/storage";
   import {
     KNOWN_REQUEST_HEADERS,
     KNOWN_RESPONSE_HEADERS
   } from "../js/constants";
   import lodashClone from "lodash/clone";
 
+  let reviewDialog;
   let snackbar;
   let snackbarMessage;
 
   window.addEventListener("unload", save);
+
+  async function promptForReviewsIfNeeded() {
+    const { reviewPromptTimestamp } = await getSync('reviewPromptTimestamp');
+    if (!reviewPromptTimestamp) {
+      await setSync({
+        reviewPromptTimestamp: Date.now() + (1000 * 60 * 60 * 24 * 7) // 7 days
+      });
+    } else if (Date.now() > reviewPromptTimestamp) {
+      reviewDialog.show();
+    }
+  }
+
+  onMount(() => {
+    promptForReviewsIfNeeded();
+  });
 
   const unsubscribeToastMessage = toastMessage.subscribe(message => {
     if (snackbar) {
@@ -53,6 +71,8 @@
     height: 48px;
   }
 </style>
+
+<ReviewDialog bind:this={reviewDialog} />
 
 {#await init() then initResult}
   <Drawer />

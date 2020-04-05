@@ -178,7 +178,7 @@
       <Separator nav />
       <Item
         class="main-drawer-item"
-        on:click={() => openLink('https://paypal.me/hao1300')}>
+        on:click={() => openLink('https://r.bewisse.com/modheader/donate')}>
         <span class="main-drawer-icon-container">
           <MdiIcon
             size="24"
@@ -190,7 +190,7 @@
       </Item>
       <Item
         class="main-drawer-item"
-        on:click={() => openLink('https://chrome.google.com/webstore/detail/idgpnmonknjnojddfkpgkljpfnnfcklj')}>
+        on:click={() => openLink('https://r.bewisse.com/modheader/review?browser=' + process.env.BROWSER)}>
         <span class="main-drawer-icon-container">
           <MdiIcon
             size="24"
