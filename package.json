@@ -1,7 +1,7 @@
 {
-  "name": "chrome-extension-svelte-webpack",
-  "version": "0.0.2",
-  "description": "A boilerplate to chrome extension with svelte and webpack",
+  "name": "modheader-chrome-extension",
+  "version": "3.0.0",
+  "description": "ModHeader chrome extension",
   "scripts": {
     "build-chrome": "cross-env NODE_ENV=production BROWSER=chrome node utils/build.js",
     "build-firefox": "cross-env NODE_ENV=production BROWSER=firefox node utils/build.js",

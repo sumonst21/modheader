@@ -2,6 +2,7 @@ $mdc-theme-primary: #1976d2;
 $mdc-theme--on-primary: #fff;
 
 html, body {
+  font-family: "Segoe UI", Tahoma, sans-serif;
   height: 460px;
   /** Fix FF popup disappearance on long window. */
   width: 620px !important;
@@ -21,6 +22,7 @@ button::-moz-focus-inner {
   width: 28px;
   height: 28px;
   padding: 0;
+  margin: 0;
 }
 
 .small-text-button {
