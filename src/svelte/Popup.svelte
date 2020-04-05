@@ -66,7 +66,109 @@
   onDestroy(unsubscribeToastMessage);
 </script>
 
-<style scoped>
+<style>
+  :global(html, body) {
+    font-family: "Segoe UI", Tahoma, sans-serif;
+    height: 460px;
+    /** Fix FF popup disappearance on long window. */
+    width: 620px !important;
+    position: relative !important;
+    margin: 0;
+  }
+
+  :global(button::-moz-focus-inner) {
+    border: 0;
+  }
+
+  :global(.extra-gap) {
+    margin: 2px;
+  }
+
+  :global(.small-icon-button) {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    margin: 0;
+  }
+
+  :global(.small-text-button) {
+    height: 28px;
+    margin: 0 2px;
+  }
+
+  :global(.hidden) {
+    display: none !important;
+  }
+
+  :global(.app-content) {
+    margin-left: 0 !important;
+    width: 580px;
+    position: absolute;
+    left: 36px;
+  }
+
+  :global(.disabled) {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  :global(.large-textarea) {
+    width: 100%;
+    height: 50px;
+  }
+
+  :global(.ml-small) {
+    margin-left: 5px;
+  }
+
+  :global(.dialog-close-button) {
+    float: right;
+    top: 4px;
+  }
+
+  :global(.data-table) {
+    border-bottom: 1px solid #ddd;
+    width: 100%;
+  }
+
+  :global(.data-table-title) {
+    margin: 4px 0;
+  }
+
+  :global(.data-table-row-unchecked) {
+    background: #eee;
+  }
+
+  :global(.data-table-row) {
+    display: flex;
+    justify-content: start;
+    height: 30px;
+  }
+
+  :global(.data-table-cell) {
+    padding: 0 2px;
+  }
+
+  :global(.data-table .mdc-checkbox) {
+    padding: 2px;
+    margin-top: 4px;
+  }
+
+  :global(.data-table .mdc-checkbox .mdc-checkbox__background) {
+    top: 2px;
+    left: 8px;
+  }
+
+  :global(.flex-grow) {
+    flex-grow: 1;
+  }
+
+  :global(.flex-fixed-icon) {
+    flex-basis: 30px;
+    flex-shrink: 0;
+    --mdc-ripple-top: 2px !important;
+  }
+
   .top-app-bar-container {
     height: 48px;
   }

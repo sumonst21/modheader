@@ -22,6 +22,12 @@
   import MdiIcon from "./MdiIcon.svelte";
   import ResourceTypeMenu from "./ResourceTypeMenu.svelte";
 
+  const FILTER_TYPES = {
+    urls: "URL Pattern",
+    excludeUrls: "Exclude URL Pattern",
+    types: "Resource Type"
+  };
+
   let selectedFilter;
   let dialog;
   let sortMenu;
@@ -88,22 +94,16 @@
 <style scoped>
   :global(.filter-select) {
     height: 26px;
-    flex-basis: 170px;
-    flex-shrink: 0;
-    margin-right: 5px;
+    width: 170px;
   }
 
-  :global(.filter-select-field) {
-    width: 170px;
-    font-size: 14px;
-    margin: 0;
+  :global(.filter-select .mdc-select__selected-text) {
     padding: 0;
-    height: 26px;
-    border-bottom: 1px solid #ddd !important;
   }
 
   :global(.filter-select) :global(.mdc-select__dropdown-icon) {
-    bottom: 0px;
+    top: 0;
+    bottom: 0;
   }
 
   :global(.data-table-value-cell) {
@@ -185,20 +185,16 @@
       <Checkbox bind:checked={filter.enabled} indeterminate={false} class="data-table-cell flex-fixed-icon" />
       <Select
         bind:value={filter.type}
+        noLabel
+        enhanced
         class="data-table-cell filter-select"
         input$class="filter-select-field"
         on:change={refreshFilters}>
-        <Option value="urls" selected={filter.type === 'urls'}>
-          URL Pattern
-        </Option>
-        <Option
-          value="excludeUrls"
-          selected={filter.type === 'excludeUrls'}>
-          Exclude URL Pattern
-        </Option>
-        <Option value="types" selected={filter.type === 'types'}>
-          Resource Type
-        </Option>
+        {#each Object.entries(FILTER_TYPES) as [value, label]}
+          <Option value={value} selected={filter.type === value}>
+            {label}
+          </Option>
+        {/each}
       </Select>
       {#if filter.type === 'urls' || filter.type === 'excludeUrls'}
         <AutoComplete

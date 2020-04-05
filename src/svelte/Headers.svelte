@@ -186,7 +186,6 @@
       </Menu>
     </div>
 
-
     <div class="data-table-cell">
       <Button
         class="small-text-button"

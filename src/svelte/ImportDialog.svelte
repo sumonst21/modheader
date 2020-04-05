@@ -53,6 +53,15 @@
   }
 </script>
 
+<style>
+  .extra-large-textarea {
+    width: 400px;
+    height: 250px;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+</style>
+
 <Dialog
   bind:this={dialog}
   class="import-dialog"

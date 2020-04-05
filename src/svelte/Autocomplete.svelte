@@ -449,9 +449,13 @@
   }
   .autocomplete-input {
     font: inherit;
+    border: none;
+    height: 30px;
     width: 100%;
-    height: 100%;
-    padding: 5px 0;
+    background: none;
+    margin: 0;
+    outline: none;
+    padding: 0;
   }
   .autocomplete-list {
     background: #fff;
