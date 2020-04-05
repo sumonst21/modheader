@@ -1,5 +1,5 @@
 <script>
-  import ColorPicker from "svelte-picker";
+  import ColorPicker from "./svelte-picker";
   import Dialog, { Title, Content, Actions } from "@smui/dialog";
   import Tab, {Icon, Label as TabLabel} from '@smui/tab';
   import Button, { Label } from "@smui/button";
