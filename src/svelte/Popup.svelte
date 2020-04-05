@@ -80,6 +80,10 @@
     border: 0;
   }
 
+  :global(.mdc-dialog__content) {
+    overflow-x: hidden !important;
+  }
+
   :global(.extra-gap) {
     margin: 2px;
   }

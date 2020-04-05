@@ -64,7 +64,6 @@
 
 <Dialog
   bind:this={dialog}
-  class="import-dialog"
   aria-labelledby="dialog-title"
   aria-describedby="dialog-content">
   <Title id="dialog-title">

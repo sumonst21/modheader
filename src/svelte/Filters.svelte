@@ -8,9 +8,6 @@
   import { mdiPlus, mdiTrashCan, mdiHelpCircleOutline, mdiSort } from "@mdi/js";
   import lodashUniq from "lodash/uniq";
   import lodashOrderBy from "lodash/orderBy";
-  import { flip } from "svelte/animate";
-	import { quintOut } from 'svelte/easing';
-	import { crossfade } from 'svelte/transition';
   import {
     addFilter,
     removeFilter,
@@ -61,24 +58,6 @@
   function refreshFilters() {
     commitChange({ filters });
   }
-
-	const [send, receive] = crossfade({
-		duration: d => Math.sqrt(d * 200),
-
-		fallback(node, params) {
-			const style = getComputedStyle(node);
-			const transform = style.transform === 'none' ? '' : style.transform;
-
-			return {
-				duration: 600,
-				easing: quintOut,
-				css: t => `
-					transform: ${transform} scaleY(${t});
-					opacity: ${t}
-				`
-			};
-		}
-  });
 
   $: filters = $selectedProfile.filters;
   $: allChecked = filters.every(f => f.enabled);
@@ -177,11 +156,8 @@
       </Button>
     </div>
   </div>
-  {#each filters as filter, filterIndex (filterIndex)}
-    <div 
-      in:receive="{{key: filterIndex}}"
-      animate:flip
-      class="data-table-row {filter.enabled ? '' : 'data-table-row-unchecked'}">
+  {#each filters as filter, filterIndex}
+    <div class="data-table-row {filter.enabled ? '' : 'data-table-row-unchecked'}">
       <Checkbox bind:checked={filter.enabled} indeterminate={false} class="data-table-cell flex-fixed-icon" />
       <Select
         bind:value={filter.type}

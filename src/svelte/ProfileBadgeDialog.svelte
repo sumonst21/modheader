@@ -59,7 +59,7 @@
 
 <Dialog
   bind:this={dialog}
-  class="export-dialog"
+  class="profile-badge-dialog"
   aria-labelledby="dialog-title"
   aria-describedby="dialog-content">
   <Title id="dialog-title">

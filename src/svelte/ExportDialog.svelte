@@ -46,7 +46,6 @@
 
 <Dialog
   bind:this={dialog}
-  class="export-dialog"
   aria-labelledby="dialog-title"
   aria-describedby="dialog-content">
   <Title id="dialog-title">

@@ -2,14 +2,14 @@
   import Dialog, { Title, Content, Actions } from "@smui/dialog";
   import List, { Item, Separator, Text } from "@smui/list";
   import Button, { Label } from "@smui/button";
-
   import IconButton from "@smui/icon-button";
   import lodashRemove from "lodash/remove";
   import lodashOrderBy from "lodash/orderBy";
+  import lodashIsNumber from "lodash/isNumber";
   import { mdiTrashCanOutline, mdiCancel, mdiClose } from "@mdi/js";
   import MdiIcon from "./MdiIcon.svelte";
   import { DISABLED_COLOR, PRIMARY_COLOR } from "../js/constants";
-
+  import { getSync } from "../js/storage";
   import { restoreToProfiles } from "../js/datasource";
 
   let importTextbox;
@@ -17,26 +17,25 @@
   let dialog;
   let cloudBackupList = [];
 
-  export function show() {
+  export async function show() {
+    const items = (await getSync()) || [];
     let savedData = [];
-    chrome.storage.sync.get(null, items => {
-      if (!items) {
-        items = [];
-      }
-      for (const key in items) {
-        try {
-          const profiles = items[key];
-          savedData.push({
-            key,
-            timeInMs: Number(key),
-            profiles
-          });
-        } catch (e) {
-          // skip invalid profile.
+    for (const key in items) {
+      try {
+        if (!lodashIsNumber(key)) {
+          continue;
         }
+        const profiles = items[key];
+        savedData.push({
+          key,
+          timeInMs: Number(key),
+          profiles
+        });
+      } catch (e) {
+        // skip invalid profile.
       }
-      cloudBackupList = lodashOrderBy(savedData, ["timeInMs"], ["desc"]);
-    });
+    }
+    cloudBackupList = lodashOrderBy(savedData, ["timeInMs"], ["desc"]);
     dialog.open();
   }
 
@@ -94,7 +93,6 @@
 
 <Dialog
   bind:this={dialog}
-  class="cloud-backup-dialog"
   aria-labelledby="dialog-title"
   aria-describedby="dialog-content">
   <Title id="dialog-title">

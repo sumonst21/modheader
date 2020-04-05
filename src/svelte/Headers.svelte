@@ -7,9 +7,6 @@
   import List, { Item, Separator, Text } from "@smui/list";
   import { mdiPlus, mdiTrashCan, mdiArrowExpand, mdiSort } from "@mdi/js";
   import { createEventDispatcher } from "svelte";
-  import { flip } from "svelte/animate";
-	import { quintOut } from 'svelte/easing';
-	import { crossfade } from 'svelte/transition';
   import lodashUniq from "lodash/uniq";
   import lodashOrderBy from "lodash/orderBy";
   import { selectedProfile, commitChange } from "../js/datasource";
@@ -60,24 +57,6 @@
     }
     refreshHeaders();
   }
-
-	const [send, receive] = crossfade({
-		duration: d => Math.sqrt(d * 200),
-
-		fallback(node, params) {
-			const style = getComputedStyle(node);
-			const transform = style.transform === 'none' ? '' : style.transform;
-
-			return {
-				duration: 600,
-				easing: quintOut,
-				css: t => `
-					transform: ${transform} scaleY(${t});
-					opacity: ${t}
-				`
-			};
-		}
-  });
 
   $: allChecked = headers.every(h => h.enabled);
   $: allUnchecked = headers.every(h => !h.enabled);
@@ -203,11 +182,8 @@
       </Button>
     </div>
   </div>
-  {#each headers as header, headerIndex (headerIndex)}
-    <div 
-				in:receive="{{key: headerIndex}}"
-        animate:flip
-        class="data-table-row {header.enabled ? '' : 'data-table-row-unchecked'}">
+  {#each headers as header, headerIndex}
+    <div class="data-table-row {header.enabled ? '' : 'data-table-row-unchecked'}">
       <Checkbox
         class="data-table-cell flex-fixed-icon"
         bind:checked={header.enabled}
