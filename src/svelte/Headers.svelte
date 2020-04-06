@@ -168,14 +168,12 @@
       <AutoComplete
         className="mdc-text-field__input data-table-cell flex-grow"
         items={knownHeaderNames}
-        bind:value={header.name}
         bind:selectedItem={header.name}
         on:change={refreshHeaders}
         placeholder={nameLabel} />
       <AutoComplete
         className="mdc-text-field__input data-table-cell flex-grow"
         items={knownHeaderValues}
-        bind:value={header.value}
         bind:selectedItem={header.value}
         on:change={refreshHeaders}
         placeholder={valueLabel} />
@@ -183,7 +181,6 @@
         <AutoComplete
           className="mdc-text-field__input data-table-cell flex-grow"
           items={knownHeaderComments}
-          bind:value={header.comment}
           bind:selectedItem={header.comment}
           on:change={refreshHeaders}
           placeholder="Comment" />

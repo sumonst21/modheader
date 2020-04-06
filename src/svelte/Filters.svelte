@@ -9,6 +9,7 @@
   import lodashUniq from "lodash/uniq";
   import lodashOrderBy from "lodash/orderBy";
   import lodashCloneDeep from "lodash/cloneDeep";
+  import lodashDebounce from "lodash/debounce";
   import {
     addFilter,
     removeFilter,
@@ -41,6 +42,7 @@
 
   function sort(field, order) {
     filters = lodashOrderBy(filters, [field], [order]);
+    refreshFilters();
   }
 
   function openLink(link) {
@@ -53,21 +55,24 @@
     } else {
       filters.forEach(f => (f.enabled = false));
     }
+    refreshFilters();
   }
 
   function refreshFilters() {
     commitChange({ filters });
   }
 
-  $: filters, refreshFilters();
-  $: allChecked = filters.every(f => f.enabled);
-  $: allUnchecked = filters.every(f => !f.enabled);
-  $: knownUrlRegexes = lodashUniq(
-    filters.map(f => f.urlRegex).filter(n => !!n)
-  );
-  $: knownFilterComments = lodashUniq(
-    filters.map(f => f.comment).filter(n => !!n)
-  );
+  let allChecked;
+  let allUnchecked;
+  let knownUrlRegexes;
+  let knownFilterComments;
+  $: filters, lodashDebounce(() => {
+      refreshFilters();
+      allChecked = filters.every(f => f.enabled);
+      allUnchecked = filters.every(f => !f.enabled);
+      knownUrlRegexes = lodashUniq(filters.map(f => f.urlRegex).filter(n => !!n));
+      knownFilterComments = lodashUniq(filters.map(f => f.comment).filter(n => !!n));
+    }, 500)();
 </script>
 
 <style scoped>
@@ -175,9 +180,7 @@
         <AutoComplete
           className="mdc-text-field__input filter-text-field data-table-cell flex-grow"
           items={knownUrlRegexes}
-          bind:value={filter.urlRegex}
           bind:selectedItem={filter.urlRegex}
-          on:change={refreshFilters}
           placeholder=".*://.*.google.com/.*" />
       {:else}
         <ResourceTypeMenu
@@ -188,9 +191,7 @@
         <AutoComplete
           className="mdc-text-field__input data-table-cell flex-grow"
           items={knownFilterComments}
-          bind:value={filter.comment}
           bind:selectedItem={filter.comment}
-          on:change={refreshFilters}
           placeholder="Comment" />
       {/if}
       <IconButton
