@@ -5,6 +5,7 @@
   import Button from "@smui/button";
   import { mdiClose } from "@mdi/js";
   import { onMount, onDestroy } from "svelte";
+  import lodashCloneDeep from "lodash/cloneDeep";
   import TopBar from "./TopBar.svelte";
   import Drawer from "./Drawer.svelte";
   import Filters from "./Filters.svelte";
@@ -29,7 +30,6 @@
     KNOWN_REQUEST_HEADERS,
     KNOWN_RESPONSE_HEADERS
   } from "../js/constants";
-  import lodashClone from "lodash/clone";
 
   let reviewDialog;
   let snackbar;
@@ -189,7 +189,7 @@
     </div>
     <div class={$isPaused ? 'disabled' : ''}>
       <Headers
-        headers={$selectedProfile.headers}
+        headers={lodashCloneDeep($selectedProfile.headers)}
         class="extra-gap"
         title="Request headers"
         autocompleteNames={KNOWN_REQUEST_HEADERS}
@@ -203,7 +203,7 @@
           commitChange({ headers: event.detail });
         }} />
       <Headers
-        headers={$selectedProfile.respHeaders}
+        headers={lodashCloneDeep($selectedProfile.respHeaders)}
         class="extra-gap"
         title="Response headers"
         autocompleteNames={KNOWN_RESPONSE_HEADERS}
@@ -218,7 +218,7 @@
           commitChange({ respHeaders: event.detail });
         }} />
       <Headers
-        headers={$selectedProfile.urlReplacements}
+        headers={lodashCloneDeep($selectedProfile.urlReplacements)}
         class="extra-gap"
         title="Redirect URLs"
         autocompleteNames={[]}
@@ -234,7 +234,9 @@
         on:refresh={event => {
           commitChange({ urlReplacements: event.detail });
         }} />
-      <Filters class="extra-gap" />
+      <Filters
+        filters={lodashCloneDeep($selectedProfile.filters)}
+        class="extra-gap" />
     </div>
   </AppContent>
 

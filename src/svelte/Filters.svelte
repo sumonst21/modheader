@@ -8,6 +8,7 @@
   import { mdiPlus, mdiTrashCan, mdiHelpCircleOutline, mdiSort } from "@mdi/js";
   import lodashUniq from "lodash/uniq";
   import lodashOrderBy from "lodash/orderBy";
+  import lodashCloneDeep from "lodash/cloneDeep";
   import {
     addFilter,
     removeFilter,
@@ -25,6 +26,7 @@
     types: "Resource Type"
   };
 
+  export let filters;
   let selectedFilter;
   let dialog;
   let sortMenu;
@@ -38,9 +40,7 @@
   }
 
   function sort(field, order) {
-    commitChange({
-      filters: lodashOrderBy(filters, [field], [order])
-    });
+    filters = lodashOrderBy(filters, [field], [order]);
   }
 
   function openLink(link) {
@@ -59,7 +59,7 @@
     commitChange({ filters });
   }
 
-  $: filters = $selectedProfile.filters;
+  $: filters, refreshFilters();
   $: allChecked = filters.every(f => f.enabled);
   $: allUnchecked = filters.every(f => !f.enabled);
   $: knownUrlRegexes = lodashUniq(
@@ -164,8 +164,7 @@
         noLabel
         enhanced
         class="data-table-cell filter-select"
-        input$class="filter-select-field"
-        on:change={refreshFilters}>
+        input$class="filter-select-field">
         {#each Object.entries(FILTER_TYPES) as [value, label]}
           <Option value={value} selected={filter.type === value}>
             {label}
@@ -183,8 +182,7 @@
       {:else}
         <ResourceTypeMenu
           bind:resourceType={filter.resourceType}
-          {resourceTypeMenuLocation}
-          on:change={refreshFilters} />
+          {resourceTypeMenuLocation} />
       {/if}
       {#if !$selectedProfile.hideComment}
         <AutoComplete

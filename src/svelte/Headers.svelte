@@ -9,10 +9,12 @@
   import { createEventDispatcher } from "svelte";
   import lodashUniq from "lodash/uniq";
   import lodashOrderBy from "lodash/orderBy";
+  import lodashClone from "lodash/clone";
   import { selectedProfile, commitChange } from "../js/datasource";
   import { DISABLED_COLOR, PRIMARY_COLOR } from "../js/constants";
   import AutoComplete from "./Autocomplete.svelte";
   import MdiIcon from "./MdiIcon.svelte";
+  import ExpandHeaderDialog from './ExpandHeaderDialog.svelte';
 
   const dispatch = createEventDispatcher();
 
@@ -21,6 +23,7 @@
   export let autocompleteNames;
   export let nameLabel = "Name";
   export let valueLabel = "Value";
+  let selectedHeaderIndex;
   let selectedHeader;
   let dialog;
   let sortMenu;
@@ -35,8 +38,9 @@
     dispatch("remove", headerIndex);
   }
 
-  function expandEditor(header) {
-    selectedHeader = header;
+  function expandEditor(headerIndex) {
+    selectedHeaderIndex = headerIndex;
+    selectedHeader = lodashClone(headers[selectedHeaderIndex]);
     dialog.open();
   }
 
@@ -72,44 +76,16 @@
   );
 </script>
 
-<Dialog
+<ExpandHeaderDialog
   bind:this={dialog}
-  class="expanded-dialog"
-  aria-labelledby="dialog-title"
-  aria-describedby="dialog-content"
-  on:MDCDialog:closed={refreshHeaders}>
-  <Title id="dialog-title">{title}</Title>
-  <Content id="dialog-content">
-    {#if selectedHeader}
-      <div class="mdc-text-field mdc-text-field--textarea">
-        <label>{nameLabel}</label>
-        <textarea
-          class="mdc-text-field__input large-textarea"
-          bind:value={selectedHeader.name}
-          placeholder={nameLabel} />
-      </div>
-      <div class="mdc-text-field mdc-text-field--textarea">
-        <label>{valueLabel}</label>
-        <textarea
-          class="mdc-text-field__input large-textarea"
-          bind:value={selectedHeader.value}
-          placeholder={valueLabel} />
-      </div>
-      <div class="mdc-text-field mdc-text-field--textarea">
-        <label>Comment</label>
-        <textarea
-          class="mdc-text-field__input large-textarea"
-          bind:value={selectedHeader.comment}
-          placeholder="Comment" />
-      </div>
-    {/if}
-  </Content>
-  <Actions>
-    <Button>
-      <Label>Done</Label>
-    </Button>
-  </Actions>
-</Dialog>
+  {title}
+  {nameLabel}
+  {valueLabel}
+  {selectedHeader}
+  on:save={event => {
+    headers[selectedHeaderIndex] = event.detail;
+    refreshHeaders();
+  }} />
 
 <div class="data-table {clazz}">
   <div class="data-table-row data-table-title-row">
@@ -216,7 +192,7 @@
         dense
         aria-label="Expand"
         class="small-icon-button data-table-cell flex-fixed-icon"
-        on:click={() => expandEditor(header)}>
+        on:click={() => expandEditor(headerIndex)}>
         <MdiIcon size="24" icon={mdiArrowExpand} />
       </IconButton>
       <IconButton

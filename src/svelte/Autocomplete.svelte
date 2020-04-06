@@ -37,7 +37,6 @@
     return true;
   };
   const dispatch = createEventDispatcher();
-  export let onChange = function(newSelectedItem) {};
   export let selectFirstIfEmpty = false;
   export let minCharactersToSearch = 0;
   export let maxItemsToShowInList = 0;
@@ -108,7 +107,6 @@
   function onSelectedItemChanged() {
     value = valueFunction(selectedItem);
     text = safeLabelFunction(selectedItem);
-    onChange(selectedItem);
   }
   $: selectedItem, onSelectedItemChanged();
   // HTML elements
@@ -191,6 +189,7 @@
     if (textFiltered === "") {
       filteredListItems = listItems;
       closeIfMinCharsToSearchReached();
+      selectedItem = text;
       if (debug) {
         console.log(
           "User entered text is empty set the list of items to all items"
