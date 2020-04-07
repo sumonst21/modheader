@@ -2,6 +2,7 @@
   // Forked from https://github.com/pstanoev/simple-svelte-autocomplete
   import { fade } from "svelte/transition";
   import { createEventDispatcher } from "svelte";
+  import lodashDebounce from "lodash/debounce";
 
   // the list of items  the user can select from
   export let items;
@@ -42,11 +43,6 @@
   export let maxItemsToShowInList = 0;
 
   function safeStringFunction(theFunction, argument) {
-    if (typeof theFunction !== "function") {
-      console.error(
-        "Not a function: " + theFunction + ", argument: " + argument
-      );
-    }
     let originalResult;
     try {
       originalResult = theFunction(argument);
@@ -68,23 +64,12 @@
     return result;
   }
   function safeLabelFunction(item) {
-    // console.log("labelFunction: " + labelFunction);
-    // console.log("safeLabelFunction, item: " + item);
     return safeStringFunction(labelFunction, item);
   }
   function safeKeywordsFunction(item) {
-    // console.log("safeKeywordsFunction");
     const keywords = safeStringFunction(keywordsFunction, item);
     let result = safeStringFunction(keywordsCleanFunction, keywords);
     result = result.toLowerCase().trim();
-    if (debug) {
-      console.log(
-        "Extracted keywords: '" +
-          result +
-          "' from item: " +
-          JSON.stringify(item)
-      );
-    }
     return result;
   }
   // the text displayed when no option is selected
@@ -97,7 +82,6 @@
   export let disabled = false;
   // add the title to the HTML input
   export let title = undefined;
-  export let debug = false;
   // selected item state
   export let selectedItem = undefined;
   export let value = undefined;
@@ -119,27 +103,12 @@
   let filteredListItems;
   let listItems = [];
   function prepareListItems() {
-    let tStart;
-    if (debug) {
-      tStart = performance.now();
-      console.log("prepare items to search");
-      console.log("items: " + JSON.stringify(items));
-    }
     const length = items ? items.length : 0;
     listItems = new Array(length);
     if (length > 0) {
       items.forEach((item, i) => {
         listItems[i] = getListItem(item);
       });
-    }
-    if (debug) {
-      const tEnd = performance.now();
-      console.log(
-        listItems.length +
-          " items to search prepared in " +
-          (tEnd - tStart) +
-          " milliseconds"
-      );
     }
   }
   function getListItem(item) {
@@ -168,33 +137,14 @@
     }
     const cleanUserEnteredText = textCleanFunction(textFiltered);
     const textFilteredLowerCase = cleanUserEnteredText.toLowerCase().trim();
-    if (debug) {
-      console.log(
-        "Change user entered text '" +
-          userEnteredText +
-          "' into '" +
-          textFilteredLowerCase +
-          "'"
-      );
-    }
     return textFilteredLowerCase;
   }
   function search() {
-    let tStart;
-    if (debug) {
-      tStart = performance.now();
-      console.log("Searching user entered text: '" + text + "'");
-    }
     const textFiltered = prepareUserEnteredText(text);
     if (textFiltered === "") {
       filteredListItems = listItems;
       closeIfMinCharsToSearchReached();
       selectedItem = text;
-      if (debug) {
-        console.log(
-          "User entered text is empty set the list of items to all items"
-        );
-      }
       return;
     }
     const searchWords = textFiltered.split(" ");
@@ -213,31 +163,15 @@
     filteredListItems = filteredListItemsHighlighted;
     closeIfMinCharsToSearchReached();
     selectedItem = text;
-    if (debug) {
-      const tEnd = performance.now();
-      console.log(
-        "Search took " +
-          (tEnd - tStart) +
-          " milliseconds, found " +
-          filteredListItems.length +
-          " items"
-      );
-    }
   }
-  // $: text, search();
+
   function selectListItem(listItem) {
-    if (debug) {
-      console.log("selectListItem");
-    }
     const newSelectedItem = listItem.item;
     if (beforeChange(selectedItem, newSelectedItem)) {
       selectedItem = newSelectedItem;
     }
   }
   function selectItem() {
-    if (debug) {
-      console.log("selectItem");
-    }
     const listItem = filteredListItems[highlightIndex] || filteredListItems[0];
     if (listItem) {
       selectListItem(listItem);
@@ -245,60 +179,29 @@
     close();
   }
   function up() {
-    if (debug) {
-      console.log("up");
-    }
     open();
     if (highlightIndex > 0) highlightIndex--;
     highlight();
   }
   function down() {
-    if (debug) {
-      console.log("down");
-    }
     open();
     if (highlightIndex < filteredListItems.length - 1) highlightIndex++;
     highlight();
   }
   function highlight() {
-    if (debug) {
-      console.log("highlight");
-    }
     const query = ".selected";
-    if (debug) {
-      console.log("Seaching DOM element: " + query + " in " + list);
-    }
     const el = list.querySelector(query);
     if (el) {
       if (typeof el.scrollIntoViewIfNeeded === "function") {
-        if (debug) {
-          console.log("Scrolling selected item into view");
-        }
         el.scrollIntoViewIfNeeded();
-      } else {
-        if (debug) {
-          console.warn(
-            "Could not scroll selected item into view, scrollIntoViewIfNeeded not supported"
-          );
-        }
-      }
-    } else {
-      if (debug) {
-        console.warn("Selected item not found to scroll into view");
       }
     }
   }
   function onListItemClick(listItem) {
-    if (debug) {
-      console.log("onListItemClick");
-    }
     selectListItem(listItem);
     close();
   }
   function onKeyDown(e) {
-    if (debug) {
-      console.log("onKeyDown");
-    }
     let key = e.key;
     const fnmap = {
       Tab: opened ? selectItem.bind(this) : null,
@@ -315,34 +218,23 @@
     }
   }
   function onKeyPress(e) {
-    if (debug) {
-      console.log("onKeyPress");
-    }
     if (e.key === "Enter") {
       e.preventDefault();
       selectItem();
     }
   }
   function onInput(e) {
-    if (debug) {
-      console.log("onInput");
-    }
     text = e.target.value;
-    search();
-    highlightIndex = 0;
-    open();
+    lodashDebounce(() => {
+      search();
+      highlightIndex = 0;
+      open();
+    }, 500, { leading: true, trailing: true })();
   }
   function onInputClick() {
-    if (debug) {
-      console.log("onInputClick");
-    }
     resetListToAllItemsAndOpen();
   }
   function onEsc(e) {
-    if (debug) {
-      console.log("onEsc");
-    }
-    //if (text) return clear();
     e.stopPropagation();
     if (opened) {
       input.focus();
@@ -350,23 +242,14 @@
     }
   }
   function onFocus() {
-    if (debug) {
-      console.log("onFocus");
-    }
     focused = true;
     resetListToAllItemsAndOpen();
   }
   function resetListToAllItemsAndOpen() {
-    if (debug) {
-      console.log("resetListToAllItemsAndOpen");
-    }
     search();
     open();
   }
   function open() {
-    if (debug) {
-      console.log("open");
-    }
     // check if the search text has more than the min chars required
     if (isMinCharsToSearchReached()) {
       return;
@@ -374,9 +257,6 @@
     opened = true;
   }
   function close() {
-    if (debug) {
-      console.log("close");
-    }
     opened = false;
     if (!text && selectFirstIfEmpty) {
       highlightFilter = 0;
@@ -395,22 +275,13 @@
     }
   }
   function clear() {
-    if (debug) {
-      console.log("clear");
-    }
     text = "";
     setTimeout(() => input.focus());
   }
   function onBlur(e) {
-    if (debug) {
-      console.log("onBlur");
-    }
     focused = false;
 
     if (!e.target.closest(".autocomplete")) {
-      if (debug) {
-        console.log("onDocumentClick outside");
-      }
       close();
     } else {
       setTimeout(() => {

@@ -10,6 +10,7 @@
   import lodashUniq from "lodash/uniq";
   import lodashOrderBy from "lodash/orderBy";
   import lodashClone from "lodash/clone";
+  import lodashDebounce from "lodash/debounce";
   import { selectedProfile, commitChange } from "../js/datasource";
   import { DISABLED_COLOR, PRIMARY_COLOR } from "../js/constants";
   import AutoComplete from "./Autocomplete.svelte";
@@ -29,6 +30,12 @@
   let sortMenu;
   let clazz;
   export { clazz as class };
+
+  let allChecked;
+  let allUnchecked;
+  let knownHeaderNames;
+  let knownHeaderValues;
+  let knownHeaderComments;
 
   function addHeader() {
     dispatch("add");
@@ -62,18 +69,14 @@
     refreshHeaders();
   }
 
-  $: allChecked = headers.every(h => h.enabled);
-  $: allUnchecked = headers.every(h => !h.enabled);
-  $: knownHeaderNames = lodashUniq(
-    headers
-      .map(h => h.name)
-      .filter(n => !!n)
-      .concat(autocompleteNames)
-  );
-  $: knownHeaderValues = lodashUniq(headers.map(h => h.value).filter(n => !!n));
-  $: knownHeaderComments = lodashUniq(
-    headers.map(h => h.comment).filter(n => !!n)
-  );
+  $: headers, lodashDebounce(() => {
+      refreshHeaders();
+      allChecked = headers.every(h => h.enabled);
+      allUnchecked = headers.every(h => !h.enabled);
+      knownHeaderNames = lodashUniq(headers.map(h => h.name).filter(n => !!n).concat(autocompleteNames));
+      knownHeaderValues = lodashUniq(headers.map(h => h.value).filter(n => !!n));
+      knownHeaderComments = lodashUniq(headers.map(h => h.comment).filter(n => !!n));
+    }, 500, { leading: true, trailing: true })();
 </script>
 
 <ExpandHeaderDialog
@@ -169,20 +172,17 @@
         className="mdc-text-field__input data-table-cell flex-grow"
         items={knownHeaderNames}
         bind:selectedItem={header.name}
-        on:change={refreshHeaders}
         placeholder={nameLabel} />
       <AutoComplete
         className="mdc-text-field__input data-table-cell flex-grow"
         items={knownHeaderValues}
         bind:selectedItem={header.value}
-        on:change={refreshHeaders}
         placeholder={valueLabel} />
       {#if !$selectedProfile.hideComment}
         <AutoComplete
           className="mdc-text-field__input data-table-cell flex-grow"
           items={knownHeaderComments}
           bind:selectedItem={header.comment}
-          on:change={refreshHeaders}
           placeholder="Comment" />
       {/if}
       <IconButton

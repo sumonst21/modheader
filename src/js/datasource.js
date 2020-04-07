@@ -6,6 +6,7 @@ import lodashLast from 'lodash/last';
 import lodashIsUndefined from 'lodash/isUndefined';
 import { showMessage, hideMessage } from './toast';
 import { getLocal, setLocal, removeLocal, fixProfiles } from './storage';
+import { getActiveTab } from './tabs';
 import { createHeader, takeRight, generateBackgroundColor, generateTextColor } from './utils';
 
 export const profiles = writable([]);
@@ -96,11 +97,9 @@ export function save() {
 
 export async function addFilter() {
   let urlRegex = '';
-  const { currentTabUrl } = await getLocal('currentTabUrl');
-  if (currentTabUrl) {
-    const parser = document.createElement('a');
-    parser.href = currentTabUrl;
-    urlRegex = parser.origin + '/.*';
+  const tab = await getActiveTab();
+  if (tab && tab.url) {
+    urlRegex = new URL(tab.url).origin + '/.*';
   }
   const filters = latestProfiles[latestSelectedProfileIndex].filters;
   commitChange({
@@ -122,9 +121,9 @@ export function addHeader(headers) {
 
 export async function addUrlReplacement(replacements) {
   let domain = '';
-  const { currentTabUrl } = await getLocal('currentTabUrl');
-  if (currentTabUrl) {
-    domain = new URL(currentTabUrl).origin;
+  const tab = await getActiveTab();
+  if (tab && tab.url) {
+    domain = new URL(tab.url).origin;
   }
   return [...replacements, {
     enabled: true,

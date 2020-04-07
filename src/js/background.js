@@ -11,7 +11,6 @@ let chromeLocal = {
   isPaused: true,
 };
 let currentProfile;
-let tabUrls = {};
 
 /**
  * Check whether the current request url pass the given list of filters.
@@ -129,11 +128,6 @@ function modifyRequestHandler_(details) {
   if (chromeLocal.isPaused) {
     return {};
   }
-  if (details.type == 'main_frame' && details.url && details.tabId >= 0) {
-    tabUrls[details.tabId] = details.url;
-    setLocal({ activeTabId: details.tabId });
-    chrome.tabs.get(details.tabId, onTabUpdated);
-  }
   if (!chromeLocal.lockedTabId || chromeLocal.lockedTabId == details.tabId) {
     if (
       currentProfile &&
@@ -247,36 +241,9 @@ function setupHeaderModListener() {
 }
 
 async function onTabUpdated(tab) {
-  if (tab.active) {
-    await removeLocal('currentTabUrl');
-    // Since we don't have access to the "tabs" permission, we may not have
-    // access to the url property all the time. So, match it against the URL
-    // found during request modification.
-    let url = tab.url;
-    if (url) {
-      tabUrls[tab.id] = url;
-    } else {
-      url = tabUrls[tab.id];
-    }
-    await setLocal({ activeTabId: tab.id });
-
-    // Only set the currentTabUrl property if the tab is active and the window
-    // is in focus.
-    chrome.windows.get(tab.windowId, {}, async win => {
-      if (win.focused) {
-        await setLocal({ currentTabUrl: url });
-      }
-    });
-    if (!url) {
-      return;
-    }
-    await resetBadgeAndContextMenu();
-  }
+  await setLocal({ activeTabId: tab.id });
+  await resetBadgeAndContextMenu();
 }
-
-chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
-  await onTabUpdated(tab);
-});
 
 chrome.tabs.onActivated.addListener(activeInfo => {
   chrome.tabs.get(activeInfo.tabId, onTabUpdated);
@@ -287,8 +254,11 @@ chrome.windows.onFocusChanged.addListener(windowId => {
     return;
   }
   chrome.windows.get(windowId, { populate: true }, async win => {
-    for (let tab of win.tabs) {
-      await onTabUpdated(tab);
+    for (const tab of win.tabs) {
+      if (tab.active) {
+        await onTabUpdated(tab);
+        break;
+      }
     }
   });
 });

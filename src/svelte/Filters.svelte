@@ -34,6 +34,11 @@
   let clazz;
   let resourceTypeMenuLocation;
   export { clazz as class };
+  
+  let allChecked;
+  let allUnchecked;
+  let knownUrlRegexes;
+  let knownFilterComments;
 
   function expandEditor(filter) {
     selectedFilter = filter;
@@ -62,17 +67,13 @@
     commitChange({ filters });
   }
 
-  let allChecked;
-  let allUnchecked;
-  let knownUrlRegexes;
-  let knownFilterComments;
   $: filters, lodashDebounce(() => {
       refreshFilters();
       allChecked = filters.every(f => f.enabled);
       allUnchecked = filters.every(f => !f.enabled);
       knownUrlRegexes = lodashUniq(filters.map(f => f.urlRegex).filter(n => !!n));
       knownFilterComments = lodashUniq(filters.map(f => f.comment).filter(n => !!n));
-    }, 500)();
+    }, 500, { leading: true, trailing: true })();
 </script>
 
 <style scoped>

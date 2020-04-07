@@ -6,6 +6,7 @@
   import lodashRemove from "lodash/remove";
   import lodashOrderBy from "lodash/orderBy";
   import lodashIsNumber from "lodash/isNumber";
+  import lodashIsNaN from "lodash/isNaN";
   import { mdiTrashCanOutline, mdiCancel, mdiClose } from "@mdi/js";
   import MdiIcon from "./MdiIcon.svelte";
   import { DISABLED_COLOR, PRIMARY_COLOR } from "../js/constants";
@@ -18,17 +19,18 @@
   let cloudBackupList = [];
 
   export async function show() {
-    const items = (await getSync()) || [];
+    const items = (await getSync()) || {};
     let savedData = [];
     for (const key in items) {
       try {
-        if (!lodashIsNumber(key)) {
+        const timeInMs = Number(key);
+        if (!lodashIsNumber(timeInMs) || lodashIsNaN(timeInMs)) {
           continue;
         }
         const profiles = items[key];
         savedData.push({
           key,
-          timeInMs: Number(key),
+          timeInMs,
           profiles
         });
       } catch (e) {
