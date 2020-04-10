@@ -40,7 +40,7 @@
   const dispatch = createEventDispatcher();
   export let selectFirstIfEmpty = false;
   export let minCharactersToSearch = 0;
-  export let maxItemsToShowInList = 0;
+  export let maxItemsToShowInList = 10;
 
   function safeStringFunction(theFunction, argument) {
     let originalResult;
