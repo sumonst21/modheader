@@ -4,6 +4,7 @@ import lodashIsEqual from 'lodash/isEqual';
 import lodashOrderBy from 'lodash/orderBy';
 import lodashLast from 'lodash/last';
 import lodashIsUndefined from 'lodash/isUndefined';
+import lodashIsEmpty from 'lodash/isEmpty';
 import { showMessage, hideMessage } from './toast';
 import { getLocal, setLocal, removeLocal, fixProfiles } from './storage';
 import { getActiveTab } from './tabs';
@@ -98,8 +99,11 @@ export function save() {
 export async function addFilter() {
   let urlRegex = '';
   const tab = await getActiveTab();
-  if (tab && tab.url) {
-    urlRegex = new URL(tab.url).origin + '/.*';
+  if (tab && !lodashIsEmpty(tab.url)) {
+    const origin = new URL(tab.url).origin;
+    if (!lodashIsEmpty(origin) && origin !== 'null') {
+      urlRegex = `${origin}/.*`;
+    }
   }
   const filters = latestProfiles[latestSelectedProfileIndex].filters;
   commitChange({
@@ -122,8 +126,11 @@ export function addHeader(headers) {
 export async function addUrlReplacement(replacements) {
   let domain = '';
   const tab = await getActiveTab();
-  if (tab && tab.url) {
-    domain = new URL(tab.url).origin;
+  if (tab && !lodashIsEmpty(tab.url)) {
+    const origin = new URL(tab.url).origin;
+    if (!lodashIsEmpty(origin) && origin !== 'null') {
+      domain = origin;
+    }
   }
   return [...replacements, {
     enabled: true,
