@@ -12,6 +12,7 @@
   } from "@mdi/js";
 
   const ONE_MONTH_FROM_NOW = Date.now() + (1000 * 60 * 60 * 24 * 30);
+  const ONE_YEAR_FROM_NOW = Date.now() + (1000 * 60 * 60 * 24 * 365);
   const MODE = Math.random() < .5 ? 'REVIEW' : 'DONATE';
 
   let dialog;
@@ -20,7 +21,7 @@
   }
 
   async function openLink(url) {
-    await close(Number.MAX_SAFE_INTEGER);
+    await close(ONE_YEAR_FROM_NOW);
     chrome.tabs.create({ url });
   }
 

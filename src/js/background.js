@@ -1,6 +1,6 @@
 import lodashIsEqual from 'lodash/isEqual';
 import lodashIsUndefined from 'lodash/isUndefined';
-import lodashClone from 'lodash/clone';
+import lodashCloneDeep from 'lodash/cloneDeep';
 import { initStorage, setLocal, removeLocal, setSync, getSync, removeSync } from './storage';
 import { createContextMenu, updateContextMenu, clearContextMenu } from './context-menu';
 import { setBrowserAction } from './browser-action';
@@ -166,7 +166,7 @@ function modifyResponseHeaderHandler_(details) {
       currentProfile &&
       passFilters_(details.url, details.type, currentProfile.filters)
     ) {
-      const responseHeaders = lodashClone(details.responseHeaders);
+      const responseHeaders = lodashCloneDeep(details.responseHeaders);
       modifyHeader(currentProfile.respHeaders, responseHeaders);
       if (!lodashIsEqual(responseHeaders, details.responseHeaders)) {
         return {
