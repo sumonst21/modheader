@@ -16,6 +16,8 @@
     mdiCircle,
     mdiSortAscending,
     mdiSortDescending,
+    mdiChevronRight,
+    mdiChevronLeft,
     mdiPlus
   } from "@mdi/js";
   import MdiIcon from "./MdiIcon.svelte";
@@ -33,14 +35,6 @@
   let drawerOpen = true;
   let expand = false;
   let sortOrder = "asc";
-
-  function onMouseenter() {
-    expand = true;
-  }
-
-  function onMouseleave() {
-    expand = false;
-  }
 
   function openLink(url) {
     chrome.tabs.create({ url });
@@ -107,8 +101,6 @@
 <Drawer
   class="main-drawer {expand ? 'main-drawer-expand' : 'main-drawer-collapsed'}"
   variant="dismissible"
-  on:mouseenter={onMouseenter}
-  on:mouseleave={onMouseleave}
   bind:this={drawer}
   bind:open={drawerOpen}>
 
@@ -130,6 +122,20 @@
       </Item>
       <Separator nav />
 
+      <Item
+        class="main-drawer-item"
+        on:click={() => {
+          expand = !expand;
+        }}>
+        <span class="main-drawer-icon-container">
+          <MdiIcon
+            size="24"
+            class="main-drawer-icon"
+            icon={expand ? mdiChevronLeft: mdiChevronRight}
+            color={PRIMARY_COLOR} />
+        </span>
+        <Text class="main-drawer-item-text">{expand ? 'Hide navigation' : 'Show navigation'}</Text>
+      </Item>
       <div class="profiles-list">
         <Item
           class="main-drawer-item"

@@ -325,7 +325,15 @@ async function resetBadgeAndContextMenu() {
       color: '#666'
     });
   } else {
-    if (
+    const numHeaders =
+      currentProfile.headers.length + currentProfile.respHeaders.length + currentProfile.urlReplacements.length;
+    if (numHeaders == 0) {
+      await setBrowserAction({
+        icon: 'images/icon_bw.png',
+        text: '',
+        color: '#ffffff'
+      });
+    } else if (
       chromeLocal.lockedTabId &&
       chromeLocal.lockedTabId != chromeLocal.activeTabId
     ) {
@@ -337,7 +345,7 @@ async function resetBadgeAndContextMenu() {
     } else {
       await setBrowserAction({
         icon: 'images/icon.png',
-        text: currentProfile.shortTitle,
+        text: numHeaders.toString(),
         color: currentProfile.backgroundColor
       });
     }

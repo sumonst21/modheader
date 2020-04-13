@@ -284,17 +284,11 @@
   <Label>ModHeader is Paused</Label>
   <Actions>
     <Button on:click={() => play()}>Resume</Button>
-    <IconButton dense on:click={() => pauseSnackbar.close()} title="Dismiss">
-      <MdiIcon size="24" icon={mdiClose} color="white" />
-    </IconButton>
   </Actions>
 </Snackbar>
 <Snackbar timeoutMs={10000} bind:this={tabLockSnackbar}>
   <Label>Tab lock is active</Label>
   <Actions>
     <Button on:click={() => unlockAllTab()}>Unlock</Button>
-    <IconButton dense on:click={() => tabLockSnackbar.close()} title="Dismiss">
-      <MdiIcon size="24" icon={mdiClose} color="white" />
-    </IconButton>
   </Actions>
 </Snackbar>
