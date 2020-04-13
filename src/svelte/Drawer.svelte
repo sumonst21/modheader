@@ -109,6 +109,7 @@
     <List class="main-drawer-list">
       <Item
         class="main-drawer-item"
+        title="Visit ModHeader"
         on:click={() => openLink('https://bewisse.com/modheader/')}>
         <img
           src="/images/icon_128.png"
@@ -122,23 +123,25 @@
       </Item>
       <Separator nav />
 
-      <Item
-        class="main-drawer-item"
-        on:click={() => {
-          expand = !expand;
-        }}>
-        <span class="main-drawer-icon-container">
-          <MdiIcon
-            size="24"
-            class="main-drawer-icon"
-            icon={expand ? mdiChevronLeft: mdiChevronRight}
-            color={PRIMARY_COLOR} />
-        </span>
-        <Text class="main-drawer-item-text">{expand ? 'Hide navigation' : 'Show navigation'}</Text>
-      </Item>
       <div class="profiles-list">
         <Item
           class="main-drawer-item"
+          title={expand ? 'Hide navigation' : 'Show navigation'}
+          on:click={() => {
+            expand = !expand;
+          }}>
+          <span class="main-drawer-icon-container">
+            <MdiIcon
+              size="24"
+              class="main-drawer-icon"
+              icon={expand ? mdiChevronLeft: mdiChevronRight}
+              color={PRIMARY_COLOR} />
+          </span>
+          <Text class="main-drawer-item-text">{expand ? 'Hide navigation' : 'Show navigation'}</Text>
+        </Item>
+        <Item
+          class="main-drawer-item"
+          title="Add profile"
           on:click={() => {
             addProfile();
             expand = false;
@@ -155,6 +158,7 @@
         {#each $profiles as profile, profileIndex}
           <Item
             class="main-drawer-item"
+            title={profile.title}
             selected={$selectedProfile === profile}
             on:click={() => {
               selectProfile(profileIndex);
@@ -166,6 +170,7 @@
         {/each}
         <Item
           class="main-drawer-item"
+          title="Sort profiles"
           on:click={() => {
             sortProfiles(sortOrder);
             sortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
@@ -184,6 +189,7 @@
       <Separator nav />
       <Item
         class="main-drawer-item"
+        title="Donate"
         on:click={() => openLink('https://r.bewisse.com/modheader/donate')}>
         <span class="main-drawer-icon-container">
           <MdiIcon
@@ -196,6 +202,7 @@
       </Item>
       <Item
         class="main-drawer-item"
+        title="Rate us"
         on:click={() => openLink('https://r.bewisse.com/modheader/review?browser=' + process.env.BROWSER)}>
         <span class="main-drawer-icon-container">
           <MdiIcon
@@ -208,6 +215,7 @@
       </Item>
       <Item
         class="main-drawer-item"
+        title="Help"
         on:click={() => openLink('https://bewisse.com/modheader/help/')}>
         <span class="main-drawer-icon-container">
           <MdiIcon
