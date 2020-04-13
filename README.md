@@ -57,8 +57,6 @@ You may fork and redistribute ModHeader for a small group of friends / colleague
 
 For v3.0+ (still WIP), run `npm install` first, then run `npm run start` to start development. The built packages will be in the build/ directory.
 
-For older version, load the legacy/ package into Chrome.
-
 ## Selenium usage
 
 If you need to use ModHeader for Selenium tests, please visit: [modheader_selenium](https://github.com/bewisse/modheader_selenium)
