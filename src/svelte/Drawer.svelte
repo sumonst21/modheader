@@ -20,6 +20,7 @@
     mdiChevronLeft,
     mdiPlus
   } from "@mdi/js";
+	import { fade } from 'svelte/transition';
   import MdiIcon from "./MdiIcon.svelte";
   import ProfileBadge from "./ProfileBadge.svelte";
   import {
@@ -95,6 +96,17 @@
 
   .profiles-list {
     min-height: 280px;
+  }
+
+  .scrim {
+    background: #ccc;
+    opacity: .7;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 5;
   }
 </style>
 
@@ -230,3 +242,9 @@
     </List>
   </Content>
 </Drawer>
+
+{#if expand}
+  <div class="scrim"
+      transition:fade="{{ duration: 200 }}"
+      on:click={() => expand = false} />
+{/if}
