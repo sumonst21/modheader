@@ -188,55 +188,63 @@
       <TopBar />
     </div>
     <div class={$isPaused ? 'disabled' : ''}>
-      <Headers
-        headers={lodashCloneDeep($selectedProfile.headers)}
-        class="extra-gap"
-        title="Request headers"
-        autocompleteNames={KNOWN_REQUEST_HEADERS}
-        on:add={() => {
-          commitChange({ headers: addHeader($selectedProfile.headers) });
-        }}
-        on:remove={event => {
-          commitChange({ headers: removeHeader($selectedProfile.headers, event.detail) });
-        }}
-        on:refresh={event => {
-          commitChange({ headers: event.detail });
-        }} />
-      <Headers
-        headers={lodashCloneDeep($selectedProfile.respHeaders)}
-        class="extra-gap"
-        title="Response headers"
-        autocompleteNames={KNOWN_RESPONSE_HEADERS}
-        profile={selectedProfile}
-        on:add={() => {
-          commitChange({ respHeaders: addHeader($selectedProfile.respHeaders) });
-        }}
-        on:remove={event => {
-          commitChange({ respHeaders: removeHeader($selectedProfile.respHeaders, event.detail) });
-        }}
-        on:refresh={event => {
-          commitChange({ respHeaders: event.detail });
-        }} />
-      <Headers
-        headers={lodashCloneDeep($selectedProfile.urlReplacements)}
-        class="extra-gap"
-        title="Redirect URLs"
-        autocompleteNames={[]}
-        nameLabel="Original URL"
-        valueLabel="Redirect URL"
-        profile={$selectedProfile}
-        on:add={async () => {
-          commitChange({ urlReplacements: await addUrlReplacement($selectedProfile.urlReplacements) });
-        }}
-        on:remove={event => {
-          commitChange({ urlReplacements: removeUrlReplacement($selectedProfile.urlReplacements, event.detail) });
-        }}
-        on:refresh={event => {
-          commitChange({ urlReplacements: event.detail });
-        }} />
-      <Filters
-        filters={lodashCloneDeep($selectedProfile.filters)}
-        class="extra-gap" />
+      {#if $selectedProfile.headers.length > 0}
+        <Headers
+          headers={lodashCloneDeep($selectedProfile.headers)}
+          class="extra-gap"
+          title="Request headers"
+          autocompleteNames={KNOWN_REQUEST_HEADERS}
+          on:add={() => {
+            commitChange({ headers: addHeader($selectedProfile.headers) });
+          }}
+          on:remove={event => {
+            commitChange({ headers: removeHeader($selectedProfile.headers, event.detail) });
+          }}
+          on:refresh={event => {
+            commitChange({ headers: event.detail });
+          }} />
+      {/if}
+      {#if $selectedProfile.respHeaders.length > 0}
+        <Headers
+          headers={lodashCloneDeep($selectedProfile.respHeaders)}
+          class="extra-gap"
+          title="Response headers"
+          autocompleteNames={KNOWN_RESPONSE_HEADERS}
+          profile={selectedProfile}
+          on:add={() => {
+            commitChange({ respHeaders: addHeader($selectedProfile.respHeaders) });
+          }}
+          on:remove={event => {
+            commitChange({ respHeaders: removeHeader($selectedProfile.respHeaders, event.detail) });
+          }}
+          on:refresh={event => {
+            commitChange({ respHeaders: event.detail });
+          }} />
+      {/if}
+      {#if $selectedProfile.urlReplacements.length > 0}
+        <Headers
+          headers={lodashCloneDeep($selectedProfile.urlReplacements)}
+          class="extra-gap"
+          title="Redirect URLs"
+          autocompleteNames={[]}
+          nameLabel="Original URL"
+          valueLabel="Redirect URL"
+          profile={$selectedProfile}
+          on:add={async () => {
+            commitChange({ urlReplacements: await addUrlReplacement($selectedProfile.urlReplacements) });
+          }}
+          on:remove={event => {
+            commitChange({ urlReplacements: removeUrlReplacement($selectedProfile.urlReplacements, event.detail) });
+          }}
+          on:refresh={event => {
+            commitChange({ urlReplacements: event.detail });
+          }} />
+      {/if}
+      {#if $selectedProfile.filters.length > 0}
+        <Filters
+          filters={lodashCloneDeep($selectedProfile.filters)}
+          class="extra-gap" />
+      {/if}
     </div>
   </AppContent>
 

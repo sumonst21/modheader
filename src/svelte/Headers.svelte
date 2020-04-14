@@ -11,6 +11,7 @@
   import lodashOrderBy from "lodash/orderBy";
   import lodashClone from "lodash/clone";
   import lodashDebounce from "lodash/debounce";
+	import { fly } from 'svelte/transition';
   import { selectedProfile, commitChange } from "../js/datasource";
   import { DISABLED_COLOR, PRIMARY_COLOR } from "../js/constants";
   import AutoComplete from "./Autocomplete.svelte";
@@ -90,7 +91,7 @@
     refreshHeaders();
   }} />
 
-<div class="data-table {clazz}">
+<div class="data-table {clazz}" transition:fly>
   <div class="data-table-row data-table-title-row">
     <Checkbox
       class="data-table-cell flex-fixed-icon"

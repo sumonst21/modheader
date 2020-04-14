@@ -39,7 +39,7 @@
   };
   const dispatch = createEventDispatcher();
   export let selectFirstIfEmpty = false;
-  export let minCharactersToSearch = 0;
+  export let minCharactersToSearch = 1;
   export let maxItemsToShowInList = 10;
 
   function safeStringFunction(theFunction, argument) {
@@ -130,7 +130,7 @@
       .replace(/[&/\\#,+()$~%.'":*?<>{}]/g, " ")
       .trim();
     filteredTextLength = textFiltered.length;
-    if (minCharactersToSearch > 1) {
+    if (minCharactersToSearch > 0) {
       if (filteredTextLength < minCharactersToSearch) {
         return "";
       }
@@ -266,7 +266,7 @@
   }
   function isMinCharsToSearchReached() {
     return (
-      minCharactersToSearch > 1 && filteredTextLength < minCharactersToSearch
+      minCharactersToSearch > 0 && filteredTextLength < minCharactersToSearch
     );
   }
   function closeIfMinCharsToSearchReached() {

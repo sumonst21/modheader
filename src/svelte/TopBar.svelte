@@ -7,6 +7,7 @@
   import IconButton from "@smui/icon-button";
   import Button from "@smui/button";
   import {
+    mdiPlus,
     mdiTrashCan,
     mdiClose,
     mdiPlay,
@@ -31,6 +32,9 @@
   import CloudBackupDialog from "./CloudBackupDialog.svelte";
   import MdiIcon from "./MdiIcon.svelte";
   import {
+    addHeader,
+    addUrlReplacement,
+    addFilter,
     selectedProfile,
     changesStack,
     cloneProfile,
@@ -50,6 +54,7 @@
   let pauseSnackbar;
   let tabLockSnackbar;
   let moreMenu;
+  let addMenu;
   let exportDialog;
   let importDialog;
   let cloudBackupDialog;
@@ -162,6 +167,25 @@
           <MdiIcon size="24" icon={mdiUndo} color="white" />
         </IconButton>
       {/if}
+      <IconButton dense on:click={() => addMenu.setOpen(true)} title="Undo">
+        <MdiIcon size="24" icon={mdiPlus} color="white" />
+      </IconButton>
+      <Menu bind:this={addMenu} class="add-menu" quickOpen>
+        <List>
+          <Item on:SMUI:action={() => commitChange({ headers: addHeader($selectedProfile.headers) })}>
+            Request header
+          </Item>
+          <Item on:SMUI:action={() => commitChange({ respHeaders: addHeader($selectedProfile.respHeaders) })}>
+            Response header
+          </Item>
+          <Item on:SMUI:action={async () => commitChange({ urlReplacements: await addUrlReplacement($selectedProfile.urlReplacements) })}>
+            URL replacement
+          </Item>
+          <Item on:SMUI:action={() => addFilter()}>
+            Filter
+          </Item>
+        </List>
+      </Menu>
       <IconButton
         dense
         on:click={() => togglePause()}
