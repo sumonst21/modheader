@@ -31,9 +31,6 @@
   export let keywordsCleanFunction = function(keywords) {
     return keywords;
   };
-  export let textCleanFunction = function(userEnteredText) {
-    return userEnteredText;
-  };
   export let beforeChange = function(oldSelectedItem, newSelectedItem) {
     return true;
   };
@@ -126,18 +123,14 @@
     if (userEnteredText === undefined || userEnteredText === null) {
       return "";
     }
-    const textFiltered = userEnteredText
-      .replace(/[&/\\#,+()$~%.'":*?<>{}]/g, " ")
-      .trim();
+    const textFiltered = userEnteredText;
     filteredTextLength = textFiltered.length;
     if (minCharactersToSearch > 0) {
       if (filteredTextLength < minCharactersToSearch) {
         return "";
       }
     }
-    const cleanUserEnteredText = textCleanFunction(textFiltered);
-    const textFilteredLowerCase = cleanUserEnteredText.toLowerCase().trim();
-    return textFilteredLowerCase;
+    return textFiltered.toLowerCase().trim();
   }
   function search() {
     const textFiltered = prepareUserEnteredText(text);
@@ -373,7 +366,7 @@
     {disabled}
     {title}
     bind:this={input}
-    bind:value={text}
+    value={text}
     on:blur={onBlur}
     on:input={onInput}
     on:focus={onFocus}

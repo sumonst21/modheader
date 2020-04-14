@@ -16,7 +16,7 @@
     selectedProfile,
     commitChange
   } from "../js/datasource";
-  import { DISABLED_COLOR, PRIMARY_COLOR } from "../js/constants";
+  import { DISABLED_COLOR, PRIMARY_COLOR, MAX_AUTOCOMPLETE_LENGTH } from "../js/constants";
   import AutoComplete from "./Autocomplete.svelte";
   import MdiIcon from "./MdiIcon.svelte";
   import ResourceTypeMenu from "./ResourceTypeMenu.svelte";
@@ -71,8 +71,8 @@
       refreshFilters();
       allChecked = filters.every(f => f.enabled);
       allUnchecked = filters.every(f => !f.enabled);
-      knownUrlRegexes = lodashUniq(filters.map(f => f.urlRegex).filter(n => !!n));
-      knownFilterComments = lodashUniq(filters.map(f => f.comment).filter(n => !!n));
+      knownUrlRegexes = lodashUniq(filters.map(f => f.urlRegex).filter(n => !!n && n.length <= MAX_AUTOCOMPLETE_LENGTH));
+      knownFilterComments = lodashUniq(filters.map(f => f.comment).filter(n => !!n && n.length <= MAX_AUTOCOMPLETE_LENGTH));
     }, 500, { leading: true, trailing: true })();
 </script>
 

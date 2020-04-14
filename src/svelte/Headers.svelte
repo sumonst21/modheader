@@ -13,7 +13,7 @@
   import lodashDebounce from "lodash/debounce";
 	import { fly } from 'svelte/transition';
   import { selectedProfile, commitChange } from "../js/datasource";
-  import { DISABLED_COLOR, PRIMARY_COLOR } from "../js/constants";
+  import { DISABLED_COLOR, PRIMARY_COLOR, MAX_AUTOCOMPLETE_LENGTH } from "../js/constants";
   import AutoComplete from "./Autocomplete.svelte";
   import MdiIcon from "./MdiIcon.svelte";
   import ExpandHeaderDialog from './ExpandHeaderDialog.svelte';
@@ -74,9 +74,9 @@
       refreshHeaders();
       allChecked = headers.every(h => h.enabled);
       allUnchecked = headers.every(h => !h.enabled);
-      knownHeaderNames = lodashUniq(headers.map(h => h.name).filter(n => !!n).concat(autocompleteNames));
-      knownHeaderValues = lodashUniq(headers.map(h => h.value).filter(n => !!n));
-      knownHeaderComments = lodashUniq(headers.map(h => h.comment).filter(n => !!n));
+      knownHeaderNames = lodashUniq(headers.map(h => h.name).filter(n => !!n && n.length <= MAX_AUTOCOMPLETE_LENGTH).concat(autocompleteNames));
+      knownHeaderValues = lodashUniq(headers.map(h => h.value).filter(n => !!n && n.length <= MAX_AUTOCOMPLETE_LENGTH));
+      knownHeaderComments = lodashUniq(headers.map(h => h.comment).filter(n => !!n && n.length <= MAX_AUTOCOMPLETE_LENGTH));
     }, 500, { leading: true, trailing: true })();
 </script>
 
