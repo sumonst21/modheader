@@ -86,7 +86,10 @@ function loadSelectedProfile_() {
 function replaceUrls(urlReplacements, url) {
   if (urlReplacements) {
     for (const replacement of urlReplacements) {
-      url = url.replace(replacement.name, replacement.value);
+      // Avoid infinite replacement
+      if (!url.includes(replacement.value)) {
+        url = url.replace(replacement.name, replacement.value);
+      }
     }
   }
   return url;
