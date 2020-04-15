@@ -22,6 +22,7 @@
 
   export let headers;
   export let title;
+  export let autocompleteListId;
   export let autocompleteNames;
   export let nameLabel = "Name";
   export let valueLabel = "Value";
@@ -34,9 +35,6 @@
 
   let allChecked;
   let allUnchecked;
-  let knownHeaderNames;
-  let knownHeaderValues;
-  let knownHeaderComments;
 
   function addHeader() {
     dispatch("add");
@@ -69,16 +67,22 @@
     }
     refreshHeaders();
   }
-
-  $: headers, lodashDebounce(() => {
-      refreshHeaders();
-      allChecked = headers.every(h => h.enabled);
-      allUnchecked = headers.every(h => !h.enabled);
-      knownHeaderNames = lodashUniq(headers.map(h => h.name).filter(n => !!n && n.length <= MAX_AUTOCOMPLETE_LENGTH).concat(autocompleteNames));
-      knownHeaderValues = lodashUniq(headers.map(h => h.value).filter(n => !!n && n.length <= MAX_AUTOCOMPLETE_LENGTH));
-      knownHeaderComments = lodashUniq(headers.map(h => h.comment).filter(n => !!n && n.length <= MAX_AUTOCOMPLETE_LENGTH));
-    }, 500, { leading: true, trailing: true })();
+  
+  const refreshHeadersDebounce = lodashDebounce(() => {
+    refreshHeaders();
+    allChecked = headers.every(h => h.enabled);
+    allUnchecked = headers.every(h => !h.enabled);
+  }, 500, { leading: true, trailing: true });
+  $: headers, refreshHeadersDebounce();
 </script>
+
+{#if autocompleteListId && autocompleteNames}
+  <datalist id={autocompleteListId}>
+    {#each autocompleteNames as item}
+      <option value={item}>
+    {/each}
+  </datalist>
+{/if}
 
 <ExpandHeaderDialog
   bind:this={dialog}
@@ -92,7 +96,7 @@
   }} />
 
 <div class="data-table {clazz}" transition:fly>
-  <div class="data-table-row data-table-title-row">
+  <div class="data-table-row">
     <Checkbox
       class="data-table-cell flex-fixed-icon"
       bind:checked={allChecked}
@@ -167,23 +171,18 @@
       <Checkbox
         class="data-table-cell flex-fixed-icon"
         bind:checked={header.enabled}
-        on:click={refreshHeaders}
+        on:change={refreshHeaders}
         indeterminate={false} />
       <AutoComplete
-        className="mdc-text-field__input data-table-cell flex-grow"
-        items={knownHeaderNames}
-        bind:selectedItem={header.name}
+        list={autocompleteListId}
+        bind:value={header.name}
         placeholder={nameLabel} />
       <AutoComplete
-        className="mdc-text-field__input data-table-cell flex-grow"
-        items={knownHeaderValues}
-        bind:selectedItem={header.value}
+        bind:value={header.value}
         placeholder={valueLabel} />
       {#if !$selectedProfile.hideComment}
         <AutoComplete
-          className="mdc-text-field__input data-table-cell flex-grow"
-          items={knownHeaderComments}
-          bind:selectedItem={header.comment}
+          bind:value={header.comment}
           placeholder="Comment" />
       {/if}
       <IconButton

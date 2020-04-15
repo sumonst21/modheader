@@ -49,6 +49,9 @@ export function fixProfiles(profiles) {
         filter.resourceType = [];
         isMutated = true;
       }
+      if (!filter.comment) {
+        filter.comment = '';
+      }
     }
     if (!profile.backgroundColor) {
       profile.backgroundColor = generateBackgroundColor();

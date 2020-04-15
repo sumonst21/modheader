@@ -37,8 +37,6 @@
   
   let allChecked;
   let allUnchecked;
-  let knownUrlRegexes;
-  let knownFilterComments;
 
   function expandEditor(filter) {
     selectedFilter = filter;
@@ -67,13 +65,12 @@
     commitChange({ filters });
   }
 
-  $: filters, lodashDebounce(() => {
-      refreshFilters();
-      allChecked = filters.every(f => f.enabled);
-      allUnchecked = filters.every(f => !f.enabled);
-      knownUrlRegexes = lodashUniq(filters.map(f => f.urlRegex).filter(n => !!n && n.length <= MAX_AUTOCOMPLETE_LENGTH));
-      knownFilterComments = lodashUniq(filters.map(f => f.comment).filter(n => !!n && n.length <= MAX_AUTOCOMPLETE_LENGTH));
-    }, 500, { leading: true, trailing: true })();
+  const refreshFiltersDebounce = lodashDebounce(() => {
+    refreshFilters();
+    allChecked = filters.every(f => f.enabled);
+    allUnchecked = filters.every(f => !f.enabled);
+  }, 500, { leading: true, trailing: true });
+  $: filters, refreshFiltersDebounce();
 </script>
 
 <style scoped>
@@ -97,7 +94,7 @@
 </style>
 
 <div class="data-table {clazz}">
-  <div class="data-table-row data-table-title-row">
+  <div class="data-table-row">
     <Checkbox
       class="data-table-cell flex-fixed-icon"
       bind:checked={allChecked}
@@ -164,7 +161,11 @@
   </div>
   {#each filters as filter, filterIndex}
     <div class="data-table-row {filter.enabled ? '' : 'data-table-row-unchecked'}">
-      <Checkbox bind:checked={filter.enabled} indeterminate={false} class="data-table-cell flex-fixed-icon" />
+      <Checkbox
+        bind:checked={filter.enabled}
+        indeterminate={false}
+        on:change={refreshFilters}
+        class="data-table-cell flex-fixed-icon" />
       <Select
         bind:value={filter.type}
         noLabel
@@ -179,9 +180,7 @@
       </Select>
       {#if filter.type === 'urls' || filter.type === 'excludeUrls'}
         <AutoComplete
-          className="mdc-text-field__input filter-text-field data-table-cell flex-grow"
-          items={knownUrlRegexes}
-          bind:selectedItem={filter.urlRegex}
+          bind:value={filter.urlRegex}
           placeholder=".*://.*.google.com/.*" />
       {:else}
         <ResourceTypeMenu
@@ -190,9 +189,7 @@
       {/if}
       {#if !$selectedProfile.hideComment}
         <AutoComplete
-          className="mdc-text-field__input data-table-cell flex-grow"
-          items={knownFilterComments}
-          bind:selectedItem={filter.comment}
+          bind:value={filter.comment}
           placeholder="Comment" />
       {/if}
       <IconButton

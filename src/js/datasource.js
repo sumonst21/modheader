@@ -4,6 +4,7 @@ import lodashIsEqual from 'lodash/isEqual';
 import lodashOrderBy from 'lodash/orderBy';
 import lodashLast from 'lodash/last';
 import lodashIsUndefined from 'lodash/isUndefined';
+import lodashOmitBy from 'lodash/omitBy';
 import lodashIsEmpty from 'lodash/isEmpty';
 import { showMessage, hideMessage } from './toast';
 import { getLocal, setLocal, removeLocal, fixProfiles } from './storage';
@@ -113,6 +114,7 @@ export async function addFilter() {
         enabled: true,
         type: 'urls',
         urlRegex: urlRegex,
+        comment: '',
         resourceType: []
       }
     ]

@@ -193,6 +193,7 @@
           headers={lodashCloneDeep($selectedProfile.headers)}
           class="extra-gap"
           title="Request headers"
+          autocompleteListId="request-autocomplete"
           autocompleteNames={KNOWN_REQUEST_HEADERS}
           on:add={() => {
             commitChange({ headers: addHeader($selectedProfile.headers) });
@@ -209,6 +210,7 @@
           headers={lodashCloneDeep($selectedProfile.respHeaders)}
           class="extra-gap"
           title="Response headers"
+          autocompleteListId="response-autocomplete"
           autocompleteNames={KNOWN_RESPONSE_HEADERS}
           profile={selectedProfile}
           on:add={() => {
@@ -226,7 +228,6 @@
           headers={lodashCloneDeep($selectedProfile.urlReplacements)}
           class="extra-gap"
           title="Redirect URLs"
-          autocompleteNames={[]}
           nameLabel="Original URL"
           valueLabel="Redirect URL"
           profile={$selectedProfile}
