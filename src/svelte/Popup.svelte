@@ -68,7 +68,7 @@
 
 <style>
   :global(html, body) {
-    font-family: "Segoe UI", Tahoma, sans-serif;
+    font-family: Roboto,Helvetica Neue,sans-serif;
     height: 460px;
     /** Fix FF popup disappearance on long window. */
     width: 620px !important;

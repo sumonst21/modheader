@@ -49,9 +49,10 @@
     left: 0;
     top: 0;
     overflow-x: hidden;
+    scrollbar-width: none;
     transition: width 0.2s ease-out;
   }
-
+  
   :global(.main-drawer)::-webkit-scrollbar {
     display: none;
   }

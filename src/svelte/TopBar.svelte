@@ -108,7 +108,8 @@
   }
 
   :global(.more-menu) {
-    width: 320px;
+    width: 300px;
+    left: -60px !important;
   }
 
   :global(.more-menu-icon) {

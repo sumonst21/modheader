@@ -30,7 +30,7 @@ export function toRgbString(rgb) {
 }
 
 export function generateBackgroundColor() {
-  return hslToRgb(Math.random(), Math.random(), Math.random() * .4);
+  return hslToRgb(Math.random(), Math.random(), .1 + Math.random() * .45);
 }
 
 export function generateTextColor() {

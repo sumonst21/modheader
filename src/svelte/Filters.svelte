@@ -5,7 +5,7 @@
   import Menu from "@smui/menu";
   import Select, { Option } from "@smui/select";
   import List, { Item, Separator, Text } from "@smui/list";
-  import { mdiPlus, mdiTrashCan, mdiHelpCircleOutline, mdiSort } from "@mdi/js";
+  import { mdiPlus, mdiClose, mdiTrashCanOutline, mdiHelpCircleOutline, mdiSort } from "@mdi/js";
   import lodashUniq from "lodash/uniq";
   import lodashOrderBy from "lodash/orderBy";
   import lodashCloneDeep from "lodash/cloneDeep";
@@ -152,8 +152,8 @@
         class="small-text-button">
         <MdiIcon
           size="20"
-          icon={mdiTrashCan}
-          color={$selectedProfile.filters.length === 0 ? DISABLED_COLOR : 'red'}
+          icon={mdiTrashCanOutline}
+          color={$selectedProfile.filters.length === 0 ? DISABLED_COLOR : PRIMARY_COLOR}
           middle />
         Clear
       </Button>
@@ -197,7 +197,7 @@
         aria-label="Delete"
         class="small-icon-button data-table-cell flex-fixed-icon"
         on:click={() => removeFilter(filterIndex)}>
-        <MdiIcon size="24" icon={mdiTrashCan} color="red" />
+        <MdiIcon size="24" icon={mdiClose} color="red" />
       </IconButton>
     </div>
   {/each}

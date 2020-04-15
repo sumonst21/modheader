@@ -5,7 +5,7 @@
   import Checkbox from "@smui/checkbox";
   import Menu from "@smui/menu";
   import List, { Item, Separator, Text } from "@smui/list";
-  import { mdiPlus, mdiTrashCan, mdiArrowExpand, mdiSort } from "@mdi/js";
+  import { mdiPlus, mdiClose, mdiTrashCanOutline, mdiArrowExpand, mdiSort } from "@mdi/js";
   import { createEventDispatcher } from "svelte";
   import lodashUniq from "lodash/uniq";
   import lodashOrderBy from "lodash/orderBy";
@@ -159,8 +159,8 @@
         disabled={headers.length === 0}>
         <MdiIcon
           size="20"
-          icon={mdiTrashCan}
-          color={headers.length === 0 ? DISABLED_COLOR : 'red'}
+          icon={mdiTrashCanOutline}
+          color={headers.length === 0 ? DISABLED_COLOR : PRIMARY_COLOR}
           middle />
         Clear
       </Button>
@@ -197,7 +197,7 @@
         aria-label="Delete"
         class="small-icon-button data-table-cell flex-fixed-icon"
         on:click={() => removeHeader(headerIndex)}>
-        <MdiIcon size="24" icon={mdiTrashCan} color="red" />
+        <MdiIcon size="24" icon={mdiClose} color="red" />
       </IconButton>
     </div>
   {/each}
