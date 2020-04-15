@@ -58,24 +58,24 @@ function passFilters_(url, type, filters) {
   );
 }
 
+function filterEnabled_(rows) {
+  let output = [];
+  if (rows) {
+    for (let row of rows) {
+      // Overrides the header if it is enabled and its name is not empty.
+      if (row.enabled && row.name) {
+        output.push({ name: row.name, value: row.value });
+      }
+    }
+  }
+  return output;
+}
+
 function loadSelectedProfile_() {
   let selectedProfile;
   if (chromeLocal.profiles) {
     const profiles = chromeLocal.profiles;
-    selectedProfile = profiles[chromeLocal.selectedProfile];
-
-    function filterEnabled_(rows) {
-      let output = [];
-      if (rows) {
-        for (let row of rows) {
-          // Overrides the header if it is enabled and its name is not empty.
-          if (row.enabled && row.name) {
-            output.push({ name: row.name, value: row.value });
-          }
-        }
-      }
-      return output;
-    }
+    selectedProfile = lodashCloneDeep(profiles[chromeLocal.selectedProfile]);
     selectedProfile.headers = filterEnabled_(selectedProfile.headers);
     selectedProfile.respHeaders = filterEnabled_(selectedProfile.respHeaders);
     selectedProfile.urlReplacements = filterEnabled_(selectedProfile.urlReplacements);

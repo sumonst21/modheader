@@ -136,7 +136,8 @@
   }
 
   :global(.data-table-title) {
-    margin: 4px 0;
+    margin: 6px 0;
+    font-size: 16px;
   }
 
   :global(.data-table-row-unchecked) {
