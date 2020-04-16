@@ -16,8 +16,8 @@
     mdiCircle,
     mdiSortAscending,
     mdiSortDescending,
-    mdiChevronRight,
     mdiChevronLeft,
+    mdiMenu,
     mdiPlus
   } from "@mdi/js";
 	import { fade } from 'svelte/transition';
@@ -70,10 +70,6 @@
     margin: 0 !important;
   }
 
-  :global(.main-drawer-logo) {
-    min-width: 36px;
-  }
-
   :global(.main-drawer-item-text) {
     font-size: 16px;
     margin-left: 5px;
@@ -122,36 +118,21 @@
     <List class="main-drawer-list">
       <Item
         class="main-drawer-item"
-        title="Visit ModHeader"
-        on:click={() => openLink('https://bewisse.com/modheader/')}>
-        <img
-          src="/images/icon_128.png"
-          class="main-drawer-logo"
-          width="36"
-          height="36"
-          alt="ModHeader" />
-        <Text class="main-drawer-item-text">
-          <h1>ModHeader</h1>
-        </Text>
+        title={expand ? 'Hide navigation' : 'Show navigation'}
+        on:click={() => {
+          expand = !expand;
+        }}>
+        <span class="main-drawer-icon-container">
+          <MdiIcon
+            size="24"
+            class="main-drawer-icon"
+            icon={expand ? mdiChevronLeft: mdiMenu}
+            color={PRIMARY_COLOR} />
+        </span>
       </Item>
       <Separator nav />
 
       <div class="profiles-list">
-        <Item
-          class="main-drawer-item"
-          title={expand ? 'Hide navigation' : 'Show navigation'}
-          on:click={() => {
-            expand = !expand;
-          }}>
-          <span class="main-drawer-icon-container">
-            <MdiIcon
-              size="24"
-              class="main-drawer-icon"
-              icon={expand ? mdiChevronLeft: mdiChevronRight}
-              color={PRIMARY_COLOR} />
-          </span>
-          <Text class="main-drawer-item-text">{expand ? 'Hide navigation' : 'Show navigation'}</Text>
-        </Item>
         <Item
           class="main-drawer-item"
           title="Add profile"

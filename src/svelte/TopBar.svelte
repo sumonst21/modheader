@@ -98,7 +98,7 @@
     background: none;
     color: #fff;
     margin: 0 10px;
-    font-size: 1.5em;
+    font-size: 18px;
     outline: none;
     padding: 0;
   }
@@ -109,7 +109,7 @@
 
   :global(.more-menu) {
     width: 300px;
-    left: -60px !important;
+    left: -30px !important;
   }
 
   :global(.more-menu-icon) {
@@ -120,9 +120,9 @@
     border: 2px solid white;
     border-radius: 50%;
     font-size: 20px;
-    top: 11px;
+    top: 10px;
     position: absolute;
-    left: 11px;
+    left: 8px;
     width: 24px;
     height: 24px;
   }
@@ -145,6 +145,7 @@
     <Section>
       <IconButton
         dense
+        class="top-bar-profile-badge-icon"
         on:click={() => {
           profileBadgeDialog.show();
         }}
@@ -197,6 +198,15 @@
           <MdiIcon size="24" icon={mdiPause} color="white" />
         {/if}
       </IconButton>
+      {#if $isLocked}
+        <IconButton dense on:click={() => unlockAllTab()} title="Unlock tab">
+          <MdiIcon size="24" icon={mdiLockOpenOutline} color="white" />
+        </IconButton>
+      {:else}
+        <IconButton dense on:click={() => lockToTab()} title="Lock to tab">
+          <MdiIcon size="24" icon={mdiLockOutline} color="white" />
+        </IconButton>
+      {/if}
       <IconButton
         dense
         on:click={() => exportDialog.show()}
@@ -221,25 +231,6 @@
               color="#666" />
             {$selectedProfile.hideComment ? 'Show comment column' : 'Hide comment column'}
           </Item>
-          {#if $isLocked}
-            <Item on:SMUI:action={() => unlockAllTab()}>
-              <MdiIcon
-                class="more-menu-icon"
-                size="24"
-                icon={mdiLockOpenOutline}
-                color="#666" />
-              Unlock tab
-            </Item>
-          {:else}
-            <Item on:SMUI:action={() => lockToTab()}>
-              <MdiIcon
-                class="more-menu-icon"
-                size="24"
-                icon={mdiLockOutline}
-                color="#666" />
-              Lock to tab
-            </Item>
-          {/if}
           <Separator nav />
           <Item on:SMUI:action={() => removeProfile($selectedProfile)}>
             <MdiIcon

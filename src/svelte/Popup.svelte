@@ -131,7 +131,7 @@
   }
 
   :global(.data-table) {
-    border-bottom: 1px solid #ddd;
+    margin-bottom: 10px;
     width: 100%;
   }
 

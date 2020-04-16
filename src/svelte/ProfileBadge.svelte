@@ -8,7 +8,7 @@
     font-size: 16px;
     border: 2px solid white;
     border-radius: 50%;
-    margin: 10px 6px;
+    margin: 10px 4px;
     width: 24px;
     min-width: 24px;
     height: 24px;
