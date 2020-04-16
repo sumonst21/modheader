@@ -1,18 +1,26 @@
 <script>
   import Dialog, { Title, Content, Actions } from "@smui/dialog";
   import Button, { Label } from "@smui/button";
+  import Tab, {Icon, Label as TabLabel} from '@smui/tab';
+  import TabBar from '@smui/tab-bar';
   import Snackbar, { Label as SnackbarLabel } from "@smui/snackbar";
   import IconButton from "@smui/icon-button";
   import Checkbox from "@smui/checkbox";
   import List, { Item, Separator, Text } from "@smui/list";
   import lzString from "lz-string";
-  import { mdiSelectAll, mdiContentCopy, mdiClose } from "@mdi/js";
+  import { mdiDownload, mdiSelectAll, mdiContentCopy, mdiClose } from "@mdi/js";
   import MdiIcon from "./MdiIcon.svelte";
   import { DISABLED_COLOR, PRIMARY_COLOR } from "../js/constants";
   import { showMessage } from "../js/toast";
   import { profiles, selectedProfile, commitChange } from "../js/datasource";
 
-  let exportTextbox;
+  const TABS = [
+    {label: 'URL', value: 'url'},
+    {label: 'JSON', value: 'json'}
+  ];
+  let activeTab = TABS[0];
+  let exportUrlTextbox;
+  let exportJsonTextbox;
   let dialog;
   let selectedProfiles = [];
 
@@ -21,8 +29,8 @@
     dialog.open();
   }
 
-  async function copyExportText() {
-    exportTextbox.select();
+  async function copyExportText(textbox) {
+    textbox.select();
     if (navigator.clipboard && navigator.clipboard.writeText) {
       await navigator.clipboard.writeText(exportedUrl);
     } else {
@@ -32,7 +40,7 @@
   }
 
   $: exportedText = JSON.stringify(selectedProfiles);
-  $: exportedUrl = `https://bewisse.com/modheader/p/${lzString.compressToEncodedURIComponent(
+  $: exportedUrl = `https://bewisse.com/modheader/p/#${lzString.compressToEncodedURIComponent(
     exportedText
   )}`;
 </script>
@@ -69,27 +77,60 @@
         </Item>
       {/each}
     </List>
-    <input
-      bind:this={exportTextbox}
-      on:focus={() => copyExportText()}
-      class="export-text-field"
-      type="url"
-      readonly
-      value={exportedUrl} />
+    
+    <TabBar tabs={TABS} let:tab bind:active={activeTab}>
+      <Tab {tab}>
+        <TabLabel>{tab.label}</TabLabel>
+      </Tab>
+    </TabBar>
+    {#if activeTab.value === 'url'}
+      <input
+        bind:this={exportUrlTextbox}
+        on:focus={() => copyExportText(exportUrlTextbox)}
+        class="export-text-field"
+        type="url"
+        readonly
+        value={exportedUrl} />
+    {:else}
+      <input
+        bind:this={exportJsonTextbox}
+        on:focus={() => copyExportText(exportJsonTextbox)}
+        class="export-text-field"
+        type="text"
+        readonly
+        value={exportedText} />
+    {/if}
   </Content>
   <div class="mdc-dialog__actions">
     <Button on:click={() => (selectedProfiles = [...$profiles])}>
       <MdiIcon size="24" icon={mdiSelectAll} color={PRIMARY_COLOR} />
       <Label class="ml-small">Select All</Label>
     </Button>
-    <Button
-      disabled={selectedProfiles.length === 0}
-      on:click={() => exportTextbox.focus()}>
-      <MdiIcon
-        size="24"
-        icon={mdiContentCopy}
-        color={selectedProfiles.length === 0 ? DISABLED_COLOR : PRIMARY_COLOR} />
-      <Label class="ml-small">Copy</Label>
-    </Button>
+    {#if activeTab.value === 'json'}
+      {#if selectedProfiles.length === 0}
+        <Button disabled>
+          <MdiIcon size="24" icon={mdiDownload} color={DISABLED_COLOR} />
+          <Label class="ml-small">Download JSON</Label>
+        </Button>
+      {:else}
+        <Button
+          href="data:application/json;base64,{window.btoa(exportedText)}"
+          download="{selectedProfiles.map(p => p.title).join('+')}.json">
+          <MdiIcon size="24" icon={mdiDownload} color={PRIMARY_COLOR} />
+          <Label class="ml-small">Download JSON</Label>
+        </Button>
+      {/if}
+    {/if}
+    {#if activeTab.value === 'url'}
+      <Button
+        disabled={selectedProfiles.length === 0}
+        on:click={() => exportUrlTextbox.focus()}>
+        <MdiIcon
+          size="24"
+          icon={mdiContentCopy}
+          color={selectedProfiles.length === 0 ? DISABLED_COLOR : PRIMARY_COLOR} />
+        <Label class="ml-small">Copy URL</Label>
+      </Button>
+    {/if}
   </div>
 </Dialog>
