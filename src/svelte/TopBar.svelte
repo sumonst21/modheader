@@ -169,7 +169,7 @@
           <MdiIcon size="24" icon={mdiUndo} color="white" />
         </IconButton>
       {/if}
-      <IconButton dense on:click={() => addMenu.setOpen(true)} title="Undo">
+      <IconButton dense on:click={() => addMenu.setOpen(true)} title="Add">
         <MdiIcon size="24" icon={mdiPlus} color="white" />
       </IconButton>
       <Menu bind:this={addMenu} class="add-menu" quickOpen>

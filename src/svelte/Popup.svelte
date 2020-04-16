@@ -73,6 +73,7 @@
     /** Fix FF popup disappearance on long window. */
     width: 620px !important;
     position: relative !important;
+    overflow-x: hidden;
     margin: 0;
   }
 
@@ -132,7 +133,7 @@
 
   :global(.data-table) {
     margin-bottom: 10px;
-    width: 100%;
+    width: calc(100% - 10px);
   }
 
   :global(.data-table-title) {
