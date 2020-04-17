@@ -131,7 +131,7 @@ function modifyRequestHandler_(details) {
   if (chromeLocal.isPaused) {
     return {};
   }
-  if (!chromeLocal.lockedTabId || chromeLocal.lockedTabId == details.tabId) {
+  if (!chromeLocal.lockedTabId || chromeLocal.lockedTabId === details.tabId) {
     if (
       currentProfile &&
       passFilters_(details.url, details.type, currentProfile.filters)
@@ -149,7 +149,7 @@ function modifyRequestHeaderHandler_(details) {
   if (chromeLocal.isPaused) {
     return {};
   }
-  if (!chromeLocal.lockedTabId || chromeLocal.lockedTabId == details.tabId) {
+  if (!chromeLocal.lockedTabId || chromeLocal.lockedTabId === details.tabId) {
     if (
       currentProfile &&
       passFilters_(details.url, details.type, currentProfile.filters)

@@ -43,6 +43,7 @@ export function fixProfiles(profiles) {
     }
     if (!profile.filters) {
       profile.filters = [];
+      isMutated = true;
     }
     for (let filter of profile.filters) {
       if (!filter.resourceType) {
@@ -51,6 +52,7 @@ export function fixProfiles(profiles) {
       }
       if (!filter.comment) {
         filter.comment = '';
+        isMutated = true;
       }
     }
     if (!profile.backgroundColor) {

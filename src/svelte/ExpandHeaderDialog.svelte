@@ -1,6 +1,7 @@
 <script>
   import Dialog, { Title, Content, Actions } from "@smui/dialog";
   import Button, { Label } from "@smui/button";
+  import Textfield from '@smui/textfield';
   import { createEventDispatcher } from "svelte";
 
   const dispatch = createEventDispatcher();
@@ -19,6 +20,16 @@
   }
 </script>
 
+<style>
+  :global(.expand-header-dialog-content) {
+    padding-top: 5px;
+  }
+
+  :global(.expand-header-dialog-textfield) {
+    margin: 5px;
+  }
+</style>
+
 <Dialog
   bind:this={dialog}
   aria-labelledby="dialog-title"
@@ -26,29 +37,28 @@
   on:MDCDialog:closed={saveHeader}>
   <Title id="dialog-title">{title}</Title>
   <Content id="dialog-content">
-    {#if selectedHeader}
-      <div class="mdc-text-field mdc-text-field--textarea">
-        <label>{nameLabel}</label>
-        <textarea
-          class="mdc-text-field__input large-textarea"
+    <div class="expand-header-dialog-content">
+      {#if selectedHeader}
+        <Textfield
+          textarea
+          fullwidth
+          class="expand-header-dialog-textfield"
           bind:value={selectedHeader.name}
-          placeholder={nameLabel} />
-      </div>
-      <div class="mdc-text-field mdc-text-field--textarea">
-        <label>{valueLabel}</label>
-        <textarea
-          class="mdc-text-field__input large-textarea"
+          label={nameLabel} />
+        <Textfield
+          textarea
+          fullwidth
+          class="expand-header-dialog-textfield"
           bind:value={selectedHeader.value}
-          placeholder={valueLabel} />
-      </div>
-      <div class="mdc-text-field mdc-text-field--textarea">
-        <label>Comment</label>
-        <textarea
-          class="mdc-text-field__input large-textarea"
+          label={valueLabel} />
+        <Textfield
+          textarea
+          fullwidth
+          class="expand-header-dialog-textfield"
           bind:value={selectedHeader.comment}
-          placeholder="Comment" />
-      </div>
-    {/if}
+          label="Comment" />
+      {/if}
+    </div>
   </Content>
   <Actions>
     <Button>
