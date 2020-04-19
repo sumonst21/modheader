@@ -1,6 +1,6 @@
 {
   "name": "ModHeader",
-  "version": "3.0.7",
+  "version": "3.0.8",
   "manifest_version": 2,
   "homepage_url": "https://bewisse.com/modheader/",
   "description": "Modify HTTP request and response headers",

@@ -81,8 +81,8 @@ function isExistingProfileTitle_(title) {
 }
 
 export function save() {
-  const background = chrome.extension.getBackgroundPage();
-  if (background) {
+  if (process.env.BROWSER !== 'firefox') {
+    const background = chrome.extension.getBackgroundPage();
     background.saveToStorage({
       profiles: latestProfiles,
       selectedProfile: latestSelectedProfileIndex
