@@ -20,7 +20,7 @@
     mdiMenu,
     mdiPlus
   } from "@mdi/js";
-	import { fade } from 'svelte/transition';
+  import { fade } from "svelte/transition";
   import MdiIcon from "./MdiIcon.svelte";
   import ProfileBadge from "./ProfileBadge.svelte";
   import {
@@ -44,6 +44,7 @@
 
 <style scoped>
   :global(.main-drawer) {
+    background: #f2f2f2;
     display: block;
     position: fixed;
     left: 0;
@@ -52,7 +53,7 @@
     scrollbar-width: none;
     transition: width 0.2s ease-out;
   }
-  
+
   :global(.main-drawer)::-webkit-scrollbar {
     display: none;
   }
@@ -97,7 +98,7 @@
 
   .scrim {
     background: #ccc;
-    opacity: .7;
+    opacity: 0.7;
     position: fixed;
     top: 0;
     left: 0;
@@ -126,7 +127,7 @@
           <MdiIcon
             size="24"
             class="main-drawer-icon"
-            icon={expand ? mdiChevronLeft: mdiMenu}
+            icon={expand ? mdiChevronLeft : mdiMenu}
             color={PRIMARY_COLOR} />
         </span>
       </Item>
@@ -226,7 +227,8 @@
 </Drawer>
 
 {#if expand}
-  <div class="scrim"
-      transition:fade="{{ duration: 200 }}"
-      on:click={() => expand = false} />
+  <div
+    class="scrim"
+    transition:fade={{ duration: 200 }}
+    on:click={() => (expand = false)} />
 {/if}
