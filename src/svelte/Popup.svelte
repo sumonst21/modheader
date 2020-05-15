@@ -23,7 +23,6 @@
     init
   } from "../js/datasource";
   import MdiIcon from "./MdiIcon.svelte";
-  import ReviewDialog from "./ReviewDialog.svelte";
   import { toastMessage, undoable } from "../js/toast";
   import { getSync, setSync } from "../js/storage";
   import {
