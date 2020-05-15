@@ -107,11 +107,6 @@
     width: 585px;
   }
 
-  :global(.more-menu) {
-    width: 300px;
-    left: -30px !important;
-  }
-
   :global(.more-menu-icon) {
     margin: 0 8px 0 10px;
   }
@@ -153,7 +148,11 @@
         <span
           class="top-bar-profile-badge"
           style="background: {$selectedProfile.backgroundColor}">
-          <span class="top-bar-profile-badge-text" style="color: {$selectedProfile.textColor}">{$selectedProfile.shortTitle}</span>
+          <span
+            class="top-bar-profile-badge-text"
+            style="color: {$selectedProfile.textColor}">
+            {$selectedProfile.shortTitle}
+          </span>
         </span>
       </IconButton>
 
@@ -174,18 +173,27 @@
       </IconButton>
       <Menu bind:this={addMenu} class="add-menu" quickOpen>
         <List>
-          <Item on:SMUI:action={() => commitChange({ headers: addHeader($selectedProfile.headers) })}>
+          <Item
+            on:SMUI:action={() => commitChange({
+                headers: addHeader($selectedProfile.headers)
+              })}>
             Request header
           </Item>
-          <Item on:SMUI:action={() => commitChange({ respHeaders: addHeader($selectedProfile.respHeaders) })}>
+          <Item
+            on:SMUI:action={() => commitChange({
+                respHeaders: addHeader($selectedProfile.respHeaders)
+              })}>
             Response header
           </Item>
-          <Item on:SMUI:action={async () => commitChange({ urlReplacements: await addUrlReplacement($selectedProfile.urlReplacements) })}>
+          <Item
+            on:SMUI:action={async () => commitChange({
+                urlReplacements: await addUrlReplacement(
+                  $selectedProfile.urlReplacements
+                )
+              })}>
             URL replacement
           </Item>
-          <Item on:SMUI:action={() => addFilter()}>
-            Filter
-          </Item>
+          <Item on:SMUI:action={() => addFilter()}>Filter</Item>
         </List>
       </Menu>
       <IconButton
@@ -221,7 +229,7 @@
         title="More">
         <MdiIcon size="24" icon={mdiDotsVertical} color="white" />
       </IconButton>
-      <Menu bind:this={moreMenu} class="more-menu" quickOpen>
+      <Menu bind:this={moreMenu} quickOpen>
         <List>
           <Item on:SMUI:action={() => toggleComment()}>
             <MdiIcon

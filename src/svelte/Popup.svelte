@@ -23,7 +23,7 @@
     init
   } from "../js/datasource";
   import MdiIcon from "./MdiIcon.svelte";
-  import ReviewDialog from './ReviewDialog.svelte';
+  import ReviewDialog from "./ReviewDialog.svelte";
   import { toastMessage, undoable } from "../js/toast";
   import { getSync, setSync } from "../js/storage";
   import {
@@ -31,26 +31,10 @@
     KNOWN_RESPONSE_HEADERS
   } from "../js/constants";
 
-  let reviewDialog;
   let snackbar;
   let snackbarMessage;
 
   window.addEventListener("unload", save);
-
-  async function promptForReviewsIfNeeded() {
-    const { reviewPromptTimestamp } = await getSync('reviewPromptTimestamp');
-    if (!reviewPromptTimestamp) {
-      await setSync({
-        reviewPromptTimestamp: Date.now() + (1000 * 60 * 60 * 24 * 7) // 7 days
-      });
-    } else if (Date.now() > reviewPromptTimestamp) {
-      reviewDialog.show();
-    }
-  }
-
-  onMount(() => {
-    promptForReviewsIfNeeded();
-  });
 
   const unsubscribeToastMessage = toastMessage.subscribe(message => {
     if (snackbar) {
@@ -68,7 +52,7 @@
 
 <style>
   :global(html, body) {
-    font-family: Roboto,Helvetica Neue,sans-serif;
+    font-family: Roboto, Helvetica Neue, sans-serif;
     height: 460px;
     /** Fix FF popup disappearance on long window. */
     width: 620px !important;
@@ -92,6 +76,13 @@
   :global(.small-icon-button) {
     width: 28px;
     height: 28px;
+    padding: 0;
+    margin: 0;
+  }
+
+  :global(.medium-icon-button) {
+    width: 36px;
+    height: 36px;
     padding: 0;
     margin: 0;
   }
@@ -148,7 +139,12 @@
   :global(.data-table-row) {
     display: flex;
     justify-content: start;
-    height: 30px;
+    height: 32px;
+  }
+
+  :global(.data-table-title-row) {
+    margin-top: 5px;
+    height: 40px;
   }
 
   :global(.data-table-cell) {
@@ -180,8 +176,6 @@
   }
 </style>
 
-<ReviewDialog bind:this={reviewDialog} />
-
 {#await init() then initResult}
   <Drawer />
 
@@ -201,7 +195,9 @@
             commitChange({ headers: addHeader($selectedProfile.headers) });
           }}
           on:remove={event => {
-            commitChange({ headers: removeHeader($selectedProfile.headers, event.detail) });
+            commitChange({
+              headers: removeHeader($selectedProfile.headers, event.detail)
+            });
           }}
           on:refresh={event => {
             commitChange({ headers: event.detail });
@@ -216,10 +212,17 @@
           autocompleteNames={KNOWN_RESPONSE_HEADERS}
           profile={selectedProfile}
           on:add={() => {
-            commitChange({ respHeaders: addHeader($selectedProfile.respHeaders) });
+            commitChange({
+              respHeaders: addHeader($selectedProfile.respHeaders)
+            });
           }}
           on:remove={event => {
-            commitChange({ respHeaders: removeHeader($selectedProfile.respHeaders, event.detail) });
+            commitChange({
+              respHeaders: removeHeader(
+                $selectedProfile.respHeaders,
+                event.detail
+              )
+            });
           }}
           on:refresh={event => {
             commitChange({ respHeaders: event.detail });
@@ -234,10 +237,19 @@
           valueLabel="Redirect URL"
           profile={$selectedProfile}
           on:add={async () => {
-            commitChange({ urlReplacements: await addUrlReplacement($selectedProfile.urlReplacements) });
+            commitChange({
+              urlReplacements: await addUrlReplacement(
+                $selectedProfile.urlReplacements
+              )
+            });
           }}
           on:remove={event => {
-            commitChange({ urlReplacements: removeUrlReplacement($selectedProfile.urlReplacements, event.detail) });
+            commitChange({
+              urlReplacements: removeUrlReplacement(
+                $selectedProfile.urlReplacements,
+                event.detail
+              )
+            });
           }}
           on:refresh={event => {
             commitChange({ urlReplacements: event.detail });

@@ -5,7 +5,15 @@
   import Checkbox from "@smui/checkbox";
   import Menu from "@smui/menu";
   import List, { Item, Separator, Text } from "@smui/list";
-  import { mdiPlus, mdiClose, mdiTrashCanOutline, mdiArrowExpand, mdiSort } from "@mdi/js";
+  import {
+    mdiPlus,
+    mdiClose,
+    mdiTrashCanOutline,
+    mdiArrowExpand,
+    mdiSortAlphabeticalAscending,
+    mdiSortAlphabeticalDescending,
+    mdiDotsVertical
+  } from "@mdi/js";
   import { createEventDispatcher } from "svelte";
   import lodashUniq from "lodash/uniq";
   import lodashOrderBy from "lodash/orderBy";
@@ -29,7 +37,7 @@
   let selectedHeaderIndex;
   let selectedHeader;
   let dialog;
-  let sortMenu;
+  let moreMenu;
   let clazz;
   export { clazz as class };
 
@@ -96,7 +104,7 @@
   }} />
 
 <div class="data-table {clazz}" transition:fly>
-  <div class="data-table-row">
+  <div class="data-table-row data-table-title-row">
     <Checkbox
       class="data-table-cell flex-fixed-icon"
       bind:checked={allChecked}
@@ -105,65 +113,90 @@
       disabled={headers.length === 0} />
     <h3 class="data-table-title data-table-cell flex-grow">{title}</h3>
     <div class="data-table-cell">
-      <Button on:click={() => addHeader(headers)} class="small-text-button">
-        <MdiIcon size="20" icon={mdiPlus} color={PRIMARY_COLOR} middle />
-        Add
-      </Button>
+      
     </div>
     <div class="data-table-cell">
-      <Button
-        class="small-text-button"
-        on:click={e => sortMenu.setOpen(true)}
-        disabled={headers.length === 0}>
-        <MdiIcon
-          size="20"
-          icon={mdiSort}
-          color={headers.length === 0 ? DISABLED_COLOR : PRIMARY_COLOR}
-          middle />
-        Sort
-      </Button>
+      <IconButton
+        aria-label="Expand"
+        class="medium-icon-button data-table-cell flex-fixed-icon"
+        on:click={() => moreMenu.setOpen(true)}>
+        <MdiIcon size="32" color="#666" icon={mdiDotsVertical} />
+      </IconButton>
       
-      <Menu bind:this={sortMenu} quickOpen>
-        <List class="sort-menu">
+      <Menu bind:this={moreMenu} anchorCorner="TOP_LEFT" quickOpen>
+        <List>
+          <Item on:SMUI:action={() => addHeader(headers)}>
+            <MdiIcon
+              class="more-menu-icon"
+              size="24"
+              icon={mdiPlus}
+              color="#666" />
+            <Text>Add</Text>
+          </Item>
+          <Item on:SMUI:action={() => {
+              headers = [];
+              refreshHeaders();
+            }}>
+            <MdiIcon
+              class="more-menu-icon"
+              size="24"
+              icon={mdiTrashCanOutline}
+              color="#666" />
+            <Text>Clear all</Text>
+          </Item>
+          <Separator nav />
           <Item on:SMUI:action={() => sort('name', 'asc')}>
+            <MdiIcon
+              class="more-menu-icon"
+              size="24"
+              icon={mdiSortAlphabeticalAscending}
+              color="#666" />
             <Text>{nameLabel} - ascending</Text>
           </Item>
           <Item on:SMUI:action={() => sort('name', 'desc')}>
+            <MdiIcon
+              class="more-menu-icon"
+              size="24"
+              icon={mdiSortAlphabeticalDescending}
+              color="#666" />
             <Text>{nameLabel} - descending</Text>
           </Item>
           <Item on:SMUI:action={() => sort('value', 'asc')}>
+            <MdiIcon
+              class="more-menu-icon"
+              size="24"
+              icon={mdiSortAlphabeticalAscending}
+              color="#666" />
             <Text>{valueLabel} - ascending</Text>
           </Item>
           <Item on:SMUI:action={() => sort('value', 'desc')}>
+            <MdiIcon
+              class="more-menu-icon"
+              size="24"
+              icon={mdiSortAlphabeticalDescending}
+              color="#666" />
             <Text>{valueLabel} - descending</Text>
           </Item>
           {#if !$selectedProfile.hideComment}
             <Item on:SMUI:action={() => sort('comment', 'asc')}>
+              <MdiIcon
+                class="more-menu-icon"
+                size="24"
+                icon={mdiSortAlphabeticalAscending}
+                color="#666" />
               <Text>Comment - ascending</Text>
             </Item>
             <Item on:SMUI:action={() => sort('comment', 'desc')}>
+              <MdiIcon
+                class="more-menu-icon"
+                size="24"
+                icon={mdiSortAlphabeticalDescending}
+                color="#666" />
               <Text>Comment - descending</Text>
             </Item>
           {/if}
         </List>
       </Menu>
-    </div>
-
-    <div class="data-table-cell">
-      <Button
-        class="small-text-button"
-        on:click={() => {
-          headers = [];
-          refreshHeaders();
-        }}
-        disabled={headers.length === 0}>
-        <MdiIcon
-          size="20"
-          icon={mdiTrashCanOutline}
-          color={headers.length === 0 ? DISABLED_COLOR : PRIMARY_COLOR}
-          middle />
-        Clear
-      </Button>
     </div>
   </div>
   {#each headers as header, headerIndex}
