@@ -389,9 +389,9 @@ async function initialize() {
     if (profilesUpdated || selectedProfileUpdated) {
       currentProfile = loadSelectedProfile_();
       saveStorageToCloud();
+      setupHeaderModListener();
     }
     if (currentProfile) {
-      setupHeaderModListener();
       await resetBadgeAndContextMenu();
     }
   });
