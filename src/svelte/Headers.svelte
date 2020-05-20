@@ -223,7 +223,7 @@
         aria-label="Expand"
         class="small-icon-button data-table-cell flex-fixed-icon"
         on:click={() => expandEditor(headerIndex)}>
-        <MdiIcon size="24" icon={mdiArrowExpand} />
+        <MdiIcon size="24" color="#666" icon={mdiArrowExpand} />
       </IconButton>
       <IconButton
         dense

@@ -95,7 +95,7 @@ function replaceUrls(urlReplacements, url) {
   return url;
 }
 
-function modifyHeader(source, dest) {
+function modifyHeader(url, source, dest) {
   if (!source.length) {
     return;
   }
@@ -106,22 +106,30 @@ function modifyHeader(source, dest) {
     const header = dest[index];
     indexMap[header.name.toLowerCase()] = index;
   }
-  for (let header of source) {
+  for (const header of source) {
     const normalizedHeaderName = header.name.toLowerCase();
     const index = indexMap[normalizedHeaderName];
+    let headerValue = header.value;
+    if (headerValue.startsWith('function')) {
+      try {
+        headerValue = (eval(`(${headerValue})({ url: '${url}' })`) || '').toString();
+      } catch (err) {
+        console.error(err);
+      }
+    }
     if (index !== undefined) {
       if (!currentProfile.appendMode || currentProfile.appendMode === 'false') {
-        dest[index].value = header.value;
+        dest[index].value = headerValue;
       } else if (currentProfile.appendMode == 'comma') {
         if (dest[index].value) {
           dest[index].value += ',';
         }
-        dest[index].value += header.value;
+        dest[index].value += headerValue;
       } else {
-        dest[index].value += header.value;
+        dest[index].value += headerValue;
       }
     } else {
-      dest.push({ name: header.name, value: header.value });
+      dest.push({ name: header.name, value: headerValue });
       indexMap[normalizedHeaderName] = dest.length - 1;
     }
   }
@@ -154,7 +162,7 @@ function modifyRequestHeaderHandler_(details) {
       currentProfile &&
       passFilters_(details.url, details.type, currentProfile.filters)
     ) {
-      modifyHeader(currentProfile.headers, details.requestHeaders);
+      modifyHeader(details.url, currentProfile.headers, details.requestHeaders);
     }
   }
   return { requestHeaders: details.requestHeaders };
@@ -170,7 +178,7 @@ function modifyResponseHeaderHandler_(details) {
       passFilters_(details.url, details.type, currentProfile.filters)
     ) {
       const responseHeaders = lodashCloneDeep(details.responseHeaders);
-      modifyHeader(currentProfile.respHeaders, responseHeaders);
+      modifyHeader(details.url, currentProfile.respHeaders, responseHeaders);
       if (!lodashIsEqual(responseHeaders, details.responseHeaders)) {
         return {
           responseHeaders: responseHeaders
