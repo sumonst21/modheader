@@ -83,12 +83,24 @@ function loadSelectedProfile_() {
   return selectedProfile;
 }
 
+function evaluateValue(value, url) {
+  if (value && value.startsWith('function')) {
+    try {
+      return (eval(`(${value})({ url: '${url}' })`) || '').toString();
+    } catch (err) {
+      console.error(err);
+    }
+  }
+  return value;
+}
+
 function replaceUrls(urlReplacements, url) {
   if (urlReplacements) {
     for (const replacement of urlReplacements) {
       // Avoid infinite replacement
-      if (!url.includes(replacement.value)) {
-        url = url.replace(replacement.name, replacement.value);
+      const replacementValue = evaluateValue(replacement.value, url);
+      if (!url.includes(replacementValue)) {
+        url = url.replace(replacement.name, replacementValue);
       }
     }
   }
@@ -109,14 +121,7 @@ function modifyHeader(url, source, dest) {
   for (const header of source) {
     const normalizedHeaderName = header.name.toLowerCase();
     const index = indexMap[normalizedHeaderName];
-    let headerValue = header.value;
-    if (headerValue.startsWith('function')) {
-      try {
-        headerValue = (eval(`(${headerValue})({ url: '${url}' })`) || '').toString();
-      } catch (err) {
-        console.error(err);
-      }
-    }
+    const headerValue = evaluateValue(header.value, url);
     if (index !== undefined) {
       if (!currentProfile.appendMode || currentProfile.appendMode === 'false') {
         dest[index].value = headerValue;
