@@ -21,6 +21,22 @@ function hslToRgb(h, s, l){
   return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 }
 
+export function lightOrDark(color) {
+  // https://awik.io/determine-color-bright-dark-using-javascript/
+  color = +("0x" + color.slice(1).replace(color.length < 5 && /./g, '$&$&'));
+  const r = color >> 16;
+  const g = color >> 8 & 255;
+  const b = color & 255;
+  const hsp = Math.sqrt(0.299 * (r * r) + 0.587 * (g * g) + 0.114 * (b * b));
+
+  // Using the HSP value, determine whether the color is light or dark
+  if (hsp > 127.5) {
+    return 'light';
+  } else {
+    return 'dark';
+  }
+}
+
 function toHex(v) {
   return Math.round(v * 255).toString(16).padStart(2, '0');
 }

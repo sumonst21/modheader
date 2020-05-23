@@ -25,7 +25,7 @@
     mdiUndo
   } from "@mdi/js";
   import { get } from "svelte/store";
-  import { toRgbString } from "../js/utils";
+  import { toRgbString, lightOrDark } from "../js/utils";
   import ExportDialog from "./ExportDialog.svelte";
   import ImportDialog from "./ImportDialog.svelte";
   import ProfileBadgeDialog from "./ProfileBadgeDialog.svelte";
@@ -90,6 +90,10 @@
     }
   }
   $: appendMode = ($selectedProfile.appendMode || false).toString();
+  $: color =
+    lightOrDark($selectedProfile.backgroundColor) === "light"
+      ? "black"
+      : "white";
 </script>
 
 <style scoped>
@@ -165,11 +169,11 @@
     <Section align="end">
       {#if $changesStack.length > 1}
         <IconButton dense on:click={() => undo()} title="Undo">
-          <MdiIcon size="24" icon={mdiUndo} color="white" />
+          <MdiIcon size="24" icon={mdiUndo} {color} />
         </IconButton>
       {/if}
       <IconButton dense on:click={() => addMenu.setOpen(true)} title="Add">
-        <MdiIcon size="24" icon={mdiPlus} color="white" />
+        <MdiIcon size="24" icon={mdiPlus} {color} />
       </IconButton>
       <Menu bind:this={addMenu} class="add-menu" quickOpen>
         <List>
@@ -201,25 +205,25 @@
         on:click={() => togglePause()}
         title={$isPaused ? 'Resume ModHeader' : 'Pause ModHeader'}>
         {#if $isPaused}
-          <MdiIcon size="24" icon={mdiPlay} color="white" />
+          <MdiIcon size="24" icon={mdiPlay} {color} />
         {:else}
-          <MdiIcon size="24" icon={mdiPause} color="white" />
+          <MdiIcon size="24" icon={mdiPause} {color} />
         {/if}
       </IconButton>
       {#if $isLocked}
         <IconButton dense on:click={() => unlockAllTab()} title="Unlock tab">
-          <MdiIcon size="24" icon={mdiLockOpenOutline} color="white" />
+          <MdiIcon size="24" icon={mdiLockOpenOutline} {color} />
         </IconButton>
       {:else}
         <IconButton dense on:click={() => lockToTab()} title="Lock to tab">
-          <MdiIcon size="24" icon={mdiLockOutline} color="white" />
+          <MdiIcon size="24" icon={mdiLockOutline} {color} />
         </IconButton>
       {/if}
       <IconButton
         dense
         on:click={() => exportDialog.show()}
         title="Export / share profile(s)">
-        <MdiIcon size="24" icon={mdiShare} color="white" />
+        <MdiIcon size="24" icon={mdiShare} {color} />
       </IconButton>
       <IconButton
         dense
@@ -227,7 +231,7 @@
           moreMenu.setOpen(true);
         }}
         title="More">
-        <MdiIcon size="24" icon={mdiDotsVertical} color="white" />
+        <MdiIcon size="24" icon={mdiDotsVertical} {color} />
       </IconButton>
       <Menu bind:this={moreMenu} quickOpen>
         <List>
