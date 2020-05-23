@@ -195,7 +195,7 @@
                   $selectedProfile.urlReplacements
                 )
               })}>
-            URL replacement
+            URL redirect
           </Item>
           <Item on:SMUI:action={() => addFilter()}>Filter</Item>
         </List>
