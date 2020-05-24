@@ -7,9 +7,13 @@
     Subtitle,
     Scrim
   } from "@smui/drawer";
+  import Menu from "@smui/menu";
   import List, { Item, Text, Separator, Subheader } from "@smui/list";
   import H6 from "@smui/common/H6.svelte";
   import {
+    mdiCheckboxBlankOutline,
+    mdiCheckboxMarked,
+    mdiClose,
     mdiHelpCircleOutline,
     mdiThumbUpOutline,
     mdiGiftOutline,
@@ -23,11 +27,14 @@
   import { fade } from "svelte/transition";
   import MdiIcon from "./MdiIcon.svelte";
   import ProfileBadge from "./ProfileBadge.svelte";
+  import { commitChange } from "../js/datasource";
+  import { showMessage } from "../js/toast";
   import {
     addProfile,
     sortProfiles,
     selectProfile,
     selectedProfile,
+    removeProfile,
     profiles
   } from "../js/datasource";
   import { PRIMARY_COLOR } from "../js/constants";
@@ -36,6 +43,19 @@
   let drawerOpen = true;
   let expand = false;
   let sortOrder = "asc";
+  let contextMenu;
+  let selectedProfileIndex;
+
+  function showMenu(event, { profile, profileIndex }) {
+    contextMenu.setOpen(false);
+    setImmediate(() => {
+      selectedProfileIndex = profileIndex;
+      contextMenu.hoistMenuToBody();
+      contextMenu.setAnchorElement(event.target);
+      contextMenu.setOpen(true);
+    });
+    event.preventDefault();
+  }
 
   function openLink(url) {
     chrome.tabs.create({ url });
@@ -155,11 +175,14 @@
             class="main-drawer-item"
             title={profile.title}
             selected={$selectedProfile === profile}
+            on:contextmenu={e => {
+              showMenu(e, { profile, profileIndex });
+            }}
             on:click={() => {
               selectProfile(profileIndex);
               expand = false;
             }}>
-            <ProfileBadge {profile} />
+            <ProfileBadge {profile} on:contextmenu={showMenu} />
             <Text class="main-drawer-item-text">{profile.title}</Text>
           </Item>
         {/each}
@@ -225,6 +248,37 @@
     </List>
   </Content>
 </Drawer>
+
+<Menu bind:this={contextMenu} quickOpen>
+  <List>
+    <Item
+      on:SMUI:action={() => {
+        const profile = $profiles[selectedProfileIndex];
+        const alwaysOn = !profile.alwaysOn;
+        commitChange({ alwaysOn }, selectedProfileIndex);
+        if (alwaysOn) {
+          showMessage(`${profile.title} will stay active even when it is not selected`);
+        } else {
+          showMessage(`${profile.title} will only be active when selected.`);
+        }
+      }}>
+      <MdiIcon
+        class="more-menu-icon"
+        size="24"
+        icon={($profiles[selectedProfileIndex] || {}).alwaysOn ? mdiCheckboxMarked : mdiCheckboxBlankOutline}
+        color="#666" />
+      <Text>Always stay on</Text>
+    </Item>
+    <Item
+      on:SMUI:action={() => {
+        contextMenu.setOpen(false);
+        removeProfile($profiles[selectedProfileIndex]);
+      }}>
+      <MdiIcon class="more-menu-icon" size="24" icon={mdiClose} color="red" />
+      <Text>Delete profile</Text>
+    </Item>
+  </List>
+</Menu>
 
 {#if expand}
   <div

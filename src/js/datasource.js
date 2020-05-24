@@ -160,12 +160,15 @@ export function removeUrlReplacement(urlReplacements, replacementIndex) {
   return urlReplacements;
 }
 
-export function commitChange(change) {
-  const copy = lodashCloneDeep(latestProfiles[latestSelectedProfileIndex]);
+export function commitChange(change, index = -1) {
+  if (index === -1) {
+    index = latestSelectedProfileIndex;
+  }
+  const copy = lodashCloneDeep(latestProfiles[index]);
   Object.assign(copy, change);
-  if (!lodashIsEqual(latestProfiles[latestSelectedProfileIndex], copy)) {
-    latestProfiles[latestSelectedProfileIndex] = copy;
-    setProfilesAndIndex(latestProfiles, latestSelectedProfileIndex);
+  if (!lodashIsEqual(latestProfiles[index], copy)) {
+    latestProfiles[index] = copy;
+    setProfilesAndIndex(latestProfiles, index);
   }
 }
 

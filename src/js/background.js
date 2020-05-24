@@ -10,7 +10,8 @@ const CHROME_VERSION = getChromeVersion();
 let chromeLocal = {
   isPaused: true,
 };
-let currentProfile;
+let selectedActiveProfile;
+let activeProfiles = [];
 
 /**
  * Check whether the current request url pass the given list of filters.
@@ -71,16 +72,25 @@ function filterEnabled_(rows) {
   return output;
 }
 
-function loadSelectedProfile_() {
-  let selectedProfile;
+function loadActiveProfiles() {
+  activeProfiles = [];
+  selectedActiveProfile = undefined;
   if (chromeLocal.profiles) {
     const profiles = chromeLocal.profiles;
-    selectedProfile = lodashCloneDeep(profiles[chromeLocal.selectedProfile]);
-    selectedProfile.headers = filterEnabled_(selectedProfile.headers);
-    selectedProfile.respHeaders = filterEnabled_(selectedProfile.respHeaders);
-    selectedProfile.urlReplacements = filterEnabled_(selectedProfile.urlReplacements);
+    for (const [i, value] of profiles.entries()) {
+      if (i !== chromeLocal.selectedProfile && !value.alwaysOn) {
+        continue;
+      }
+      const profile = lodashCloneDeep(value);
+      profile.headers = filterEnabled_(profile.headers);
+      profile.respHeaders = filterEnabled_(profile.respHeaders);
+      profile.urlReplacements = filterEnabled_(profile.urlReplacements);
+      if (i === chromeLocal.selectedProfile) {
+        selectedActiveProfile = value;
+      }
+      activeProfiles.push(profile);
+    }
   }
-  return selectedProfile;
 }
 
 function evaluateValue(value, url) {
@@ -107,7 +117,7 @@ function replaceUrls(urlReplacements, url) {
   return url;
 }
 
-function modifyHeader(url, source, dest) {
+function modifyHeader(url, currentProfile, source, dest) {
   if (!source.length) {
     return;
   }
@@ -144,16 +154,16 @@ function modifyRequestHandler_(details) {
   if (chromeLocal.isPaused) {
     return {};
   }
+  let newUrl = details.url;
   if (!chromeLocal.lockedTabId || chromeLocal.lockedTabId === details.tabId) {
-    if (
-      currentProfile &&
-      passFilters_(details.url, details.type, currentProfile.filters)
-    ) {
-      const newUrl = replaceUrls(currentProfile.urlReplacements, details.url);
-      if (newUrl !== details.url) {
-        return { redirectUrl: newUrl };
+    for (const currentProfile of activeProfiles) {
+      if (passFilters_(newUrl, details.type, currentProfile.filters)) {
+        newUrl = replaceUrls(currentProfile.urlReplacements, newUrl);
       }
     }
+  }
+  if (newUrl !== details.url) {
+    return { redirectUrl: newUrl };
   }
   return {};
 }
@@ -163,11 +173,10 @@ function modifyRequestHeaderHandler_(details) {
     return {};
   }
   if (!chromeLocal.lockedTabId || chromeLocal.lockedTabId === details.tabId) {
-    if (
-      currentProfile &&
-      passFilters_(details.url, details.type, currentProfile.filters)
-    ) {
-      modifyHeader(details.url, currentProfile.headers, details.requestHeaders);
+    for (const currentProfile of activeProfiles) {
+      if (passFilters_(details.url, details.type, currentProfile.filters)) {
+        modifyHeader(details.url, currentProfile, currentProfile.headers, details.requestHeaders);
+      }
     }
   }
   return { requestHeaders: details.requestHeaders };
@@ -177,19 +186,18 @@ function modifyResponseHeaderHandler_(details) {
   if (chromeLocal.isPaused) {
     return {};
   }
+  const responseHeaders = lodashCloneDeep(details.responseHeaders);
   if (!chromeLocal.lockedTabId || chromeLocal.lockedTabId == details.tabId) {
-    if (
-      currentProfile &&
-      passFilters_(details.url, details.type, currentProfile.filters)
-    ) {
-      const responseHeaders = lodashCloneDeep(details.responseHeaders);
-      modifyHeader(details.url, currentProfile.respHeaders, responseHeaders);
-      if (!lodashIsEqual(responseHeaders, details.responseHeaders)) {
-        return {
-          responseHeaders: responseHeaders
-        };
+    for (const currentProfile of activeProfiles) {
+      if (passFilters_(details.url, details.type, currentProfile.filters)) {
+        modifyHeader(details.url, currentProfile, currentProfile.respHeaders, responseHeaders);
       }
     }
+  }
+  if (!lodashIsEqual(responseHeaders, details.responseHeaders)) {
+    return {
+      responseHeaders: responseHeaders
+    };
   }
 }
 
@@ -220,7 +228,21 @@ function setupHeaderModListener() {
 
   // Chrome 72+ requires 'extraHeaders' to be added for some headers to be modifiable.
   // Older versions break with it.
-  if (currentProfile.headers.length > 0) {
+  let hasRequestHeadersModification = false;
+  let hasResponseHeadersModification = false;
+  let hasUrlReplacement = false;
+  for (const currentProfile of activeProfiles) {
+    if (currentProfile.headers.length > 0) {
+      hasRequestHeadersModification = true;
+    }
+    if (currentProfile.respHeaders.length > 0) {
+      hasResponseHeadersModification = true;
+    }
+    if (currentProfile.urlReplacements.length > 0) {
+      hasUrlReplacement = true;
+    }
+  }
+  if (hasRequestHeadersModification) {
     let requiresExtraRequestHeaders = false;
     if (CHROME_VERSION.major >= 72) {
       requiresExtraRequestHeaders = true;
@@ -233,7 +255,7 @@ function setupHeaderModListener() {
         : ['requestHeaders', 'blocking']
     );
   }
-  if (currentProfile.respHeaders.length > 0) {
+  if (hasResponseHeadersModification) {
     let requiresExtraResponseHeaders = false;
     if (CHROME_VERSION.major >= 72) {
       requiresExtraResponseHeaders = true;
@@ -247,7 +269,7 @@ function setupHeaderModListener() {
     );
   }
 
-  if (currentProfile.urlReplacements.length > 0) {
+  if (hasUrlReplacement) {
     chrome.webRequest.onBeforeRequest.addListener(
       modifyRequestHandler_,
       { urls: ['<all_urls>'] },
@@ -341,8 +363,10 @@ async function resetBadgeAndContextMenu() {
       color: '#666'
     });
   } else {
-    const numHeaders =
-      currentProfile.headers.length + currentProfile.respHeaders.length + currentProfile.urlReplacements.length;
+    let numHeaders = 0;
+    for (const currentProfile of activeProfiles) {
+      numHeaders += currentProfile.headers.length + currentProfile.respHeaders.length + currentProfile.urlReplacements.length;
+    }
     if (numHeaders == 0) {
       await setBrowserAction({
         icon: 'images/icon_bw.png',
@@ -362,7 +386,7 @@ async function resetBadgeAndContextMenu() {
       await setBrowserAction({
         icon: 'images/icon.png',
         text: numHeaders.toString(),
-        color: currentProfile.backgroundColor
+        color: selectedActiveProfile.backgroundColor
       });
     }
   }
@@ -382,11 +406,9 @@ async function initialize() {
     contexts: ['browser_action']
   });
   chromeLocal = await initStorage();
-  currentProfile = loadSelectedProfile_();
-  if (currentProfile) {
-    setupHeaderModListener();
-    await resetBadgeAndContextMenu();
-  }
+  loadActiveProfiles();
+  setupHeaderModListener();
+  await resetBadgeAndContextMenu();
   
   chrome.storage.onChanged.addListener(async (changes, areaName) => {
     if (areaName !== 'local') {
@@ -400,11 +422,9 @@ async function initialize() {
       chromeLocal[key] = value.newValue;
     }
     if (profilesUpdated || selectedProfileUpdated) {
-      currentProfile = loadSelectedProfile_();
+      loadActiveProfiles();
       saveStorageToCloud();
       setupHeaderModListener();
-    }
-    if (currentProfile) {
       await resetBadgeAndContextMenu();
     }
   });

@@ -2,11 +2,14 @@
   import TopAppBar, { Row, Section, Title } from "@smui/top-app-bar";
   import Snackbar, { Actions, Label } from "@smui/snackbar";
   import Menu from "@smui/menu";
-  import Radio from "@smui/radio";
   import List, { Subheader, Meta, Item, Separator, Text } from "@smui/list";
   import IconButton from "@smui/icon-button";
   import Button from "@smui/button";
   import {
+    mdiCheckboxBlankOutline,
+    mdiCheckboxMarked,
+    mdiRadioboxBlank,
+    mdiRadioboxMarked,
     mdiPlus,
     mdiTrashCan,
     mdiClose,
@@ -48,6 +51,7 @@
     isLocked,
     undo
   } from "../js/datasource";
+  import { showMessage } from "../js/toast";
   import { DISABLED_COLOR } from "../js/constants";
 
   let colorPicker;
@@ -72,6 +76,16 @@
     commitChange({
       hideComment: !$selectedProfile.hideComment
     });
+  }
+
+  function toggleAlwaysOn() {
+    const alwaysOn = !$selectedProfile.alwaysOn;
+    commitChange({ alwaysOn });
+    if (alwaysOn) {
+      showMessage("This profile will stay active even when it is not selected");
+    } else {
+      showMessage("This profile will only be active when selected.");
+    }
   }
 
   $: {
@@ -112,7 +126,8 @@
   }
 
   :global(.more-menu-icon) {
-    margin: 0 8px 0 10px;
+    margin: 0 5px 0 0;
+    padding: 0 2px 0 0;
   }
 
   .top-bar-profile-badge {
@@ -122,8 +137,6 @@
     top: 10px;
     position: absolute;
     left: 8px;
-    width: 24px;
-    height: 24px;
   }
 
   .top-bar-profile-badge-text {
@@ -243,6 +256,16 @@
               color="#666" />
             {$selectedProfile.hideComment ? 'Show comment column' : 'Hide comment column'}
           </Item>
+          <Item
+            on:SMUI:action={() => toggleAlwaysOn()}
+            title={$selectedProfile.alwaysOn ? `This profile will stay active even when it is not selected.` : `This profile will only be active when selected.`}>
+            <MdiIcon
+              class="more-menu-icon"
+              size="24"
+              icon={$selectedProfile.alwaysOn ? mdiCheckboxMarked : mdiCheckboxBlankOutline}
+              color="#666" />
+            Always stay enabled
+          </Item>
           <Separator nav />
           <Item on:SMUI:action={() => removeProfile($selectedProfile)}>
             <MdiIcon
@@ -287,15 +310,27 @@
           <Separator nav />
           <Subheader>Header override mode</Subheader>
           <Item on:SMUI:action={() => commitChange({ appendMode: false })}>
-            <Radio bind:group={appendMode} value="false" />
+            <MdiIcon
+              class="more-menu-icon"
+              size="24"
+              icon={appendMode === 'false' ? mdiRadioboxMarked : mdiRadioboxBlank}
+              color="#666" />
             <Label>Override existing value</Label>
           </Item>
           <Item on:SMUI:action={() => commitChange({ appendMode: true })}>
-            <Radio bind:group={appendMode} value="true" />
+            <MdiIcon
+              class="more-menu-icon"
+              size="24"
+              icon={appendMode === 'true' ? mdiRadioboxMarked : mdiRadioboxBlank}
+              color="#666" />
             <Label>Value concatenation</Label>
           </Item>
           <Item on:SMUI:action={() => commitChange({ appendMode: 'comma' })}>
-            <Radio bind:group={appendMode} value="comma" />
+            <MdiIcon
+              class="more-menu-icon"
+              size="24"
+              icon={appendMode === 'comma' ? mdiRadioboxMarked : mdiRadioboxBlank}
+              color="#666" />
             <Label>Comma separated concatenation</Label>
           </Item>
         </List>

@@ -19,7 +19,6 @@
     "@smui/icon-button": "^1.0.0-beta.21",
     "@smui/list": "^1.0.0-beta.21",
     "@smui/menu": "^1.0.0-beta.21",
-    "@smui/radio": "^1.0.0-beta.21",
     "@smui/select": "^1.0.0-beta.21",
     "@smui/snackbar": "^1.0.0-beta.21",
     "@smui/tab": "^1.0.0-beta.21",
