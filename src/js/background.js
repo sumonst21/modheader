@@ -179,7 +179,7 @@ function modifyRequestHeaderHandler_(details) {
       }
     }
   }
-  return { requestHeaders: details.requestHeaders };
+  return { requestHeaders: details.requestHeaders.filter(entry => !!entry.value) };
 }
 
 function modifyResponseHeaderHandler_(details) {
@@ -196,7 +196,7 @@ function modifyResponseHeaderHandler_(details) {
   }
   if (!lodashIsEqual(responseHeaders, details.responseHeaders)) {
     return {
-      responseHeaders: responseHeaders
+      responseHeaders: responseHeaders.filter(entry => !!entry.value)
     };
   }
 }
