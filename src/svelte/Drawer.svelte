@@ -8,15 +8,14 @@
     Scrim
   } from "@smui/drawer";
   import Menu from "@smui/menu";
-  import List, { Item, Text, Separator, Subheader } from "@smui/list";
-  import H6 from "@smui/common/H6.svelte";
+  import List, {Item, Text, Separator, Subheader} from "@smui/list";
   import {
     mdiCheckboxBlankOutline,
     mdiCheckboxMarked,
     mdiClose,
     mdiHelpCircleOutline,
     mdiThumbUpOutline,
-    mdiGiftOutline,
+    mdiCharity,
     mdiCircle,
     mdiSortAscending,
     mdiSortDescending,
@@ -24,11 +23,11 @@
     mdiMenu,
     mdiPlus
   } from "@mdi/js";
-  import { fade } from "svelte/transition";
+  import {fade} from "svelte/transition";
   import MdiIcon from "./MdiIcon.svelte";
   import ProfileBadge from "./ProfileBadge.svelte";
-  import { commitChange } from "../js/datasource";
-  import { showMessage } from "../js/toast";
+  import {commitChange} from "../js/datasource";
+  import {showMessage} from "../js/toast";
   import {
     addProfile,
     sortProfiles,
@@ -37,7 +36,7 @@
     removeProfile,
     profiles
   } from "../js/datasource";
-  import { PRIMARY_COLOR } from "../js/constants";
+  import {PRIMARY_COLOR} from "../js/constants";
 
   let drawer;
   let drawerOpen = true;
@@ -195,49 +194,49 @@
           }}>
           <span class="main-drawer-icon-container">
             <MdiIcon
-              size="24"
-              class="main-drawer-icon"
-              icon={sortOrder === 'asc' ? mdiSortAscending : mdiSortDescending}
-              color={PRIMARY_COLOR} />
+                    size="24"
+                    class="main-drawer-icon"
+                    icon={sortOrder === 'asc' ? mdiSortAscending : mdiSortDescending}
+                    color={PRIMARY_COLOR}/>
           </span>
           <Text class="main-drawer-item-text">Sort profiles</Text>
         </Item>
       </div>
 
-      <Separator nav />
+      <Separator nav/>
       <Item
-        class="main-drawer-item"
-        title="Donate"
-        on:click={() => openLink('https://r.bewisse.com/modheader/donate')}>
+              class="main-drawer-item"
+              title="Donate"
+              on:click={() => openLink('https://r.bewisse.com/modheader/donate')}>
         <span class="main-drawer-icon-container">
           <MdiIcon
-            size="24"
-            class="main-drawer-icon"
-            icon={mdiGiftOutline}
-            color={PRIMARY_COLOR} />
+                  size="24"
+                  class="main-drawer-icon"
+                  icon={mdiCharity}
+                  color={PRIMARY_COLOR}/>
         </span>
         <Text class="main-drawer-item-text">Donate</Text>
       </Item>
       <Item
-        class="main-drawer-item"
-        title="Rate us"
-        on:click={() => openLink('https://r.bewisse.com/modheader/review?browser=' + process.env.BROWSER)}>
+              class="main-drawer-item"
+              title="Rate us"
+              on:click={() => openLink('https://r.bewisse.com/modheader/review?browser=' + process.env.BROWSER)}>
         <span class="main-drawer-icon-container">
           <MdiIcon
-            size="24"
-            class="main-drawer-icon"
-            icon={mdiThumbUpOutline}
-            color={PRIMARY_COLOR} />
+                  size="24"
+                  class="main-drawer-icon"
+                  icon={mdiThumbUpOutline}
+                  color={PRIMARY_COLOR}/>
         </span>
         <Text class="main-drawer-item-text">Rate us</Text>
       </Item>
       <Item
-        class="main-drawer-item"
-        title="Help"
-        on:click={() => openLink('https://bewisse.com/modheader/help/')}>
+              class="main-drawer-item"
+              title="Help"
+              on:click={() => openLink('https://bewisse.com/modheader/help/')}>
         <span class="main-drawer-icon-container">
           <MdiIcon
-            size="24"
+                  size="24"
             class="main-drawer-icon"
             icon={mdiHelpCircleOutline}
             color={PRIMARY_COLOR} />

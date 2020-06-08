@@ -1,10 +1,10 @@
-import { createHeader, takeRight, generateBackgroundColor, generateTextColor } from './utils';
+import {createHeader, generateBackgroundColor, generateTextColor, takeRight} from './utils';
 import lodashIsUndefined from 'lodash/isUndefined';
 import lodashIsEmpty from 'lodash/isEmpty';
 
 export function fixProfiles(profiles) {
   let isMutated = false;
-  if (profiles.length == 0) {
+  if (profiles.length === 0) {
     profiles.push({
       title: 'Profile 1',
       hideComment: true,
@@ -19,7 +19,7 @@ export function fixProfiles(profiles) {
     });
     isMutated = true;
   }
-  for (let index in profiles) {
+  for (let index = 0; index < profiles.length; ++index) {
     const profile = profiles[index];
     if (!profile.title) {
       profile.title = 'Profile ' + (index + 1);
@@ -109,15 +109,16 @@ export async function initStorage() {
       await setLocal(chromeLocal);
     }
   }
-  let isMutated = false;
+  let isMutated;
   if (lodashIsEmpty(chromeLocal.profiles)) {
     chromeLocal.profiles = [];
     isMutated = true;
+  } else {
+    isMutated = fixProfiles(chromeLocal.profiles);
   }
-  isMutated = fixProfiles(chromeLocal.profiles);
   if (lodashIsUndefined(chromeLocal.selectedProfile) ||
-      chromeLocal.selectedProfile < 0 ||
-      chromeLocal.selectedProfile >= chromeLocal.profiles.length) {
+    chromeLocal.selectedProfile < 0 ||
+    chromeLocal.selectedProfile >= chromeLocal.profiles.length) {
     chromeLocal.selectedProfile = chromeLocal.profiles.length - 1;
     isMutated = true;
   }
