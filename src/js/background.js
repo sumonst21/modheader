@@ -1,9 +1,9 @@
 import lodashIsEqual from 'lodash/isEqual';
 import lodashIsUndefined from 'lodash/isUndefined';
 import lodashCloneDeep from 'lodash/cloneDeep';
-import { initStorage, setLocal, removeLocal, setSync, getSync, removeSync } from './storage';
-import { createContextMenu, updateContextMenu, clearContextMenu } from './context-menu';
-import { setBrowserAction } from './browser-action';
+import {getSync, initStorage, removeLocal, removeSync, setLocal, setSync} from './storage';
+import {clearContextMenu, createContextMenu, updateContextMenu} from './context-menu';
+import {setBrowserAction} from './browser-action';
 
 const MAX_PROFILES_IN_CLOUD = 50;
 const CHROME_VERSION = getChromeVersion();
@@ -32,7 +32,7 @@ function passFilters_(url, type, filters) {
           if (allowUrls === undefined) {
             allowUrls = false;
           }
-          if (url.search(filter.urlRegex) == 0) {
+          if (url.search(filter.urlRegex) === 0) {
             allowUrls = true;
           }
           break;
@@ -41,7 +41,7 @@ function passFilters_(url, type, filters) {
           if (allowUrls === undefined) {
             allowUrls = true;
           }
-          if (url.search(filter.urlRegex) == 0) {
+          if (url.search(filter.urlRegex) === 0) {
             allowUrls = false;
           }
           break;
@@ -124,7 +124,7 @@ function modifyHeader(url, currentProfile, source, dest) {
   // Create an index map so that we can more efficiently override
   // existing header.
   const indexMap = {};
-  for (const index in dest) {
+  for (let index = 0; index < dest.length; index++) {
     const header = dest[index];
     indexMap[header.name.toLowerCase()] = index;
   }
@@ -135,7 +135,7 @@ function modifyHeader(url, currentProfile, source, dest) {
     if (index !== undefined) {
       if (!currentProfile.appendMode || currentProfile.appendMode === 'false') {
         dest[index].value = headerValue;
-      } else if (currentProfile.appendMode == 'comma') {
+      } else if (currentProfile.appendMode === 'comma') {
         if (dest[index].value) {
           dest[index].value += ',';
         }
@@ -187,7 +187,7 @@ function modifyResponseHeaderHandler_(details) {
     return {};
   }
   const responseHeaders = lodashCloneDeep(details.responseHeaders);
-  if (!chromeLocal.lockedTabId || chromeLocal.lockedTabId == details.tabId) {
+  if (!chromeLocal.lockedTabId || chromeLocal.lockedTabId === details.tabId) {
     for (const currentProfile of activeProfiles) {
       if (passFilters_(details.url, details.type, currentProfile.filters)) {
         modifyHeader(details.url, currentProfile, currentProfile.respHeaders, responseHeaders);
@@ -205,7 +205,7 @@ function getChromeVersion() {
   let pieces = navigator.userAgent.match(
     /Chrom(?:e|ium)\/([0-9]+)\.([0-9]+)\.([0-9]+)\.([0-9]+)/
   );
-  if (pieces == null || pieces.length != 5) {
+  if (pieces == null || pieces.length !== 5) {
     return {};
   }
   pieces = pieces.map(piece => parseInt(piece, 10));
@@ -279,8 +279,9 @@ function setupHeaderModListener() {
 }
 
 async function onTabUpdated(tab) {
-  await setLocal({ activeTabId: tab.id });
-  await resetBadgeAndContextMenu();
+  await setLocal({activeTabId: tab.id});
+  await resetBadge();
+  await resetContextMenu();
 }
 
 chrome.tabs.onActivated.addListener(activeInfo => {
@@ -288,7 +289,7 @@ chrome.tabs.onActivated.addListener(activeInfo => {
 });
 
 chrome.windows.onFocusChanged.addListener(windowId => {
-  if (windowId == chrome.windows.WINDOW_ID_NONE) {
+  if (windowId === chrome.windows.WINDOW_ID_NONE) {
     return;
   }
   chrome.windows.get(windowId, { populate: true }, async win => {
@@ -306,12 +307,12 @@ async function saveStorageToCloud() {
   const keys = items ? Object.keys(items) : [];
   keys.sort();
   if (
-    keys.length == 0 ||
-    items[keys[keys.length - 1]] != chromeLocal.profiles
+      keys.length === 0 ||
+      items[keys[keys.length - 1]] !== chromeLocal.profiles
   ) {
     const data = {};
     data[Date.now()] = chromeLocal.profiles;
-    await Promise.all([setSync(data), setLocal({ savedToCloud: true })]);
+    await Promise.all([setSync(data), setLocal({savedToCloud: true})]);
   }
   if (keys.length >= MAX_PROFILES_IN_CLOUD) {
     await removeSync(keys.slice(0, keys.length - MAX_PROFILES_IN_CLOUD));
@@ -355,7 +356,7 @@ async function resetContextMenu() {
   }
 }
 
-async function resetBadgeAndContextMenu() {
+async function resetBadge() {
   if (chromeLocal.isPaused) {
     await setBrowserAction({
       icon: 'images/icon_bw.png',
@@ -367,15 +368,15 @@ async function resetBadgeAndContextMenu() {
     for (const currentProfile of activeProfiles) {
       numHeaders += currentProfile.headers.length + currentProfile.respHeaders.length + currentProfile.urlReplacements.length;
     }
-    if (numHeaders == 0) {
+    if (numHeaders === 0) {
       await setBrowserAction({
         icon: 'images/icon_bw.png',
         text: '',
         color: '#ffffff'
       });
     } else if (
-      chromeLocal.lockedTabId &&
-      chromeLocal.lockedTabId != chromeLocal.activeTabId
+        chromeLocal.lockedTabId &&
+        chromeLocal.lockedTabId !== chromeLocal.activeTabId
     ) {
       await setBrowserAction({
         icon: 'images/icon_bw.png',
@@ -390,7 +391,6 @@ async function resetBadgeAndContextMenu() {
       });
     }
   }
-  await resetContextMenu();
 }
 
 async function initialize() {
@@ -408,8 +408,9 @@ async function initialize() {
   chromeLocal = await initStorage();
   loadActiveProfiles();
   setupHeaderModListener();
-  await resetBadgeAndContextMenu();
-  
+  await resetBadge();
+  await resetContextMenu();
+
   chrome.storage.onChanged.addListener(async (changes, areaName) => {
     if (areaName !== 'local') {
       return;
@@ -425,8 +426,9 @@ async function initialize() {
       loadActiveProfiles();
       saveStorageToCloud();
       setupHeaderModListener();
-      await resetBadgeAndContextMenu();
     }
+    await resetBadge();
+    await resetContextMenu();
   });
 }
 initialize();
