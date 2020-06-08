@@ -1,11 +1,13 @@
 {
   "name": "ModHeader",
-  "version": "3.1.4",
+  "version": "3.1.5",
   "manifest_version": 2,
   "homepage_url": "https://bewisse.com/modheader/",
   "description": "Modify HTTP request and response headers",
   "background": {
-    "scripts": ["background.bundle.js"]
+    "scripts": [
+      "background.bundle.js"
+    ]
   },
   "browser_specific_settings": {
     "gecko": {
