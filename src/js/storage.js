@@ -109,13 +109,10 @@ export async function initStorage() {
       await setLocal(chromeLocal);
     }
   }
-  let isMutated;
   if (lodashIsEmpty(chromeLocal.profiles)) {
     chromeLocal.profiles = [];
-    isMutated = true;
-  } else {
-    isMutated = fixProfiles(chromeLocal.profiles);
   }
+  let isMutated = fixProfiles(chromeLocal.profiles);
   if (lodashIsUndefined(chromeLocal.selectedProfile) ||
     chromeLocal.selectedProfile < 0 ||
     chromeLocal.selectedProfile >= chromeLocal.profiles.length) {
