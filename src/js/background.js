@@ -93,10 +93,11 @@ function loadActiveProfiles() {
   }
 }
 
-function evaluateValue(value, url) {
+function evaluateValue(value, url, oldValue) {
   if (value && value.startsWith('function')) {
     try {
-      return (eval(`(${value})({ url: '${url}' })`) || '').toString();
+      const arg = JSON.stringify({ url, oldValue });
+      return (eval(`(${value})(${arg})`) || '').toString();
     } catch (err) {
       console.error(err);
     }
@@ -108,7 +109,7 @@ function replaceUrls(urlReplacements, url) {
   if (urlReplacements) {
     for (const replacement of urlReplacements) {
       // Avoid infinite replacement
-      const replacementValue = evaluateValue(replacement.value, url);
+      const replacementValue = evaluateValue(replacement.value, url, url);
       if (!url.includes(replacementValue)) {
         url = url.replace(replacement.name, replacementValue);
       }
@@ -131,7 +132,7 @@ function modifyHeader(url, currentProfile, source, dest) {
   for (const header of source) {
     const normalizedHeaderName = header.name.toLowerCase();
     const index = indexMap[normalizedHeaderName];
-    const headerValue = evaluateValue(header.value, url);
+    const headerValue = evaluateValue(header.value, url, index !== undefined ? dest[index].value : undefined);
     if (index !== undefined) {
       if (!currentProfile.appendMode || currentProfile.appendMode === 'false') {
         dest[index].value = headerValue;
