@@ -1,6 +1,6 @@
 {
   "name": "ModHeader",
-  "version": "3.1.6",
+  "version": "3.1.7",
   "manifest_version": 2,
   "homepage_url": "https://bewisse.com/modheader/",
   "description": "Modify HTTP request and response headers",
@@ -32,5 +32,5 @@
     "<all_urls>"
   ],
   "optional_permissions": ["activeTab"],
-  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
+  "content_security_policy": "script-src 'self'; object-src 'self'"
 }
