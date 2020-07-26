@@ -33,8 +33,12 @@
       let importedProfiles;
       if (importText.startsWith(SHARE_URL_PREFIX)) {
         const url = new URL(importText);
-        const encodedProfile = !lodashIsEmpty(url.hash) ? url.hash.substring(1) : url.pathname.substring(url.pathname.lastIndexOf("/") + 1);
-        importedProfiles = JSON.parse(lzString.decompressFromEncodedURIComponent(encodedProfile));
+        const encodedProfile = !lodashIsEmpty(url.hash)
+          ? url.hash.substring(1)
+          : url.pathname.substring(url.pathname.lastIndexOf("/") + 1);
+        importedProfiles = JSON.parse(
+          lzString.decompressFromEncodedURIComponent(encodedProfile)
+        );
       } else {
         importedProfiles = JSON.parse(importText);
         if (!lodashIsArray(importedProfiles)) {
@@ -50,7 +54,7 @@
     }
   }
 
-  function loadFile(event) {
+  function loadFile(file) {
     const reader = new FileReader();
     reader.onload = event => {
       const importText = event.target.result;
@@ -61,7 +65,18 @@
       importProfiles(importedProfiles);
       dialog.close();
     };
-    reader.readAsText(event.target.files[0]);
+    reader.readAsText(file, "utf8");
+  }
+
+  function openImportFilePage() {
+    chrome.tabs.create(
+      {
+        url: chrome.runtime.getURL("/importfile.html")
+      },
+      () => {
+        window.close();
+      }
+    );
   }
 </script>
 
@@ -88,7 +103,7 @@
     </IconButton>
   </Title>
   <Content id="dialog-content">
-    <div>Enter the URL / JSON encoded profile here to import</div>
+    <div>Enter the URL / JSON encoded profile here to import.</div>
     <textarea
       bind:this={importTextbox}
       class="extra-large-textarea"
@@ -102,8 +117,13 @@
         bind:this={uploadFileInput}
         type="file"
         class="hidden"
-        on:change={loadFile} />
+        on:change={e => loadFile(e.target.files[0])} />
       <Button on:click={() => uploadFileInput.click()}>
+        <MdiIcon size="24" icon={mdiFileImport} color={PRIMARY_COLOR} />
+        <Label class="ml-small">Load from file</Label>
+      </Button>
+    {:else}
+      <Button on:click={() => openImportFilePage()}>
         <MdiIcon size="24" icon={mdiFileImport} color={PRIMARY_COLOR} />
         <Label class="ml-small">Load from file</Label>
       </Button>

@@ -34,7 +34,8 @@ var options = {
   mode: env.NODE_ENV,
   entry: {
     popup: path.join(__dirname, "src", "js", "popup.js"),
-    background: path.join(__dirname, "src", "js", "background.js")
+    background: path.join(__dirname, "src", "js", "background.js"),
+    importfile: path.join(__dirname, "src", "js", "importfile.js")
   },
   output: {
     path: path.join(__dirname, "build"),
@@ -145,6 +146,11 @@ var options = {
       template: path.join(__dirname, "src", "popup.html"),
       filename: "popup.html",
       chunks: ["popup"]
+    }),
+    new HtmlWebpackPlugin({
+      template: path.join(__dirname, "src", "importfile.html"),
+      filename: "importfile.html",
+      chunks: ["importfile"]
     }),
     new WriteFilePlugin()
   ]

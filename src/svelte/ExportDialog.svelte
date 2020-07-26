@@ -1,8 +1,9 @@
 <script>
+  import { encode } from "js-base64";
   import Dialog, { Title, Content, Actions } from "@smui/dialog";
   import Button, { Label } from "@smui/button";
-  import Tab, {Icon, Label as TabLabel} from '@smui/tab';
-  import TabBar from '@smui/tab-bar';
+  import Tab, { Icon, Label as TabLabel } from "@smui/tab";
+  import TabBar from "@smui/tab-bar";
   import Snackbar, { Label as SnackbarLabel } from "@smui/snackbar";
   import IconButton from "@smui/icon-button";
   import Checkbox from "@smui/checkbox";
@@ -15,8 +16,8 @@
   import { profiles, selectedProfile, commitChange } from "../js/datasource";
 
   const TABS = [
-    {label: 'URL', value: 'url'},
-    {label: 'JSON', value: 'json'}
+    { label: "URL", value: "url" },
+    { label: "JSON", value: "json" }
   ];
   let activeTab = TABS[0];
   let exportUrlTextbox;
@@ -77,7 +78,7 @@
         </Item>
       {/each}
     </List>
-    
+
     <TabBar tabs={TABS} let:tab bind:active={activeTab}>
       <Tab {tab}>
         <TabLabel>{tab.label}</TabLabel>
@@ -114,7 +115,7 @@
         </Button>
       {:else}
         <Button
-          href="data:application/json;base64,{window.btoa(exportedText)}"
+          href="data:application/json;base64,{encode(exportedText)}"
           download="{selectedProfiles.map(p => p.title).join('+')}.json">
           <MdiIcon size="24" icon={mdiDownload} color={PRIMARY_COLOR} />
           <Label class="ml-small">Download JSON</Label>
