@@ -125,7 +125,7 @@ var options = {
         transform: function (content, path) {
           // generates the manifest file using the package.json informations
           const manifest = JSON.parse(content.toString());
-          if (env.NODE_ENV === 'production') {
+          if (env.BROWSER === 'firefox') {
             manifest.content_security_policy = manifest.content_security_policy.replace(` 'unsafe-eval'`, '');
           }
           return Buffer.from(
