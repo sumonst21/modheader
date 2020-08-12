@@ -5,7 +5,7 @@
 </h3>
 <h3 align="center">
   <a href="https://bewisse.com/modheader/">
-    <img src="https://static.bewisse.com/modheader/logo_2x.png" width="24px" alt="ModHeader" />ModHeader official website
+    <img src="https://static.bewisse.com/modheader/logo_2x.png" width="24px" alt="ModHeader" /> ModHeader official website
   </a>
 </h3>
 <p align="center">
@@ -52,7 +52,7 @@ You may fork and redistribute ModHeader for a small group of friends / colleague
 
 ## Installation
 
-For v3.0+ (still WIP), run `npm install` first, then run `npm run start` to start development. The built packages will be in the build/ directory.
+Run `npm install` first, then run `npm run start` to start development. The built packages will be in the build/ directory.
 
 ## Selenium usage
 
