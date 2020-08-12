@@ -13,16 +13,16 @@
 </h3>
 <p align="center">
   <a href="https://chrome.google.com/webstore/detail/modheader/idgpnmonknjnojddfkpgkljpfnnfcklj">
-
     <img src="https://static.bewisse.com/chrome_1x.png" srcset="https://static.bewisse.com/chrome_2x.png 2x">
-
   </a>
   <a href="https://addons.mozilla.org/firefox/addon/modheader-firefox/">
-
     <img src="https://static.bewisse.com/firefox_1x.png" srcset="https://static.bewisse.com/firefox_2x.png 2x">
-
   </a>
 </p>
+
+## Stats
+
+<a href="https://chrome-stats.com/d/idgpnmonknjnojddfkpgkljpfnnfcklj">ModHeader stats</a>
 
 ## Donation
 
