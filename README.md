@@ -4,11 +4,8 @@
   ModHeader is a browser extension that allow you to modify HTTP request and response headers.
 </h3>
 <h3 align="center">
-  <img src="https://static.bewisse.com/modheader/logo_2x.png" width="24px" alt="ModHeader" />
   <a href="https://bewisse.com/modheader/">
-
-    Official Website
-
+    <img src="https://static.bewisse.com/modheader/logo_2x.png" width="24px" alt="ModHeader" />ModHeader official website
   </a>
 </h3>
 <p align="center">
