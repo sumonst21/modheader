@@ -4,25 +4,22 @@
   ModHeader is a browser extension that allow you to modify HTTP request and response headers.
 </h3>
 <h3 align="center">
-  <img src="https://static.bewisse.com/modheader/logo_2x.png" width="24px" alt="ModHeader" />
   <a href="https://bewisse.com/modheader/">
-
-    Official Website
-
+    <img src="https://static.bewisse.com/modheader/logo_2x.png" width="24px" alt="ModHeader" /> ModHeader official website
   </a>
 </h3>
 <p align="center">
   <a href="https://chrome.google.com/webstore/detail/modheader/idgpnmonknjnojddfkpgkljpfnnfcklj">
-
     <img src="https://static.bewisse.com/chrome_1x.png" srcset="https://static.bewisse.com/chrome_2x.png 2x">
-
   </a>
   <a href="https://addons.mozilla.org/firefox/addon/modheader-firefox/">
-
     <img src="https://static.bewisse.com/firefox_1x.png" srcset="https://static.bewisse.com/firefox_2x.png 2x">
-
   </a>
 </p>
+
+## Stats
+
+<a href="https://chrome-stats.com/d/idgpnmonknjnojddfkpgkljpfnnfcklj">ModHeader stats</a>
 
 ## Donation
 
@@ -55,7 +52,7 @@ You may fork and redistribute ModHeader for a small group of friends / colleague
 
 ## Installation
 
-For v3.0+ (still WIP), run `npm install` first, then run `npm run start` to start development. The built packages will be in the build/ directory.
+Run `npm install` first, then run `npm run start` to start development. The built packages will be in the build/ directory.
 
 ## Selenium usage
 
