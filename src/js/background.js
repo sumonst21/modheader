@@ -43,11 +43,11 @@ function passFilters_(url, type, filters) {
           if (allowUrls === undefined) {
             allowUrls = false;
           }
-          try{
+          try {
             if (new RegExp(filter.urlRegex).test(url)) {
               allowUrls = true;
             }
-          }catch{
+          } catch {
             allowUrls = false;
           }
           break;
@@ -56,11 +56,11 @@ function passFilters_(url, type, filters) {
           if (allowUrls === undefined) {
             allowUrls = true;
           }
-          try{
+          try {
             if (new RegExp(filter.urlRegex).test(url)) {
               allowUrls = false;
             }
-          }catch{
+          } catch {
             allowUrls = true;
           }
           break;
