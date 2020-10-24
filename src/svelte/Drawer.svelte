@@ -15,7 +15,6 @@
     mdiClose,
     mdiHelpCircleOutline,
     mdiThumbUpOutline,
-    mdiCharity,
     mdiCircle,
     mdiSortAscending,
     mdiSortDescending,
@@ -112,7 +111,7 @@
   }
 
   .profiles-list {
-    min-height: 280px;
+    min-height: 320px;
   }
 
   .scrim {
@@ -204,19 +203,6 @@
       </div>
 
       <Separator nav />
-      <Item
-        class="main-drawer-item"
-        title="Donate"
-        on:click={() => openLink('https://r.bewisse.com/modheader/donate')}>
-        <span class="main-drawer-icon-container">
-          <MdiIcon
-            size="24"
-            class="main-drawer-icon"
-            icon={mdiCharity}
-            color={PRIMARY_COLOR} />
-        </span>
-        <Text class="main-drawer-item-text">Donate</Text>
-      </Item>
       <Item
         class="main-drawer-item"
         title="Rate us"

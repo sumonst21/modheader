@@ -10,7 +10,7 @@
   import { DISABLED_COLOR, PRIMARY_COLOR } from "../js/constants";
   import { showMessage } from "../js/toast";
   import { getLocal } from "../js/storage";
-  import { overrideProfile, importProfiles } from "../js/datasource";
+  import { importProfiles } from "../js/datasource";
 
   const SHARE_URL_PREFIX = "https://bewisse.com/modheader/p/";
   let importTextbox;

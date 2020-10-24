@@ -1,9 +1,20 @@
-import lodashIsEqual from 'lodash/isEqual';
-import lodashIsUndefined from 'lodash/isUndefined';
-import lodashCloneDeep from 'lodash/cloneDeep';
-import {getSync, initStorage, removeLocal, removeSync, setLocal, setSync} from './storage';
-import {clearContextMenu, createContextMenu, updateContextMenu} from './context-menu';
-import {setBrowserAction} from './browser-action';
+import lodashIsEqual from "lodash/isEqual";
+import lodashIsUndefined from "lodash/isUndefined";
+import lodashCloneDeep from "lodash/cloneDeep";
+import {
+  getSync,
+  initStorage,
+  removeLocal,
+  removeSync,
+  setLocal,
+  setSync,
+} from "./storage";
+import {
+  clearContextMenu,
+  createContextMenu,
+  updateContextMenu,
+} from "./context-menu";
+import { setBrowserAction } from "./browser-action";
 
 const MAX_PROFILES_IN_CLOUD = 50;
 const CHROME_VERSION = getChromeVersion();
@@ -27,25 +38,33 @@ function passFilters_(url, type, filters) {
   for (let filter of filters) {
     if (filter.enabled) {
       switch (filter.type) {
-        case 'urls':
+        case "urls":
           hasUrlFilters = true;
           if (allowUrls === undefined) {
             allowUrls = false;
           }
-          if (url.search(filter.urlRegex) === 0) {
-            allowUrls = true;
+          try {
+            if (new RegExp(filter.urlRegex).test(url)) {
+              allowUrls = true;
+            }
+          } catch {
+            allowUrls = false;
           }
           break;
-        case 'excludeUrls':
+        case "excludeUrls":
           hasUrlFilters = true;
           if (allowUrls === undefined) {
             allowUrls = true;
           }
-          if (url.search(filter.urlRegex) === 0) {
-            allowUrls = false;
+          try {
+            if (new RegExp(filter.urlRegex).test(url)) {
+              allowUrls = false;
+            }
+          } catch {
+            allowUrls = true;
           }
           break;
-        case 'types':
+        case "types":
           hasResourceTypeFilters = true;
           if (filter.resourceType.indexOf(type) >= 0) {
             allowTypes = true;
@@ -94,10 +113,10 @@ function loadActiveProfiles() {
 }
 
 function evaluateValue(value, url, oldValue) {
-  if (value && value.startsWith('function')) {
+  if (value && value.startsWith("function")) {
     try {
       const arg = JSON.stringify({ url, oldValue });
-      return (eval(`(${value})(${arg})`) || '').toString();
+      return (eval(`(${value})(${arg})`) || "").toString();
     } catch (err) {
       console.error(err);
     }
@@ -132,13 +151,17 @@ function modifyHeader(url, currentProfile, source, dest) {
   for (const header of source) {
     const normalizedHeaderName = header.name.toLowerCase();
     const index = indexMap[normalizedHeaderName];
-    const headerValue = evaluateValue(header.value, url, index !== undefined ? dest[index].value : undefined);
+    const headerValue = evaluateValue(
+      header.value,
+      url,
+      index !== undefined ? dest[index].value : undefined
+    );
     if (index !== undefined) {
-      if (!currentProfile.appendMode || currentProfile.appendMode === 'false') {
+      if (!currentProfile.appendMode || currentProfile.appendMode === "false") {
         dest[index].value = headerValue;
-      } else if (currentProfile.appendMode === 'comma') {
+      } else if (currentProfile.appendMode === "comma") {
         if (dest[index].value) {
-          dest[index].value += ',';
+          dest[index].value += ",";
         }
         dest[index].value += headerValue;
       } else {
@@ -176,11 +199,18 @@ function modifyRequestHeaderHandler_(details) {
   if (!chromeLocal.lockedTabId || chromeLocal.lockedTabId === details.tabId) {
     for (const currentProfile of activeProfiles) {
       if (passFilters_(details.url, details.type, currentProfile.filters)) {
-        modifyHeader(details.url, currentProfile, currentProfile.headers, details.requestHeaders);
+        modifyHeader(
+          details.url,
+          currentProfile,
+          currentProfile.headers,
+          details.requestHeaders
+        );
       }
     }
   }
-  return { requestHeaders: details.requestHeaders.filter(entry => !!entry.value) };
+  return {
+    requestHeaders: details.requestHeaders.filter((entry) => !!entry.value),
+  };
 }
 
 function modifyResponseHeaderHandler_(details) {
@@ -191,13 +221,18 @@ function modifyResponseHeaderHandler_(details) {
   if (!chromeLocal.lockedTabId || chromeLocal.lockedTabId === details.tabId) {
     for (const currentProfile of activeProfiles) {
       if (passFilters_(details.url, details.type, currentProfile.filters)) {
-        modifyHeader(details.url, currentProfile, currentProfile.respHeaders, responseHeaders);
+        modifyHeader(
+          details.url,
+          currentProfile,
+          currentProfile.respHeaders,
+          responseHeaders
+        );
       }
     }
   }
   if (!lodashIsEqual(responseHeaders, details.responseHeaders)) {
     return {
-      responseHeaders: responseHeaders.filter(entry => !!entry.value)
+      responseHeaders: responseHeaders.filter((entry) => !!entry.value),
     };
   }
 }
@@ -209,12 +244,12 @@ function getChromeVersion() {
   if (pieces == null || pieces.length !== 5) {
     return {};
   }
-  pieces = pieces.map(piece => parseInt(piece, 10));
+  pieces = pieces.map((piece) => parseInt(piece, 10));
   return {
     major: pieces[1],
     minor: pieces[2],
     build: pieces[3],
-    patch: pieces[4]
+    patch: pieces[4],
   };
 }
 
@@ -250,10 +285,10 @@ function setupHeaderModListener() {
     }
     chrome.webRequest.onBeforeSendHeaders.addListener(
       modifyRequestHeaderHandler_,
-      { urls: ['<all_urls>'] },
+      { urls: ["<all_urls>"] },
       requiresExtraRequestHeaders
-        ? ['requestHeaders', 'blocking', 'extraHeaders']
-        : ['requestHeaders', 'blocking']
+        ? ["requestHeaders", "blocking", "extraHeaders"]
+        : ["requestHeaders", "blocking"]
     );
   }
   if (hasResponseHeadersModification) {
@@ -263,37 +298,37 @@ function setupHeaderModListener() {
     }
     chrome.webRequest.onHeadersReceived.addListener(
       modifyResponseHeaderHandler_,
-      { urls: ['<all_urls>'] },
+      { urls: ["<all_urls>"] },
       requiresExtraResponseHeaders
-        ? ['responseHeaders', 'blocking', 'extraHeaders']
-        : ['responseHeaders', 'blocking']
+        ? ["responseHeaders", "blocking", "extraHeaders"]
+        : ["responseHeaders", "blocking"]
     );
   }
 
   if (hasUrlReplacement) {
     chrome.webRequest.onBeforeRequest.addListener(
       modifyRequestHandler_,
-      { urls: ['<all_urls>'] },
-      ['blocking']
+      { urls: ["<all_urls>"] },
+      ["blocking"]
     );
   }
 }
 
 async function onTabUpdated(tab) {
-  await setLocal({activeTabId: tab.id});
+  await setLocal({ activeTabId: tab.id });
   await resetBadge();
   await resetContextMenu();
 }
 
-chrome.tabs.onActivated.addListener(activeInfo => {
+chrome.tabs.onActivated.addListener((activeInfo) => {
   chrome.tabs.get(activeInfo.tabId, onTabUpdated);
 });
 
-chrome.windows.onFocusChanged.addListener(windowId => {
+chrome.windows.onFocusChanged.addListener((windowId) => {
   if (windowId === chrome.windows.WINDOW_ID_NONE) {
     return;
   }
-  chrome.windows.get(windowId, { populate: true }, async win => {
+  chrome.windows.get(windowId, { populate: true }, async (win) => {
     for (const tab of win.tabs) {
       if (tab.active) {
         await onTabUpdated(tab);
@@ -308,12 +343,12 @@ async function saveStorageToCloud() {
   const keys = items ? Object.keys(items) : [];
   keys.sort();
   if (
-      keys.length === 0 ||
-      items[keys[keys.length - 1]] !== chromeLocal.profiles
+    keys.length === 0 ||
+    items[keys[keys.length - 1]] !== chromeLocal.profiles
   ) {
     const data = {};
     data[Date.now()] = chromeLocal.profiles;
-    await Promise.all([setSync(data), setLocal({savedToCloud: true})]);
+    await Promise.all([setSync(data), setLocal({ savedToCloud: true })]);
   }
   if (keys.length >= MAX_PROFILES_IN_CLOUD) {
     await removeSync(keys.slice(0, keys.length - MAX_PROFILES_IN_CLOUD));
@@ -322,37 +357,37 @@ async function saveStorageToCloud() {
 
 async function resetContextMenu() {
   if (chromeLocal.isPaused) {
-    await updateContextMenu('pause', {
-      title: 'Unpause ModHeader',
-      contexts: ['browser_action'],
+    await updateContextMenu("pause", {
+      title: "Unpause ModHeader",
+      contexts: ["browser_action"],
       onclick: async () => {
-        await removeLocal('isPaused');
-      }
+        await removeLocal("isPaused");
+      },
     });
   } else {
-    await updateContextMenu('pause', {
-      title: 'Pause ModHeader',
-      contexts: ['browser_action'],
+    await updateContextMenu("pause", {
+      title: "Pause ModHeader",
+      contexts: ["browser_action"],
       onclick: async () => {
-        await setLocal({isPaused: true});
-      }
+        await setLocal({ isPaused: true });
+      },
     });
   }
   if (chromeLocal.lockedTabId) {
-    await updateContextMenu('lock', {
-      title: 'Unlock to all tabs',
-      contexts: ['browser_action'],
+    await updateContextMenu("lock", {
+      title: "Unlock to all tabs",
+      contexts: ["browser_action"],
       onclick: async () => {
-        await removeLocal('lockedTabId');
-      }
+        await removeLocal("lockedTabId");
+      },
     });
   } else {
-    await updateContextMenu('lock', {
-      title: 'Lock to this tab',
-      contexts: ['browser_action'],
+    await updateContextMenu("lock", {
+      title: "Lock to this tab",
+      contexts: ["browser_action"],
       onclick: async () => {
         await setLocal({ lockedTabId: chromeLocal.activeTabId });
-      }
+      },
     });
   }
 }
@@ -360,35 +395,38 @@ async function resetContextMenu() {
 async function resetBadge() {
   if (chromeLocal.isPaused) {
     await setBrowserAction({
-      icon: 'images/icon_bw.png',
-      text: '\u275A\u275A',
-      color: '#666'
+      icon: "images/icon_bw.png",
+      text: "\u275A\u275A",
+      color: "#666",
     });
   } else {
     let numHeaders = 0;
     for (const currentProfile of activeProfiles) {
-      numHeaders += currentProfile.headers.length + currentProfile.respHeaders.length + currentProfile.urlReplacements.length;
+      numHeaders +=
+        currentProfile.headers.length +
+        currentProfile.respHeaders.length +
+        currentProfile.urlReplacements.length;
     }
     if (numHeaders === 0) {
       await setBrowserAction({
-        icon: 'images/icon_bw.png',
-        text: '',
-        color: '#ffffff'
+        icon: "images/icon_bw.png",
+        text: "",
+        color: "#ffffff",
       });
     } else if (
-        chromeLocal.lockedTabId &&
-        chromeLocal.lockedTabId !== chromeLocal.activeTabId
+      chromeLocal.lockedTabId &&
+      chromeLocal.lockedTabId !== chromeLocal.activeTabId
     ) {
       await setBrowserAction({
-        icon: 'images/icon_bw.png',
-        text: '\uD83D\uDD12',
-        color: '#ff8e8e'
+        icon: "images/icon_bw.png",
+        text: "\uD83D\uDD12",
+        color: "#ff8e8e",
       });
     } else {
       await setBrowserAction({
-        icon: 'images/icon.png',
+        icon: "images/icon.png",
         text: numHeaders.toString(),
-        color: selectedActiveProfile.backgroundColor
+        color: selectedActiveProfile.backgroundColor,
       });
     }
   }
@@ -397,14 +435,14 @@ async function resetBadge() {
 async function initialize() {
   await clearContextMenu();
   await createContextMenu({
-    id: 'pause',
-    title: 'Pause',
-    contexts: ['browser_action']
+    id: "pause",
+    title: "Pause",
+    contexts: ["browser_action"],
   });
   await createContextMenu({
-    id: 'lock',
-    title: 'Lock',
-    contexts: ['browser_action']
+    id: "lock",
+    title: "Lock",
+    contexts: ["browser_action"],
   });
   chromeLocal = await initStorage();
   loadActiveProfiles();
@@ -413,13 +451,18 @@ async function initialize() {
   await resetContextMenu();
 
   chrome.storage.onChanged.addListener(async (changes, areaName) => {
-    if (areaName !== 'local') {
+    if (areaName !== "local") {
       return;
     }
-    const profilesUpdated = !lodashIsUndefined(changes.profiles)
-        && !lodashIsEqual(chromeLocal.profiles, changes.profiles.newValue);
-    const selectedProfileUpdated = !lodashIsUndefined(changes.selectedProfile)
-        && !lodashIsEqual(chromeLocal.selectedProfile, changes.selectedProfile.newValue);
+    const profilesUpdated =
+      !lodashIsUndefined(changes.profiles) &&
+      !lodashIsEqual(chromeLocal.profiles, changes.profiles.newValue);
+    const selectedProfileUpdated =
+      !lodashIsUndefined(changes.selectedProfile) &&
+      !lodashIsEqual(
+        chromeLocal.selectedProfile,
+        changes.selectedProfile.newValue
+      );
     for (const [key, value] of Object.entries(changes)) {
       chromeLocal[key] = value.newValue;
     }
@@ -434,12 +477,39 @@ async function initialize() {
 }
 initialize();
 
-chrome.runtime.onInstalled.addListener(details => {
-  if (details.reason === 'install') {
-    chrome.tabs.create({ url: 'https://r.bewisse.com/modheader/postinstall' });
+chrome.runtime.onMessageExternal.addListener(async function (
+  request,
+  sender,
+  sendResponse
+) {
+  if (!sender.origin.startsWith("https://bewisse.com")) {
+    sendResponse({ error: "Unsupported origin" });
+    return;
+  }
+  switch (request.type) {
+    case "EXISTS":
+      sendResponse({ success: true });
+      break;
+    case "IMPORT":
+      chromeLocal.profiles.push(JSON.parse(request.profile));
+      await setLocal({ profiles: chromeLocal.profiles });
+      sendResponse({ success: true });
+      break;
+    case "SWITCH_TO_LATEST":
+      await setLocal({ selectedProfile: chromeLocal.profiles.length - 1 });
+      sendResponse({ success: true });
+      break;
+    default:
+      break;
   }
 });
 
-window.saveToStorage = function(items) {
+chrome.runtime.onInstalled.addListener((details) => {
+  if (details.reason === "install") {
+    chrome.tabs.create({ url: "https://r.bewisse.com/modheader/postinstall" });
+  }
+});
+
+window.saveToStorage = function (items) {
   return setLocal(items);
 };
