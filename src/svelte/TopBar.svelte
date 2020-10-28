@@ -104,6 +104,7 @@
     }
   }
   $: appendMode = ($selectedProfile.appendMode || false).toString();
+  $: sendEmptyHeader = ($selectedProfile.sendEmptyHeader || false).toString();
   $: color =
     lightOrDark($selectedProfile.backgroundColor) === "light"
       ? "black"
@@ -332,6 +333,25 @@
               icon={appendMode === 'comma' ? mdiRadioboxMarked : mdiRadioboxBlank}
               color="#666" />
             <Label>Comma separated concatenation</Label>
+          </Item>
+
+          <Separator nav />
+          <Subheader>Empty header mode</Subheader>
+          <Item on:SMUI:action={() => commitChange({ sendEmptyHeader: false })}>
+            <MdiIcon
+                    class="more-menu-icon"
+                    size="24"
+                    icon={sendEmptyHeader === 'false' ? mdiRadioboxMarked : mdiRadioboxBlank}
+                    color="#666" />
+            <Label>Remove empty header</Label>
+          </Item>
+          <Item on:SMUI:action={() => commitChange({ sendEmptyHeader: true })}>
+            <MdiIcon
+                    class="more-menu-icon"
+                    size="24"
+                    icon={sendEmptyHeader === 'true' ? mdiRadioboxMarked : mdiRadioboxBlank}
+                    color="#666" />
+            <Label>Send empty header</Label>
           </Item>
         </List>
       </Menu>
