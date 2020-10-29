@@ -16,7 +16,7 @@
     mdiPlay,
     mdiPause,
     mdiLockOutline,
-    mdiLockOpenOutline,
+    mdiLockOpenVariantOutline,
     mdiDotsVertical,
     mdiContentCopy,
     mdiFileExportOutline,
@@ -225,13 +225,13 @@
         {/if}
       </IconButton>
       {#if $isLocked}
-        <IconButton dense on:click={() => unlockAllTab()} title="Unlock tab">
-          <MdiIcon size="24" icon={mdiLockOpenOutline} {color} />
-        </IconButton>
+        <Button on:click={() => unlockAllTab()} title="Unlock tab" style="min-width: fit-content">
+          Unlock
+        </Button>
       {:else}
-        <IconButton dense on:click={() => lockToTab()} title="Lock to tab">
-          <MdiIcon size="24" icon={mdiLockOutline} {color} />
-        </IconButton>
+        <Button on:click={() => lockToTab()} title="Lock to tab" style="min-width: fit-content">
+          Lock tab
+        </Button>
       {/if}
       <IconButton
         dense
@@ -255,7 +255,7 @@
               size="24"
               icon={$selectedProfile.hideComment ? mdiCommentCheckOutline : mdiCommentRemoveOutline}
               color="#666" />
-            {$selectedProfile.hideComment ? 'Show comment column' : 'Hide comment column'}
+            {$selectedProfile.hideComment ? 'Show comment' : 'Hide comment'}
           </Item>
           <Item
             on:SMUI:action={() => toggleAlwaysOn()}
@@ -306,7 +306,7 @@
               size="24"
               icon={mdiCloudDownloadOutline}
               color="#666" />
-            Restore from cloud backup
+            Restore cloud backup
           </Item>
           <Separator nav />
           <Subheader>Header override mode</Subheader>
@@ -332,7 +332,7 @@
               size="24"
               icon={appendMode === 'comma' ? mdiRadioboxMarked : mdiRadioboxBlank}
               color="#666" />
-            <Label>Comma separated concatenation</Label>
+            <Label>Comma separated</Label>
           </Item>
 
           <Separator nav />

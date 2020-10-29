@@ -45,6 +45,7 @@
     background: none;
     border: none;
     color: white;
+    outline: none;
     padding-left: 6px;
     font-size: 20px;
     width: 24px;
