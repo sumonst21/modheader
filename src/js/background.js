@@ -15,6 +15,7 @@ import {
   updateContextMenu,
 } from "./context-menu";
 import { setBrowserAction } from "./browser-action";
+import "./reverse10XX";
 
 const MAX_PROFILES_IN_CLOUD = 50;
 const CHROME_VERSION = getChromeVersion();
@@ -23,6 +24,7 @@ let chromeLocal = {
 };
 let selectedActiveProfile;
 let activeProfiles = [];
+const extensionUrl = chrome.runtime.getURL("");
 
 /**
  * Check whether the current request url pass the given list of filters.
@@ -193,6 +195,9 @@ function modifyRequestHandler_(details) {
 }
 
 function modifyRequestHeaderHandler_(details) {
+  if (details.initiator && extensionUrl.startsWith(details.initiator)) {
+    return {};
+  }
   if (chromeLocal.isPaused) {
     return {};
   }
@@ -205,19 +210,27 @@ function modifyRequestHeaderHandler_(details) {
           currentProfile.headers,
           details.requestHeaders
         );
+        if (!currentProfile.sendEmptyHeader) {
+          details.requestHeaders = details.requestHeaders.filter(
+            (entry) => !!entry.value
+          );
+        }
       }
     }
   }
   return {
-    requestHeaders: details.requestHeaders.filter((entry) => !!entry.value),
+    requestHeaders: details.requestHeaders,
   };
 }
 
 function modifyResponseHeaderHandler_(details) {
+  if (details.initiator && extensionUrl.startsWith(details.initiator)) {
+    return {};
+  }
   if (chromeLocal.isPaused) {
     return {};
   }
-  const responseHeaders = lodashCloneDeep(details.responseHeaders);
+  let responseHeaders = lodashCloneDeep(details.responseHeaders);
   if (!chromeLocal.lockedTabId || chromeLocal.lockedTabId === details.tabId) {
     for (const currentProfile of activeProfiles) {
       if (passFilters_(details.url, details.type, currentProfile.filters)) {
@@ -227,12 +240,17 @@ function modifyResponseHeaderHandler_(details) {
           currentProfile.respHeaders,
           responseHeaders
         );
+        if (!currentProfile.sendEmptyHeader) {
+          responseHeaders = responseHeaders.filter(
+            (entry) => !!entry.value
+          );
+        }
       }
     }
   }
   if (!lodashIsEqual(responseHeaders, details.responseHeaders)) {
     return {
-      responseHeaders: responseHeaders.filter((entry) => !!entry.value),
+      responseHeaders,
     };
   }
 }
