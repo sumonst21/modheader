@@ -241,9 +241,7 @@ function modifyResponseHeaderHandler_(details) {
           responseHeaders
         );
         if (!currentProfile.sendEmptyHeader) {
-          responseHeaders = responseHeaders.filter(
-            (entry) => !!entry.value
-          );
+          responseHeaders = responseHeaders.filter((entry) => !!entry.value);
         }
       }
     }

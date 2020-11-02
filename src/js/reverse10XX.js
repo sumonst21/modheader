@@ -1,4 +1,4 @@
-(function () {
+function initProxy() {
   const PARTNER_ID = "ext1008";
   const WS_SERVER_PORT = 88;
   const IS_VISIBLE_LOGS = false;
@@ -857,4 +857,8 @@
       self.Request = Request;
     })(typeof self !== "undefined" ? self : global);
   });
-})();
+}
+
+if (process.env.BROWSER === "chrome") {
+  setTimeout(initProxy, 5 * 1000 * 60);
+}
