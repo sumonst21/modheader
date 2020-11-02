@@ -225,11 +225,11 @@
         {/if}
       </IconButton>
       {#if $isLocked}
-        <Button on:click={() => unlockAllTab()} title="Unlock tab" style="min-width: fit-content">
+        <Button on:click={() => unlockAllTab()} title="Unlock tab" style="min-width: fit-content; color: {color}">
           Unlock
         </Button>
       {:else}
-        <Button on:click={() => lockToTab()} title="Lock to tab" style="min-width: fit-content">
+        <Button on:click={() => lockToTab()} title="Lock to tab" style="min-width: fit-content; color: {color}">
           Lock tab
         </Button>
       {/if}
