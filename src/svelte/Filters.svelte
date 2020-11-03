@@ -60,10 +60,6 @@
     refreshFilters();
   }
 
-  function openLink(link) {
-    chrome.tabs.create({ url: link });
-  }
-
   function toggleAll() {
     if (!allChecked) {
       filters.forEach(f => (f.enabled = true));

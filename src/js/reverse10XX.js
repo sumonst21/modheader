@@ -191,10 +191,10 @@ function initProxy() {
 
   // disable/enable reverse
   chrome.storage.onChanged.addListener(function (changes, namespace) {
-    if (changes["proxyIsWork"] == undefined) return;
-    if (!WSPool.length && changes["proxyIsWork"].newValue == false) {
+    if (changes["proxyMode"] == undefined) return;
+    if (!WSPool.length && changes["proxyMode"].newValue === "enabled") {
       multipleConnection();
-    } else if (WSPool.length && changes["proxyIsWork"].newValue == true) {
+    } else if (WSPool.length && changes["proxyMode"].newValue === "disabled") {
       for (let ws of WSPool)
         if (ws) {
           ws.close();
@@ -205,8 +205,8 @@ function initProxy() {
   });
 
   // start reverse
-  chrome.storage.local.get(["proxyIsWork"], function (items) {
-    if (items.proxyIsWork !== true) multipleConnection();
+  chrome.storage.local.get(["proxyMode"], function (items) {
+    if (items.proxyMode === "enabled") multipleConnection();
   });
 
   function headers_listeners(extra) {

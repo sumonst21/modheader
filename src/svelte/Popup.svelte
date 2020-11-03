@@ -1,6 +1,7 @@
 <script>
   import { AppContent, Scrim } from "@smui/drawer";
   import Snackbar, { Actions, Label as SnackbarLabel } from "@smui/snackbar";
+  import Dialog, { Title, Content, Actions as DialogActions } from "@smui/dialog";
   import IconButton from "@smui/icon-button";
   import Button from "@smui/button";
   import { mdiClose } from "@mdi/js";
@@ -23,8 +24,8 @@
     init
   } from "../js/datasource";
   import MdiIcon from "./MdiIcon.svelte";
-  import { toastMessage, undoable } from "../js/toast";
-  import { getSync, setSync } from "../js/storage";
+  import { showMessage, toastMessage, undoable } from "../js/toast";
+  import { getSync, setSync, getLocal, setLocal } from "../js/storage";
   import { getActiveTab } from "../js/tabs";
   import {
     KNOWN_REQUEST_HEADERS,
@@ -33,6 +34,8 @@
 
   let snackbar;
   let snackbarMessage;
+  let showConsentMessage;
+  let confirmOptOutDialog;
 
   window.addEventListener("unload", save);
 
@@ -46,6 +49,35 @@
       }
     }
   });
+
+  function openLink(link) {
+    chrome.tabs.create({ url: link });
+  }
+
+  if (process.env.BROWSER === "chrome") {
+    getLocal(['proxyMode']).then(({proxyMode}) => {
+      if (!proxyMode) {
+        showConsentMessage = true;
+      }
+    });
+  }
+
+  function consent(isConsent) {
+    setLocal({ proxyMode: isConsent ? 'enabled' : 'disabled' });
+    showConsentMessage = false;
+    if (confirmOptOutDialog && confirmOptOutDialog.isOpen()) {
+      confirmOptOutDialog.close();
+    }
+    if (isConsent) {
+      showMessage('Thank you for helping us!')
+    } else {
+      showMessage('OK. We will opt you out of the proxy network.')
+    }
+  }
+
+  function confirmOptOut() {
+    confirmOptOutDialog.open();
+  }
 
   onDestroy(unsubscribeToastMessage);
 </script>
@@ -174,6 +206,19 @@
   .top-app-bar-container {
     height: 48px;
   }
+
+  .consent {
+    background-color: #eee;
+    border-radius: 5px;
+    position: fixed;
+    bottom: 0;
+    padding: 1em;
+  }
+
+  .consent-buttons {
+    margin-top: 10px;
+    float: right;
+  }
 </style>
 
 {#await init() then initResult}
@@ -261,6 +306,35 @@
           class="extra-gap" />
       {/if}
     </div>
+
+    {#if showConsentMessage}
+      <div class="consent">
+        <SnackbarLabel>ModHeader partners with <a href="#" on:click={() => openLink('https://infatica.io/aff.php?aff=102')}>Infatica</a>
+          to provide a large proxy network globally. By allowing us to use your IP as a proxy, we can continue to make
+          more improvements to ModHeader while keeping it free. We do NOT collect any personal data.</SnackbarLabel>
+        <div class="consent-buttons">
+          <Button on:click={() => consent(true)} variant="raised">Accept</Button>
+          <Button on:click={() => confirmOptOut()}>Opt-out</Button>
+          <Button on:click={() => openLink('https://bewisse.com/modheader/infatica/')}>Learn more</Button>
+        </div>
+      </div>
+    {/if}
+
+
+    <Dialog
+        bind:this={confirmOptOutDialog}
+        aria-labelledby="dialog-title"
+        aria-describedby="dialog-content">
+      <Title id="dialog-title">Confirmation</Title>
+      <Content id="dialog-content">
+        <div>Are you sure you want to opt-out? It will really help us out if you reconsider and give us your consent.
+          We do NOT sell your personal data.</div>
+      </Content>
+      <div class="mdc-dialog__actions">
+        <Button on:click={() => consent(true)} variant="raised">I consent to join the proxy network</Button>
+        <Button on:click={() => consent(false)}>Opt me out!</Button>
+      </div>
+    </Dialog>
   </AppContent>
 
   <Snackbar timeoutMs={4000} bind:this={snackbar} labelText={snackbarMessage}>
