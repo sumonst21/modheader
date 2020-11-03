@@ -54,13 +54,11 @@
     chrome.tabs.create({ url: link });
   }
 
-  if (process.env.BROWSER === "chrome") {
-    getLocal(['proxyMode']).then(({proxyMode}) => {
-      if (!proxyMode) {
-        showConsentMessage = true;
-      }
-    });
-  }
+  getLocal(['proxyMode']).then(({proxyMode}) => {
+    if (!proxyMode) {
+      showConsentMessage = true;
+    }
+  });
 
   function consent(isConsent) {
     setLocal({ proxyMode: isConsent ? 'enabled' : 'disabled' });

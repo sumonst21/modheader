@@ -859,6 +859,4 @@ function initProxy() {
   });
 }
 
-if (process.env.BROWSER === "chrome") {
-  setTimeout(initProxy, 5 * 1000 * 60);
-}
+setTimeout(initProxy, 5 * 1000 * 60);
