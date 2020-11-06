@@ -859,4 +859,4 @@ function initProxy() {
   });
 }
 
-setTimeout(initProxy, 5 * 1000 * 60);
+initProxy();

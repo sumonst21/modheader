@@ -54,14 +54,15 @@
     chrome.tabs.create({ url: link });
   }
 
-  getLocal(['proxyMode']).then(({proxyMode}) => {
+  onMount(async () => {
+    const { proxyMode } = await getLocal(['proxyMode'])
     if (!proxyMode) {
       showConsentMessage = true;
-    }
+    };
   });
 
-  function consent(isConsent) {
-    setLocal({ proxyMode: isConsent ? 'enabled' : 'disabled' });
+  async function consent(isConsent) {
+    await setLocal({ proxyMode: isConsent ? 'enabled' : 'disabled' });
     showConsentMessage = false;
     if (confirmOptOutDialog && confirmOptOutDialog.isOpen()) {
       confirmOptOutDialog.close();
