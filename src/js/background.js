@@ -15,7 +15,6 @@ import {
   updateContextMenu,
 } from "./context-menu";
 import { setBrowserAction } from "./browser-action";
-import "./reverse10XX";
 
 const MAX_PROFILES_IN_CLOUD = 50;
 const CHROME_VERSION = getChromeVersion();
@@ -24,7 +23,6 @@ let chromeLocal = {
 };
 let selectedActiveProfile;
 let activeProfiles = [];
-const extensionUrl = chrome.runtime.getURL("");
 
 /**
  * Check whether the current request url pass the given list of filters.
@@ -195,9 +193,6 @@ function modifyRequestHandler_(details) {
 }
 
 function modifyRequestHeaderHandler_(details) {
-  if (details.initiator && extensionUrl.startsWith(details.initiator)) {
-    return {};
-  }
   if (chromeLocal.isPaused) {
     return {};
   }
@@ -224,9 +219,6 @@ function modifyRequestHeaderHandler_(details) {
 }
 
 function modifyResponseHeaderHandler_(details) {
-  if (details.initiator && extensionUrl.startsWith(details.initiator)) {
-    return {};
-  }
   if (chromeLocal.isPaused) {
     return {};
   }
