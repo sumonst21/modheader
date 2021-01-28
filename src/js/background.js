@@ -512,12 +512,6 @@ chrome.runtime.onMessageExternal.addListener(async function (
   }
 });
 
-chrome.runtime.onInstalled.addListener((details) => {
-  if (details.reason === "install") {
-    chrome.tabs.create({ url: "https://r.bewisse.com/modheader/postinstall" });
-  }
-});
-
 window.saveToStorage = function (items) {
   return setLocal(items);
 };
