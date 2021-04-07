@@ -174,19 +174,6 @@
   .top-app-bar-container {
     height: 48px;
   }
-
-  .consent {
-    background-color: #eee;
-    border-radius: 5px;
-    position: fixed;
-    bottom: 0;
-    padding: 1em;
-  }
-
-  .consent-buttons {
-    margin-top: 10px;
-    float: right;
-  }
 </style>
 
 {#await init() then initResult}

@@ -19,7 +19,7 @@
   import lodashOrderBy from "lodash/orderBy";
   import lodashClone from "lodash/clone";
   import lodashDebounce from "lodash/debounce";
-	import { fly } from 'svelte/transition';
+  import { fly } from 'svelte/transition';
   import { selectedProfile, commitChange } from "../js/datasource";
   import { DISABLED_COLOR, PRIMARY_COLOR, MAX_AUTOCOMPLETE_LENGTH } from "../js/constants";
   import AutoComplete from "./Autocomplete.svelte";
@@ -64,7 +64,10 @@
   }
 
   function refreshHeaders() {
+    console.log('Updating ', headers)
     dispatch("refresh", headers);
+    allChecked = headers.every(h => h.enabled);
+    allUnchecked = headers.every(h => !h.enabled);
   }
 
   function toggleAll() {
@@ -75,12 +78,8 @@
     }
     refreshHeaders();
   }
-  
-  const refreshHeadersDebounce = lodashDebounce(() => {
-    refreshHeaders();
-    allChecked = headers.every(h => h.enabled);
-    allUnchecked = headers.every(h => !h.enabled);
-  }, 500, { leading: true, trailing: true });
+
+  const refreshHeadersDebounce = lodashDebounce(refreshHeaders, 500, { leading: true, trailing: true });
   $: headers, refreshHeadersDebounce();
 </script>
 
@@ -209,13 +208,16 @@
       <AutoComplete
         list={autocompleteListId}
         bind:value={header.name}
+        on:change={refreshHeaders}
         placeholder={nameLabel} />
       <AutoComplete
         bind:value={header.value}
+        on:change={refreshHeaders}
         placeholder={valueLabel} />
       {#if !$selectedProfile.hideComment}
         <AutoComplete
           bind:value={header.comment}
+          on:change={refreshHeaders}
           placeholder="Comment" />
       {/if}
       <IconButton

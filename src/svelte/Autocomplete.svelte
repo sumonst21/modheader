@@ -30,4 +30,5 @@
   input$list={list}
   input$autocomplete="on"
   bind:value={value}
-  on:input={() => dispatch('input')} />
+  on:input={() => dispatch('input')}
+  on:change={() => dispatch('change')}/>
