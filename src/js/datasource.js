@@ -1,5 +1,6 @@
 import { writable, derived, get } from "svelte/store";
 import lodashCloneDeep from "lodash/cloneDeep";
+import lodashDebounce from "lodash/debounce";
 import lodashIsEqual from "lodash/isEqual";
 import lodashOrderBy from "lodash/orderBy";
 import lodashLast from "lodash/last";
@@ -26,6 +27,7 @@ export const selectedProfile = derived(
 );
 export const isPaused = writable(false);
 export const isLocked = writable(false);
+const debouncedSave = lodashDebounce(save, 500, { leading: true, trailing: true });
 
 export const changesStack = writable([]);
 let ignoringChangeStack = true;
@@ -180,6 +182,7 @@ export function commitChange(change, index = -1) {
   if (!lodashIsEqual(latestProfiles[index], copy)) {
     latestProfiles[index] = copy;
     setProfilesAndIndex(latestProfiles, index);
+    debouncedSave();
   }
 }
 
@@ -226,6 +229,7 @@ export function undo() {
     lastChange.selectedProfileIndex || currentSelectedProfileIndex,
     { newIsLocked: lastChange.isLocked, newIsPaused: lastChange.isPaused }
   );
+  debouncedSave();
   hideMessage();
 }
 

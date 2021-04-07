@@ -64,7 +64,6 @@
   }
 
   function refreshHeaders() {
-    console.log('Updating ', headers)
     dispatch("refresh", headers);
     allChecked = headers.every(h => h.enabled);
     allUnchecked = headers.every(h => !h.enabled);
