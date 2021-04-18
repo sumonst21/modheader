@@ -19,9 +19,9 @@
   import lodashCloneDeep from "lodash/cloneDeep";
   import lodashDebounce from "lodash/debounce";
   import {
+    selectedProfile,
     addFilter,
     removeFilter,
-    selectedProfile,
     commitChange
   } from "../js/datasource";
   import {
@@ -39,6 +39,7 @@
     types: "Resource Type"
   };
 
+  export let profileIndex;
   export let filters;
   let selectedFilter;
   let dialog;
@@ -70,7 +71,7 @@
   }
 
   function refreshFilters() {
-    commitChange({ filters });
+    commitChange({ filters }, profileIndex);
   }
 
   const refreshFiltersDebounce = lodashDebounce(
@@ -83,6 +84,10 @@
     { leading: true, trailing: true }
   );
   $: filters, refreshFiltersDebounce();
+
+  selectedProfile.subscribe(() => {
+    refreshFiltersDebounce.cancel();
+  });
 </script>
 
 <style scoped>
@@ -112,7 +117,7 @@
       bind:checked={allChecked}
       indeterminate={!allChecked && !allUnchecked}
       on:click={toggleAll}
-      disabled={$selectedProfile.filters.length === 0} />
+      disabled={filters.length === 0} />
     <h3 class="data-table-title data-table-cell flex-grow">Filters</h3>
     <div class="data-table-cell">
       <IconButton

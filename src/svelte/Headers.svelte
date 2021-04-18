@@ -80,6 +80,10 @@
 
   const refreshHeadersDebounce = lodashDebounce(refreshHeaders, 500, { leading: true, trailing: true });
   $: headers, refreshHeadersDebounce();
+
+  selectedProfile.subscribe(() => {
+    refreshHeadersDebounce.cancel();
+  });
 </script>
 
 {#if autocompleteListId && autocompleteNames}
