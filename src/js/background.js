@@ -490,7 +490,7 @@ chrome.runtime.onMessageExternal.addListener(async function (
   sender,
   sendResponse
 ) {
-  if (!sender.origin.startsWith("https://bewisse.com")) {
+  if (!sender.origin.startsWith("https://bewisse.com") && !sender.origin.startsWith("https://modheader.com")) {
     sendResponse({ error: "Unsupported origin" });
     return;
   }
