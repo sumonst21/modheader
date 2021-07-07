@@ -12,7 +12,7 @@
   import { getLocal } from "../js/storage";
   import { importProfiles } from "../js/datasource";
 
-  const SHARE_URL_PREFIX = "https://bewisse.com/modheader/p/";
+  const SHARE_URL_PREFIX = "https://modheader.com/p/";
   let importTextbox;
   let importText;
   let dialog;

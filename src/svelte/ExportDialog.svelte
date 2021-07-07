@@ -41,7 +41,7 @@
   }
 
   $: exportedText = JSON.stringify(selectedProfiles);
-  $: exportedUrl = `https://bewisse.com/modheader/p/#${lzString.compressToEncodedURIComponent(
+  $: exportedUrl = `https://modheader.com/p/${lzString.compressToEncodedURIComponent(
     exportedText
   )}`;
 </script>

@@ -206,7 +206,7 @@
       <Item
         class="main-drawer-item"
         title="Rate us"
-        on:click={() => openLink('https://r.bewisse.com/modheader/review?browser=' + process.env.BROWSER)}>
+        on:click={() => openLink('https://modheader.com/review?browser=' + process.env.BROWSER)}>
         <span class="main-drawer-icon-container">
           <MdiIcon
             size="24"
@@ -219,7 +219,7 @@
       <Item
         class="main-drawer-item"
         title="Help"
-        on:click={() => openLink('https://bewisse.com/modheader/help/')}>
+        on:click={() => openLink('https://modheader.com/guide/')}>
         <span class="main-drawer-icon-container">
           <MdiIcon
             size="24"

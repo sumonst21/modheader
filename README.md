@@ -4,22 +4,22 @@
   ModHeader is a browser extension that allow you to modify HTTP request and response headers.
 </h3>
 <h3 align="center">
-  <a href="https://bewisse.com/modheader/">
-    <img src="https://static.bewisse.com/modheader/logo_2x.png" width="24px" alt="ModHeader" /> ModHeader official website
+  <a href="https://modheader.com/">
+    <img src="https://static.modheader.com/logo_2x.png" width="24px" alt="ModHeader" /> ModHeader official website
   </a>
 </h3>
 <p align="center">
   <a href="https://chrome.google.com/webstore/detail/modheader/idgpnmonknjnojddfkpgkljpfnnfcklj">
-    <img src="https://static.bewisse.com/chrome.svg" width="48">
+    <img src="https://static.modheader.com/chrome.svg" width="48">
   </a>
   <a href="https://addons.mozilla.org/firefox/addon/modheader-firefox/">
-    <img src="https://static.bewisse.com/firefox_1x.png" srcset="https://static.bewisse.com/firefox_2x.png 2x" width="48">
+    <img src="https://static.modheader.com/firefox_1x.png" srcset="https://static.modheader.com/firefox_2x.png 2x" width="48">
   </a>
   <a href="https://addons.opera.com/en/extensions/details/modheader/">
-    <img src="https://static.bewisse.com/opera.png" srcset="https://static.bewisse.com/opera_2x.png 2x" width="48">
+    <img src="https://static.modheader.com/opera.png" srcset="https://static.modheader.com/opera_2x.png 2x" width="48">
   </a>
   <a href="https://microsoftedge.microsoft.com/addons/detail/opgbiafapkbbnbnjcdomjaghbckfkglc">
-    <img src="https://static.bewisse.com/edge.svg" width="48">
+    <img src="https://static.modheader.com/edge.svg" width="48">
   </a>
   
 </p>
@@ -49,7 +49,11 @@ If you find ModHeader useful, please consider making a donation. If you use it f
 
 ## Screenshots
 
-<img src="https://static.bewisse.com/modheader/ss1.png">
+<img src="https://static.modheader.com/screenshots/screenshot-caption-1.png">
+<img src="https://static.modheader.com/screenshots/screenshot-caption-2.png">
+<img src="https://static.modheader.com/screenshots/screenshot-caption-3.png">
+<img src="https://static.modheader.com/screenshots/screenshot-caption-4.png">
+<img src="https://static.modheader.com/screenshots/screenshot-caption-5.png">
 
 ## Forking and contribution
 
