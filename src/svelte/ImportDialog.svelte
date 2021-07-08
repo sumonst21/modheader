@@ -13,6 +13,7 @@
   import { importProfiles } from "../js/datasource";
 
   const SHARE_URL_PREFIX = "https://modheader.com/p/";
+  const OLD_SHARE_URL_PREFIX = "https://bewisse.com/modheader/p/";
   let importTextbox;
   let importText;
   let dialog;
@@ -20,7 +21,7 @@
 
   export async function show() {
     const { currentTabUrl } = await getLocal("currentTabUrl");
-    if (currentTabUrl && currentTabUrl.startsWith(SHARE_URL_PREFIX)) {
+    if (currentTabUrl && (currentTabUrl.startsWith(SHARE_URL_PREFIX) || currentTabUrl.startsWith(OLD_SHARE_URL_PREFIX))) {
       importText = currentTabUrl;
     } else {
       importText = "";
@@ -31,7 +32,7 @@
   function done() {
     try {
       let importedProfiles;
-      if (importText.startsWith(SHARE_URL_PREFIX)) {
+      if (importText.startsWith(SHARE_URL_PREFIX) || importText.startsWith(OLD_SHARE_URL_PREFIX)) {
         const url = new URL(importText);
         const encodedProfile = !lodashIsEmpty(url.hash)
           ? url.hash.substring(1)
