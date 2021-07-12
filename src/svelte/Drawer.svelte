@@ -72,7 +72,7 @@
     transition: width 0.2s ease-out;
   }
 
-  :global(.main-drawer)::-webkit-scrollbar {
+  :global(.main-drawer::-webkit-scrollbar) {
     display: none;
   }
 
