@@ -24,8 +24,6 @@
   } from "../js/datasource";
   import MdiIcon from "./MdiIcon.svelte";
   import { toastMessage, undoable } from "../js/toast";
-  import { getSync, setSync } from "../js/storage";
-  import { getActiveTab } from "../js/tabs";
   import {
     KNOWN_REQUEST_HEADERS,
     KNOWN_RESPONSE_HEADERS
