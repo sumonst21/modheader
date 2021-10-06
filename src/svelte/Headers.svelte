@@ -1,7 +1,5 @@
 <script>
-  import Dialog, { Title, Content, Actions } from "@smui/dialog";
   import IconButton from "@smui/icon-button";
-  import Button, { Label } from "@smui/button";
   import Checkbox from "@smui/checkbox";
   import Menu from "@smui/menu";
   import List, { Item, Separator, Text } from "@smui/list";
@@ -15,13 +13,11 @@
     mdiDotsVertical
   } from "@mdi/js";
   import { createEventDispatcher } from "svelte";
-  import lodashUniq from "lodash/uniq";
   import lodashOrderBy from "lodash/orderBy";
   import lodashClone from "lodash/clone";
   import lodashDebounce from "lodash/debounce";
   import { fly } from 'svelte/transition';
-  import { selectedProfile, commitChange } from "../js/datasource";
-  import { DISABLED_COLOR, PRIMARY_COLOR, MAX_AUTOCOMPLETE_LENGTH } from "../js/constants";
+  import { selectedProfile } from "../js/datasource";
   import AutoComplete from "./Autocomplete.svelte";
   import MdiIcon from "./MdiIcon.svelte";
   import ExpandHeaderDialog from './ExpandHeaderDialog.svelte';
