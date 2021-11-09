@@ -130,7 +130,7 @@ function replaceUrls(urlReplacements, url) {
       // Avoid infinite replacement
       const replacementValue = evaluateValue(replacement.value, url, url);
       if (!url.includes(replacementValue)) {
-        url = url.replace(replacement.name, replacementValue);
+        url = url.replace(new RegExp(replacement.name), replacementValue);
       }
     }
   }
