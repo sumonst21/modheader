@@ -7,7 +7,6 @@
     mdiPlus,
     mdiClose,
     mdiTrashCanOutline,
-    mdiArrowExpand,
     mdiSortAlphabeticalAscending,
     mdiSortAlphabeticalDescending,
     mdiDotsVertical
@@ -19,8 +18,8 @@
   import { fly } from 'svelte/transition';
   import { selectedProfile } from "../js/datasource";
   import AutoComplete from "./Autocomplete.svelte";
-  import MdiIcon from "./MdiIcon.svelte";
-  import ExpandHeaderDialog from './ExpandHeaderDialog.svelte';
+  import MdiIcon from './MdiIcon.svelte';
+  import HeaderMoreMenu from './HeaderMoreMenu.svelte';
 
   const dispatch = createEventDispatcher();
 
@@ -30,8 +29,6 @@
   export let autocompleteNames;
   export let nameLabel = "Name";
   export let valueLabel = "Value";
-  let selectedHeaderIndex;
-  let selectedHeader;
   let dialog;
   let moreMenu;
   let clazz;
@@ -41,17 +38,20 @@
   let allUnchecked;
 
   function addHeader() {
-    dispatch("add");
+    dispatch('add');
   }
 
   function removeHeader(headerIndex) {
-    dispatch("remove", headerIndex);
+    dispatch('remove', headerIndex);
   }
 
-  function expandEditor(headerIndex) {
-    selectedHeaderIndex = headerIndex;
-    selectedHeader = lodashClone(headers[selectedHeaderIndex]);
-    dialog.open();
+  function copy(headerIndex) {
+    headers = [
+      ...headers.slice(0, headerIndex),
+      lodashClone(headers[headerIndex]),
+      ...headers.slice(headerIndex),
+    ];
+    refreshHeaders();
   }
 
   function sort(field, order) {
@@ -60,7 +60,7 @@
   }
 
   function refreshHeaders() {
-    dispatch("refresh", headers);
+    dispatch('refresh', headers);
     allChecked = headers.every(h => h.enabled);
     allUnchecked = headers.every(h => !h.enabled);
   }
@@ -90,17 +90,6 @@
   </datalist>
 {/if}
 
-<ExpandHeaderDialog
-  bind:this={dialog}
-  {title}
-  {nameLabel}
-  {valueLabel}
-  {selectedHeader}
-  on:save={event => {
-    headers[selectedHeaderIndex] = event.detail;
-    refreshHeaders();
-  }} />
-
 <div class="data-table {clazz}" transition:fly>
   <div class="data-table-row data-table-title-row">
     <Checkbox
@@ -115,9 +104,9 @@
     </div>
     <div class="data-table-cell">
       <IconButton
-        aria-label="Expand"
-        class="medium-icon-button data-table-cell flex-fixed-icon"
-        on:click={() => moreMenu.setOpen(true)}>
+              aria-label="More menu"
+              class="medium-icon-button data-table-cell flex-fixed-icon"
+              on:click={() => moreMenu.setOpen(true)}>
         <MdiIcon size="32" color="#666" icon={mdiDotsVertical} />
       </IconButton>
       
@@ -205,34 +194,39 @@
         on:change={refreshHeaders}
         indeterminate={false} />
       <AutoComplete
-        list={autocompleteListId}
-        bind:value={header.name}
-        on:change={refreshHeaders}
-        placeholder={nameLabel} />
+              list={autocompleteListId}
+              bind:value={header.name}
+              on:change={refreshHeaders}
+              selectAllOnFocus={true}
+              placeholder={nameLabel} />
       <AutoComplete
-        bind:value={header.value}
-        on:change={refreshHeaders}
-        placeholder={valueLabel} />
+              bind:value={header.value}
+              on:change={refreshHeaders}
+              selectAllOnFocus={true}
+              placeholder={valueLabel} />
       {#if !$selectedProfile.hideComment}
         <AutoComplete
-          bind:value={header.comment}
-          on:change={refreshHeaders}
-          placeholder="Comment" />
+                bind:value={header.comment}
+                on:change={refreshHeaders}
+                placeholder="Comment"/>
       {/if}
+
       <IconButton
-        dense
-        aria-label="Expand"
-        class="small-icon-button data-table-cell flex-fixed-icon"
-        on:click={() => expandEditor(headerIndex)}>
-        <MdiIcon size="24" color="#666" icon={mdiArrowExpand} />
+              dense
+              aria-label="Delete"
+              class="small-icon-button data-table-cell flex-fixed-icon"
+              on:click={() => removeHeader(headerIndex)}>
+        <MdiIcon size="24" icon={mdiClose} color="red"/>
       </IconButton>
-      <IconButton
-        dense
-        aria-label="Delete"
-        class="small-icon-button data-table-cell flex-fixed-icon"
-        on:click={() => removeHeader(headerIndex)}>
-        <MdiIcon size="24" icon={mdiClose} color="red" />
-      </IconButton>
+      <HeaderMoreMenu {title} {nameLabel} {valueLabel}
+                      selectedHeaderIndex={headerIndex}
+                      selectedHeader={header}
+                      on:copy={(e) => copy(e.detail)}
+                      on:update={(e) => {
+          headers[e.detail.headerIndex] = e.detail.header;
+          refreshHeaders();
+        }}/>
     </div>
   {/each}
 </div>
+

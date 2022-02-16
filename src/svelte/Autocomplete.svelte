@@ -1,13 +1,21 @@
 <script>
-  import Textfield from '@smui/textfield';
-  import { createEventDispatcher } from "svelte";
+    import Textfield from '@smui/textfield';
+    import {createEventDispatcher} from 'svelte';
 
-  const dispatch = createEventDispatcher();
-  // ID to the datalist of items the user can select from
-  export let list;
-  // the text displayed when no option is selected
-  export let placeholder;
-  export let value;
+    function selectText(e) {
+        if (selectAllOnFocus) {
+            e.target.select();
+        }
+    }
+
+    const dispatch = createEventDispatcher();
+    // ID to the datalist of items the user can select from
+    export let list;
+    // the text displayed when no option is selected
+    export let placeholder;
+    export let value;
+    export let selectAllOnFocus;
+    let textField;
 </script>
 
 <style>
@@ -25,10 +33,12 @@
 </style>
 
 <Textfield class="data-table-cell flex-grow autocomplete-input"
-  type="text"
-  input$placeholder={placeholder}
-  input$list={list}
-  input$autocomplete="on"
-  bind:value={value}
-  on:input={() => dispatch('input')}
-  on:change={() => dispatch('change')}/>
+           input$bind:this={textField}
+           type="text"
+           input$placeholder={placeholder}
+           input$list={list}
+           input$autocomplete="on"
+           bind:value={value}
+           on:input={() => dispatch('input')}
+           on:change={() => dispatch('change')}
+           on:focus={selectText}/>
