@@ -41,8 +41,6 @@
 
   export let profileIndex;
   export let filters;
-  let selectedFilter;
-  let dialog;
   let sortMenu;
   let clazz;
   let resourceTypeMenuLocation;
@@ -50,11 +48,6 @@
 
   let allChecked;
   let allUnchecked;
-
-  function expandEditor(filter) {
-    selectedFilter = filter;
-    dialog.open();
-  }
 
   function sort(field, order) {
     filters = lodashOrderBy(filters, [field], [order]);
@@ -90,7 +83,7 @@
   });
 </script>
 
-<style scoped>
+<style>
   :global(.filter-select) {
     height: 26px;
     width: 170px;
@@ -127,7 +120,7 @@
         <MdiIcon size="32" color="#666" icon={mdiDotsVertical} />
       </IconButton>
 
-      <Menu bind:this={sortMenu} quickOpen>
+      <Menu bind:this={sortMenu}>
         <List>
           <Item on:SMUI:action={() => addFilter()}>
             <MdiIcon

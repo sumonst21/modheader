@@ -19,7 +19,7 @@
   export let resourceType;
 </script>
 
-<style scoped>
+<style>
   :global(.resource-type-menu-button) {
     display: inline;
     text-align: left;
@@ -45,7 +45,7 @@
           .map(rt => KNOWN_RESOURCE_TYPES[rt])
           .join(', ') : 'Select Resource Type'}
   </Button>
-  <Menu bind:this={resourceTypeMenu} quickOpen>
+  <Menu bind:this={resourceTypeMenu}>
     <List>
       {#each Object.entries(KNOWN_RESOURCE_TYPES) as [value, label]}
         <Item

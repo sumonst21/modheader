@@ -1,32 +1,35 @@
 <script>
-  import lodashIsEmpty from "lodash/isEmpty";
-  import lodashIsArray from "lodash/isArray";
-  import Dialog, { Title, Content, Actions } from "@smui/dialog";
-  import Button, { Label } from "@smui/button";
-  import IconButton from "@smui/icon-button";
-  import { mdiClose, mdiFileImport, mdiCheck } from "@mdi/js";
-  import lzString from "lz-string";
-  import MdiIcon from "./MdiIcon.svelte";
-  import { DISABLED_COLOR, PRIMARY_COLOR } from "../js/constants";
-  import { showMessage } from "../js/toast";
-  import { getLocal } from "../js/storage";
-  import { importProfiles } from "../js/datasource";
+  import lodashIsEmpty from 'lodash/isEmpty';
+  import lodashIsArray from 'lodash/isArray';
+  import Dialog, { Title, Content } from '@smui/dialog';
+  import Button, { Label } from '@smui/button';
+  import IconButton from '@smui/icon-button';
+  import { mdiClose, mdiFileImport, mdiCheck } from '@mdi/js';
+  import lzString from 'lz-string';
+  import MdiIcon from './MdiIcon.svelte';
+  import { DISABLED_COLOR, PRIMARY_COLOR } from '../js/constants';
+  import { showMessage } from '../js/toast';
+  import { getLocal } from '../js/storage';
+  import { importProfiles } from '../js/datasource';
 
-  const SHARE_URL_PREFIX = "https://modheader.com/p/";
-  const OLD_SHARE_URL_PREFIX = "https://bewisse.com/modheader/p/";
+  const SHARE_URL_PREFIX = 'https://modheader.com/p/';
+  const OLD_SHARE_URL_PREFIX = 'https://bewisse.com/modheader/p/';
   let importTextbox;
   let importText;
-  let dialog;
+  let dialogVisible;
   let uploadFileInput;
 
   export async function show() {
-    const { currentTabUrl } = await getLocal("currentTabUrl");
-    if (currentTabUrl && (currentTabUrl.startsWith(SHARE_URL_PREFIX) || currentTabUrl.startsWith(OLD_SHARE_URL_PREFIX))) {
+    const { currentTabUrl } = await getLocal('currentTabUrl');
+    if (
+      currentTabUrl &&
+      (currentTabUrl.startsWith(SHARE_URL_PREFIX) || currentTabUrl.startsWith(OLD_SHARE_URL_PREFIX))
+    ) {
       importText = currentTabUrl;
     } else {
-      importText = "";
+      importText = '';
     }
-    dialog.open();
+    dialogVisible = true;
   }
 
   function done() {
@@ -36,10 +39,8 @@
         const url = new URL(importText);
         const encodedProfile = !lodashIsEmpty(url.hash)
           ? url.hash.substring(1)
-          : url.pathname.substring(url.pathname.lastIndexOf("/") + 1);
-        importedProfiles = JSON.parse(
-          lzString.decompressFromEncodedURIComponent(encodedProfile)
-        );
+          : url.pathname.substring(url.pathname.lastIndexOf('/') + 1);
+        importedProfiles = JSON.parse(lzString.decompressFromEncodedURIComponent(encodedProfile));
       } else {
         importedProfiles = JSON.parse(importText);
         if (!lodashIsArray(importedProfiles)) {
@@ -47,32 +48,30 @@
         }
       }
       importProfiles(importedProfiles);
-      dialog.close();
+      dialogVisible = false;
     } catch (err) {
-      showMessage(
-        "Failed to import profiles. Please double check your exported profile."
-      );
+      showMessage('Failed to import profiles. Please double check your exported profile.');
     }
   }
 
   function loadFile(file) {
     const reader = new FileReader();
-    reader.onload = event => {
+    reader.onload = (event) => {
       const importText = event.target.result;
-      const importedProfiles = JSON.parse(importText);
+      let importedProfiles = JSON.parse(importText);
       if (!lodashIsArray(importedProfiles)) {
         importedProfiles = [importedProfiles];
       }
       importProfiles(importedProfiles);
-      dialog.close();
+      dialogVisible = false;
     };
-    reader.readAsText(file, "utf8");
+    reader.readAsText(file, 'utf8');
   }
 
   function openImportFilePage() {
     chrome.tabs.create(
       {
-        url: chrome.runtime.getURL("/importfile.html")
+        url: chrome.runtime.getURL('/importfile.html')
       },
       () => {
         window.close();
@@ -81,25 +80,14 @@
   }
 </script>
 
-<style>
-  .extra-large-textarea {
-    width: 400px;
-    height: 250px;
-    overflow-x: hidden;
-    overflow-y: auto;
-  }
-</style>
-
-<Dialog
-  bind:this={dialog}
-  aria-labelledby="dialog-title"
-  aria-describedby="dialog-content">
+<Dialog bind:open={dialogVisible} aria-labelledby="dialog-title" aria-describedby="dialog-content">
   <Title id="dialog-title">
     Import profile
     <IconButton
       aria-label="Close"
       class="dialog-close-button"
-      on:click={() => dialog.close()}>
+      on:click={() => (dialogVisible = false)}
+    >
       <MdiIcon size="32" icon={mdiClose} color="#888" />
     </IconButton>
   </Title>
@@ -109,7 +97,8 @@
       bind:this={importTextbox}
       class="extra-large-textarea"
       rows="40"
-      bind:value={importText} />
+      bind:value={importText}
+    />
   </Content>
   <div class="mdc-dialog__actions">
     {#if process.env.BROWSER !== 'firefox'}
@@ -118,7 +107,8 @@
         bind:this={uploadFileInput}
         type="file"
         class="hidden"
-        on:change={e => loadFile(e.target.files[0])} />
+        on:change={(e) => loadFile(e.target.files[0])}
+      />
       <Button on:click={() => uploadFileInput.click()}>
         <MdiIcon size="24" icon={mdiFileImport} color={PRIMARY_COLOR} />
         <Label class="ml-small">Load from file</Label>
@@ -133,8 +123,18 @@
       <MdiIcon
         size="24"
         icon={mdiCheck}
-        color={lodashIsEmpty(importText) ? DISABLED_COLOR : PRIMARY_COLOR} />
+        color={lodashIsEmpty(importText) ? DISABLED_COLOR : PRIMARY_COLOR}
+      />
       <Label class="ml-small">Import</Label>
     </Button>
   </div>
 </Dialog>
+
+<style>
+  .extra-large-textarea {
+    width: 400px;
+    height: 250px;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+</style>

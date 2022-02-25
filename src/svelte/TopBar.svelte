@@ -111,7 +111,7 @@
       : "white";
 </script>
 
-<style scoped>
+<style>
   .profile-title {
     border: none;
     background: none;
@@ -189,7 +189,7 @@
       <IconButton dense on:click={() => addMenu.setOpen(true)} title="Add">
         <MdiIcon size="24" icon={mdiPlus} {color} />
       </IconButton>
-      <Menu bind:this={addMenu} class="add-menu" quickOpen>
+      <Menu bind:this={addMenu} class="add-menu">
         <List>
           <Item
             on:SMUI:action={() => commitChange({
@@ -247,7 +247,7 @@
         title="More">
         <MdiIcon size="24" icon={mdiDotsVertical} {color} />
       </IconButton>
-      <Menu bind:this={moreMenu} quickOpen>
+      <Menu bind:this={moreMenu}>
         <List>
           <Item on:SMUI:action={() => toggleComment()}>
             <MdiIcon

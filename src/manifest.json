@@ -1,19 +1,11 @@
 {
   "name": "ModHeader",
-  "version": "3.1.27",
+  "version": "4.0.0",
   "manifest_version": 2,
   "homepage_url": "https://modheader.com/",
   "description": "Modify HTTP request and response headers",
   "background": {
-    "scripts": [
-      "background.bundle.js"
-    ]
-  },
-  "browser_specific_settings": {
-    "gecko": {
-      "id": "{ed630365-1261-4ba9-a676-99963d2b4f54}",
-      "strict_min_version": "68.0"
-    }
+    "scripts": ["js/background.js"]
   },
   "browser_action": {
     "default_icon": "images/icon.png",
@@ -26,16 +18,11 @@
     "128": "images/icon_128.png"
   },
   "incognito": "spanning",
-  "permissions": [
-    "contextMenus",
-    "storage",
-    "webRequest",
-    "webRequestBlocking",
-    "<all_urls>"
-  ],
+  "permissions": ["contextMenus", "storage", "webRequest", "webRequestBlocking", "<all_urls>"],
   "externally_connectable": {
-    "matches": ["*://bewisse.com/*", "*://modheader.com/*", "*://localhost/*"]
+    "matches": ["*://modheader.com/*", "*://localhost/*"]
   },
+  "web_accessible_resources": ["images/icon_bw.png"],
   "optional_permissions": ["activeTab"],
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
 }

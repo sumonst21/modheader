@@ -60,7 +60,7 @@
   }
 </script>
 
-<style scoped>
+<style>
   :global(.main-drawer) {
     background: #f2f2f2;
     display: block;
@@ -234,7 +234,7 @@
   </Content>
 </Drawer>
 
-<Menu bind:this={contextMenu} quickOpen>
+<Menu bind:this={contextMenu}>
   <List>
     <Item
       on:SMUI:action={() => {
