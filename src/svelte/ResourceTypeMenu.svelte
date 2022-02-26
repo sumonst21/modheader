@@ -19,22 +19,6 @@
   export let resourceType;
 </script>
 
-<style>
-  :global(.resource-type-menu-button) {
-    display: inline;
-    text-align: left;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    max-width: 220px;
-    height: 28px;
-    margin: 0 2px;
-  }
-
-  :global(.resource-type-menu-cell) {
-    flex-basis: 200px;
-  }
-</style>
-
 <div class="resource-type-menu-cell data-table-cell flex-grow">
   <Button
     class="resource-type-menu-button"

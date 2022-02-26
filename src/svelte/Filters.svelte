@@ -83,26 +83,6 @@
   });
 </script>
 
-<style>
-  :global(.filter-select) {
-    height: 26px;
-    width: 170px;
-  }
-
-  :global(.filter-select .mdc-select__selected-text) {
-    padding: 0;
-  }
-
-  :global(.filter-select) :global(.mdc-select__dropdown-icon) {
-    top: 0;
-    bottom: 0;
-  }
-
-  :global(.data-table-value-cell) {
-    width: 350px;
-  }
-</style>
-
 <div class="data-table {clazz}">
   <div class="data-table-row data-table-title-row">
     <Checkbox
@@ -204,9 +184,8 @@
       <Select
         bind:value={filter.type}
         noLabel
-        enhanced
-        class="data-table-cell filter-select"
-        input$class="filter-select-field">
+        class="data-table-cell"
+        anchor$class="filter-select-field">
         {#each Object.entries(FILTER_TYPES) as [value, label]}
           <Option {value} selected={filter.type === value}>{label}</Option>
         {/each}

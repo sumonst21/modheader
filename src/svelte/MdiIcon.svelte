@@ -12,6 +12,7 @@
   height={size}
   class="mdi-icon {clazz || ''}"
   fill={color}
-  viewBox="0 0 24 24">
+  viewBox="0 0 24 24"
+>
   <path d={icon} />
 </svg>

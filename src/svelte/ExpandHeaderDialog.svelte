@@ -60,13 +60,3 @@
     </Button>
   </Actions>
 </Dialog>
-
-<style>
-  :global(.expand-header-dialog-content) {
-    padding-top: 5px;
-  }
-
-  :global(.expand-header-dialog-textfield) {
-    margin: 5px;
-  }
-</style>

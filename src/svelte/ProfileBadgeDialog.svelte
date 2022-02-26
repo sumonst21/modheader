@@ -115,27 +115,3 @@
   </div>
 </Dialog>
 
-<style>
-  .profile-badge-preview {
-    border-radius: 50%;
-    display: inline-block;
-    width: 24px;
-    height: 24px;
-  }
-
-  .profile-badge-preview-text {
-    background: none;
-    border: none;
-    color: white;
-    outline: none;
-    padding-left: 6px;
-    font-size: 20px;
-    width: 24px;
-  }
-
-  .color-picker-container {
-    margin-top: 10px;
-    display: flex;
-    justify-content: center;
-  }
-</style>

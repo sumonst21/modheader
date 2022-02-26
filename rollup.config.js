@@ -4,6 +4,7 @@ import zip from 'rollup-plugin-zip';
 import svelte from 'rollup-plugin-svelte';
 import replace from '@rollup/plugin-replace';
 import { terser } from 'rollup-plugin-terser';
+import copy from 'rollup-plugin-copy';
 import postcss from 'rollup-plugin-postcss';
 import { chromeExtension, simpleReloader } from 'rollup-plugin-chrome-extension';
 import { emptyDir } from 'rollup-plugin-empty-dir';
@@ -17,6 +18,15 @@ export default {
     format: 'esm'
   },
   plugins: [
+    copy({
+      targets: [
+        {
+          src: 'svelte-material-ui/bare.css',
+          dest: 'src/svelte-material-ui.css',
+          copyOnce: true
+        }
+      ]
+    }),
     replace({
       preventAssignment: true,
       'process.env.BROWSER': JSON.stringify(process.env.BROWSER)
@@ -40,7 +50,6 @@ export default {
       compilerOptions: {
         dev: !production
       },
-      emitCss: false
     }),
     postcss({ minimize: production }),
     resolve({

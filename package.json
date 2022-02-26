@@ -3,6 +3,7 @@
   "version": "3.0.0",
   "description": "ModHeader chrome extension",
   "scripts": {
+    "postinstall": "node scripts/setup.js",
     "build-chrome": "cross-env NODE_ENV=production BROWSER=chrome node utils/build.js",
     "build-firefox": "cross-env NODE_ENV=production BROWSER=firefox node utils/build.js",
     "build-opera": "cross-env NODE_ENV=production BROWSER=opera node utils/build.js",
@@ -38,6 +39,7 @@
     "node-sass": "^7.0.1",
     "rollup": "^2.68.0",
     "rollup-plugin-chrome-extension": "^3.6.7",
+    "rollup-plugin-copy": "^3.4.0",
     "rollup-plugin-empty-dir": "^1.0.5",
     "rollup-plugin-postcss": "^4.0.2",
     "rollup-plugin-svelte": "^7.1.0",

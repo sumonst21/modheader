@@ -111,42 +111,6 @@
       : "white";
 </script>
 
-<style>
-  .profile-title {
-    border: none;
-    background: none;
-    color: #fff;
-    margin: 0 10px;
-    font-size: 18px;
-    outline: none;
-    padding: 0;
-  }
-
-  :global(.top-bar) {
-    width: 585px;
-  }
-
-  :global(.more-menu-icon) {
-    margin: 0 5px 0 0;
-    padding: 0 2px 0 0;
-  }
-
-  .top-bar-profile-badge {
-    border: 2px solid white;
-    border-radius: 50%;
-    font-size: 20px;
-    top: 10px;
-    position: absolute;
-    left: 8px;
-  }
-
-  .top-bar-profile-badge-text {
-    width: 24px;
-    display: flex;
-    justify-content: center;
-  }
-</style>
-
 <ProfileBadgeDialog bind:this={profileBadgeDialog} />
 
 <TopAppBar

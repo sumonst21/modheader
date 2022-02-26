@@ -71,9 +71,3 @@
     </List>
   </Menu>
 </div>
-
-<style>
-  :global(.icon-with-text) {
-    margin-right: 4px;
-  }
-</style>

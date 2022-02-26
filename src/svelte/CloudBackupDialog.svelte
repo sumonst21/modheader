@@ -124,22 +124,3 @@
     </Button>
   </div>
 </Dialog>
-
-<style>
-  :global(.entry-label) {
-    width: 390px;
-  }
-
-  :global(.delete-entry-icon) {
-    float: right;
-  }
-
-  :global(.backup-dialog-content) {
-    margin: 0;
-    padding: 0;
-  }
-
-  .missing-backup-info {
-    margin: 10px 24px;
-  }
-</style>
