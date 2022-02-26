@@ -4,13 +4,16 @@
   "description": "ModHeader chrome extension",
   "scripts": {
     "postinstall": "node scripts/setup.js",
+    "prepare": "npm run smui-theme-light && npm run smui-theme-dark",
+    "smui-theme-light": "smui-theme compile src/smui.css -i theme",
+    "smui-theme-dark": "smui-theme compile src/smui-dark.css -i theme/dark",
     "build-chrome": "cross-env NODE_ENV=production BROWSER=chrome node utils/build.js",
     "build-firefox": "cross-env NODE_ENV=production BROWSER=firefox node utils/build.js",
     "build-opera": "cross-env NODE_ENV=production BROWSER=opera node utils/build.js",
     "build-edge": "cross-env NODE_ENV=production BROWSER=edge node utils/build.js",
     "build-all": "node build-all.js",
     "start": "cross-env NODE_ENV=development BROWSER=chrome rollup -c -w",
-    "build": "rollup -c"
+    "build": "cross-env BROWSER=chrome rollup -c"
   },
   "devDependencies": {
     "@mdi/js": "^6.5.95",
@@ -30,6 +33,8 @@
     "@smui/tab-bar": "^6.0.0-beta.14",
     "@smui/textfield": "^6.0.0-beta.14",
     "@smui/top-app-bar": "^6.0.0-beta.14",
+    "smui-theme": "^6.0.0-beta.14",
+    "@material/theme": "^13.0.0",
     "archiver": "^4.0.1",
     "cross-env": "^6.0.3",
     "fs-extra": "^7.0.1",

@@ -32,7 +32,6 @@ export default {
       'process.env.BROWSER': JSON.stringify(process.env.BROWSER)
     }),
     chromeExtension({
-      browserPolyfill: true,
       extendManifest: (manifest) => {
         if (process.env.BROWSER === 'firefox') {
           manifest.browser_specific_settings = {
@@ -49,7 +48,7 @@ export default {
     svelte({
       compilerOptions: {
         dev: !production
-      },
+      }
     }),
     postcss({ minimize: production }),
     resolve({
