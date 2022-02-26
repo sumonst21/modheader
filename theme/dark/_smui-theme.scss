@@ -1,18 +1,27 @@
-@use 'sass:color';
-
-@use '@material/theme/color-palette';
-
-// Svelte Colors! (Dark Theme)
-@use '@material/theme/index' as theme with (
-  $primary: #1976d2,
-  $secondary: color.scale(#676778, $whiteness: -10%),
-  $surface: color.adjust(color-palette.$grey-900, $blue: +4),
-  $background: #000,
-  $error: color-palette.$red-700
-);
-
 html,
 body {
-  background-color: #000;
-  color: theme.$on-surface;
+  --mdc-theme-primary: #1976d2;
+  --mdc-theme-secondary: #676778;
+  --mdc-theme-background: #000;
+  --mdc-theme-surface: #000;
+  --mdc-theme-error: #b71c1c;
+  --mdc-theme-on-primary: #fff;
+  --mdc-theme-on-secondary: #ccc;
+  --mdc-theme-on-surface: #fff;
+  --mdc-theme-on-error: #fff;
+  --mdc-theme-text-primary-on-background: rgba(255, 255, 255, 0.87);
+  --mdc-theme-text-secondary-on-background: rgba(255, 255, 255, 0.54);
+  --mdc-theme-text-hint-on-background: rgba(255, 255, 255, 0.38);
+  --mdc-theme-text-disabled-on-background: rgba(255, 255, 255, 0.38);
+  --mdc-theme-text-icon-on-background: rgba(255, 255, 255, 0.38);
+  --mdc-theme-text-primary-on-light: rgba(255, 255, 255, 0.87);
+  --mdc-theme-text-secondary-on-light: rgba(255, 255, 255, 0.54);
+  --mdc-theme-text-hint-on-light: rgba(255, 255, 255, 0.38);
+  --mdc-theme-text-disabled-on-light: rgba(255, 255, 255, 0.38);
+  --mdc-theme-text-icon-on-light: rgba(255, 255, 255, 0.38);
+  --mdc-theme-text-primary-on-dark: white;
+  --mdc-theme-text-secondary-on-dark: rgba(0, 0, 0, 0.7);
+  --mdc-theme-text-hint-on-dark: rgba(0, 0, 0, 0.5);
+  --mdc-theme-text-disabled-on-dark: rgba(0, 0, 0, 0.5);
+  --mdc-theme-text-icon-on-dark: rgba(0, 0, 0, 0.5);
 }
