@@ -1,5 +1,16 @@
 @use 'sass:color';
 
+@use '@material/theme/color-palette';
+
+// Svelte Colors! (Dark Theme)
+@use '@material/theme/index' as theme with (
+  $primary: #1976d2,
+  $secondary: color.scale(#676778, $whiteness: -10%),
+  $surface: color.adjust(color-palette.$grey-900, $blue: +4),
+  $background: #000,
+  $error: color-palette.$red-700
+);
+
 @use '@smui/button/_style.scss' as button;
 @use '@smui/checkbox/_style.scss' as checkbox;
 @use '@smui/dialog/_style.scss' as dialog;
@@ -14,7 +25,8 @@
 @use '@smui/textfield/_style.scss' as textfield;
 @use '@smui/top-app-bar/_style.scss' as topappbar;
 
-:root {
-  --mdc-theme-primary: #1976d2;
-  --mdc-theme-background: #fff;
+html,
+body {
+  background-color: #000;
+  color: theme.$on-surface;
 }

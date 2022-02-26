@@ -69,8 +69,6 @@
     <div class="color-picker-container">
       {#if activeTab.value === 'backgroundColor'}
         <ColorPicker
-          alpha={false}
-          showInfobox={false}
           startColor={$selectedProfile.backgroundColor}
           on:colorchange={(event) => {
             const rgbString = event.detail.hex;
@@ -81,8 +79,6 @@
         />
       {:else}
         <ColorPicker
-          alpha={false}
-          showInfobox={false}
           startColor={$selectedProfile.textColor}
           on:colorchange={(event) => {
             const rgbString = event.detail.hex;

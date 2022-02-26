@@ -5,8 +5,6 @@
   let className = '';
   export { className as class };
 
-  export let alpha = true;
-  export let showInfobox = true;
   export let startColor = '#ff0000';
 
   onMount(() => {
@@ -52,7 +50,6 @@
     let hex = startColor.replace('#', '');
     if (hex.length !== 6 && hex.length !== 3 && !hex.match(/([^A-F0-9])/gi)) {
       throw new Error(`Invalid property value startColor ${startColor}`);
-      return;
     }
     let hexFiltered = '';
     if (hex.length === 3)
@@ -69,14 +66,7 @@
     updateHuePicker();
   }
 
-  const handleRGBInput = (event) => {
-    setColor({ r, g, b, a });
-  };
-
   function killMouseEvents() {
-    if (alphaEvent) {
-      alphaEvent.removeEventListener('mousedown', alphaDown);
-    }
     colorSquareEvent.removeEventListener('mousedown', csDown);
     hueEvent.removeEventListener('mousedown', hueDown);
     document.removeEventListener('mouseup', mouseUp);
@@ -86,9 +76,6 @@
   }
 
   function killTouchEvents() {
-    if (alphaEvent) {
-      alphaEvent.removeEventListener('touchstart', alphaDownTouch);
-    }
     colorSquareEvent.removeEventListener('touchstart', csDownTouch);
     hueEvent.removeEventListener('touchstart', hueDownTouch);
     document.removeEventListener('touchend', mouseUp);
@@ -123,7 +110,7 @@
       let mouseX = event.clientX;
       let mouseY = event.clientY;
       let trackedPos = tracked.getBoundingClientRect();
-      let xPercentage, yPercentage, picker;
+      let xPercentage, yPercentage;
       switch (tracked) {
         case colorSquareEvent:
           xPercentage = ((mouseX - trackedPos.x) / 240) * 100;
@@ -163,7 +150,7 @@
       let mouseX = event.touches[0].clientX;
       let mouseY = event.touches[0].clientY;
       let trackedPos = tracked.getBoundingClientRect();
-      let xPercentage, yPercentage, picker;
+      let xPercentage, yPercentage;
       switch (tracked) {
         case colorSquareEvent:
           xPercentage = ((mouseX - trackedPos.x) / 240) * 100;
@@ -227,7 +214,7 @@
     colorChange();
   }
 
-  function mouseUp(event) {
+  function mouseUp() {
     tracked = null;
   }
 
@@ -264,27 +251,6 @@
     b = rgb[2];
     hexValue = RGBAToHex();
     colorChangeCallback();
-  }
-
-  function alphaDown(event) {
-    tracked = event.currentTarget;
-    let xPercentage = ((event.offsetX - 9) / 220) * 100;
-    xPercentage = xPercentage.toFixed(2);
-    alphaPicker.style.left = xPercentage + '%';
-    a = xPercentage / 100;
-    colorChange();
-  }
-
-  function alphaDownTouch(event) {
-    tracked = event.currentTarget;
-    let rect = event.target.getBoundingClientRect();
-    let offsetX = event.targetTouches[0].clientX - rect.left;
-    let xPercentage = ((offsetX - 9) / 220) * 100;
-    xPercentage = xPercentage.toFixed(2);
-    let picker = document.querySelector('#alpha-picker');
-    picker.style.left = xPercentage + '%';
-    a = xPercentage / 100;
-    colorChange();
   }
 
   //Math algorithms
@@ -326,9 +292,9 @@
     let gHex = g.toString(16);
     let bHex = b.toString(16);
 
-    if (rHex.length == 1) rHex = '0' + rHex;
-    if (gHex.length == 1) gHex = '0' + gHex;
-    if (bHex.length == 1) bHex = '0' + bHex;
+    if (rHex.length === 1) rHex = '0' + rHex;
+    if (gHex.length === 1) gHex = '0' + gHex;
+    if (bHex.length === 1) bHex = '0' + bHex;
 
     return ('#' + rHex + gHex + bHex).toUpperCase();
   }
@@ -343,7 +309,7 @@
     diff = max - min;
 
     vnew = max;
-    vnew == 0 ? (snew = 0) : (snew = diff / max);
+    vnew === 0 ? (snew = 0) : (snew = diff / max);
 
     for (let i = 0; i < 3; i++) {
       if ([rperc, gperc, bperc][i] === max) {
@@ -351,7 +317,7 @@
         break;
       }
     }
-    if (diff == 0) {
+    if (diff === 0) {
       hnew = 0;
       if (update) {
         h = hnew;
@@ -386,52 +352,6 @@
       return { h: hnew, s: snew, v: vnew };
     }
   }
-
-  const handleInputHex = (event) => {
-    setColor(event.target.value);
-    dispatch('colorchange', { r, g, b, a });
-  };
-
-  const fixRGB = (value) => Math.min(255, Math.max(0, value | 0));
-
-  const handleInputR = (event) => {
-    r = fixRGB(event.target.value);
-    const rgba = { r, g, b, a };
-    setColor(rgba);
-    dispatch('colorchange', rgba);
-  };
-
-  const handleInputG = (event) => {
-    g = fixRGB(event.target.value);
-    const rgba = { r, g, b, a };
-    setColor(rgba);
-    dispatch('colorchange', rgba);
-  };
-
-  const handleInputB = (event) => {
-    b = fixRGB(event.target.value);
-    const rgba = { r, g, b, a };
-    setColor(rgba);
-    dispatch('colorchange', rgba);
-  };
-
-  const handleInputA = (event) => {
-    a = Math.min(0, Math.max(1, parseFloat(event.target.value) | 0));
-    const rgba = { r, g, b, a };
-    setColor(rgba);
-    dispatch('colorchange', rgba);
-  };
-
-  const nums = '0123456789';
-  const handleKeypressRGB = (event) => {
-    if (nums.indexOf(event.key) === -1) event.preventDefault();
-  };
-
-  const handleKeypressA = (event) => {
-    if (nums.concat('.').indexOf(event.key) === -1) event.preventDefault();
-  };
-
-  $: fixedAlpha = Math.round(a * 100) / 100;
 </script>
 
 <div class="main-container {className}">
@@ -458,80 +378,4 @@
       on:touchstart={hueDownTouch}
     />
   </div>
-
-  {#if alpha}
-    <div class="alpha-selector">
-      <div class="alpha-value" />
-      <div bind:this={alphaPicker} class="alpha-picker" />
-      <div
-        bind:this={alphaEvent}
-        class="alpha-event"
-        on:mousedown={alphaDown}
-        on:touchstart={alphaDownTouch}
-      />
-    </div>
-  {/if}
-
-  {#if showInfobox}
-    <div class="color-info-box">
-      <div class="color-picked-bg">
-        <div class="color-picked" style="background-color: rgba({r},{g},{b},{a})" />
-      </div>
-
-      <div class="hex-text-block">
-        <input class="text text-hex" value={hexValue} on:input={handleInputHex} />
-      </div>
-
-      <div class="rgb-text-div">
-        <div class="rgb-text-block">
-          <input
-            type="text"
-            class="text text-rgba"
-            value={r}
-            maxlength={3}
-            on:input={handleInputR}
-            on:keypress={handleKeypressRGB}
-          />
-          <div class="text-label">R</div>
-        </div>
-
-        <div class="rgb-text-block">
-          <input
-            type="text"
-            class="text text-rgba"
-            value={g}
-            maxlength={3}
-            on:input={handleInputG}
-            on:keypress={handleKeypressRGB}
-          />
-          <div class="text-label">G</div>
-        </div>
-
-        <div class="rgb-text-block">
-          <input
-            type="text"
-            class="text text-rgba"
-            value={b}
-            maxlength={3}
-            on:input={handleInputB}
-            on:keypress={handleKeypressRGB}
-          />
-          <div class="text-label">B</div>
-        </div>
-
-        {#if alpha}
-          <div class="rgb-text-block">
-            <input
-              type="text"
-              class="text text-rgba"
-              value={fixedAlpha}
-              on:input={handleInputA}
-              on:keypress={handleKeypressA}
-            />
-            <div class="text-label">A</div>
-          </div>
-        {/if}
-      </div>
-    </div>
-  {/if}
 </div>
