@@ -3,8 +3,9 @@
   "version": "3.0.0",
   "description": "ModHeader chrome extension",
   "scripts": {
-    "smui-theme-light": "sass --no-source-map -I node_modules theme/_smui-theme.scss src/smui.css",
-    "smui-theme-dark": "sass --no-source-map -I node_modules theme/dark/_smui-theme.scss src/smui-dark.css",
+    "postinstall": "npm run smui-theme-light && npm run smui-theme-dark",
+    "smui-theme-light": "sass --no-source-map -I node_modules theme/_smui-theme.scss src/styles/smui.css",
+    "smui-theme-dark": "sass --no-source-map -I node_modules theme/dark/_smui-theme.scss src/styles/smui-dark.css",
     "build-chrome": "cross-env NODE_ENV=production BROWSER=chrome node utils/build.js",
     "build-firefox": "cross-env NODE_ENV=production BROWSER=firefox node utils/build.js",
     "build-opera": "cross-env NODE_ENV=production BROWSER=opera node utils/build.js",

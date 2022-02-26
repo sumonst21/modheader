@@ -11,20 +11,6 @@
   $error: color-palette.$red-700
 );
 
-@use '@smui/button/_style.scss' as button;
-@use '@smui/checkbox/_style.scss' as checkbox;
-@use '@smui/dialog/_style.scss' as dialog;
-@use '@smui/drawer/_style.scss' as drawer;
-@use '@smui/icon-button/_style.scss' as icon-button;
-@use '@smui/menu/_style.scss' as menu;
-@use '@smui/list/_style.scss' as list;
-@use '@smui/select/_style.scss' as select;
-@use '@smui/snackbar/_style.scss' as snackbar;
-@use '@smui/tab/_style.scss' as tab;
-@use '@smui/tab-bar/_style.scss' as tabbar;
-@use '@smui/textfield/_style.scss' as textfield;
-@use '@smui/top-app-bar/_style.scss' as topappbar;
-
 html,
 body {
   background-color: #000;

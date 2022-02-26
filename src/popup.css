@@ -200,7 +200,7 @@ button::-moz-focus-inner {
 }
 
 .data-table-row-unchecked {
-  background: #eee;
+  background: var(--disabled-background);
 }
 
 .data-table-row {
@@ -279,7 +279,6 @@ button::-moz-focus-inner {
 }
 
 .main-drawer {
-  background: #f2f2f2;
   display: block;
   position: fixed;
   left: 0;
