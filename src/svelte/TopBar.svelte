@@ -1,10 +1,10 @@
 <script>
-  import TopAppBar, { Row, Section, Title } from "@smui/top-app-bar";
-  import Snackbar, { Actions, Label } from "@smui/snackbar";
-  import Menu from "@smui/menu";
-  import List, { Subheader, Meta, Item, Separator, Text } from "@smui/list";
-  import IconButton from "@smui/icon-button";
-  import Button from "@smui/button";
+  import TopAppBar, { Row, Section } from '@smui/top-app-bar';
+  import Snackbar, { Actions, Label } from '@smui/snackbar';
+  import Menu from '@smui/menu';
+  import List, { Subheader, Item, Separator } from '@smui/list';
+  import IconButton from '@smui/icon-button';
+  import Button from '@smui/button';
   import {
     mdiCheckboxBlankOutline,
     mdiCheckboxMarked,
@@ -12,28 +12,24 @@
     mdiRadioboxMarked,
     mdiPlus,
     mdiTrashCan,
-    mdiClose,
     mdiPlay,
     mdiPause,
-    mdiLockOutline,
-    mdiLockOpenVariantOutline,
     mdiDotsVertical,
     mdiContentCopy,
-    mdiFileExportOutline,
     mdiFileImportOutline,
     mdiShare,
     mdiCloudDownloadOutline,
     mdiCommentCheckOutline,
     mdiCommentRemoveOutline,
-    mdiUndo
-  } from "@mdi/js";
-  import { get } from "svelte/store";
-  import { toRgbString, lightOrDark } from "../js/utils";
-  import ExportDialog from "./ExportDialog.svelte";
-  import ImportDialog from "./ImportDialog.svelte";
-  import ProfileBadgeDialog from "./ProfileBadgeDialog.svelte";
-  import CloudBackupDialog from "./CloudBackupDialog.svelte";
-  import MdiIcon from "./MdiIcon.svelte";
+    mdiUndo,
+    mdiThemeLightDark
+  } from '@mdi/js';
+  import { lightOrDark } from '../js/utils';
+  import ExportDialog from './ExportDialog.svelte';
+  import ImportDialog from './ImportDialog.svelte';
+  import ProfileBadgeDialog from './ProfileBadgeDialog.svelte';
+  import CloudBackupDialog from './CloudBackupDialog.svelte';
+  import MdiIcon from './MdiIcon.svelte';
   import {
     addHeader,
     addUrlReplacement,
@@ -50,11 +46,10 @@
     unlockAllTab,
     isLocked,
     undo
-  } from "../js/datasource";
-  import { showMessage } from "../js/toast";
-  import { DISABLED_COLOR } from "../js/constants";
+  } from '../js/datasource';
+  import { showMessage } from '../js/toast';
+  import { setPreferredColorScheme } from '../js/color-scheme';
 
-  let colorPicker;
   let pauseSnackbar;
   let tabLockSnackbar;
   let moreMenu;
@@ -63,6 +58,7 @@
   let importDialog;
   let cloudBackupDialog;
   let profileBadgeDialog;
+  let darkModeMenu;
 
   function togglePause() {
     if ($isPaused) {
@@ -82,9 +78,9 @@
     const alwaysOn = !$selectedProfile.alwaysOn;
     commitChange({ alwaysOn });
     if (alwaysOn) {
-      showMessage("This profile will stay active even when it is not selected");
+      showMessage('This profile will stay active even when it is not selected');
     } else {
-      showMessage("This profile will only be active when selected.");
+      showMessage('This profile will only be active when selected.');
     }
   }
 
@@ -103,12 +99,10 @@
       }
     }
   }
+
   $: appendMode = ($selectedProfile.appendMode || false).toString();
   $: sendEmptyHeader = ($selectedProfile.sendEmptyHeader || false).toString();
-  $: color =
-    lightOrDark($selectedProfile.backgroundColor) === "light"
-      ? "black"
-      : "white";
+  $: color = lightOrDark($selectedProfile.backgroundColor) === 'light' ? 'black' : 'white';
 </script>
 
 <ProfileBadgeDialog bind:this={profileBadgeDialog} />
@@ -117,7 +111,8 @@
   variant
   dense
   class="top-bar"
-  style="background-color: {$selectedProfile.backgroundColor};">
+  style="background-color: {$selectedProfile.backgroundColor};"
+>
   <Row>
     <Section>
       <IconButton
@@ -126,13 +121,10 @@
         on:click={() => {
           profileBadgeDialog.show();
         }}
-        title="Change profile badge">
-        <span
-          class="top-bar-profile-badge"
-          style="background: {$selectedProfile.backgroundColor}">
-          <span
-            class="top-bar-profile-badge-text"
-            style="color: {$selectedProfile.textColor}">
+        title="Change profile badge"
+      >
+        <span class="top-bar-profile-badge" style="background: {$selectedProfile.backgroundColor}">
+          <span class="top-bar-profile-badge-text" style="color: {$selectedProfile.textColor}">
             {$selectedProfile.shortTitle}
           </span>
         </span>
@@ -142,7 +134,8 @@
         class="mdc-text-field__input profile-title"
         style="color: {$selectedProfile.textColor}"
         value={$selectedProfile.title}
-        on:input={event => commitChange({ title: event.target.value })} />
+        on:input={(event) => commitChange({ title: event.target.value })}
+      />
     </Section>
     <Section align="end">
       {#if $changesStack.length > 1}
@@ -156,23 +149,27 @@
       <Menu bind:this={addMenu} class="add-menu">
         <List>
           <Item
-            on:SMUI:action={() => commitChange({
+            on:SMUI:action={() =>
+              commitChange({
                 headers: addHeader($selectedProfile.headers)
-              })}>
+              })}
+          >
             Request header
           </Item>
           <Item
-            on:SMUI:action={() => commitChange({
+            on:SMUI:action={() =>
+              commitChange({
                 respHeaders: addHeader($selectedProfile.respHeaders)
-              })}>
+              })}
+          >
             Response header
           </Item>
           <Item
-            on:SMUI:action={async () => commitChange({
-                urlReplacements: await addUrlReplacement(
-                  $selectedProfile.urlReplacements
-                )
-              })}>
+            on:SMUI:action={async () =>
+              commitChange({
+                urlReplacements: await addUrlReplacement($selectedProfile.urlReplacements)
+              })}
+          >
             URL redirect
           </Item>
           <Item on:SMUI:action={() => addFilter()}>Filter</Item>
@@ -181,7 +178,8 @@
       <IconButton
         dense
         on:click={() => togglePause()}
-        title={$isPaused ? 'Resume ModHeader' : 'Pause ModHeader'}>
+        title={$isPaused ? 'Resume ModHeader' : 'Pause ModHeader'}
+      >
         {#if $isPaused}
           <MdiIcon size="24" icon={mdiPlay} {color} />
         {:else}
@@ -189,18 +187,23 @@
         {/if}
       </IconButton>
       {#if $isLocked}
-        <Button on:click={() => unlockAllTab()} title="Unlock tab" style="min-width: fit-content; color: {color}">
+        <Button
+          on:click={() => unlockAllTab()}
+          title="Unlock tab"
+          style="min-width: fit-content; color: {color}"
+        >
           Unlock
         </Button>
       {:else}
-        <Button on:click={() => lockToTab()} title="Lock to tab" style="min-width: fit-content; color: {color}">
+        <Button
+          on:click={() => lockToTab()}
+          title="Lock to tab"
+          style="min-width: fit-content; color: {color}"
+        >
           Lock tab
         </Button>
       {/if}
-      <IconButton
-        dense
-        on:click={() => exportDialog.show()}
-        title="Export / share profile(s)">
+      <IconButton dense on:click={() => exportDialog.show()} title="Export / share profile(s)">
         <MdiIcon size="24" icon={mdiShare} {color} />
       </IconButton>
       <IconButton
@@ -208,7 +211,8 @@
         on:click={() => {
           moreMenu.setOpen(true);
         }}
-        title="More">
+        title="More"
+      >
         <MdiIcon size="24" icon={mdiDotsVertical} {color} />
       </IconButton>
       <Menu bind:this={moreMenu}>
@@ -218,58 +222,54 @@
               class="more-menu-icon"
               size="24"
               icon={$selectedProfile.hideComment ? mdiCommentCheckOutline : mdiCommentRemoveOutline}
-              color="#666" />
+              color="#666"
+            />
             {$selectedProfile.hideComment ? 'Show comment' : 'Hide comment'}
           </Item>
           <Item
             on:SMUI:action={() => toggleAlwaysOn()}
-            title={$selectedProfile.alwaysOn ? `This profile will stay active even when it is not selected.` : `This profile will only be active when selected.`}>
+            title={$selectedProfile.alwaysOn
+              ? `This profile will stay active even when it is not selected.`
+              : `This profile will only be active when selected.`}
+          >
             <MdiIcon
               class="more-menu-icon"
               size="24"
               icon={$selectedProfile.alwaysOn ? mdiCheckboxMarked : mdiCheckboxBlankOutline}
-              color="#666" />
+              color="#666"
+            />
             Always stay enabled
           </Item>
+          <Item on:SMUI:action={() => darkModeMenu.setOpen(true)} title={`Dark mode`}>
+            <MdiIcon class="more-menu-icon" size="24" icon={mdiThemeLightDark} color="#666" />
+            Dark mode
+          </Item>
+          <Menu bind:this={darkModeMenu}>
+            <List>
+              <Item on:SMUI:action={() => setPreferredColorScheme(undefined)}>System default</Item>
+              <Item on:SMUI:action={() => setPreferredColorScheme('dark')}>Dark mode</Item>
+              <Item on:SMUI:action={() => setPreferredColorScheme('light')}>Light mode</Item>
+            </List>
+          </Menu>
           <Separator nav />
           <Item on:SMUI:action={() => removeProfile($selectedProfile)}>
-            <MdiIcon
-              class="more-menu-icon"
-              size="24"
-              icon={mdiTrashCan}
-              color="#666" />
+            <MdiIcon class="more-menu-icon" size="24" icon={mdiTrashCan} color="#666" />
             Delete profile
           </Item>
           <Item on:SMUI:action={() => cloneProfile($selectedProfile)}>
-            <MdiIcon
-              class="more-menu-icon"
-              size="24"
-              icon={mdiContentCopy}
-              color="#666" />
+            <MdiIcon class="more-menu-icon" size="24" icon={mdiContentCopy} color="#666" />
             Clone profile
           </Item>
           <Item on:SMUI:action={() => exportDialog.show()}>
-            <MdiIcon
-              class="more-menu-icon"
-              size="24"
-              icon={mdiShare}
-              color="#666" />
+            <MdiIcon class="more-menu-icon" size="24" icon={mdiShare} color="#666" />
             Export / share profile(s)
           </Item>
           <Item on:SMUI:action={() => importDialog.show()}>
-            <MdiIcon
-              class="more-menu-icon"
-              size="24"
-              icon={mdiFileImportOutline}
-              color="#666" />
+            <MdiIcon class="more-menu-icon" size="24" icon={mdiFileImportOutline} color="#666" />
             Import profile(s)
           </Item>
           <Item on:SMUI:action={() => cloudBackupDialog.show()}>
-            <MdiIcon
-              class="more-menu-icon"
-              size="24"
-              icon={mdiCloudDownloadOutline}
-              color="#666" />
+            <MdiIcon class="more-menu-icon" size="24" icon={mdiCloudDownloadOutline} color="#666" />
             Restore cloud backup
           </Item>
           <Separator nav />
@@ -279,7 +279,8 @@
               class="more-menu-icon"
               size="24"
               icon={appendMode === 'false' ? mdiRadioboxMarked : mdiRadioboxBlank}
-              color="#666" />
+              color="#666"
+            />
             <Label>Override existing value</Label>
           </Item>
           <Item on:SMUI:action={() => commitChange({ appendMode: true })}>
@@ -287,7 +288,8 @@
               class="more-menu-icon"
               size="24"
               icon={appendMode === 'true' ? mdiRadioboxMarked : mdiRadioboxBlank}
-              color="#666" />
+              color="#666"
+            />
             <Label>Value concatenation</Label>
           </Item>
           <Item on:SMUI:action={() => commitChange({ appendMode: 'comma' })}>
@@ -295,7 +297,8 @@
               class="more-menu-icon"
               size="24"
               icon={appendMode === 'comma' ? mdiRadioboxMarked : mdiRadioboxBlank}
-              color="#666" />
+              color="#666"
+            />
             <Label>Comma separated</Label>
           </Item>
 
@@ -303,18 +306,20 @@
           <Subheader>Empty header mode</Subheader>
           <Item on:SMUI:action={() => commitChange({ sendEmptyHeader: false })}>
             <MdiIcon
-                    class="more-menu-icon"
-                    size="24"
-                    icon={sendEmptyHeader === 'false' ? mdiRadioboxMarked : mdiRadioboxBlank}
-                    color="#666" />
+              class="more-menu-icon"
+              size="24"
+              icon={sendEmptyHeader === 'false' ? mdiRadioboxMarked : mdiRadioboxBlank}
+              color="#666"
+            />
             <Label>Remove empty header</Label>
           </Item>
           <Item on:SMUI:action={() => commitChange({ sendEmptyHeader: true })}>
             <MdiIcon
-                    class="more-menu-icon"
-                    size="24"
-                    icon={sendEmptyHeader === 'true' ? mdiRadioboxMarked : mdiRadioboxBlank}
-                    color="#666" />
+              class="more-menu-icon"
+              size="24"
+              icon={sendEmptyHeader === 'true' ? mdiRadioboxMarked : mdiRadioboxBlank}
+              color="#666"
+            />
             <Label>Send empty header</Label>
           </Item>
         </List>

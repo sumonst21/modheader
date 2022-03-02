@@ -1,6 +1,6 @@
 {
   "name": "modheader-chrome-extension",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "description": "ModHeader chrome extension",
   "scripts": {
     "postinstall": "npm run smui-theme-light && npm run smui-theme-dark",
