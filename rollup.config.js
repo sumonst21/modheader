@@ -8,6 +8,7 @@ import { chromeExtension, simpleReloader } from 'rollup-plugin-chrome-extension'
 import { emptyDir } from 'rollup-plugin-empty-dir';
 
 const production = !process.env.ROLLUP_WATCH;
+const URL_BASE = production ? 'https://modheader.com' : 'http://localhost:3005';
 
 export default {
   input: 'src/manifest.json',
@@ -18,7 +19,8 @@ export default {
   plugins: [
     replace({
       preventAssignment: true,
-      'process.env.BROWSER': JSON.stringify(process.env.BROWSER)
+      'process.env.BROWSER': JSON.stringify(process.env.BROWSER),
+      'process.env.URL_BASE': JSON.stringify(URL_BASE)
     }),
     chromeExtension({
       extendManifest: (manifest) => {

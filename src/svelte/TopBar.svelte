@@ -74,6 +74,15 @@
     });
   }
 
+  function signIn() {
+    const url = new URL(`${process.env.URL_BASE}/login`);
+    url.searchParams.set('for', process.env.BROWSER);
+    url.searchParams.set('extension_id', chrome.runtime.id);
+    chrome.tabs.create({
+      url: url.href
+    });
+  }
+
   function toggleAlwaysOn() {
     const alwaysOn = !$selectedProfile.alwaysOn;
     commitChange({ alwaysOn });
@@ -206,6 +215,11 @@
       <IconButton dense on:click={() => exportDialog.show()} title="Export / share profile(s)">
         <MdiIcon size="24" icon={mdiShare} {color} />
       </IconButton>
+      <Button
+        style="min-width: fit-content; color: {color}"
+        on:click={() => signIn()}
+        title="Sign in">Sign in</Button
+      >
       <IconButton
         dense
         on:click={() => {
