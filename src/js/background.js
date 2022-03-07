@@ -1,7 +1,8 @@
 import lodashIsEqual from 'lodash/isEqual';
 import lodashIsUndefined from 'lodash/isUndefined';
 import lodashCloneDeep from 'lodash/cloneDeep';
-import { getSync, initStorage, removeLocal, removeSync, setLocal, setSync } from './storage';
+import { initStorage } from './storage-loader';
+import { getSync, removeLocal, removeSync, setLocal, setSync } from './storage';
 import { clearContextMenu, createContextMenu, updateContextMenu } from './context-menu';
 import { setBrowserAction } from './browser-action';
 import { signedInUser } from './datasource';

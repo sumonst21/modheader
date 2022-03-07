@@ -7,9 +7,11 @@ import lodashLast from 'lodash/last';
 import lodashIsUndefined from 'lodash/isUndefined';
 import lodashIsEmpty from 'lodash/isEmpty';
 import { showMessage, hideMessage } from './toast';
-import { getLocal, setLocal, removeLocal, fixProfiles } from './storage';
+import { getLocal, setLocal, removeLocal } from './storage';
+import { fixProfiles } from './profile';
 import { getActiveTab } from './tabs';
-import { createHeader, takeRight, generateBackgroundColor, generateTextColor } from './utils';
+import { createHeader, takeRight } from './utils';
+import { generateBackgroundColor, generateTextColor } from './color';
 
 export const profiles = writable([]);
 let latestProfiles = [];
@@ -315,7 +317,7 @@ export function selectProfile(profileIndex) {
 
 export function removeProfile(profile) {
   latestProfiles.splice(latestProfiles.indexOf(profile), 1);
-  if (latestProfiles.length == 0) {
+  if (latestProfiles.length === 0) {
     latestProfiles = [createProfile()];
   }
   setProfilesAndIndex(latestProfiles, latestProfiles.length - 1);
