@@ -9,6 +9,9 @@ import { emptyDir } from 'rollup-plugin-empty-dir';
 
 const production = !process.env.ROLLUP_WATCH;
 const URL_BASE = production ? 'https://modheader.com' : 'http://localhost:3005';
+const CHECK_LOGIN_URL = production
+  ? 'https://modheader.com/u/extension-signed-in'
+  : 'http://localhost/u/extension-signed-in';
 
 export default {
   input: 'src/manifest.json',
@@ -20,6 +23,7 @@ export default {
     replace({
       preventAssignment: true,
       'process.env.BROWSER': JSON.stringify(process.env.BROWSER),
+      'process.env.CHECK_LOGIN_URL': JSON.stringify(CHECK_LOGIN_URL),
       'process.env.URL_BASE': JSON.stringify(URL_BASE)
     }),
     chromeExtension({

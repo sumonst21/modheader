@@ -1,20 +1,15 @@
-import { writable, derived, get } from "svelte/store";
-import lodashCloneDeep from "lodash/cloneDeep";
-import lodashDebounce from "lodash/debounce";
-import lodashIsEqual from "lodash/isEqual";
-import lodashOrderBy from "lodash/orderBy";
-import lodashLast from "lodash/last";
-import lodashIsUndefined from "lodash/isUndefined";
-import lodashIsEmpty from "lodash/isEmpty";
-import { showMessage, hideMessage } from "./toast";
-import { getLocal, setLocal, removeLocal, fixProfiles } from "./storage";
-import { getActiveTab } from "./tabs";
-import {
-  createHeader,
-  takeRight,
-  generateBackgroundColor,
-  generateTextColor,
-} from "./utils";
+import { writable, derived, get } from 'svelte/store';
+import lodashCloneDeep from 'lodash/cloneDeep';
+import lodashDebounce from 'lodash/debounce';
+import lodashIsEqual from 'lodash/isEqual';
+import lodashOrderBy from 'lodash/orderBy';
+import lodashLast from 'lodash/last';
+import lodashIsUndefined from 'lodash/isUndefined';
+import lodashIsEmpty from 'lodash/isEmpty';
+import { showMessage, hideMessage } from './toast';
+import { getLocal, setLocal, removeLocal, fixProfiles } from './storage';
+import { getActiveTab } from './tabs';
+import { createHeader, takeRight, generateBackgroundColor, generateTextColor } from './utils';
 
 export const profiles = writable([]);
 let latestProfiles = [];
@@ -22,11 +17,12 @@ export const selectedProfileIndex = writable(0);
 let latestSelectedProfileIndex = 0;
 export const selectedProfile = derived(
   [profiles, selectedProfileIndex],
-  ([$profiles, $selectedProfileIndex]) => $profiles[$selectedProfileIndex],
+  ([$profiles, $selectedProfileIndex]) => $profiles[$selectedProfileIndex] || {},
   {}
 );
 export const isPaused = writable(false);
 export const isLocked = writable(false);
+export const signedInUser = writable(undefined);
 const debouncedSave = lodashDebounce(save, 500, { leading: true, trailing: true });
 
 export const changesStack = writable([]);
@@ -37,10 +33,7 @@ profiles.subscribe(($profiles) => {
   if (!ignoringChangeStack) {
     const changes = get(changesStack);
     const profilesCopy = lodashCloneDeep($profiles);
-    if (
-      changes.length === 0 ||
-      !lodashIsEqual(lodashLast(changes).profiles, profilesCopy)
-    ) {
+    if (changes.length === 0 || !lodashIsEqual(lodashLast(changes).profiles, profilesCopy)) {
       changes.push({ profiles: profilesCopy });
       changesStack.set(changes);
     }
@@ -93,25 +86,25 @@ export async function save() {
     const background = chrome.extension.getBackgroundPage();
     await background.saveToStorage({
       profiles: latestProfiles,
-      selectedProfile: latestSelectedProfileIndex,
+      selectedProfile: latestSelectedProfileIndex
     });
   } catch (err) {
     // Firefox's private session cannot access background page, so just set
     // directly to the browser storage.
     await browser.storage.local.set({
       profiles: latestProfiles,
-      selectedProfile: latestSelectedProfileIndex,
+      selectedProfile: latestSelectedProfileIndex
     });
   }
 }
 
 export async function addFilter() {
-  let urlRegex = "";
+  let urlRegex = '';
   const tab = await getActiveTab();
   if (tab && !lodashIsEmpty(tab.url)) {
     const origin = new URL(tab.url).origin;
-    if (!lodashIsEmpty(origin) && origin !== "null") {
-      urlRegex = origin.replace(/\//g, "\\/");
+    if (!lodashIsEmpty(origin) && origin !== 'null') {
+      urlRegex = origin.replace(/\//g, '\\/');
     }
   }
   const filters = latestProfiles[latestSelectedProfileIndex].filters;
@@ -120,12 +113,12 @@ export async function addFilter() {
       ...filters,
       {
         enabled: true,
-        type: "urls",
+        type: 'urls',
         urlRegex: urlRegex,
-        comment: "",
-        resourceType: [],
-      },
-    ],
+        comment: '',
+        resourceType: []
+      }
+    ]
   });
 }
 
@@ -134,11 +127,11 @@ export function addHeader(headers) {
 }
 
 export async function addUrlReplacement(replacements) {
-  let domain = "";
+  let domain = '';
   const tab = await getActiveTab();
   if (tab && !lodashIsEmpty(tab.url)) {
     const origin = new URL(tab.url).origin;
-    if (!lodashIsEmpty(origin) && origin !== "null") {
+    if (!lodashIsEmpty(origin) && origin !== 'null') {
       domain = origin;
     }
   }
@@ -148,15 +141,13 @@ export async function addUrlReplacement(replacements) {
       enabled: true,
       name: domain,
       value: domain,
-      comment: "",
-    },
+      comment: ''
+    }
   ];
 }
 
 export function removeFilter(filterIndex) {
-  const filters = lodashCloneDeep(
-    latestProfiles[latestSelectedProfileIndex].filters
-  );
+  const filters = lodashCloneDeep(latestProfiles[latestSelectedProfileIndex].filters);
   filters.splice(filterIndex, 1);
   commitChange({ filters });
 }
@@ -210,16 +201,10 @@ export function undo() {
     ) {
       break;
     }
-    if (
-      !lodashIsUndefined(lastChange.isLocked) &&
-      lastChange.isLocked !== currentIsLocked
-    ) {
+    if (!lodashIsUndefined(lastChange.isLocked) && lastChange.isLocked !== currentIsLocked) {
       break;
     }
-    if (
-      !lodashIsUndefined(lastChange.isPaused) &&
-      lastChange.isPaused !== currentIsPaused
-    ) {
+    if (!lodashIsUndefined(lastChange.isPaused) && lastChange.isPaused !== currentIsPaused) {
       break;
     }
   }
@@ -240,29 +225,29 @@ export async function pause() {
 
 export async function play() {
   isPaused.set(false);
-  await removeLocal("isPaused");
+  await removeLocal('isPaused');
 }
 
 export async function lockToTab() {
   isLocked.set(true);
   if (isInitialized) {
-    const { activeTabId } = await getLocal("activeTabId");
+    const { activeTabId } = await getLocal('activeTabId');
     await setLocal({ lockedTabId: activeTabId });
   }
 }
 
 export async function unlockAllTab() {
   isLocked.set(false);
-  await removeLocal("lockedTabId");
+  await removeLocal('lockedTabId');
 }
 
 export function createProfile() {
   let index = 1;
-  while (isExistingProfileTitle_("Profile " + index)) {
+  while (isExistingProfileTitle_('Profile ' + index)) {
     ++index;
   }
   const profile = {
-    title: "Profile " + index,
+    title: 'Profile ' + index,
     hideComment: true,
     headers: [createHeader()],
     respHeaders: [],
@@ -271,16 +256,12 @@ export function createProfile() {
     appendMode: false,
     backgroundColor: generateBackgroundColor(),
     textColor: generateTextColor(),
-    shortTitle: takeRight(index),
+    shortTitle: takeRight(index)
   };
   return profile;
 }
 
-function setProfilesAndIndex(
-  newProfiles,
-  newIndex,
-  { newIsLocked, newIsPaused } = {}
-) {
+function setProfilesAndIndex(newProfiles, newIndex, { newIsLocked, newIsPaused } = {}) {
   ignoringChangeStack = true;
   newIndex = Math.max(0, Math.min(newProfiles.length - 1, newIndex));
   if (lodashIsUndefined(newIsLocked)) {
@@ -306,7 +287,7 @@ function setProfilesAndIndex(
     profiles: lodashCloneDeep(newProfiles),
     selectedProfileIndex: newIndex,
     isLocked: newIsLocked,
-    isPaused: newIsPaused,
+    isPaused: newIsPaused
   });
 
   changesStack.set(changes);
@@ -317,10 +298,9 @@ export function importProfiles(importProfiles) {
   fixProfiles(importProfiles);
   const innerProfiles = latestProfiles.concat(importProfiles);
   setProfilesAndIndex(innerProfiles, innerProfiles.length - 1);
-  showMessage(
-    `Imported profiles: ${importProfiles.map((p) => p.title).join(", ")}`,
-    { canUndo: true }
-  );
+  showMessage(`Imported profiles: ${importProfiles.map((p) => p.title).join(', ')}`, {
+    canUndo: true
+  });
 }
 
 export function addProfile() {
@@ -339,42 +319,44 @@ export function removeProfile(profile) {
     latestProfiles = [createProfile()];
   }
   setProfilesAndIndex(latestProfiles, latestProfiles.length - 1);
-  showMessage("Profile deleted", { canUndo: true });
+  showMessage('Profile deleted', { canUndo: true });
 }
 
 export function cloneProfile(profile) {
   const newProfile = lodashCloneDeep(profile);
-  newProfile.title = "Copy of " + newProfile.title;
+  newProfile.title = 'Copy of ' + newProfile.title;
   latestProfiles.push(newProfile);
   setProfilesAndIndex(latestProfiles, latestProfiles.length - 1);
-  showMessage("Profile cloned", { canUndo: true });
+  showMessage('Profile cloned', { canUndo: true });
 }
 
 export function restoreToProfiles(profilesToRestore) {
   fixProfiles(profilesToRestore);
   setProfilesAndIndex(profilesToRestore, 0);
-  showMessage("Profiles restored", { canUndo: true });
+  showMessage('Profiles restored', { canUndo: true });
 }
 
 export function sortProfiles(sortOrder) {
-  profiles.set(lodashOrderBy(latestProfiles, ["title"], [sortOrder]));
-  if (sortOrder === "asc") {
-    showMessage("Profiles sorted in ascending order", { canUndo: true });
+  profiles.set(lodashOrderBy(latestProfiles, ['title'], [sortOrder]));
+  if (sortOrder === 'asc') {
+    showMessage('Profiles sorted in ascending order', { canUndo: true });
   } else {
-    showMessage("Profiles sorted in descending order", { canUndo: true });
+    showMessage('Profiles sorted in descending order', { canUndo: true });
   }
 }
 
 export async function init() {
   const chromeLocal = await getLocal([
-    "profiles",
-    "selectedProfile",
-    "lockedTabId",
-    "isPaused",
+    'profiles',
+    'selectedProfile',
+    'signedInUser',
+    'lockedTabId',
+    'isPaused'
   ]);
+  signedInUser.set(chromeLocal.signedInUser);
   setProfilesAndIndex(chromeLocal.profiles, chromeLocal.selectedProfile, {
     newIsLocked: !!chromeLocal.lockedTabId,
-    newIsPaused: !!chromeLocal.isPaused,
+    newIsPaused: !!chromeLocal.isPaused
   });
   isInitialized = true;
 }

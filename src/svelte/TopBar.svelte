@@ -30,6 +30,7 @@
   import ProfileBadgeDialog from './ProfileBadgeDialog.svelte';
   import CloudBackupDialog from './CloudBackupDialog.svelte';
   import MdiIcon from './MdiIcon.svelte';
+  import ProfilePicture from './ProfilePicture.svelte';
   import {
     addHeader,
     addUrlReplacement,
@@ -45,10 +46,12 @@
     lockToTab,
     unlockAllTab,
     isLocked,
+    signedInUser,
     undo
   } from '../js/datasource';
   import { showMessage } from '../js/toast';
   import { setPreferredColorScheme } from '../js/color-scheme';
+  import { removeLocal } from '../js/storage';
 
   let pauseSnackbar;
   let tabLockSnackbar;
@@ -59,6 +62,7 @@
   let cloudBackupDialog;
   let profileBadgeDialog;
   let darkModeMenu;
+  let accountMenu;
 
   function togglePause() {
     if ($isPaused) {
@@ -74,7 +78,12 @@
     });
   }
 
-  function signIn() {
+  async function signOut() {
+    await removeLocal(['signedInUser']);
+    signedInUser.set(undefined);
+  }
+
+  async function signIn() {
     const url = new URL(`${process.env.URL_BASE}/login`);
     url.searchParams.set('for', process.env.BROWSER);
     url.searchParams.set('extension_id', chrome.runtime.id);
@@ -215,11 +224,23 @@
       <IconButton dense on:click={() => exportDialog.show()} title="Export / share profile(s)">
         <MdiIcon size="24" icon={mdiShare} {color} />
       </IconButton>
-      <Button
-        style="min-width: fit-content; color: {color}"
-        on:click={() => signIn()}
-        title="Sign in">Sign in</Button
-      >
+      {#if $signedInUser}
+        <IconButton dense title="Account" on:click={() => accountMenu.setOpen(true)}>
+          <ProfilePicture picture={$signedInUser.picture} />
+        </IconButton>
+
+        <Menu bind:this={accountMenu} anchorCorner="TOP_LEFT">
+          <List>
+            <Item on:SMUI:action={() => signOut()}>Sign out</Item>
+          </List>
+        </Menu>
+      {:else}
+        <Button
+          style="min-width: fit-content; color: {color}"
+          on:click={() => signIn()}
+          title="Sign in">Sign in</Button
+        >
+      {/if}
       <IconButton
         dense
         on:click={() => {
