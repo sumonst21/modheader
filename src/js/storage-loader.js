@@ -4,33 +4,6 @@ import lodashIsUndefined from 'lodash/isUndefined';
 import lodashIsEmpty from 'lodash/isEmpty';
 
 export async function initStorage() {
-  if (localStorage.profiles) {
-    const profiles = JSON.parse(localStorage.profiles);
-    fixProfiles(profiles);
-    let profileIndex = 0;
-    if (localStorage.selectedProfile) {
-      profileIndex = Number(localStorage.selectedProfile);
-    }
-    if (!(profileIndex >= 0 && profileIndex < profiles.length)) {
-      profileIndex = profiles.length - 1;
-    }
-    await setLocal({
-      profiles,
-      selectedProfile: profileIndex,
-      lockedTabId: localStorage.lockedTabId,
-      isPaused: localStorage.isPaused,
-      activeTabId: localStorage.activeTabId,
-      savedToCloud: localStorage.savedToCloud,
-      currentTabUrl: localStorage.currentTabUrl
-    });
-    delete localStorage.profiles;
-    delete localStorage.selectedProfile;
-    delete localStorage.lockedTabId;
-    delete localStorage.isPaused;
-    delete localStorage.activeTabId;
-    delete localStorage.savedToCloud;
-    delete localStorage.currentTabUrl;
-  }
   let chromeLocal = await getLocal();
   if (!chromeLocal.profiles) {
     const items = await getSync();

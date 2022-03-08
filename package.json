@@ -2,8 +2,10 @@
   "name": "modheader-chrome-extension",
   "version": "4.0.0",
   "description": "ModHeader chrome extension",
+  "type": "module",
   "scripts": {
     "postinstall": "npm run smui-theme-light && npm run smui-theme-dark",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "smui-theme-light": "sass --no-source-map -I node_modules theme/_smui-theme.scss src/styles/smui.css",
     "smui-theme-dark": "sass --no-source-map -I node_modules theme/dark/_smui-theme.scss src/styles/smui-dark.css",
     "build-chrome": "cross-env NODE_ENV=production BROWSER=chrome node utils/build.js",
@@ -35,16 +37,17 @@
     "archiver": "^4.0.1",
     "cross-env": "^6.0.3",
     "fs-extra": "^7.0.1",
+    "jest": "^27.5.1",
     "js-base64": "^3.2.4",
     "lodash": "^4.17.21",
     "lz-string": "^1.4.4",
-    "sass": "^1.49.9",
     "rollup": "^2.68.0",
     "rollup-plugin-chrome-extension": "^3.6.7",
     "rollup-plugin-empty-dir": "^1.0.5",
     "rollup-plugin-svelte": "^7.1.0",
     "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-zip": "^1.0.3",
+    "sass": "^1.49.9",
     "svelte": "^3.46.4"
   }
 }
