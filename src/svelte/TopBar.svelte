@@ -24,7 +24,7 @@
     mdiUndo,
     mdiThemeLightDark
   } from '@mdi/js';
-  import { lightOrDark } from '../js/utils';
+  import { lightOrDark } from '../js/color';
   import ExportDialog from './ExportDialog.svelte';
   import ImportDialog from './ImportDialog.svelte';
   import ProfileBadgeDialog from './ProfileBadgeDialog.svelte';
@@ -46,12 +46,11 @@
     lockToTab,
     unlockAllTab,
     isLocked,
-    signedInUser,
     undo
   } from '../js/datasource';
+  import { signedInUser, signOut } from '../js/identity';
   import { showMessage } from '../js/toast';
   import { setPreferredColorScheme } from '../js/color-scheme';
-  import { removeLocal } from '../js/storage';
 
   let pauseSnackbar;
   let tabLockSnackbar;
@@ -76,11 +75,6 @@
     commitChange({
       hideComment: !$selectedProfile.hideComment
     });
-  }
-
-  async function signOut() {
-    await removeLocal(['signedInUser']);
-    signedInUser.set(undefined);
   }
 
   async function signIn() {

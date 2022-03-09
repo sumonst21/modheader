@@ -5,7 +5,7 @@ import { initStorage } from './storage-loader';
 import { getSync, removeLocal, removeSync, setLocal, setSync } from './storage';
 import { clearContextMenu, createContextMenu, updateContextMenu } from './context-menu';
 import { setBrowserAction } from './browser-action';
-import { signedInUser } from './datasource';
+import { registerSignInChecker } from './identity';
 
 const MAX_PROFILES_IN_CLOUD = 50;
 const CHROME_VERSION = getChromeVersion();
@@ -161,15 +161,6 @@ function modifyHeader(url, currentProfile, source, dest) {
       indexMap[normalizedHeaderName] = dest.length - 1;
     }
   }
-}
-
-async function checkSignedIn_() {
-  const response = await fetch(`${process.env.URL_BASE}/api/u/user-details`, {
-    mode: 'cors',
-    credentials: 'include'
-  });
-  await setLocal({ signedInUser: await response.json() });
-  signedInUser.set(response.user);
 }
 
 function modifyRequestHandler_(details) {
@@ -429,10 +420,7 @@ async function initialize() {
   setupHeaderModListener();
   await resetBadge();
   await resetContextMenu();
-  chrome.webRequest.onSendHeaders.removeListener(checkSignedIn_);
-  chrome.webRequest.onSendHeaders.addListener(checkSignedIn_, {
-    urls: [process.env.CHECK_LOGIN_URL, `${process.env.CHECK_LOGIN_URL}?*`]
-  });
+  registerSignInChecker();
 
   chrome.storage.onChanged.addListener(async (changes, areaName) => {
     if (areaName !== 'local') {
@@ -474,11 +462,6 @@ chrome.runtime.onMessageExternal.addListener(async function (request, sender, se
       break;
     case 'SWITCH_TO_LATEST':
       await setLocal({ selectedProfile: chromeLocal.profiles.length - 1 });
-      sendResponse({ success: true });
-      break;
-    case 'SIGN_IN':
-      await setLocal({ signedInUser: request.user });
-      signedInUser.set(request.user);
       sendResponse({ success: true });
       break;
     default:

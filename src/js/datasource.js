@@ -8,6 +8,7 @@ import lodashIsUndefined from 'lodash/isUndefined';
 import lodashIsEmpty from 'lodash/isEmpty';
 import { showMessage, hideMessage } from './toast';
 import { getLocal, setLocal, removeLocal } from './storage';
+import { signedInUser } from './identity';
 import { fixProfiles } from './profile';
 import { getActiveTab } from './tabs';
 import { createHeader, takeRight } from './utils';
@@ -24,7 +25,6 @@ export const selectedProfile = derived(
 );
 export const isPaused = writable(false);
 export const isLocked = writable(false);
-export const signedInUser = writable(undefined);
 const debouncedSave = lodashDebounce(save, 500, { leading: true, trailing: true });
 
 export const changesStack = writable([]);
