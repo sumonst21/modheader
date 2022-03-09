@@ -3,15 +3,16 @@ import { removeLocal, setLocal } from './storage.js';
 
 export const signedInUser = writable(undefined);
 
-async function loadSignedInUser() {
+export async function loadSignedInUser() {
   try {
     const response = await fetch(`${process.env.URL_BASE}/api/u/user-details`, {
       mode: 'cors',
       credentials: 'include'
     });
     if (response.ok) {
-      await setLocal({ signedInUser: await response.json() });
-      signedInUser.set(response.user);
+      const user = await response.json();
+      await setLocal({ signedInUser: user });
+      signedInUser.set(user);
     }
   } catch (err) {
     console.error('Failed to fetch signed in user details', err);
