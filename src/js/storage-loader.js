@@ -5,6 +5,7 @@ import lodashIsEmpty from 'lodash/isEmpty';
 
 export async function initStorage() {
   let chromeLocal = await getLocal();
+  let isMutated;
   if (!chromeLocal.profiles) {
     const items = await getSync();
     const keys = items ? Object.keys(items) : [];
@@ -15,13 +16,15 @@ export async function initStorage() {
         selectedProfile: 0,
         savedToCloud: true
       };
-      await setLocal(chromeLocal);
+      isMutated = true;
     }
   }
   if (lodashIsEmpty(chromeLocal.profiles)) {
     chromeLocal.profiles = [];
   }
-  let isMutated = fixProfiles(chromeLocal.profiles);
+  if (fixProfiles(chromeLocal.profiles)) {
+    isMutated = true;
+  }
   if (
     lodashIsUndefined(chromeLocal.selectedProfile) ||
     chromeLocal.selectedProfile < 0 ||

@@ -7,35 +7,69 @@ const mockStorage = {
 };
 jest.unstable_mockModule('./storage', () => mockStorage);
 
+const mockProfile = {
+  fixProfiles: jest.fn()
+};
+jest.unstable_mockModule('./profile', () => mockProfile);
+
 const { initStorage } = await import('./storage-loader');
 
 describe('storage-loader', () => {
+  beforeEach(() => {
+    mockProfile.fixProfiles.mockImplementation((profiles) => profiles);
+  });
+
   test('Setup default profile', async () => {
     mockStorage.getLocal.mockResolvedValue({});
+    mockProfile.fixProfiles.mockImplementation((profiles) => {
+      profiles.push({ title: 'Default profile' });
+      return true;
+    });
+    const local = await initStorage();
+    expect(local).toEqual({
+      profiles: [{ title: 'Default profile' }],
+      selectedProfile: 0
+    });
+    expect(mockStorage.getLocal).toHaveBeenCalledTimes(1);
+    expect(mockStorage.setLocal).toHaveBeenCalledTimes(1);
+    expect(mockProfile.fixProfiles).toHaveBeenCalledTimes(1);
+  });
+
+  test('Load from sync profile', async () => {
+    mockStorage.getLocal.mockResolvedValue({});
+    mockStorage.getSync.mockResolvedValue({
+      1: [{ title: 'Profile 1' }],
+      2: [{ title: 'Profile 2' }]
+    });
     const local = await initStorage();
     expect(local).toEqual({
       profiles: [
-        {
-          appendMode: false,
-          backgroundColor: expect.any(String),
-          filters: [],
-          headers: [
-            {
-              comment: '',
-              enabled: true,
-              name: '',
-              value: ''
-            }
-          ],
-          hideComment: true,
-          respHeaders: [],
-          shortTitle: '1',
-          textColor: expect.any(String),
-          title: 'Profile 1',
-          urlReplacements: []
-        }
+        expect.objectContaining({
+          title: 'Profile 2'
+        })
       ],
+      selectedProfile: 0,
+      savedToCloud: true
+    });
+    expect(mockStorage.getLocal).toHaveBeenCalledTimes(1);
+    expect(mockStorage.getSync).toHaveBeenCalledTimes(1);
+    expect(mockStorage.setLocal).toHaveBeenCalledTimes(1);
+  });
+
+  test('No mutation', async () => {
+    mockStorage.getLocal.mockResolvedValue({
+      profiles: [{ title: 'Default profile' }],
       selectedProfile: 0
     });
+    mockProfile.fixProfiles.mockReturnValue(false);
+    const local = await initStorage();
+    expect(local).toEqual({
+      profiles: [{ title: 'Default profile' }],
+      selectedProfile: 0
+    });
+    expect(mockStorage.getLocal).toHaveBeenCalledTimes(1);
+    expect(mockStorage.getSync).not.toHaveBeenCalled();
+    expect(mockStorage.setLocal).not.toHaveBeenCalled();
+    expect(mockProfile.fixProfiles).toHaveBeenCalledTimes(1);
   });
 });

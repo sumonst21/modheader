@@ -28,6 +28,9 @@ export default {
     }),
     chromeExtension({
       extendManifest: (manifest) => {
+        if (!production) {
+          manifest.externally_connectable.matches.push('*://localhost/*');
+        }
         if (process.env.BROWSER === 'firefox') {
           manifest.browser_specific_settings = {
             gecko: {

@@ -1,25 +1,16 @@
 export async function getActiveTab() {
-  return new Promise((resolve) => {
-    chrome.permissions.request(
+  return new Promise((resolve, reject) => {
+    chrome.tabs.query(
       {
-        permissions: ['activeTab']
+        active: true,
+        currentWindow: true,
+        windowType: 'normal'
       },
-      function (granted) {
-        if (granted) {
-          chrome.tabs.query(
-            {
-              active: true,
-              currentWindow: true,
-              windowType: 'normal'
-            },
-            (tabs) => {
-              if (tabs && tabs.length > 0) {
-                resolve(tabs[0]);
-              } else {
-                resolve(undefined);
-              }
-            }
-          );
+      (tabs) => {
+        if (chrome.runtime.lastError) {
+          reject(chrome.runtime.lastError);
+        } else if (tabs && tabs.length > 0) {
+          resolve(tabs[0]);
         } else {
           resolve(undefined);
         }

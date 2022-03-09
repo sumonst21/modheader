@@ -20,9 +20,8 @@
   "incognito": "spanning",
   "permissions": ["contextMenus", "storage", "webRequest", "webRequestBlocking", "<all_urls>"],
   "externally_connectable": {
-    "matches": ["*://modheader.com/*", "*://localhost/*"]
+    "matches": ["*://modheader.com/*"]
   },
   "web_accessible_resources": ["images/icon_bw.png"],
-  "optional_permissions": ["activeTab"],
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
 }
