@@ -4,12 +4,10 @@ import lodashDebounce from 'lodash/debounce';
 import lodashIsEqual from 'lodash/isEqual';
 import lodashOrderBy from 'lodash/orderBy';
 import lodashIsUndefined from 'lodash/isUndefined';
-import lodashIsEmpty from 'lodash/isEmpty';
 import { showMessage, hideMessage } from './toast';
 import { getLocal, setLocal, removeLocal } from './storage';
 import { signedInUser } from './identity';
 import { fixProfiles } from './profile';
-import { getActiveTab } from './tabs';
 import {
   undoChange,
   commit,
@@ -17,7 +15,8 @@ import {
   stopIgnoringChange,
   startIgnoringChange
 } from './change-stack';
-import { createHeader, takeRight } from './utils';
+import { takeRight } from './utils';
+import { createHeader } from './header';
 import { generateBackgroundColor, generateTextColor } from './color';
 
 export const profiles = writable([]);
@@ -76,77 +75,6 @@ export async function save() {
       selectedProfile: latestSelectedProfileIndex
     });
   }
-}
-
-export async function addFilter() {
-  let urlRegex = '';
-  const tab = await getActiveTab();
-  if (tab && !lodashIsEmpty(tab.url)) {
-    const host = new URL(tab.url).host;
-    if (!lodashIsEmpty(host) && host !== 'null') {
-      urlRegex = `.*://${host}/.*`;
-    }
-  }
-  const filters = latestProfiles[latestSelectedProfileIndex].filters;
-  commitChange({
-    filters: [
-      ...filters,
-      {
-        enabled: true,
-        type: 'urls',
-        urlRegex: urlRegex,
-        comment: '',
-        resourceType: []
-      }
-    ]
-  });
-}
-
-export function addHeader(headers) {
-  return [...headers, createHeader()];
-}
-
-export async function addUrlReplacement(replacements) {
-  let name = '';
-  let value = '';
-  const tab = await getActiveTab();
-  if (tab && !lodashIsEmpty(tab.url)) {
-    const url = new URL(tab.url);
-    const { host, origin } = url;
-    if (!lodashIsEmpty(host) && host !== 'null') {
-      name = `.*://${host}/.*`;
-    }
-    if (!lodashIsEmpty(origin) && origin !== 'null') {
-      value = origin;
-    }
-  }
-  return [
-    ...replacements,
-    {
-      enabled: true,
-      name,
-      value,
-      comment: ''
-    }
-  ];
-}
-
-export function removeFilter(filterIndex) {
-  const filters = lodashCloneDeep(latestProfiles[latestSelectedProfileIndex].filters);
-  filters.splice(filterIndex, 1);
-  commitChange({ filters });
-}
-
-export function removeHeader(headers, headerIndex) {
-  headers = lodashCloneDeep(headers);
-  headers.splice(headerIndex, 1);
-  return headers;
-}
-
-export function removeUrlReplacement(urlReplacements, replacementIndex) {
-  urlReplacements = lodashCloneDeep(urlReplacements);
-  urlReplacements.splice(replacementIndex, 1);
-  return urlReplacements;
 }
 
 export function commitChange(change, index = -1) {

@@ -1,4 +1,5 @@
-import { createHeader, takeRight } from './utils';
+import { takeRight } from './utils';
+import { createHeader } from './header';
 import { generateBackgroundColor, generateTextColor } from './color';
 
 export function fixProfiles(profiles) {

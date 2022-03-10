@@ -10,18 +10,9 @@
   import Drawer from './Drawer.svelte';
   import Filters from './Filters.svelte';
   import Headers from './Headers.svelte';
-  import {
-    selectedProfile,
-    isPaused,
-    addHeader,
-    removeHeader,
-    addUrlReplacement,
-    removeUrlReplacement,
-    commitChange,
-    undo,
-    save,
-    init
-  } from '../js/datasource';
+  import { selectedProfile, isPaused, commitChange, undo, save, init } from '../js/datasource';
+  import { addUrlRedirect, removeUrlRedirect } from '../js/url-redirect.js';
+  import { addHeader, removeHeader } from '../js/header';
   import MdiIcon from './MdiIcon.svelte';
   import { toastMessage, undoable } from '../js/toast';
   import { KNOWN_REQUEST_HEADERS, KNOWN_RESPONSE_HEADERS } from '../js/constants';
@@ -106,12 +97,12 @@
           profile={$selectedProfile}
           on:add={async () => {
             commitChange({
-              urlReplacements: await addUrlReplacement($selectedProfile.urlReplacements)
+              urlReplacements: await addUrlRedirect($selectedProfile.urlReplacements)
             });
           }}
           on:remove={(event) => {
             commitChange({
-              urlReplacements: removeUrlReplacement($selectedProfile.urlReplacements, event.detail)
+              urlReplacements: removeUrlRedirect($selectedProfile.urlReplacements, event.detail)
             });
           }}
           on:refresh={(event) => {

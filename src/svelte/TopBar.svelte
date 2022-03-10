@@ -32,9 +32,6 @@
   import MdiIcon from './MdiIcon.svelte';
   import ProfilePicture from './ProfilePicture.svelte';
   import {
-    addHeader,
-    addUrlReplacement,
-    addFilter,
     selectedProfile,
     cloneProfile,
     commitChange,
@@ -47,6 +44,9 @@
     isLocked,
     undo
   } from '../js/datasource';
+  import { addHeader } from '../js/header';
+  import { addFilter } from '../js/filter';
+  import { addUrlRedirect } from '../js/url-redirect';
   import { canUndoChange } from '../js/change-stack';
   import { signedInUser, signOut } from '../js/identity';
   import { showMessage } from '../js/toast';
@@ -179,12 +179,17 @@
           <Item
             on:SMUI:action={async () =>
               commitChange({
-                urlReplacements: await addUrlReplacement($selectedProfile.urlReplacements)
+                urlReplacements: await addUrlRedirect($selectedProfile.urlReplacements)
               })}
           >
             URL redirect
           </Item>
-          <Item on:SMUI:action={() => addFilter()}>Filter</Item>
+          <Item
+            on:SMUI:action={async () =>
+              commitChange({
+                filters: await addFilter($selectedProfile.filters)
+              })}>Filter</Item
+          >
         </List>
       </Menu>
       <IconButton
