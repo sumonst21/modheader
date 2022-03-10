@@ -36,7 +36,6 @@
     addUrlReplacement,
     addFilter,
     selectedProfile,
-    changesStack,
     cloneProfile,
     commitChange,
     removeProfile,
@@ -48,6 +47,7 @@
     isLocked,
     undo
   } from '../js/datasource';
+  import { canUndoChange } from '../js/change-stack';
   import { signedInUser, signOut } from '../js/identity';
   import { showMessage } from '../js/toast';
   import { setPreferredColorScheme } from '../js/color-scheme';
@@ -150,7 +150,7 @@
       />
     </Section>
     <Section align="end">
-      {#if $changesStack.length > 1}
+      {#if $canUndoChange}
         <IconButton dense on:click={() => undo()} title="Undo">
           <MdiIcon size="24" icon={mdiUndo} {color} />
         </IconButton>

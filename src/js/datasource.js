@@ -3,7 +3,6 @@ import lodashCloneDeep from 'lodash/cloneDeep';
 import lodashDebounce from 'lodash/debounce';
 import lodashIsEqual from 'lodash/isEqual';
 import lodashOrderBy from 'lodash/orderBy';
-import lodashLast from 'lodash/last';
 import lodashIsUndefined from 'lodash/isUndefined';
 import lodashIsEmpty from 'lodash/isEmpty';
 import { showMessage, hideMessage } from './toast';
@@ -11,6 +10,13 @@ import { getLocal, setLocal, removeLocal } from './storage';
 import { signedInUser } from './identity';
 import { fixProfiles } from './profile';
 import { getActiveTab } from './tabs';
+import {
+  undoChange,
+  commit,
+  setChangeField,
+  stopIgnoringChange,
+  startIgnoringChange
+} from './change-stack';
 import { createHeader, takeRight } from './utils';
 import { generateBackgroundColor, generateTextColor } from './color';
 
@@ -27,52 +33,24 @@ export const isPaused = writable(false);
 export const isLocked = writable(false);
 const debouncedSave = lodashDebounce(save, 500, { leading: true, trailing: true });
 
-export const changesStack = writable([]);
-let ignoringChangeStack = true;
 let isInitialized = false;
+
+startIgnoringChange();
 profiles.subscribe(($profiles) => {
   latestProfiles = $profiles;
-  if (!ignoringChangeStack) {
-    const changes = get(changesStack);
-    const profilesCopy = lodashCloneDeep($profiles);
-    if (changes.length === 0 || !lodashIsEqual(lodashLast(changes).profiles, profilesCopy)) {
-      changes.push({ profiles: profilesCopy });
-      changesStack.set(changes);
-    }
-  }
+  setChangeField('profiles', latestProfiles);
 });
 selectedProfileIndex.subscribe(($selectedProfileIndex) => {
   latestSelectedProfileIndex = $selectedProfileIndex;
-  if (!ignoringChangeStack) {
-    const changes = get(changesStack);
-    if (
-      changes.length === 0 ||
-      lodashLast(changes).selectedProfileIndex !== $selectedProfileIndex
-    ) {
-      changes.push({ selectedProfileIndex: $selectedProfileIndex });
-      changesStack.set(changes);
-    }
-  }
+  setChangeField('selectedProfileIndex', latestSelectedProfileIndex);
 });
 isPaused.subscribe(($isPaused) => {
-  if (!ignoringChangeStack) {
-    const changes = get(changesStack);
-    if (changes.length === 0 || lodashLast(changes).isPaused !== $isPaused) {
-      changes.push({ isPaused: $isPaused });
-      changesStack.set(changes);
-    }
-  }
+  setChangeField('isPaused', $isPaused);
 });
 isLocked.subscribe(($isLocked) => {
-  if (!ignoringChangeStack) {
-    const changes = get(changesStack);
-    if (changes.length === 0 || lodashLast(changes).isLocked !== $isLocked) {
-      changes.push({ isLocked: $isLocked });
-      changesStack.set(changes);
-    }
-  }
+  setChangeField('isLocked', $isLocked);
 });
-ignoringChangeStack = false;
+stopIgnoringChange();
 
 function isExistingProfileTitle_(title) {
   for (const profile of latestProfiles) {
@@ -180,17 +158,15 @@ export function commitChange(change, index = -1) {
 }
 
 export function undo() {
-  const changes = get(changesStack);
-  if (changes.length === 0) {
+  let lastChange = undoChange();
+  if (!lastChange) {
     return;
   }
-  let lastChange;
   const currentProfiles = latestProfiles;
   const currentSelectedProfileIndex = latestSelectedProfileIndex;
   const currentIsLocked = get(isLocked);
   const currentIsPaused = get(isPaused);
-  while (changes.length > 0) {
-    lastChange = changes.pop();
+  while (lastChange) {
     if (
       !lodashIsUndefined(lastChange.profiles) &&
       !lodashIsEqual(lastChange.profiles, currentProfiles)
@@ -209,8 +185,8 @@ export function undo() {
     if (!lodashIsUndefined(lastChange.isPaused) && lastChange.isPaused !== currentIsPaused) {
       break;
     }
+    lastChange = undoChange();
   }
-  changesStack.set(changes);
   setProfilesAndIndex(
     lastChange.profiles || currentProfiles,
     lastChange.selectedProfileIndex || currentSelectedProfileIndex,
@@ -264,36 +240,33 @@ export function createProfile() {
 }
 
 function setProfilesAndIndex(newProfiles, newIndex, { newIsLocked, newIsPaused } = {}) {
-  ignoringChangeStack = true;
-  newIndex = Math.max(0, Math.min(newProfiles.length - 1, newIndex));
-  if (lodashIsUndefined(newIsLocked)) {
-    newIsLocked = get(isLocked);
-  }
-  if (lodashIsUndefined(newIsPaused)) {
-    newIsPaused = get(isPaused);
-  }
-  profiles.set(newProfiles);
-  selectedProfileIndex.set(newIndex);
-  if (newIsLocked) {
-    lockToTab();
-  } else {
-    unlockAllTab();
-  }
-  if (newIsPaused) {
-    pause();
-  } else {
-    play();
-  }
-  const changes = get(changesStack);
-  changes.push({
-    profiles: lodashCloneDeep(newProfiles),
-    selectedProfileIndex: newIndex,
-    isLocked: newIsLocked,
-    isPaused: newIsPaused
+  commit(() => {
+    newIndex = Math.max(0, Math.min(newProfiles.length - 1, newIndex));
+    if (lodashIsUndefined(newIsLocked)) {
+      newIsLocked = get(isLocked);
+    }
+    if (lodashIsUndefined(newIsPaused)) {
+      newIsPaused = get(isPaused);
+    }
+    profiles.set(newProfiles);
+    selectedProfileIndex.set(newIndex);
+    if (newIsLocked) {
+      lockToTab();
+    } else {
+      unlockAllTab();
+    }
+    if (newIsPaused) {
+      pause();
+    } else {
+      play();
+    }
+    return {
+      profiles: lodashCloneDeep(newProfiles),
+      selectedProfileIndex: newIndex,
+      isLocked: newIsLocked,
+      isPaused: newIsPaused
+    };
   });
-
-  changesStack.set(changes);
-  ignoringChangeStack = false;
 }
 
 export function importProfiles(importProfiles) {
