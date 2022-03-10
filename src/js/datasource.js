@@ -82,9 +82,9 @@ export async function addFilter() {
   let urlRegex = '';
   const tab = await getActiveTab();
   if (tab && !lodashIsEmpty(tab.url)) {
-    const origin = new URL(tab.url).origin;
-    if (!lodashIsEmpty(origin) && origin !== 'null') {
-      urlRegex = origin.replace(/\//g, '\\/');
+    const host = new URL(tab.url).host;
+    if (!lodashIsEmpty(host) && host !== 'null') {
+      urlRegex = `.*://${host}/.*`;
     }
   }
   const filters = latestProfiles[latestSelectedProfileIndex].filters;
@@ -107,20 +107,25 @@ export function addHeader(headers) {
 }
 
 export async function addUrlReplacement(replacements) {
-  let domain = '';
+  let name = '';
+  let value = '';
   const tab = await getActiveTab();
   if (tab && !lodashIsEmpty(tab.url)) {
-    const origin = new URL(tab.url).origin;
+    const url = new URL(tab.url);
+    const { host, origin } = url;
+    if (!lodashIsEmpty(host) && host !== 'null') {
+      name = `.*://${host}/.*`;
+    }
     if (!lodashIsEmpty(origin) && origin !== 'null') {
-      domain = origin;
+      value = origin;
     }
   }
   return [
     ...replacements,
     {
       enabled: true,
-      name: domain,
-      value: domain,
+      name,
+      value,
       comment: ''
     }
   ];
