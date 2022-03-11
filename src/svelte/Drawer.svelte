@@ -185,7 +185,7 @@
     <Item
       on:SMUI:action={() => {
         contextMenu.setOpen(false);
-        removeProfile($profiles[selectedProfileIndex]);
+        removeProfile(selectedProfileIndex);
       }}
     >
       <MdiIcon class="more-menu-icon" size="24" icon={mdiClose} color="red" />

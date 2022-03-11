@@ -33,6 +33,7 @@
   import ProfilePicture from './ProfilePicture.svelte';
   import {
     selectedProfile,
+    selectedProfileIndex,
     play,
     pause,
     isPaused,
@@ -284,7 +285,7 @@
             </List>
           </Menu>
           <Separator nav />
-          <Item on:SMUI:action={() => removeProfile($selectedProfile)}>
+          <Item on:SMUI:action={() => removeProfile($selectedProfileIndex)}>
             <MdiIcon class="more-menu-icon" size="24" icon={mdiTrashCan} color="#666" />
             Delete profile
           </Item>

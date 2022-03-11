@@ -135,13 +135,30 @@ export function addProfile() {
   commitData({ newProfiles: latestProfiles, newIndex: latestProfiles.length - 1 });
 }
 
-export function removeProfile(profile) {
-  latestProfiles.splice(latestProfiles.indexOf(profile), 1);
+export function removeProfile(profileIndex) {
+  latestProfiles.splice(profileIndex, 1);
   if (latestProfiles.length === 0) {
     latestProfiles = [createProfile()];
   }
   commitData({ newProfiles: latestProfiles, newIndex: latestProfiles.length - 1 });
   showMessage('Profile deleted', { canUndo: true });
+}
+
+export function cloneProfile(profile) {
+  const newProfile = lodashCloneDeep(profile);
+  newProfile.title = 'Copy of ' + newProfile.title;
+  latestProfiles.push(newProfile);
+  commitData({ newProfiles: latestProfiles, newIndex: latestProfiles.length - 1 });
+  showMessage('Profile cloned', { canUndo: true });
+}
+
+export function sortProfiles(sortOrder) {
+  profiles.set(lodashOrderBy(latestProfiles, ['title'], [sortOrder]));
+  if (sortOrder === 'asc') {
+    showMessage('Profiles sorted in ascending order', { canUndo: true });
+  } else {
+    showMessage('Profiles sorted in descending order', { canUndo: true });
+  }
 }
 
 export function importProfiles(importProfiles) {
@@ -153,25 +170,8 @@ export function importProfiles(importProfiles) {
   });
 }
 
-export function cloneProfile(profile) {
-  const newProfile = lodashCloneDeep(profile);
-  newProfile.title = 'Copy of ' + newProfile.title;
-  latestProfiles.push(newProfile);
-  commitData({ newProfiles: latestProfiles, newIndex: latestProfiles.length - 1 });
-  showMessage('Profile cloned', { canUndo: true });
-}
-
 export function restoreToProfiles(profilesToRestore) {
   fixProfiles(profilesToRestore);
   commitData({ newProfiles: profilesToRestore, newIndex: 0 });
   showMessage('Profiles restored', { canUndo: true });
-}
-
-export function sortProfiles(sortOrder) {
-  profiles.set(lodashOrderBy(latestProfiles, ['title'], [sortOrder]));
-  if (sortOrder === 'asc') {
-    showMessage('Profiles sorted in ascending order', { canUndo: true });
-  } else {
-    showMessage('Profiles sorted in descending order', { canUndo: true });
-  }
 }
