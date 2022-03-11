@@ -1,14 +1,13 @@
 <script>
-  import Drawer, { AppContent, Content, Header, Title, Subtitle, Scrim } from '@smui/drawer';
+  import Drawer, { Content } from '@smui/drawer';
   import Menu from '@smui/menu';
-  import List, { Item, Text, Separator, Subheader } from '@smui/list';
+  import List, { Item, Text, Separator } from '@smui/list';
   import {
     mdiCheckboxBlankOutline,
     mdiCheckboxMarked,
     mdiClose,
     mdiHelpCircleOutline,
     mdiThumbUpOutline,
-    mdiCircle,
     mdiSortAscending,
     mdiSortDescending,
     mdiChevronLeft,
@@ -18,16 +17,9 @@
   import { fade } from 'svelte/transition';
   import MdiIcon from './MdiIcon.svelte';
   import ProfileBadge from './ProfileBadge.svelte';
-  import { commitChange } from '../js/datasource';
   import { showMessage } from '../js/toast';
-  import {
-    addProfile,
-    sortProfiles,
-    selectProfile,
-    selectedProfile,
-    removeProfile,
-    profiles
-  } from '../js/datasource';
+  import { selectProfile, selectedProfile, profiles } from '../js/datasource';
+  import { addProfile, removeProfile, updateProfile, sortProfiles } from '../js/profile';
   import { PRIMARY_COLOR } from '../js/constants';
 
   let drawer;
@@ -37,7 +29,7 @@
   let contextMenu;
   let selectedProfileIndex;
 
-  function showMenu(event, { profile, profileIndex }) {
+  function showMenu(event, { profileIndex }) {
     contextMenu.setOpen(false);
     setImmediate(() => {
       selectedProfileIndex = profileIndex;
@@ -172,7 +164,7 @@
       on:SMUI:action={() => {
         const profile = $profiles[selectedProfileIndex];
         const alwaysOn = !profile.alwaysOn;
-        commitChange({ alwaysOn }, selectedProfileIndex);
+        updateProfile({ alwaysOn }, selectedProfileIndex);
         if (alwaysOn) {
           showMessage(`${profile.title} will stay active even when it is not selected`);
         } else {

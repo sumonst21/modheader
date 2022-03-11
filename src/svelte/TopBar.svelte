@@ -33,9 +33,6 @@
   import ProfilePicture from './ProfilePicture.svelte';
   import {
     selectedProfile,
-    cloneProfile,
-    commitChange,
-    removeProfile,
     play,
     pause,
     isPaused,
@@ -44,6 +41,7 @@
     isLocked,
     undo
   } from '../js/datasource';
+  import { removeProfile, cloneProfile, updateProfile } from '../js/profile';
   import { addHeader } from '../js/header';
   import { addFilter } from '../js/filter';
   import { addUrlRedirect } from '../js/url-redirect';
@@ -72,7 +70,7 @@
   }
 
   function toggleComment() {
-    commitChange({
+    updateProfile({
       hideComment: !$selectedProfile.hideComment
     });
   }
@@ -88,7 +86,7 @@
 
   function toggleAlwaysOn() {
     const alwaysOn = !$selectedProfile.alwaysOn;
-    commitChange({ alwaysOn });
+    updateProfile({ alwaysOn });
     if (alwaysOn) {
       showMessage('This profile will stay active even when it is not selected');
     } else {
@@ -146,7 +144,7 @@
         class="mdc-text-field__input profile-title"
         style="color: {$selectedProfile.textColor}"
         value={$selectedProfile.title}
-        on:input={(event) => commitChange({ title: event.target.value })}
+        on:input={(event) => updateProfile({ title: event.target.value })}
       />
     </Section>
     <Section align="end">
@@ -162,7 +160,7 @@
         <List>
           <Item
             on:SMUI:action={() =>
-              commitChange({
+              updateProfile({
                 headers: addHeader($selectedProfile.headers)
               })}
           >
@@ -170,7 +168,7 @@
           </Item>
           <Item
             on:SMUI:action={() =>
-              commitChange({
+              updateProfile({
                 respHeaders: addHeader($selectedProfile.respHeaders)
               })}
           >
@@ -178,7 +176,7 @@
           </Item>
           <Item
             on:SMUI:action={async () =>
-              commitChange({
+              updateProfile({
                 urlReplacements: await addUrlRedirect($selectedProfile.urlReplacements)
               })}
           >
@@ -186,7 +184,7 @@
           </Item>
           <Item
             on:SMUI:action={async () =>
-              commitChange({
+              updateProfile({
                 filters: await addFilter($selectedProfile.filters)
               })}>Filter</Item
           >
@@ -308,7 +306,7 @@
           </Item>
           <Separator nav />
           <Subheader>Header override mode</Subheader>
-          <Item on:SMUI:action={() => commitChange({ appendMode: false })}>
+          <Item on:SMUI:action={() => updateProfile({ appendMode: false })}>
             <MdiIcon
               class="more-menu-icon"
               size="24"
@@ -317,7 +315,7 @@
             />
             <Label>Override existing value</Label>
           </Item>
-          <Item on:SMUI:action={() => commitChange({ appendMode: true })}>
+          <Item on:SMUI:action={() => updateProfile({ appendMode: true })}>
             <MdiIcon
               class="more-menu-icon"
               size="24"
@@ -326,7 +324,7 @@
             />
             <Label>Value concatenation</Label>
           </Item>
-          <Item on:SMUI:action={() => commitChange({ appendMode: 'comma' })}>
+          <Item on:SMUI:action={() => updateProfile({ appendMode: 'comma' })}>
             <MdiIcon
               class="more-menu-icon"
               size="24"
@@ -338,7 +336,7 @@
 
           <Separator nav />
           <Subheader>Empty header mode</Subheader>
-          <Item on:SMUI:action={() => commitChange({ sendEmptyHeader: false })}>
+          <Item on:SMUI:action={() => updateProfile({ sendEmptyHeader: false })}>
             <MdiIcon
               class="more-menu-icon"
               size="24"
@@ -347,7 +345,7 @@
             />
             <Label>Remove empty header</Label>
           </Item>
-          <Item on:SMUI:action={() => commitChange({ sendEmptyHeader: true })}>
+          <Item on:SMUI:action={() => updateProfile({ sendEmptyHeader: true })}>
             <MdiIcon
               class="more-menu-icon"
               size="24"

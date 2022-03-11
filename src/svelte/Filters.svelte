@@ -14,7 +14,8 @@
   } from '@mdi/js';
   import lodashOrderBy from 'lodash/orderBy';
   import lodashDebounce from 'lodash/debounce';
-  import { selectedProfile, commitChange } from '../js/datasource';
+  import { selectedProfile } from '../js/datasource';
+  import { updateProfile } from '../js/profile';
   import { addFilter, removeFilter } from '../js/filter';
   import AutoComplete from './Autocomplete.svelte';
   import MdiIcon from './MdiIcon.svelte';
@@ -51,7 +52,7 @@
   }
 
   function refreshFilters() {
-    commitChange({ filters }, profileIndex);
+    updateProfile({ filters }, profileIndex);
   }
 
   const refreshFiltersDebounce = lodashDebounce(
@@ -91,11 +92,11 @@
 
       <Menu bind:this={sortMenu}>
         <List>
-          <Item on:SMUI:action={() => commitChange({ filters: addFilter($filters) })}>
+          <Item on:SMUI:action={async () => updateProfile({ filters: await addFilter(filters) })}>
             <MdiIcon class="more-menu-icon" size="24" icon={mdiPlus} color="#666" />
             <Text>Add</Text>
           </Item>
-          <Item on:SMUI:action={() => commitChange({ filters: [] })}>
+          <Item on:SMUI:action={() => updateProfile({ filters: [] })}>
             <MdiIcon class="more-menu-icon" size="24" icon={mdiTrashCanOutline} color="#666" />
             <Text>Clear all</Text>
           </Item>
@@ -190,7 +191,7 @@
         dense
         aria-label="Delete"
         class="small-icon-button data-table-cell flex-fixed-icon"
-        on:click={() => commitChange({ filters: removeFilter($filters, filterIndex) })}
+        on:click={() => updateProfile({ filters: removeFilter(filters, filterIndex) })}
       >
         <MdiIcon size="24" icon={mdiClose} color="red" />
       </IconButton>

@@ -10,7 +10,7 @@
   import { DISABLED_COLOR, PRIMARY_COLOR } from '../js/constants';
   import { showMessage } from '../js/toast';
   import { getLocal } from '../js/storage';
-  import { importProfiles } from '../js/datasource';
+  import { importProfiles } from '../js/profile';
 
   const SHARE_URL_PREFIX = 'https://modheader.com/p/';
   const OLD_SHARE_URL_PREFIX = 'https://bewisse.com/modheader/p/';

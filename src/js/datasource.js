@@ -2,12 +2,10 @@ import { writable, derived, get } from 'svelte/store';
 import lodashCloneDeep from 'lodash/cloneDeep';
 import lodashDebounce from 'lodash/debounce';
 import lodashIsEqual from 'lodash/isEqual';
-import lodashOrderBy from 'lodash/orderBy';
 import lodashIsUndefined from 'lodash/isUndefined';
-import { showMessage, hideMessage } from './toast';
+import { hideMessage } from './toast';
 import { getLocal, setLocal, removeLocal } from './storage';
 import { signedInUser } from './identity';
-import { fixProfiles } from './profile';
 import {
   undoChange,
   commit,
@@ -15,9 +13,6 @@ import {
   stopIgnoringChange,
   startIgnoringChange
 } from './change-stack';
-import { takeRight } from './utils';
-import { createHeader } from './header';
-import { generateBackgroundColor, generateTextColor } from './color';
 
 export const profiles = writable([]);
 let latestProfiles = [];
@@ -51,15 +46,6 @@ isLocked.subscribe(($isLocked) => {
 });
 stopIgnoringChange();
 
-function isExistingProfileTitle_(title) {
-  for (const profile of latestProfiles) {
-    if (profile.title === title) {
-      return true;
-    }
-  }
-  return false;
-}
-
 export async function save() {
   try {
     const background = chrome.extension.getBackgroundPage();
@@ -74,19 +60,6 @@ export async function save() {
       profiles: latestProfiles,
       selectedProfile: latestSelectedProfileIndex
     });
-  }
-}
-
-export function commitChange(change, index = -1) {
-  if (index === -1) {
-    index = latestSelectedProfileIndex;
-  }
-  const copy = lodashCloneDeep(latestProfiles[index]);
-  Object.assign(copy, change);
-  if (!lodashIsEqual(latestProfiles[index], copy)) {
-    latestProfiles[index] = copy;
-    setProfilesAndIndex(latestProfiles, index);
-    debouncedSave();
   }
 }
 
@@ -120,12 +93,12 @@ export function undo() {
     }
     lastChange = undoChange();
   }
-  setProfilesAndIndex(
-    lastChange.profiles || currentProfiles,
-    lastChange.selectedProfileIndex || currentSelectedProfileIndex,
-    { newIsLocked: lastChange.isLocked, newIsPaused: lastChange.isPaused }
-  );
-  debouncedSave();
+  commitData({
+    newProfiles: lastChange.profiles || currentProfiles,
+    newIndex: lastChange.selectedProfileIndex || currentSelectedProfileIndex,
+    newIsLocked: lastChange.isLocked,
+    newIsPaused: lastChange.isPaused
+  });
   hideMessage();
 }
 
@@ -152,27 +125,7 @@ export async function unlockAllTab() {
   await removeLocal('lockedTabId');
 }
 
-export function createProfile() {
-  let index = 1;
-  while (isExistingProfileTitle_('Profile ' + index)) {
-    ++index;
-  }
-  const profile = {
-    title: 'Profile ' + index,
-    hideComment: true,
-    headers: [createHeader()],
-    respHeaders: [],
-    filters: [],
-    urlReplacements: [],
-    appendMode: false,
-    backgroundColor: generateBackgroundColor(),
-    textColor: generateTextColor(),
-    shortTitle: takeRight(index)
-  };
-  return profile;
-}
-
-function setProfilesAndIndex(newProfiles, newIndex, { newIsLocked, newIsPaused } = {}) {
+export function commitData({ newProfiles, newIndex, newIsLocked, newIsPaused } = {}) {
   commit(() => {
     newIndex = Math.max(0, Math.min(newProfiles.length - 1, newIndex));
     if (lodashIsUndefined(newIsLocked)) {
@@ -200,57 +153,11 @@ function setProfilesAndIndex(newProfiles, newIndex, { newIsLocked, newIsPaused }
       isPaused: newIsPaused
     };
   });
-}
-
-export function importProfiles(importProfiles) {
-  fixProfiles(importProfiles);
-  const innerProfiles = latestProfiles.concat(importProfiles);
-  setProfilesAndIndex(innerProfiles, innerProfiles.length - 1);
-  showMessage(`Imported profiles: ${importProfiles.map((p) => p.title).join(', ')}`, {
-    canUndo: true
-  });
-}
-
-export function addProfile() {
-  const newProfile = createProfile();
-  latestProfiles.push(newProfile);
-  setProfilesAndIndex(latestProfiles, latestProfiles.length - 1);
+  debouncedSave();
 }
 
 export function selectProfile(profileIndex) {
   selectedProfileIndex.set(profileIndex);
-}
-
-export function removeProfile(profile) {
-  latestProfiles.splice(latestProfiles.indexOf(profile), 1);
-  if (latestProfiles.length === 0) {
-    latestProfiles = [createProfile()];
-  }
-  setProfilesAndIndex(latestProfiles, latestProfiles.length - 1);
-  showMessage('Profile deleted', { canUndo: true });
-}
-
-export function cloneProfile(profile) {
-  const newProfile = lodashCloneDeep(profile);
-  newProfile.title = 'Copy of ' + newProfile.title;
-  latestProfiles.push(newProfile);
-  setProfilesAndIndex(latestProfiles, latestProfiles.length - 1);
-  showMessage('Profile cloned', { canUndo: true });
-}
-
-export function restoreToProfiles(profilesToRestore) {
-  fixProfiles(profilesToRestore);
-  setProfilesAndIndex(profilesToRestore, 0);
-  showMessage('Profiles restored', { canUndo: true });
-}
-
-export function sortProfiles(sortOrder) {
-  profiles.set(lodashOrderBy(latestProfiles, ['title'], [sortOrder]));
-  if (sortOrder === 'asc') {
-    showMessage('Profiles sorted in ascending order', { canUndo: true });
-  } else {
-    showMessage('Profiles sorted in descending order', { canUndo: true });
-  }
 }
 
 export async function init() {
@@ -262,7 +169,9 @@ export async function init() {
     'isPaused'
   ]);
   signedInUser.set(chromeLocal.signedInUser);
-  setProfilesAndIndex(chromeLocal.profiles, chromeLocal.selectedProfile, {
+  commitData({
+    newProfiles: chromeLocal.profiles,
+    newIndex: chromeLocal.selectedProfile,
     newIsLocked: !!chromeLocal.lockedTabId,
     newIsPaused: !!chromeLocal.isPaused
   });

@@ -10,8 +10,9 @@
   import Drawer from './Drawer.svelte';
   import Filters from './Filters.svelte';
   import Headers from './Headers.svelte';
-  import { selectedProfile, isPaused, commitChange, undo, save, init } from '../js/datasource';
-  import { addUrlRedirect, removeUrlRedirect } from '../js/url-redirect.js';
+  import { selectedProfile, isPaused, undo, save, init } from '../js/datasource';
+  import { updateProfile } from '../js/profile';
+  import { addUrlRedirect, removeUrlRedirect } from '../js/url-redirect';
   import { addHeader, removeHeader } from '../js/header';
   import MdiIcon from './MdiIcon.svelte';
   import { toastMessage, undoable } from '../js/toast';
@@ -52,15 +53,15 @@
           autocompleteListId="request-autocomplete"
           autocompleteNames={KNOWN_REQUEST_HEADERS}
           on:add={() => {
-            commitChange({ headers: addHeader($selectedProfile.headers) });
+            updateProfile({ headers: addHeader($selectedProfile.headers) });
           }}
           on:remove={(event) => {
-            commitChange({
+            updateProfile({
               headers: removeHeader($selectedProfile.headers, event.detail)
             });
           }}
           on:refresh={(event) => {
-            commitChange({ headers: event.detail });
+            updateProfile({ headers: event.detail });
           }}
         />
       {/if}
@@ -73,17 +74,17 @@
           autocompleteNames={KNOWN_RESPONSE_HEADERS}
           profile={selectedProfile}
           on:add={() => {
-            commitChange({
+            updateProfile({
               respHeaders: addHeader($selectedProfile.respHeaders)
             });
           }}
           on:remove={(event) => {
-            commitChange({
+            updateProfile({
               respHeaders: removeHeader($selectedProfile.respHeaders, event.detail)
             });
           }}
           on:refresh={(event) => {
-            commitChange({ respHeaders: event.detail });
+            updateProfile({ respHeaders: event.detail });
           }}
         />
       {/if}
@@ -96,17 +97,17 @@
           valueLabel="Redirect URL"
           profile={$selectedProfile}
           on:add={async () => {
-            commitChange({
+            updateProfile({
               urlReplacements: await addUrlRedirect($selectedProfile.urlReplacements)
             });
           }}
           on:remove={(event) => {
-            commitChange({
+            updateProfile({
               urlReplacements: removeUrlRedirect($selectedProfile.urlReplacements, event.detail)
             });
           }}
           on:refresh={(event) => {
-            commitChange({ urlReplacements: event.detail });
+            updateProfile({ urlReplacements: event.detail });
           }}
         />
       {/if}

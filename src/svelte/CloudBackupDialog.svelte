@@ -1,9 +1,8 @@
 <script>
-  import Dialog, { Title, Content, Actions } from '@smui/dialog';
-  import List, { Item, Separator, Text } from '@smui/list';
+  import Dialog, { Title, Content } from '@smui/dialog';
+  import List, { Item, Text } from '@smui/list';
   import Button, { Label } from '@smui/button';
   import IconButton from '@smui/icon-button';
-  import lodashRemove from 'lodash/remove';
   import lodashOrderBy from 'lodash/orderBy';
   import lodashIsNumber from 'lodash/isNumber';
   import lodashIsNaN from 'lodash/isNaN';
@@ -11,10 +10,8 @@
   import MdiIcon from './MdiIcon.svelte';
   import { DISABLED_COLOR, PRIMARY_COLOR } from '../js/constants';
   import { getSync } from '../js/storage';
-  import { restoreToProfiles } from '../js/datasource';
+  import { restoreToProfiles } from '../js/profile';
 
-  let importTextbox;
-  let importText;
   let dialogVisible;
   let cloudBackupList = [];
 

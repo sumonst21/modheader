@@ -8,7 +8,8 @@
   import { mdiContentSave, mdiClose } from '@mdi/js';
   import MdiIcon from './MdiIcon.svelte';
   import { PRIMARY_COLOR } from '../js/constants';
-  import { selectedProfile, commitChange } from '../js/datasource';
+  import { selectedProfile } from '../js/datasource';
+  import { updateProfile } from '../js/profile';
 
   const TABS = [
     { label: 'Background', value: 'backgroundColor' },
@@ -97,7 +98,7 @@
     </Button>
     <Button
       on:click={() => {
-        commitChange({
+        updateProfile({
           shortTitle,
           backgroundColor,
           textColor
@@ -110,4 +111,3 @@
     </Button>
   </div>
 </Dialog>
-

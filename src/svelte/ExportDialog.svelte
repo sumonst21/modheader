@@ -1,19 +1,18 @@
 <script>
   import { encode } from 'js-base64';
-  import Dialog, { Title, Content, Actions } from '@smui/dialog';
+  import Dialog, { Title, Content } from '@smui/dialog';
   import Button, { Label } from '@smui/button';
-  import Tab, { Icon, Label as TabLabel } from '@smui/tab';
+  import Tab, { Label as TabLabel } from '@smui/tab';
   import TabBar from '@smui/tab-bar';
-  import Snackbar, { Label as SnackbarLabel } from '@smui/snackbar';
   import IconButton from '@smui/icon-button';
   import Checkbox from '@smui/checkbox';
-  import List, { Item, Separator, Text } from '@smui/list';
+  import List, { Item } from '@smui/list';
   import lzString from 'lz-string';
   import { mdiDownload, mdiSelectAll, mdiContentCopy, mdiClose } from '@mdi/js';
   import MdiIcon from './MdiIcon.svelte';
   import { DISABLED_COLOR, PRIMARY_COLOR } from '../js/constants';
   import { showMessage } from '../js/toast';
-  import { profiles, selectedProfile, commitChange } from '../js/datasource';
+  import { profiles, selectedProfile } from '../js/datasource';
 
   const TABS = [
     { label: 'URL', value: 'url' },
