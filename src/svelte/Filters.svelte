@@ -14,8 +14,7 @@
   } from '@mdi/js';
   import lodashOrderBy from 'lodash/orderBy';
   import lodashDebounce from 'lodash/debounce';
-  import { selectedProfile } from '../js/datasource';
-  import { updateProfile } from '../js/profile';
+  import { selectedProfile, updateProfile } from '../js/profile';
   import { addFilter, removeFilter } from '../js/filter';
   import AutoComplete from './Autocomplete.svelte';
   import MdiIcon from './MdiIcon.svelte';

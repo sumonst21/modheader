@@ -1,9 +1,9 @@
 import { jest } from '@jest/globals';
-
 import { get, writable } from 'svelte/store';
 
 const mockDatasource = {
   commitData: jest.fn(),
+  isInitialized: writable(false),
   profiles: writable([]),
   selectedProfileIndex: writable(0)
 };
@@ -15,6 +15,7 @@ const mockToast = {
 jest.unstable_mockModule('./toast', () => mockToast);
 
 const {
+  selectedProfile,
   fixProfiles,
   addProfile,
   removeProfile,
@@ -24,10 +25,17 @@ const {
   restoreToProfiles
 } = await import('./profile');
 
+jest.useFakeTimers();
+
 describe('profile', () => {
   beforeEach(() => {
     mockDatasource.profiles.set([]);
     mockDatasource.selectedProfileIndex.set(0);
+    mockDatasource.isInitialized.set(false);
+  });
+
+  afterEach(() => {
+    delete window.chrome;
   });
 
   test('Fix profiles - initialize empty profile', () => {
@@ -413,6 +421,76 @@ describe('profile', () => {
     expect(mockToast.showMessage).toHaveBeenCalledTimes(1);
     expect(mockToast.showMessage).toHaveBeenCalledWith('Profiles restored', {
       canUndo: true
+    });
+  });
+
+  test('Selected profile is derived from profiles and selectedProfileIndex', () => {
+    mockDatasource.profiles.set([
+      {
+        title: 'Local Profile 1'
+      },
+      {
+        title: 'Local Profile 2'
+      }
+    ]);
+    mockDatasource.selectedProfileIndex.set(1);
+
+    expect(get(selectedProfile)).toEqual({
+      title: 'Local Profile 2'
+    });
+  });
+
+  test('Profile changes are persisted after initialization', () => {
+    const saveToStorageMock = jest.fn();
+    window.chrome = {
+      extension: {
+        getBackgroundPage: () => ({
+          saveToStorage: saveToStorageMock
+        })
+      }
+    };
+    mockDatasource.profiles.set([
+      {
+        title: 'Local Profile 1'
+      }
+    ]);
+    mockDatasource.isInitialized.set(true);
+    mockDatasource.profiles.set([
+      {
+        title: 'Local Profile 1'
+      },
+      {
+        title: 'Local Profile 2'
+      }
+    ]);
+    expect(saveToStorageMock).toHaveBeenCalledTimes(1);
+    expect(saveToStorageMock).toHaveBeenCalledWith({
+      profiles: [
+        {
+          title: 'Local Profile 1'
+        },
+        {
+          title: 'Local Profile 2'
+        }
+      ],
+      selectedProfile: 0
+    });
+
+    mockDatasource.selectedProfileIndex.set(1);
+
+    jest.clearAllMocks();
+    jest.runAllTimers();
+    expect(saveToStorageMock).toHaveBeenCalledTimes(1);
+    expect(saveToStorageMock).toHaveBeenCalledWith({
+      profiles: [
+        {
+          title: 'Local Profile 1'
+        },
+        {
+          title: 'Local Profile 2'
+        }
+      ],
+      selectedProfile: 1
     });
   });
 });

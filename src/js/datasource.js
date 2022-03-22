@@ -1,6 +1,5 @@
-import { writable, derived, get } from 'svelte/store';
+import { writable, get } from 'svelte/store';
 import lodashCloneDeep from 'lodash/cloneDeep';
-import lodashDebounce from 'lodash/debounce';
 import lodashIsEqual from 'lodash/isEqual';
 import lodashIsUndefined from 'lodash/isUndefined';
 import { hideMessage } from './toast';
@@ -15,31 +14,20 @@ import {
 } from './change-stack';
 
 export const profiles = writable([]);
-let latestProfiles = [];
 export const selectedProfileIndex = writable(0);
-let latestSelectedProfileIndex = 0;
-export const selectedProfile = derived(
-  [profiles, selectedProfileIndex],
-  ([$profiles, $selectedProfileIndex]) => $profiles[$selectedProfileIndex] || {},
-  {}
-);
 export const isPaused = writable(false);
 export const isLocked = writable(false);
-const debouncedSave = lodashDebounce(save, 500, { leading: true, trailing: true });
-
-let isInitialized = false;
+export const isInitialized = writable(false);
 
 profiles.subscribe(($profiles) => {
-  latestProfiles = $profiles;
-  setChangeField('profiles', latestProfiles);
+  setChangeField('profiles', $profiles);
 });
 selectedProfileIndex.subscribe(($selectedProfileIndex) => {
-  latestSelectedProfileIndex = $selectedProfileIndex;
-  setChangeField('selectedProfileIndex', latestSelectedProfileIndex);
+  setChangeField('selectedProfileIndex', $selectedProfileIndex);
 });
 isPaused.subscribe(async ($isPaused) => {
   setChangeField('isPaused', $isPaused);
-  if (isInitialized) {
+  if (get(isInitialized)) {
     if ($isPaused) {
       await setLocal({ isPaused: true });
     } else {
@@ -49,7 +37,7 @@ isPaused.subscribe(async ($isPaused) => {
 });
 isLocked.subscribe(async ($isLocked) => {
   setChangeField('isLocked', $isLocked);
-  if (isInitialized) {
+  if (get(isInitialized)) {
     if ($isLocked) {
       const { activeTabId } = await getLocal('activeTabId');
       await setLocal({ lockedTabId: activeTabId });
@@ -58,31 +46,21 @@ isLocked.subscribe(async ($isLocked) => {
     }
   }
 });
-
-export async function save() {
-  try {
-    const background = chrome.extension.getBackgroundPage();
-    await background.saveToStorage({
-      profiles: latestProfiles,
-      selectedProfile: latestSelectedProfileIndex
-    });
-  } catch (err) {
-    // Firefox's private session cannot access background page, so just set
-    // directly to the browser storage.
-    await browser.storage.local.set({
-      profiles: latestProfiles,
-      selectedProfile: latestSelectedProfileIndex
-    });
+isInitialized.subscribe(($isInitialized) => {
+  if ($isInitialized) {
+    stopIgnoringChange();
+  } else {
+    startIgnoringChange();
   }
-}
+});
 
 export function undo() {
   let lastChange = undoChange();
   if (!lastChange) {
     return;
   }
-  const currentProfiles = latestProfiles;
-  const currentSelectedProfileIndex = latestSelectedProfileIndex;
+  const currentProfiles = get(profiles);
+  const currentSelectedProfileIndex = get(selectedProfileIndex);
   const currentIsLocked = get(isLocked);
   const currentIsPaused = get(isPaused);
   while (lastChange) {
@@ -108,7 +86,7 @@ export function undo() {
   }
   commitData({
     newProfiles: lastChange.profiles || currentProfiles,
-    newIndex: lastChange.selectedProfileIndex || currentSelectedProfileIndex,
+    newIndex: lastChange.selectedProfileIndex,
     newIsLocked: lastChange.isLocked,
     newIsPaused: lastChange.isPaused
   });
@@ -135,15 +113,9 @@ export function commitData({ newProfiles, newIndex, newIsLocked, newIsPaused } =
       isPaused: newIsPaused
     };
   });
-  debouncedSave();
-}
-
-export function selectProfile(profileIndex) {
-  selectedProfileIndex.set(profileIndex);
 }
 
 export async function init() {
-  startIgnoringChange();
   const chromeLocal = await getLocal([
     'profiles',
     'selectedProfile',
@@ -158,6 +130,5 @@ export async function init() {
     newIsLocked: !!chromeLocal.lockedTabId,
     newIsPaused: !!chromeLocal.isPaused
   });
-  isInitialized = true;
-  stopIgnoringChange();
+  isInitialized.set(true);
 }

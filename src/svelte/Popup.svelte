@@ -10,8 +10,8 @@
   import Drawer from './Drawer.svelte';
   import Filters from './Filters.svelte';
   import Headers from './Headers.svelte';
-  import { selectedProfile, isPaused, undo, save, init } from '../js/datasource';
-  import { updateProfile } from '../js/profile';
+  import { isPaused, undo, init } from '../js/datasource';
+  import { selectedProfile, save, updateProfile } from '../js/profile';
   import { addUrlRedirect, removeUrlRedirect } from '../js/url-redirect';
   import { addHeader, removeHeader } from '../js/header';
   import MdiIcon from './MdiIcon.svelte';

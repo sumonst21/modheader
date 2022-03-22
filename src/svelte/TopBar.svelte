@@ -31,14 +31,8 @@
   import CloudBackupDialog from './CloudBackupDialog.svelte';
   import MdiIcon from './MdiIcon.svelte';
   import ProfilePicture from './ProfilePicture.svelte';
-  import {
-    selectedProfile,
-    selectedProfileIndex,
-    isPaused,
-    isLocked,
-    undo
-  } from '../js/datasource';
-  import { removeProfile, cloneProfile, updateProfile } from '../js/profile';
+  import { selectedProfileIndex, isPaused, isLocked, undo } from '../js/datasource';
+  import { removeProfile, cloneProfile, selectedProfile, updateProfile } from '../js/profile';
   import { addHeader } from '../js/header';
   import { addFilter } from '../js/filter';
   import { addUrlRedirect } from '../js/url-redirect';

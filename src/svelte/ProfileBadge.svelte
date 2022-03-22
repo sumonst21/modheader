@@ -1,7 +1,7 @@
 <script>
   import { mdiCheckboxMarkedCircle, mdiCheckboxBlankCircle } from '@mdi/js';
   import MdiIcon from './MdiIcon.svelte';
-  import { selectedProfile } from '../js/datasource';
+  import { selectedProfile } from '../js/profile';
 
   export let profile;
 

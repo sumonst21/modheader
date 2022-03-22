@@ -5,8 +5,7 @@
   import { mdiFileImport } from '@mdi/js';
   import MdiIcon from './MdiIcon.svelte';
   import { PRIMARY_COLOR } from '../js/constants';
-  import { importProfiles } from '../js/profile';
-  import { save } from '../js/datasource';
+  import { importProfiles, save } from '../js/profile';
 
   let snackbar;
   let uploadFileInput;

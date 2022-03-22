@@ -12,7 +12,8 @@
   import MdiIcon from './MdiIcon.svelte';
   import { DISABLED_COLOR, PRIMARY_COLOR } from '../js/constants';
   import { showMessage } from '../js/toast';
-  import { profiles, selectedProfile } from '../js/datasource';
+  import { profiles } from '../js/datasource';
+  import { selectedProfile } from '../js/profile';
 
   const TABS = [
     { label: 'URL', value: 'url' },

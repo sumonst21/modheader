@@ -1,21 +1,53 @@
 import { takeRight } from './utils';
 import { createHeader } from './header';
 import { generateBackgroundColor, generateTextColor } from './color';
-import { profiles, commitData, selectedProfileIndex } from './datasource';
+import { profiles, commitData, selectedProfileIndex, isInitialized } from './datasource';
 import { showMessage } from './toast';
 import lodashCloneDeep from 'lodash/cloneDeep';
 import lodashOrderBy from 'lodash/orderBy';
 import lodashIsEqual from 'lodash/isEqual';
 import lodashIsArray from 'lodash/isArray';
+import lodashDebounce from 'lodash/debounce';
+import { get, derived } from 'svelte/store';
 
 let latestProfiles = [];
 let latestSelectedProfileIndex = 0;
 profiles.subscribe(($profiles) => {
   latestProfiles = $profiles;
+  if (get(isInitialized)) {
+    debouncedSave();
+  }
 });
 selectedProfileIndex.subscribe(($selectedProfileIndex) => {
   latestSelectedProfileIndex = $selectedProfileIndex;
+  if (get(isInitialized)) {
+    debouncedSave();
+  }
 });
+export const selectedProfile = derived(
+  [profiles, selectedProfileIndex],
+  ([$profiles, $selectedProfileIndex]) => $profiles[$selectedProfileIndex] || {},
+  {}
+);
+
+const debouncedSave = lodashDebounce(save, 500, { leading: true, trailing: true });
+
+export async function save() {
+  try {
+    const background = chrome.extension.getBackgroundPage();
+    await background.saveToStorage({
+      profiles: latestProfiles,
+      selectedProfile: latestSelectedProfileIndex
+    });
+  } catch (err) {
+    // Firefox's private session cannot access background page, so just set
+    // directly to the browser storage.
+    await browser.storage.local.set({
+      profiles: latestProfiles,
+      selectedProfile: latestSelectedProfileIndex
+    });
+  }
+}
 
 function isExistingProfileTitle_(title) {
   for (const profile of latestProfiles) {
@@ -174,4 +206,8 @@ export function restoreToProfiles(profilesToRestore) {
   fixProfiles(profilesToRestore);
   commitData({ newProfiles: profilesToRestore, newIndex: 0 });
   showMessage('Profiles restored', { canUndo: true });
+}
+
+export function selectProfile(profileIndex) {
+  selectedProfileIndex.set(profileIndex);
 }

@@ -8,8 +8,7 @@
   import { mdiContentSave, mdiClose } from '@mdi/js';
   import MdiIcon from './MdiIcon.svelte';
   import { PRIMARY_COLOR } from '../js/constants';
-  import { selectedProfile } from '../js/datasource';
-  import { updateProfile } from '../js/profile';
+  import { selectedProfile, updateProfile } from '../js/profile';
 
   const TABS = [
     { label: 'Background', value: 'backgroundColor' },

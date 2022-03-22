@@ -16,7 +16,7 @@
   import lodashClone from 'lodash/clone';
   import lodashDebounce from 'lodash/debounce';
   import { fly } from 'svelte/transition';
-  import { selectedProfile } from '../js/datasource';
+  import { selectedProfile } from '../js/profile';
   import AutoComplete from './Autocomplete.svelte';
   import MdiIcon from './MdiIcon.svelte';
   import HeaderMoreMenu from './HeaderMoreMenu.svelte';

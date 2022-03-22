@@ -18,8 +18,15 @@
   import MdiIcon from './MdiIcon.svelte';
   import ProfileBadge from './ProfileBadge.svelte';
   import { showMessage } from '../js/toast';
-  import { selectProfile, selectedProfile, profiles } from '../js/datasource';
-  import { addProfile, removeProfile, updateProfile, sortProfiles } from '../js/profile';
+  import { profiles } from '../js/datasource';
+  import {
+    addProfile,
+    removeProfile,
+    selectProfile,
+    selectedProfile,
+    updateProfile,
+    sortProfiles
+  } from '../js/profile';
   import { PRIMARY_COLOR } from '../js/constants';
 
   let drawer;
