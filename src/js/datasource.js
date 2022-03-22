@@ -93,10 +93,10 @@ export function undo() {
   hideMessage();
 }
 
-export function commitData({ newProfiles, newIndex, newIsLocked, newIsPaused } = {}) {
+export function commitData({ newProfiles = [], newIndex = 0, newIsLocked, newIsPaused } = {}) {
   commit(() => {
     newIndex = Math.max(0, Math.min(newProfiles.length - 1, newIndex));
-    if (!lodashIsUndefined(newIsLocked)) {
+    if (lodashIsUndefined(newIsLocked)) {
       newIsLocked = get(isLocked);
     }
     if (lodashIsUndefined(newIsPaused)) {
@@ -116,6 +116,7 @@ export function commitData({ newProfiles, newIndex, newIsLocked, newIsPaused } =
 }
 
 export async function init() {
+  isInitialized.set(false);
   const chromeLocal = await getLocal([
     'profiles',
     'selectedProfile',
