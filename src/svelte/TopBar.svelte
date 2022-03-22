@@ -34,11 +34,7 @@
   import {
     selectedProfile,
     selectedProfileIndex,
-    play,
-    pause,
     isPaused,
-    lockToTab,
-    unlockAllTab,
     isLocked,
     undo
   } from '../js/datasource';
@@ -63,11 +59,7 @@
   let accountMenu;
 
   function togglePause() {
-    if ($isPaused) {
-      play();
-    } else {
-      pause();
-    }
+    isPaused.set(!$isPaused);
   }
 
   function toggleComment() {
@@ -204,7 +196,7 @@
       </IconButton>
       {#if $isLocked}
         <Button
-          on:click={() => unlockAllTab()}
+          on:click={() => isLocked.set(false)}
           title="Unlock tab"
           style="min-width: fit-content; color: {color}"
         >
@@ -212,7 +204,7 @@
         </Button>
       {:else}
         <Button
-          on:click={() => lockToTab()}
+          on:click={() => isLocked.set(true)}
           title="Lock to tab"
           style="min-width: fit-content; color: {color}"
         >
@@ -368,12 +360,12 @@
 <Snackbar timeoutMs={10000} bind:this={pauseSnackbar}>
   <Label>ModHeader is Paused</Label>
   <Actions>
-    <Button on:click={() => play()}>Resume</Button>
+    <Button on:click={() => isPaused.set(false)}>Resume</Button>
   </Actions>
 </Snackbar>
 <Snackbar timeoutMs={10000} bind:this={tabLockSnackbar}>
   <Label>Tab lock is active</Label>
   <Actions>
-    <Button on:click={() => unlockAllTab()}>Unlock</Button>
+    <Button on:click={() => isLocked.set(false)}>Unlock</Button>
   </Actions>
 </Snackbar>

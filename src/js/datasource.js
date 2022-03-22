@@ -29,7 +29,6 @@ const debouncedSave = lodashDebounce(save, 500, { leading: true, trailing: true 
 
 let isInitialized = false;
 
-startIgnoringChange();
 profiles.subscribe(($profiles) => {
   latestProfiles = $profiles;
   setChangeField('profiles', latestProfiles);
@@ -38,13 +37,27 @@ selectedProfileIndex.subscribe(($selectedProfileIndex) => {
   latestSelectedProfileIndex = $selectedProfileIndex;
   setChangeField('selectedProfileIndex', latestSelectedProfileIndex);
 });
-isPaused.subscribe(($isPaused) => {
+isPaused.subscribe(async ($isPaused) => {
   setChangeField('isPaused', $isPaused);
+  if (isInitialized) {
+    if ($isPaused) {
+      await setLocal({ isPaused: true });
+    } else {
+      await removeLocal('isPaused');
+    }
+  }
 });
-isLocked.subscribe(($isLocked) => {
+isLocked.subscribe(async ($isLocked) => {
   setChangeField('isLocked', $isLocked);
+  if (isInitialized) {
+    if ($isLocked) {
+      const { activeTabId } = await getLocal('activeTabId');
+      await setLocal({ lockedTabId: activeTabId });
+    } else {
+      await removeLocal('lockedTabId');
+    }
+  }
 });
-stopIgnoringChange();
 
 export async function save() {
   try {
@@ -102,33 +115,10 @@ export function undo() {
   hideMessage();
 }
 
-export async function pause() {
-  isPaused.set(true);
-  await setLocal({ isPaused: true });
-}
-
-export async function play() {
-  isPaused.set(false);
-  await removeLocal('isPaused');
-}
-
-export async function lockToTab() {
-  isLocked.set(true);
-  if (isInitialized) {
-    const { activeTabId } = await getLocal('activeTabId');
-    await setLocal({ lockedTabId: activeTabId });
-  }
-}
-
-export async function unlockAllTab() {
-  isLocked.set(false);
-  await removeLocal('lockedTabId');
-}
-
 export function commitData({ newProfiles, newIndex, newIsLocked, newIsPaused } = {}) {
   commit(() => {
     newIndex = Math.max(0, Math.min(newProfiles.length - 1, newIndex));
-    if (lodashIsUndefined(newIsLocked)) {
+    if (!lodashIsUndefined(newIsLocked)) {
       newIsLocked = get(isLocked);
     }
     if (lodashIsUndefined(newIsPaused)) {
@@ -136,16 +126,8 @@ export function commitData({ newProfiles, newIndex, newIsLocked, newIsPaused } =
     }
     profiles.set(newProfiles);
     selectedProfileIndex.set(newIndex);
-    if (newIsLocked) {
-      lockToTab();
-    } else {
-      unlockAllTab();
-    }
-    if (newIsPaused) {
-      pause();
-    } else {
-      play();
-    }
+    isLocked.set(newIsLocked);
+    isPaused.set(newIsPaused);
     return {
       profiles: lodashCloneDeep(newProfiles),
       selectedProfileIndex: newIndex,
@@ -161,6 +143,7 @@ export function selectProfile(profileIndex) {
 }
 
 export async function init() {
+  startIgnoringChange();
   const chromeLocal = await getLocal([
     'profiles',
     'selectedProfile',
@@ -176,4 +159,5 @@ export async function init() {
     newIsPaused: !!chromeLocal.isPaused
   });
   isInitialized = true;
+  stopIgnoringChange();
 }

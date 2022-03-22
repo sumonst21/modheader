@@ -31,12 +31,12 @@
 
   function showMenu(event, { profileIndex }) {
     contextMenu.setOpen(false);
-    setImmediate(() => {
+    setTimeout(() => {
       selectedProfileIndex = profileIndex;
-      contextMenu.hoistMenuToBody();
-      contextMenu.setAnchorElement(event.target);
+      // TODO(hao): Figure out how to anchor the menu
+      // contextMenu.setAnchorElement(event.target);
       contextMenu.setOpen(true);
-    });
+    }, 0);
     event.preventDefault();
   }
 
@@ -73,21 +73,24 @@
 
       <div class="profiles-list">
         {#each $profiles as profile, profileIndex}
-          <Item
-            class="main-drawer-item"
-            title={profile.title}
-            selected={$selectedProfile === profile}
+          <div
             on:contextmenu={(e) => {
               showMenu(e, { profile, profileIndex });
             }}
-            on:click={() => {
-              selectProfile(profileIndex);
-              expand = false;
-            }}
           >
-            <ProfileBadge {profile} on:contextmenu={showMenu} />
-            <Text class="main-drawer-item-text">{profile.title}</Text>
-          </Item>
+            <Item
+              class="main-drawer-item"
+              title={profile.title}
+              selected={$selectedProfile === profile}
+              on:click={() => {
+                selectProfile(profileIndex);
+                expand = false;
+              }}
+            >
+              <ProfileBadge {profile} />
+              <Text class="main-drawer-item-text">{profile.title}</Text>
+            </Item>
+          </div>
         {/each}
         <Item
           class="main-drawer-item"
