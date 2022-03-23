@@ -6,9 +6,11 @@ import { getSync, removeLocal, removeSync, setLocal, setSync } from './storage';
 import { clearContextMenu, createContextMenu, updateContextMenu } from './context-menu';
 import { setBrowserAction } from './browser-action';
 import { registerSignInChecker } from './identity';
+import { getChromeVersion } from './user-agent';
+import { filterEnabled } from './utils';
 
 const MAX_PROFILES_IN_CLOUD = 50;
-const CHROME_VERSION = getChromeVersion();
+const CHROME_VERSION = getChromeVersion(navigator.userAgent);
 let chromeLocal = {
   isPaused: true
 };
@@ -67,19 +69,6 @@ function passFilters_(url, type, filters) {
   return (!hasUrlFilters || allowUrls) && (!hasResourceTypeFilters || allowTypes);
 }
 
-function filterEnabled_(rows) {
-  let output = [];
-  if (rows) {
-    for (let row of rows) {
-      // Overrides the header if it is enabled and its name is not empty.
-      if (row.enabled && row.name) {
-        output.push({ name: row.name, value: row.value });
-      }
-    }
-  }
-  return output;
-}
-
 function loadActiveProfiles() {
   activeProfiles = [];
   selectedActiveProfile = undefined;
@@ -90,9 +79,9 @@ function loadActiveProfiles() {
         continue;
       }
       const profile = lodashCloneDeep(value);
-      profile.headers = filterEnabled_(profile.headers);
-      profile.respHeaders = filterEnabled_(profile.respHeaders);
-      profile.urlReplacements = filterEnabled_(profile.urlReplacements);
+      profile.headers = filterEnabled(profile.headers);
+      profile.respHeaders = filterEnabled(profile.respHeaders);
+      profile.urlReplacements = filterEnabled(profile.urlReplacements);
       if (i === chromeLocal.selectedProfile) {
         selectedActiveProfile = value;
       }
@@ -220,20 +209,6 @@ function modifyResponseHeaderHandler_(details) {
       responseHeaders
     };
   }
-}
-
-function getChromeVersion() {
-  let pieces = navigator.userAgent.match(/Chrom(?:e|ium)\/([0-9]+)\.([0-9]+)\.([0-9]+)\.([0-9]+)/);
-  if (pieces == null || pieces.length !== 5) {
-    return {};
-  }
-  pieces = pieces.map((piece) => parseInt(piece, 10));
-  return {
-    major: pieces[1],
-    minor: pieces[2],
-    build: pieces[3],
-    patch: pieces[4]
-  };
 }
 
 function setupHeaderModListener() {

@@ -1,8 +1,7 @@
 import { get } from 'svelte/store';
 import { startIgnoringChange, stopIgnoringChange } from './change-stack.js';
 
-const { canUndoChange, undoChange, commit, setChangeField, __testing__ } =
-  await import('./change-stack');
+import { canUndoChange, undoChange, commit, setChangeField, __testing__ } from './change-stack';
 
 describe('change-stack', () => {
   beforeEach(() => {

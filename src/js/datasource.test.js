@@ -22,7 +22,7 @@ const {
   isPaused
 } = await import('./datasource');
 
-describe('profile', () => {
+describe('datasource', () => {
   beforeEach(() => {
     profiles.set([]);
     selectedProfileIndex.set(0);
