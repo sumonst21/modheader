@@ -19,7 +19,7 @@ export async function loadSignedInUser() {
   }
 }
 
-export async function registerSignInChecker() {
+export function registerSignInChecker() {
   chrome.webRequest.onSendHeaders.removeListener(loadSignedInUser);
   chrome.webRequest.onSendHeaders.addListener(loadSignedInUser, {
     urls: [process.env.CHECK_LOGIN_URL, `${process.env.CHECK_LOGIN_URL}?*`]
