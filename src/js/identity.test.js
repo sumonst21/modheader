@@ -8,7 +8,6 @@ const mockStorage = {
 jest.unstable_mockModule('./storage', () => mockStorage);
 
 import { get } from 'svelte/store';
-import {removeLocal} from "./storage.js";
 const { loadSignedInUser, signedInUser, signOut } = await import('./identity');
 
 describe('identity', () => {

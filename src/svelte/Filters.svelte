@@ -15,15 +15,15 @@
   import lodashOrderBy from 'lodash/orderBy';
   import lodashDebounce from 'lodash/debounce';
   import { selectedProfile, updateProfile } from '../js/profile';
-  import { addFilter, removeFilter } from '../js/filter';
+  import { FilterType, addFilter, removeFilter } from '../js/filter';
   import AutoComplete from './Autocomplete.svelte';
   import MdiIcon from './MdiIcon.svelte';
   import ResourceTypeMenu from './ResourceTypeMenu.svelte';
 
   const FILTER_TYPES = {
-    urls: 'URL Pattern',
-    excludeUrls: 'Exclude URL Pattern',
-    types: 'Resource Type'
+    [FilterType.URLS]: 'URL Pattern',
+    [FilterType.EXCLUDE_URLS]: 'Exclude URL Pattern',
+    [FilterType.RESOURCE_TYPES]: 'Resource Type'
   };
 
   export let profileIndex;
@@ -178,7 +178,7 @@
           <Option {value} selected={filter.type === value}>{label}</Option>
         {/each}
       </Select>
-      {#if filter.type === 'urls' || filter.type === 'excludeUrls'}
+      {#if filter.type === FilterType.URLS || filter.type === FilterType.EXCLUDE_URLS}
         <AutoComplete bind:value={filter.urlRegex} placeholder=".*://.*.google.com/.*" />
       {:else}
         <ResourceTypeMenu bind:resourceType={filter.resourceType} {resourceTypeMenuLocation} />

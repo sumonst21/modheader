@@ -7,7 +7,8 @@ import { clearContextMenu, createContextMenu, updateContextMenu } from './contex
 import { setBrowserAction } from './browser-action';
 import { registerSignInChecker } from './identity';
 import { getChromeVersion } from './user-agent';
-import { filterEnabled } from './utils';
+import { filterEnabledMods } from './utils';
+import { optimizeFilters, passFilters } from './filter';
 
 const MAX_PROFILES_IN_CLOUD = 50;
 const CHROME_VERSION = getChromeVersion(navigator.userAgent);
@@ -16,58 +17,6 @@ let chromeLocal = {
 };
 let selectedActiveProfile;
 let activeProfiles = [];
-
-/**
- * Check whether the current request url pass the given list of filters.
- */
-function passFilters_(url, type, filters) {
-  if (!filters) {
-    return true;
-  }
-  let allowUrls = undefined;
-  let hasUrlFilters = false;
-  let allowTypes = false;
-  let hasResourceTypeFilters = false;
-  for (let filter of filters) {
-    if (filter.enabled) {
-      switch (filter.type) {
-        case 'urls':
-          hasUrlFilters = true;
-          if (allowUrls === undefined) {
-            allowUrls = false;
-          }
-          try {
-            if (new RegExp(filter.urlRegex).test(url)) {
-              allowUrls = true;
-            }
-          } catch {
-            allowUrls = false;
-          }
-          break;
-        case 'excludeUrls':
-          hasUrlFilters = true;
-          if (allowUrls === undefined) {
-            allowUrls = true;
-          }
-          try {
-            if (new RegExp(filter.urlRegex).test(url)) {
-              allowUrls = false;
-            }
-          } catch {
-            allowUrls = true;
-          }
-          break;
-        case 'types':
-          hasResourceTypeFilters = true;
-          if (filter.resourceType.indexOf(type) >= 0) {
-            allowTypes = true;
-          }
-          break;
-      }
-    }
-  }
-  return (!hasUrlFilters || allowUrls) && (!hasResourceTypeFilters || allowTypes);
-}
 
 function loadActiveProfiles() {
   activeProfiles = [];
@@ -79,9 +28,10 @@ function loadActiveProfiles() {
         continue;
       }
       const profile = lodashCloneDeep(value);
-      profile.headers = filterEnabled(profile.headers);
-      profile.respHeaders = filterEnabled(profile.respHeaders);
-      profile.urlReplacements = filterEnabled(profile.urlReplacements);
+      profile.headers = filterEnabledMods(profile.headers);
+      profile.respHeaders = filterEnabledMods(profile.respHeaders);
+      profile.urlReplacements = filterEnabledMods(profile.urlReplacements);
+      profile.filters = optimizeFilters(profile.filters);
       if (i === chromeLocal.selectedProfile) {
         selectedActiveProfile = value;
       }
@@ -159,7 +109,7 @@ function modifyRequestHandler_(details) {
   let newUrl = details.url;
   if (!chromeLocal.lockedTabId || chromeLocal.lockedTabId === details.tabId) {
     for (const currentProfile of activeProfiles) {
-      if (passFilters_(newUrl, details.type, currentProfile.filters)) {
+      if (passFilters({ url: newUrl, type: details.type, filters: currentProfile.filters })) {
         newUrl = replaceUrls(currentProfile.urlReplacements, newUrl);
       }
     }
@@ -176,7 +126,7 @@ function modifyRequestHeaderHandler_(details) {
   }
   if (!chromeLocal.lockedTabId || chromeLocal.lockedTabId === details.tabId) {
     for (const currentProfile of activeProfiles) {
-      if (passFilters_(details.url, details.type, currentProfile.filters)) {
+      if (passFilters({ url: details.url, type: details.type, filters: currentProfile.filters })) {
         modifyHeader(details.url, currentProfile, currentProfile.headers, details.requestHeaders);
         if (!currentProfile.sendEmptyHeader) {
           details.requestHeaders = details.requestHeaders.filter((entry) => !!entry.value);
@@ -196,7 +146,7 @@ function modifyResponseHeaderHandler_(details) {
   let responseHeaders = lodashCloneDeep(details.responseHeaders);
   if (!chromeLocal.lockedTabId || chromeLocal.lockedTabId === details.tabId) {
     for (const currentProfile of activeProfiles) {
-      if (passFilters_(details.url, details.type, currentProfile.filters)) {
+      if (passFilters({ url: details.url, type: details.type, filters: currentProfile.filters })) {
         modifyHeader(details.url, currentProfile, currentProfile.respHeaders, responseHeaders);
         if (!currentProfile.sendEmptyHeader) {
           responseHeaders = responseHeaders.filter((entry) => !!entry.value);

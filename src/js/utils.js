@@ -3,7 +3,7 @@ export function takeRight(v) {
   return s.length > 0 ? s[s.length - 1] : '0';
 }
 
-export function filterEnabled(rows) {
+export function filterEnabledMods(rows) {
   let output = [];
   if (rows) {
     for (const row of rows) {

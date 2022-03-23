@@ -1,4 +1,4 @@
-import { takeRight, filterEnabled } from './utils';
+import { takeRight, filterEnabledMods } from './utils';
 
 describe('utils', () => {
   test('takeRight', () => {
@@ -7,8 +7,8 @@ describe('utils', () => {
     expect(takeRight('')).toEqual('0');
   });
 
-  test('filterEnabled', () => {
-    const actual = filterEnabled([
+  test('filterEnabledMods', () => {
+    const actual = filterEnabledMods([
       { enabled: true, name: 'Test 1' },
       { name: 'Test 2' },
       { enabled: true, value: 'Test 3' }
