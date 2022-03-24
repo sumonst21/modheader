@@ -1,6 +1,6 @@
 <script>
   import Drawer, { Content } from '@smui/drawer';
-  import Menu from '@smui/menu';
+  import MenuSurface from '@smui/menu-surface';
   import List, { Item, Text, Separator } from '@smui/list';
   import {
     mdiCheckboxBlankOutline,
@@ -34,14 +34,15 @@
   let expand = false;
   let sortOrder = 'asc';
   let contextMenu;
+  let contextMenuAnchor;
   let selectedProfileIndex;
 
   function showMenu(event, { profileIndex }) {
     contextMenu.setOpen(false);
     setTimeout(() => {
       selectedProfileIndex = profileIndex;
-      // TODO(hao): Figure out how to anchor the menu
-      // contextMenu.setAnchorElement(event.target);
+      contextMenuAnchor = event.target;
+      contextMenu.setIsHoisted(true);
       contextMenu.setOpen(true);
     }, 0);
     event.preventDefault();
@@ -80,24 +81,21 @@
 
       <div class="profiles-list">
         {#each $profiles as profile, profileIndex}
-          <div
+          <Item
+            class="main-drawer-item"
+            title={profile.title}
+            selected={$selectedProfile === profile}
             on:contextmenu={(e) => {
               showMenu(e, { profile, profileIndex });
             }}
+            on:click={() => {
+              selectProfile(profileIndex);
+              expand = false;
+            }}
           >
-            <Item
-              class="main-drawer-item"
-              title={profile.title}
-              selected={$selectedProfile === profile}
-              on:click={() => {
-                selectProfile(profileIndex);
-                expand = false;
-              }}
-            >
-              <ProfileBadge {profile} />
-              <Text class="main-drawer-item-text">{profile.title}</Text>
-            </Item>
-          </div>
+            <ProfileBadge {profile} />
+            <Text class="main-drawer-item-text">{profile.title}</Text>
+          </Item>
         {/each}
         <Item
           class="main-drawer-item"
@@ -168,7 +166,7 @@
   </Content>
 </Drawer>
 
-<Menu bind:this={contextMenu}>
+<MenuSurface bind:this={contextMenu} bind:anchorElement={contextMenuAnchor} quickOpen>
   <List>
     <Item
       on:SMUI:action={() => {
@@ -202,7 +200,7 @@
       <Text>Delete profile</Text>
     </Item>
   </List>
-</Menu>
+</MenuSurface>
 
 {#if expand}
   <div class="scrim" transition:fade={{ duration: 200 }} on:click={() => (expand = false)} />
