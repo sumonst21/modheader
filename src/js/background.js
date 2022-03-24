@@ -6,12 +6,11 @@ import { getSync, removeLocal, removeSync, setLocal, setSync } from './storage';
 import { clearContextMenu, createContextMenu, updateContextMenu } from './context-menu';
 import { setBrowserAction } from './browser-action';
 import { registerSignInChecker } from './identity';
-import { getChromeVersion } from './user-agent';
+import { isChromiumBasedBrowser } from './user-agent';
 import { filterEnabledMods } from './utils';
 import { optimizeFilters, passFilters } from './filter';
 
 const MAX_PROFILES_IN_CLOUD = 50;
-const CHROME_VERSION = getChromeVersion(navigator.userAgent);
 let chromeLocal = {
   isPaused: true
 };
@@ -183,27 +182,19 @@ function setupHeaderModListener() {
     }
   }
   if (hasRequestHeadersModification) {
-    let requiresExtraRequestHeaders = false;
-    if (CHROME_VERSION.major >= 72) {
-      requiresExtraRequestHeaders = true;
-    }
     chrome.webRequest.onBeforeSendHeaders.addListener(
       modifyRequestHeaderHandler_,
       { urls: ['<all_urls>'] },
-      requiresExtraRequestHeaders
+      isChromiumBasedBrowser()
         ? ['requestHeaders', 'blocking', 'extraHeaders']
         : ['requestHeaders', 'blocking']
     );
   }
   if (hasResponseHeadersModification) {
-    let requiresExtraResponseHeaders = false;
-    if (CHROME_VERSION.major >= 72) {
-      requiresExtraResponseHeaders = true;
-    }
     chrome.webRequest.onHeadersReceived.addListener(
       modifyResponseHeaderHandler_,
       { urls: ['<all_urls>'] },
-      requiresExtraResponseHeaders
+      isChromiumBasedBrowser()
         ? ['responseHeaders', 'blocking', 'extraHeaders']
         : ['responseHeaders', 'blocking']
     );

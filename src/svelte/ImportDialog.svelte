@@ -11,6 +11,7 @@
   import { showMessage } from '../js/toast';
   import { getLocal } from '../js/storage';
   import { importProfiles } from '../js/profile';
+  import { isChromiumBasedBrowser } from '../js/user-agent.js';
 
   const SHARE_URL_PREFIX = 'https://modheader.com/p/';
   const OLD_SHARE_URL_PREFIX = 'https://bewisse.com/modheader/p/';
@@ -101,7 +102,7 @@
     />
   </Content>
   <div class="mdc-dialog__actions">
-    {#if process.env.BROWSER !== 'firefox'}
+    {#if isChromiumBasedBrowser()}
       <!-- Opening the file would close the popup in Firefox, so we can't support it. -->
       <input
         bind:this={uploadFileInput}

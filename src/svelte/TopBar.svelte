@@ -40,6 +40,7 @@
   import { signedInUser, signOut } from '../js/identity';
   import { showMessage } from '../js/toast';
   import { setPreferredColorScheme } from '../js/color-scheme';
+  import { CURRENT_BROWSER } from '../js/user-agent.js';
 
   let pauseSnackbar;
   let tabLockSnackbar;
@@ -64,7 +65,7 @@
 
   async function signIn() {
     const url = new URL(`${process.env.URL_BASE}/login`);
-    url.searchParams.set('for', process.env.BROWSER);
+    url.searchParams.set('for', CURRENT_BROWSER);
     url.searchParams.set('extension_id', chrome.runtime.id);
     chrome.tabs.create({
       url: url.href

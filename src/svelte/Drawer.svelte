@@ -19,6 +19,7 @@
   import ProfileBadge from './ProfileBadge.svelte';
   import { showMessage } from '../js/toast';
   import { profiles } from '../js/datasource';
+  import { CURRENT_BROWSER } from '../js/user-agent.js';
   import {
     addProfile,
     removeProfile,
@@ -134,7 +135,7 @@
       <Item
         class="main-drawer-item"
         title="Rate us"
-        on:click={() => openLink('https://modheader.com/review?browser=' + process.env.BROWSER)}
+        on:click={() => openLink('https://modheader.com/review?browser=' + CURRENT_BROWSER)}
       >
         <span class="main-drawer-icon-container">
           <MdiIcon
