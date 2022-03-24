@@ -6,7 +6,7 @@ const mockTabs = {
 jest.unstable_mockModule('./tabs.js', () => mockTabs);
 
 const { FilterType, addFilter, removeFilter, optimizeFilters, passFilters } = await import(
-  './filter'
+  './filter.js'
 );
 
 describe('filter', () => {
@@ -20,6 +20,21 @@ describe('filter', () => {
         resourceType: [],
         type: FilterType.URLS,
         urlRegex: ''
+      }
+    ]);
+  });
+
+  test('addFilter - prefill url', async () => {
+    mockTabs.getActiveTab.mockResolvedValue({ url: 'https://modheader.com/test' });
+    const actual = await addFilter([]);
+
+    expect(actual).toEqual([
+      {
+        comment: '',
+        enabled: true,
+        resourceType: [],
+        type: FilterType.URLS,
+        urlRegex: '.*://modheader.com/.*'
       }
     ]);
   });
@@ -187,14 +202,14 @@ describe('filter', () => {
     ).toEqual(false);
 
     expect(
-        passFilters({
-          url: 'https://www.google.com/search',
-          type: 'main_frame',
-          filters: optimizeFilters([
-            { enabled: true, type: FilterType.EXCLUDE_URLS, urlRegex: '.*.google.com.*' },
-            { enabled: true, type: FilterType.URLS, urlRegex: '.*.google.com.*' },
-          ])
-        })
+      passFilters({
+        url: 'https://www.google.com/search',
+        type: 'main_frame',
+        filters: optimizeFilters([
+          { enabled: true, type: FilterType.EXCLUDE_URLS, urlRegex: '.*.google.com.*' },
+          { enabled: true, type: FilterType.URLS, urlRegex: '.*.google.com.*' }
+        ])
+      })
     ).toEqual(true);
   });
 

@@ -23,6 +23,20 @@ describe('url-redirect', () => {
     ]);
   });
 
+  test('addUrlRedirect - prefill url', async () => {
+    mockTabs.getActiveTab.mockResolvedValue({ url: 'https://modheader.com/test' });
+    const actual = await addUrlRedirect([]);
+
+    expect(actual).toEqual([
+      {
+        enabled: true,
+        name: '.*://modheader.com/.*',
+        value: 'https://modheader.com',
+        comment: ''
+      }
+    ]);
+  });
+
   test('addUrlRedirect - append to existing inputs', async () => {
     const actual = await addUrlRedirect([
       {
