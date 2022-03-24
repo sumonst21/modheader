@@ -9,6 +9,7 @@ import { loadSignedInUser } from './identity.js';
 import { isChromiumBasedBrowser } from './user-agent.js';
 import { filterEnabledMods, evaluateValue } from './utils.js';
 import { optimizeFilters, passFilters } from './filter.js';
+import { optimizeUrlRedirects, redirectUrl } from './url-redirect.js';
 
 const MAX_PROFILES_IN_CLOUD = 50;
 let chromeLocal = {
@@ -29,7 +30,7 @@ function loadActiveProfiles() {
       const profile = lodashCloneDeep(value);
       profile.headers = filterEnabledMods(profile.headers);
       profile.respHeaders = filterEnabledMods(profile.respHeaders);
-      profile.urlReplacements = filterEnabledMods(profile.urlReplacements);
+      profile.urlReplacements = optimizeUrlRedirects(profile.urlReplacements);
       profile.filters = optimizeFilters(profile.filters);
       if (i === chromeLocal.selectedProfile) {
         selectedActiveProfile = value;
@@ -37,19 +38,6 @@ function loadActiveProfiles() {
       activeProfiles.push(profile);
     }
   }
-}
-
-function replaceUrls(urlReplacements, url) {
-  if (urlReplacements) {
-    for (const replacement of urlReplacements) {
-      // Avoid infinite replacement
-      const replacementValue = evaluateValue({ value: replacement.value, url, oldValue: url });
-      if (!url.includes(replacementValue)) {
-        url = url.replace(new RegExp(replacement.name), replacementValue);
-      }
-    }
-  }
-  return url;
 }
 
 function modifyHeader(url, currentProfile, source, dest) {
@@ -97,7 +85,7 @@ function modifyRequestHandler_(details) {
   if (!chromeLocal.lockedTabId || chromeLocal.lockedTabId === details.tabId) {
     for (const currentProfile of activeProfiles) {
       if (passFilters({ url: newUrl, type: details.type, filters: currentProfile.filters })) {
-        newUrl = replaceUrls(currentProfile.urlReplacements, newUrl);
+        newUrl = redirectUrl({ urlRedirects: currentProfile.urlReplacements, url: newUrl });
       }
     }
   }

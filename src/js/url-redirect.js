@@ -1,8 +1,9 @@
 import { getActiveTab } from './tabs.js';
 import lodashIsEmpty from 'lodash/isEmpty.js';
 import lodashCloneDeep from 'lodash/cloneDeep.js';
+import { evaluateValue, filterEnabledMods } from './utils.js';
 
-export async function addUrlRedirect(urlReplacements) {
+export async function addUrlRedirect(urlRedirects) {
   let name = '';
   let value = '';
   const tab = await getActiveTab();
@@ -17,7 +18,7 @@ export async function addUrlRedirect(urlReplacements) {
     }
   }
   return [
-    ...urlReplacements,
+    ...urlRedirects,
     {
       enabled: true,
       name,
@@ -27,8 +28,28 @@ export async function addUrlRedirect(urlReplacements) {
   ];
 }
 
-export function removeUrlRedirect(urlReplacements, replacementIndex) {
-  urlReplacements = lodashCloneDeep(urlReplacements);
-  urlReplacements.splice(replacementIndex, 1);
-  return urlReplacements;
+export function removeUrlRedirect(urlRedirects, replacementIndex) {
+  urlRedirects = lodashCloneDeep(urlRedirects);
+  urlRedirects.splice(replacementIndex, 1);
+  return urlRedirects;
+}
+
+export function optimizeUrlRedirects(urlRedirects) {
+  return filterEnabledMods(urlRedirects).map((redirect) => ({
+    ...redirect,
+    name: new RegExp(redirect.name)
+  }));
+}
+
+export function redirectUrl({ urlRedirects, url }) {
+  if (urlRedirects) {
+    for (const replacement of urlRedirects) {
+      // Avoid infinite replacement
+      const replacementValue = evaluateValue({ value: replacement.value, url, oldValue: url });
+      if (!url.includes(replacementValue)) {
+        url = url.replace(replacement.name, replacementValue);
+      }
+    }
+  }
+  return url;
 }

@@ -14,6 +14,7 @@
     "build-edge": "cross-env NODE_ENV=production BROWSER=edge node utils/build.js",
     "build-all": "node build-all.js",
     "start": "cross-env NODE_ENV=development BROWSER=chrome rollup -c -w",
+    "start-firefox": "cross-env NODE_ENV=development BROWSER=firefox rollup -c -w",
     "build": "cross-env BROWSER=chrome rollup -c"
   },
   "devDependencies": {
