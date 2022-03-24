@@ -1,14 +1,14 @@
 import { jest } from '@jest/globals';
+import { get } from 'svelte/store';
 
 global.fetch = jest.fn();
 const mockStorage = {
   removeLocal: jest.fn(),
   setLocal: jest.fn()
 };
-jest.unstable_mockModule('./storage', () => mockStorage);
+jest.unstable_mockModule('./storage.js', () => mockStorage);
 
-import { get } from 'svelte/store';
-const { loadSignedInUser, signedInUser, signOut } = await import('./identity');
+const { loadSignedInUser, signedInUser, signOut } = await import('./identity.js');
 
 describe('identity', () => {
   test('Load signed in user', async () => {

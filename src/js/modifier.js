@@ -4,22 +4,25 @@ import { passFilters } from './filter.js';
 import { redirectUrl } from './url-redirect.js';
 import { evaluateValue } from './utils.js';
 
-export function modifyRequestUrls({ chromeLocal, activeProfiles, details }) {
+function isEnabled(chromeLocal, details) {
   if (chromeLocal.isPaused) {
-    return {};
+    return false;
   }
-  let newUrl = details.url;
-  if (!chromeLocal.lockedTabId || chromeLocal.lockedTabId === details.tabId) {
+  return !chromeLocal.lockedTabId || chromeLocal.lockedTabId === details.tabId;
+}
+
+export function modifyRequestUrls({ chromeLocal, activeProfiles, details }) {
+  if (isEnabled(chromeLocal, details)) {
+    let newUrl = details.url;
     for (const currentProfile of activeProfiles) {
       if (passFilters({ url: newUrl, type: details.type, filters: currentProfile.filters })) {
         newUrl = redirectUrl({ urlRedirects: currentProfile.urlReplacements, url: newUrl });
       }
     }
+    if (newUrl !== details.url) {
+      return { redirectUrl: newUrl };
+    }
   }
-  if (newUrl !== details.url) {
-    return { redirectUrl: newUrl };
-  }
-  return {};
 }
 
 function modifyHeader(url, currentProfile, source, dest) {
@@ -60,10 +63,7 @@ function modifyHeader(url, currentProfile, source, dest) {
 }
 
 export function modifyRequestHeaders({ chromeLocal, activeProfiles, details }) {
-  if (chromeLocal.isPaused) {
-    return {};
-  }
-  if (!chromeLocal.lockedTabId || chromeLocal.lockedTabId === details.tabId) {
+  if (isEnabled(chromeLocal, details)) {
     for (const currentProfile of activeProfiles) {
       if (passFilters({ url: details.url, type: details.type, filters: currentProfile.filters })) {
         modifyHeader(details.url, currentProfile, currentProfile.headers, details.requestHeaders);
@@ -72,18 +72,15 @@ export function modifyRequestHeaders({ chromeLocal, activeProfiles, details }) {
         }
       }
     }
+    return {
+      requestHeaders: details.requestHeaders
+    };
   }
-  return {
-    requestHeaders: details.requestHeaders
-  };
 }
 
 export function modifyResponseHeaders({ chromeLocal, activeProfiles, details }) {
-  if (chromeLocal.isPaused) {
-    return {};
-  }
-  let responseHeaders = lodashCloneDeep(details.responseHeaders);
-  if (!chromeLocal.lockedTabId || chromeLocal.lockedTabId === details.tabId) {
+  if (isEnabled(chromeLocal, details)) {
+    let responseHeaders = lodashCloneDeep(details.responseHeaders);
     for (const currentProfile of activeProfiles) {
       if (passFilters({ url: details.url, type: details.type, filters: currentProfile.filters })) {
         modifyHeader(details.url, currentProfile, currentProfile.respHeaders, responseHeaders);
@@ -92,10 +89,10 @@ export function modifyResponseHeaders({ chromeLocal, activeProfiles, details }) 
         }
       }
     }
-  }
-  if (!lodashIsEqual(responseHeaders, details.responseHeaders)) {
-    return {
-      responseHeaders
-    };
+    if (!lodashIsEqual(responseHeaders, details.responseHeaders)) {
+      return {
+        responseHeaders
+      };
+    }
   }
 }
