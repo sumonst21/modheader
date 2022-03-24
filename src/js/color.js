@@ -1,4 +1,4 @@
-import lodashIsString from 'lodash/isString';
+import lodashIsString from 'lodash/isString.js';
 
 function hue2rgb(p, q, t) {
   if (t < 0) t += 1;

@@ -1,17 +1,17 @@
 import { writable, get } from 'svelte/store';
-import lodashCloneDeep from 'lodash/cloneDeep';
-import lodashIsEqual from 'lodash/isEqual';
-import lodashIsUndefined from 'lodash/isUndefined';
-import { hideMessage } from './toast';
-import { getLocal, setLocal, removeLocal } from './storage';
-import { signedInUser } from './identity';
+import lodashCloneDeep from 'lodash/cloneDeep.js';
+import lodashIsEqual from 'lodash/isEqual.js';
+import lodashIsUndefined from 'lodash/isUndefined.js';
+import { hideMessage } from './toast.js';
+import { getLocal, setLocal, removeLocal } from './storage.js';
+import { signedInUser } from './identity.js';
 import {
   undoChange,
   commit,
   setChangeField,
   stopIgnoringChange,
   startIgnoringChange
-} from './change-stack';
+} from './change-stack.js';
 
 export const profiles = writable([]);
 export const selectedProfileIndex = writable(0);

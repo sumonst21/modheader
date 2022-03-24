@@ -1,5 +1,5 @@
 import App from '../svelte/Popup.svelte';
-import { reloadColorScheme } from './color-scheme';
+import { reloadColorScheme } from './color-scheme.js';
 
 const app = new App({
   target: document.body

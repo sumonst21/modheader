@@ -1,4 +1,4 @@
-import { takeRight, filterEnabledMods } from './utils';
+import { takeRight, filterEnabledMods } from './utils.js';
 
 describe('utils', () => {
   test('takeRight', () => {

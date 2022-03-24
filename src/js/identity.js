@@ -19,13 +19,6 @@ export async function loadSignedInUser() {
   }
 }
 
-export function registerSignInChecker() {
-  chrome.webRequest.onSendHeaders.removeListener(loadSignedInUser);
-  chrome.webRequest.onSendHeaders.addListener(loadSignedInUser, {
-    urls: [process.env.CHECK_LOGIN_URL, `${process.env.CHECK_LOGIN_URL}?*`]
-  });
-}
-
 export async function signOut() {
   await removeLocal(['signedInUser']);
   signedInUser.set(undefined);

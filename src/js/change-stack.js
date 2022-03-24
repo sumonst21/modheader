@@ -1,7 +1,7 @@
 import { writable } from 'svelte/store';
-import lodashCloneDeep from 'lodash/cloneDeep';
-import lodashIsEqual from 'lodash/isEqual';
-import lodashLast from 'lodash/last';
+import lodashCloneDeep from 'lodash/cloneDeep.js';
+import lodashIsEqual from 'lodash/isEqual.js';
+import lodashLast from 'lodash/last.js';
 
 const changes = [];
 export const canUndoChange = writable(false);

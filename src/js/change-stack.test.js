@@ -1,7 +1,13 @@
 import { get } from 'svelte/store';
-import { startIgnoringChange, stopIgnoringChange } from './change-stack.js';
-
-import { canUndoChange, undoChange, commit, setChangeField, __testing__ } from './change-stack';
+import {
+  startIgnoringChange,
+  stopIgnoringChange,
+  canUndoChange,
+  undoChange,
+  commit,
+  setChangeField,
+  __testing__
+} from './change-stack.js';
 
 describe('change-stack', () => {
   beforeEach(() => {

@@ -5,14 +5,14 @@ const mockStorage = {
   setLocal: jest.fn(),
   getSync: jest.fn()
 };
-jest.unstable_mockModule('./storage', () => mockStorage);
+jest.unstable_mockModule('./storage.js', () => mockStorage);
 
 const mockProfile = {
   fixProfiles: jest.fn()
 };
-jest.unstable_mockModule('./profile', () => mockProfile);
+jest.unstable_mockModule('./profile.js', () => mockProfile);
 
-const { initStorage } = await import('./storage-loader');
+const { initStorage } = await import('./storage-loader.js');
 
 describe('storage-loader', () => {
   beforeEach(() => {

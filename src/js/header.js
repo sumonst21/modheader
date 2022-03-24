@@ -1,4 +1,4 @@
-import lodashCloneDeep from 'lodash/cloneDeep';
+import lodashCloneDeep from 'lodash/cloneDeep.js';
 
 export function createHeader() {
   return {

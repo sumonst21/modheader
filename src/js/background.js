@@ -1,13 +1,13 @@
-import lodashIsEqual from 'lodash/isEqual';
-import lodashIsUndefined from 'lodash/isUndefined';
-import lodashCloneDeep from 'lodash/cloneDeep';
-import { initStorage } from './storage-loader';
-import { getSync, removeLocal, removeSync, setLocal, setSync } from './storage';
-import { clearContextMenu, createContextMenu, updateContextMenu } from './context-menu';
-import { setBrowserAction } from './browser-action';
-import { registerSignInChecker } from './identity';
-import { isChromiumBasedBrowser } from './user-agent';
-import { filterEnabledMods } from './utils';
+import lodashIsEqual from 'lodash/isEqual.js';
+import lodashIsUndefined from 'lodash/isUndefined.js';
+import lodashCloneDeep from 'lodash/cloneDeep.js';
+import { initStorage } from './storage-loader.js';
+import { getSync, removeLocal, removeSync, setLocal, setSync } from './storage.js';
+import { clearContextMenu, createContextMenu, updateContextMenu } from './context-menu.js';
+import { setBrowserAction } from './browser-action.js';
+import { loadSignedInUser } from './identity.js';
+import { isChromiumBasedBrowser } from './user-agent.js';
+import { filterEnabledMods } from './utils.js';
 import { optimizeFilters, passFilters } from './filter';
 
 const MAX_PROFILES_IN_CLOUD = 50;
@@ -336,7 +336,11 @@ async function initialize() {
   setupHeaderModListener();
   await resetBadge();
   await resetContextMenu();
-  registerSignInChecker();
+
+  chrome.webRequest.onSendHeaders.removeListener(loadSignedInUser);
+  chrome.webRequest.onSendHeaders.addListener(loadSignedInUser, {
+    urls: [process.env.CHECK_LOGIN_URL, `${process.env.CHECK_LOGIN_URL}?*`]
+  });
 
   chrome.storage.onChanged.addListener(async (changes, areaName) => {
     if (areaName !== 'local') {

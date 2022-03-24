@@ -1,14 +1,14 @@
-import { takeRight } from './utils';
-import { createHeader } from './header';
-import { generateBackgroundColor, generateTextColor } from './color';
-import { profiles, commitData, selectedProfileIndex, isInitialized } from './datasource';
-import { showMessage } from './toast';
-import lodashCloneDeep from 'lodash/cloneDeep';
-import lodashOrderBy from 'lodash/orderBy';
-import lodashIsEqual from 'lodash/isEqual';
-import lodashIsArray from 'lodash/isArray';
-import lodashDebounce from 'lodash/debounce';
 import { get, derived } from 'svelte/store';
+import lodashCloneDeep from 'lodash/cloneDeep.js';
+import lodashOrderBy from 'lodash/orderBy.js';
+import lodashIsEqual from 'lodash/isEqual.js';
+import lodashIsArray from 'lodash/isArray.js';
+import lodashDebounce from 'lodash/debounce.js';
+import { takeRight } from './utils.js';
+import { createHeader } from './header.js';
+import { generateBackgroundColor, generateTextColor } from './color.js';
+import { profiles, commitData, selectedProfileIndex, isInitialized } from './datasource.js';
+import { showMessage } from './toast.js';
 
 let latestProfiles = [];
 let latestSelectedProfileIndex = 0;

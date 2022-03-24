@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals';
 import { get } from 'svelte/store';
 import flushPromises from 'flush-promises';
-import { signedInUser } from './identity';
+import { signedInUser } from './identity.js';
 import { __testing__ as changeStackTesting } from './change-stack.js';
 
 const mockStorage = {
@@ -9,7 +9,7 @@ const mockStorage = {
   setLocal: jest.fn(),
   removeLocal: jest.fn()
 };
-jest.unstable_mockModule('./storage', () => mockStorage);
+jest.unstable_mockModule('./storage.js', () => mockStorage);
 
 const {
   init,
@@ -20,7 +20,7 @@ const {
   selectedProfileIndex,
   isLocked,
   isPaused
-} = await import('./datasource');
+} = await import('./datasource.js');
 
 describe('datasource', () => {
   beforeEach(() => {
