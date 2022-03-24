@@ -7,8 +7,8 @@ import { clearContextMenu, createContextMenu, updateContextMenu } from './contex
 import { setBrowserAction } from './browser-action.js';
 import { loadSignedInUser } from './identity.js';
 import { isChromiumBasedBrowser } from './user-agent.js';
-import { filterEnabledMods } from './utils.js';
-import { optimizeFilters, passFilters } from './filter';
+import { filterEnabledMods, evaluateValue } from './utils.js';
+import { optimizeFilters, passFilters } from './filter.js';
 
 const MAX_PROFILES_IN_CLOUD = 50;
 let chromeLocal = {
@@ -39,23 +39,11 @@ function loadActiveProfiles() {
   }
 }
 
-function evaluateValue(value, url, oldValue) {
-  if (value && value.startsWith('function')) {
-    try {
-      const arg = JSON.stringify({ url, oldValue });
-      return (eval(`(${value})(${arg})`) || '').toString();
-    } catch (err) {
-      console.error(err);
-    }
-  }
-  return value;
-}
-
 function replaceUrls(urlReplacements, url) {
   if (urlReplacements) {
     for (const replacement of urlReplacements) {
       // Avoid infinite replacement
-      const replacementValue = evaluateValue(replacement.value, url, url);
+      const replacementValue = evaluateValue({ value: replacement.value, url, oldValue: url });
       if (!url.includes(replacementValue)) {
         url = url.replace(new RegExp(replacement.name), replacementValue);
       }
@@ -78,11 +66,11 @@ function modifyHeader(url, currentProfile, source, dest) {
   for (const header of source) {
     const normalizedHeaderName = header.name.toLowerCase();
     const index = indexMap[normalizedHeaderName];
-    const headerValue = evaluateValue(
-      header.value,
+    const headerValue = evaluateValue({
+      value: header.value,
       url,
-      index !== undefined ? dest[index].value : undefined
-    );
+      oldUrl: index !== undefined ? dest[index].value : undefined
+    });
     if (index !== undefined) {
       if (!currentProfile.appendMode || currentProfile.appendMode === 'false') {
         dest[index].value = headerValue;
