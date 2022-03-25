@@ -6,9 +6,9 @@ const mockStorage = {
   removeLocal: jest.fn(),
   setLocal: jest.fn()
 };
-jest.unstable_mockModule('./storage.js', () => mockStorage);
+jest.doMock('./storage.js', () => mockStorage);
 
-const { loadSignedInUser, signedInUser, signOut } = await import('./identity.js');
+const { loadSignedInUser, signedInUser, signOut } = require('./identity.js');
 
 describe('identity', () => {
   test('Load signed in user', async () => {

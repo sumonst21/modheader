@@ -3,9 +3,9 @@ import { jest } from '@jest/globals';
 const mockBrowserAction = {
   setBrowserAction: jest.fn()
 };
-jest.unstable_mockModule('./browser-action.js', () => mockBrowserAction);
+jest.doMock('./browser-action.js', () => mockBrowserAction);
 
-const { resetBrowserActions, __testing__ } = await import('./browser-action-manager.js');
+const { resetBrowserActions, __testing__ } = require('./browser-action-manager.js');
 
 describe('browser-action-manager', () => {
   afterEach(() => {

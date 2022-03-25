@@ -8,14 +8,14 @@ const mockStorage = {
   setSync: jest.fn(),
   addStorageChangeListener: jest.fn()
 };
-jest.unstable_mockModule('./storage.js', () => mockStorage);
+jest.doMock('./storage.js', () => mockStorage);
 
 const mockStorageLoader = {
   initStorage: jest.fn()
 };
-jest.unstable_mockModule('./storage-loader.js', () => mockStorageLoader);
+jest.doMock('./storage-loader.js', () => mockStorageLoader);
 
-const { loadProfilesFromStorage } = await import('./worker-data-manager.js');
+const { loadProfilesFromStorage } = require('./worker-data-manager.js');
 
 MockDate.set(10000000);
 

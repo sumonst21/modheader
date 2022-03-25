@@ -273,6 +273,8 @@ button::-moz-focus-inner {
 }
 
 .profile-badge-status {
+  background-color: white;
+  border-radius: 50%;
   position: absolute;
   right: 0;
   bottom: 0;

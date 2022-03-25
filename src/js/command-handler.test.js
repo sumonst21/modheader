@@ -5,9 +5,9 @@ const mockStorageLoader = {
   setPaused: jest.fn(),
   setSelectedProfileIndex: jest.fn()
 };
-jest.unstable_mockModule('./storage-loader.js', () => mockStorageLoader);
+jest.doMock('./storage-loader.js', () => mockStorageLoader);
 
-const { onCommandReceived, __testing__ } = await import('./command-handler.js');
+const { onCommandReceived, __testing__ } = require('./command-handler.js');
 
 describe('command-handler', () => {
   test('Toggle pause - to paused', async () => {

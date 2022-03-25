@@ -7,12 +7,12 @@ const mockDatasource = {
   profiles: writable([]),
   selectedProfileIndex: writable(0)
 };
-jest.unstable_mockModule('./datasource.js', () => mockDatasource);
+jest.doMock('./datasource.js', () => mockDatasource);
 
 const mockToast = {
   showMessage: jest.fn()
 };
-jest.unstable_mockModule('./toast.js', () => mockToast);
+jest.doMock('./toast.js', () => mockToast);
 
 const {
   selectedProfile,
@@ -23,7 +23,7 @@ const {
   sortProfiles,
   importProfiles,
   restoreToProfiles
-} = await import('./profile.js');
+} = require('./profile.js');
 
 jest.useFakeTimers();
 

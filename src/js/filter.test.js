@@ -3,9 +3,9 @@ import { jest } from '@jest/globals';
 const mockTabs = {
   getActiveTab: jest.fn()
 };
-jest.unstable_mockModule('./tabs.js', () => mockTabs);
+jest.doMock('./tabs.js', () => mockTabs);
 
-const { FilterType, addFilter, removeFilter, optimizeFilters, passFilters } = await import(
+const { FilterType, addFilter, removeFilter, optimizeFilters, passFilters } = require(
   './filter.js'
 );
 

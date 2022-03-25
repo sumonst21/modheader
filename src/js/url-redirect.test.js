@@ -3,9 +3,9 @@ import { jest } from '@jest/globals';
 const mockTabs = {
   getActiveTab: jest.fn()
 };
-jest.unstable_mockModule('./tabs.js', () => mockTabs);
+jest.doMock('./tabs.js', () => mockTabs);
 
-const { addUrlRedirect, removeUrlRedirect, optimizeUrlRedirects, redirectUrl } = await import(
+const { addUrlRedirect, removeUrlRedirect, optimizeUrlRedirects, redirectUrl } = require(
   './url-redirect.js'
 );
 

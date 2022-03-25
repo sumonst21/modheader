@@ -7,13 +7,13 @@ import { __testing__ as changeStackTesting } from './change-stack.js';
 const mockStorage = {
   getLocal: jest.fn()
 };
-jest.unstable_mockModule('./storage.js', () => mockStorage);
+jest.doMock('./storage.js', () => mockStorage);
 
 const mockStorageLoader = {
   setPaused: jest.fn(),
   setLockedTabId: jest.fn()
 };
-jest.unstable_mockModule('./storage-loader.js', () => mockStorageLoader);
+jest.doMock('./storage-loader.js', () => mockStorageLoader);
 
 const {
   init,
@@ -24,7 +24,7 @@ const {
   selectedProfileIndex,
   isLocked,
   isPaused
-} = await import('./datasource.js');
+} = require('./datasource.js');
 
 describe('datasource', () => {
   beforeEach(() => {

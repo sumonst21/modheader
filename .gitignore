@@ -64,3 +64,4 @@ build
 dist
 .idea
 src/styles
+*__diff_output__

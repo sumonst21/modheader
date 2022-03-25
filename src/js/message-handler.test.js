@@ -4,9 +4,9 @@ const mockStorageLoader = {
   setProfiles: jest.fn(),
   setSelectedProfileIndex: jest.fn()
 };
-jest.unstable_mockModule('./storage-loader.js', () => mockStorageLoader);
+jest.doMock('./storage-loader.js', () => mockStorageLoader);
 
-const { MessageType, onMessageReceived } = await import('./message-handler.js');
+const { MessageType, onMessageReceived } = require('./message-handler.js');
 
 describe('message-handler', () => {
   test('onMessageReceived - EXISTS', async () => {

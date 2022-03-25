@@ -1,7 +1,7 @@
 <script>
   import { mdiCheckboxMarkedCircle, mdiCheckboxBlankCircle } from '@mdi/js';
   import MdiIcon from './MdiIcon.svelte';
-  import { selectedProfile } from '../js/profile';
+  import { selectedProfile } from '../js/profile.js';
 
   export let profile;
 
@@ -12,11 +12,10 @@
   <span class="profile-badge-icon-text" style="color: {profile.textColor}">
     {profile.shortTitle}
   </span>
-  <span class="profile-badge-status">
-    <MdiIcon
-      size="12"
-      icon={isActive ? mdiCheckboxMarkedCircle : mdiCheckboxBlankCircle}
-      color={isActive ? 'green' : 'red'}
-    />
-  </span>
+  <MdiIcon
+    class="profile-badge-status"
+    size="12"
+    icon={isActive ? mdiCheckboxMarkedCircle : mdiCheckboxBlankCircle}
+    color={isActive ? 'green' : 'red'}
+  />
 </span>

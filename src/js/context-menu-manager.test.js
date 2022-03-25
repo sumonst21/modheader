@@ -5,9 +5,9 @@ const mockContextMenu = {
   createContextMenu: jest.fn(),
   updateContextMenu: jest.fn()
 };
-jest.unstable_mockModule('./context-menu.js', () => mockContextMenu);
+jest.doMock('./context-menu.js', () => mockContextMenu);
 
-const { resetContextMenu, __testing__ } = await import('./context-menu-manager.js');
+const { resetContextMenu, __testing__ } = require('./context-menu-manager.js');
 
 describe('context-menu-manager', () => {
   afterEach(() => {
