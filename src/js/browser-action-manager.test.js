@@ -1,15 +1,15 @@
 import { jest } from '@jest/globals';
 
-const mockStorage = {
+const mockBrowserAction = {
   setBrowserAction: jest.fn()
 };
-jest.unstable_mockModule('./browser-action.js', () => mockStorage);
+jest.unstable_mockModule('./browser-action.js', () => mockBrowserAction);
 
 const { resetBrowserActions, __testing__ } = await import('./browser-action-manager.js');
 
 describe('browser-action-manager', () => {
   afterEach(() => {
-    __testing__.currentSetting = undefined;
+    __testing__.currentSettings = undefined;
   });
 
   test('Show paused', async () => {
@@ -18,8 +18,8 @@ describe('browser-action-manager', () => {
     const selectedActiveProfile = {};
     await resetBrowserActions({ chromeLocal, activeProfiles, selectedActiveProfile });
 
-    expect(mockStorage.setBrowserAction).toHaveBeenCalledTimes(1);
-    expect(mockStorage.setBrowserAction).toHaveBeenCalledWith({
+    expect(mockBrowserAction.setBrowserAction).toHaveBeenCalledTimes(1);
+    expect(mockBrowserAction.setBrowserAction).toHaveBeenCalledWith({
       icon: __testing__.DISABLED_ICON,
       text: __testing__.PAUSED_TEXT,
       color: '#666'
@@ -32,8 +32,8 @@ describe('browser-action-manager', () => {
     const selectedActiveProfile = {};
     await resetBrowserActions({ chromeLocal, activeProfiles, selectedActiveProfile });
 
-    expect(mockStorage.setBrowserAction).toHaveBeenCalledTimes(1);
-    expect(mockStorage.setBrowserAction).toHaveBeenCalledWith({
+    expect(mockBrowserAction.setBrowserAction).toHaveBeenCalledTimes(1);
+    expect(mockBrowserAction.setBrowserAction).toHaveBeenCalledWith({
       icon: __testing__.DISABLED_ICON,
       text: '',
       color: '#fff'
@@ -48,8 +48,8 @@ describe('browser-action-manager', () => {
     const selectedActiveProfile = {};
     await resetBrowserActions({ chromeLocal, activeProfiles, selectedActiveProfile });
 
-    expect(mockStorage.setBrowserAction).toHaveBeenCalledTimes(1);
-    expect(mockStorage.setBrowserAction).toHaveBeenCalledWith({
+    expect(mockBrowserAction.setBrowserAction).toHaveBeenCalledTimes(1);
+    expect(mockBrowserAction.setBrowserAction).toHaveBeenCalledWith({
       icon: __testing__.DISABLED_ICON,
       text: __testing__.LOCKED_TEXT,
       color: '#ff8e8e'
@@ -66,11 +66,26 @@ describe('browser-action-manager', () => {
     };
     await resetBrowserActions({ chromeLocal, activeProfiles, selectedActiveProfile });
 
-    expect(mockStorage.setBrowserAction).toHaveBeenCalledTimes(1);
-    expect(mockStorage.setBrowserAction).toHaveBeenCalledWith({
+    expect(mockBrowserAction.setBrowserAction).toHaveBeenCalledTimes(1);
+    expect(mockBrowserAction.setBrowserAction).toHaveBeenCalledWith({
       icon: __testing__.REGULAR_ICON,
       text: '1',
       color: '#123456'
+    });
+  });
+
+  test('Call only once on same setting', async () => {
+    const chromeLocal = { isPaused: true };
+    const activeProfiles = [];
+    const selectedActiveProfile = {};
+    await resetBrowserActions({ chromeLocal, activeProfiles, selectedActiveProfile });
+    await resetBrowserActions({ chromeLocal, activeProfiles, selectedActiveProfile });
+
+    expect(mockBrowserAction.setBrowserAction).toHaveBeenCalledTimes(1);
+    expect(mockBrowserAction.setBrowserAction).toHaveBeenCalledWith({
+      icon: __testing__.DISABLED_ICON,
+      text: __testing__.PAUSED_TEXT,
+      color: '#666'
     });
   });
 });

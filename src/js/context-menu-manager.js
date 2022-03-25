@@ -5,6 +5,14 @@ const PAUSE_MENU_ID = 'pause';
 const LOCK_MENU_ID = 'lock';
 const BROWSER_ACTION_CONTEXT = ['browser_action'];
 
+const currentSettings = {};
+
+export const __testing__ = {
+  PAUSE_MENU_ID,
+  LOCK_MENU_ID,
+  currentSettings
+};
+
 export async function initContextMenu() {
   await clearContextMenu();
   await createContextMenu({
@@ -19,30 +27,38 @@ export async function initContextMenu() {
   });
 }
 
+async function updateContextMenuIfNeeded(id, { title, onclick }) {
+  if (currentSettings[id] === title) {
+    return;
+  }
+  currentSettings[id] = title;
+  await updateContextMenu(id, {
+    title,
+    contexts: BROWSER_ACTION_CONTEXT,
+    onclick
+  });
+}
+
 export async function resetContextMenu(chromeLocal) {
   if (chromeLocal.isPaused) {
-    await updateContextMenu(PAUSE_MENU_ID, {
+    await updateContextMenuIfNeeded(PAUSE_MENU_ID, {
       title: 'Unpause ModHeader',
-      contexts: BROWSER_ACTION_CONTEXT,
       onclick: () => removeLocal('isPaused')
     });
   } else {
-    await updateContextMenu(PAUSE_MENU_ID, {
+    await updateContextMenuIfNeeded(PAUSE_MENU_ID, {
       title: 'Pause ModHeader',
-      contexts: BROWSER_ACTION_CONTEXT,
       onclick: () => setLocal({ isPaused: true })
     });
   }
   if (chromeLocal.lockedTabId) {
-    await updateContextMenu(LOCK_MENU_ID, {
-      title: 'Unlock to all tabs',
-      contexts: BROWSER_ACTION_CONTEXT,
+    await updateContextMenuIfNeeded(LOCK_MENU_ID, {
+      title: 'Unlock all tabs',
       onclick: () => removeLocal('lockedTabId')
     });
   } else {
-    await updateContextMenu(LOCK_MENU_ID, {
+    await updateContextMenuIfNeeded(LOCK_MENU_ID, {
       title: 'Lock to this tab',
-      contexts: BROWSER_ACTION_CONTEXT,
       onclick: () => setLocal({ lockedTabId: chromeLocal.activeTabId })
     });
   }
