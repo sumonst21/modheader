@@ -69,3 +69,7 @@ export async function removeSync(keys) {
     });
   });
 }
+
+export function addStorageChangeListener(listener) {
+  return chrome.storage.onChanged.addListener(listener);
+}

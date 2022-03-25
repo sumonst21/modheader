@@ -1,45 +1,16 @@
-import lodashIsEqual from 'lodash/isEqual.js';
-import lodashIsUndefined from 'lodash/isUndefined.js';
-import lodashCloneDeep from 'lodash/cloneDeep.js';
-import { initStorage } from './storage-loader.js';
-import { getSync, removeLocal, removeSync, setLocal, setSync } from './storage.js';
+import { removeLocal, setLocal } from './storage.js';
 import { clearContextMenu, createContextMenu, updateContextMenu } from './context-menu.js';
 import { setBrowserAction } from './browser-action.js';
 import { loadSignedInUser } from './identity.js';
 import { isChromiumBasedBrowser } from './user-agent.js';
-import { filterEnabledMods } from './utils.js';
-import { optimizeFilters } from './filter.js';
-import { optimizeUrlRedirects } from './url-redirect.js';
 import { modifyRequestUrls, modifyRequestHeaders, modifyResponseHeaders } from './modifier.js';
+import { loadProfilesFromStorage } from './worker-data-manager.js';
 
-const MAX_PROFILES_IN_CLOUD = 50;
 let chromeLocal = {
   isPaused: true
 };
 let selectedActiveProfile;
 let activeProfiles = [];
-
-function loadActiveProfiles() {
-  activeProfiles = [];
-  selectedActiveProfile = undefined;
-  if (chromeLocal.profiles) {
-    const profiles = chromeLocal.profiles;
-    for (const [i, value] of profiles.entries()) {
-      if (i !== chromeLocal.selectedProfile && !value.alwaysOn) {
-        continue;
-      }
-      const profile = lodashCloneDeep(value);
-      profile.headers = filterEnabledMods(profile.headers);
-      profile.respHeaders = filterEnabledMods(profile.respHeaders);
-      profile.urlReplacements = optimizeUrlRedirects(profile.urlReplacements);
-      profile.filters = optimizeFilters(profile.filters);
-      if (i === chromeLocal.selectedProfile) {
-        selectedActiveProfile = value;
-      }
-      activeProfiles.push(profile);
-    }
-  }
-}
 
 function modifyRequestHandler_(details) {
   return modifyRequestUrls({ chromeLocal, activeProfiles, details });
@@ -123,20 +94,6 @@ chrome.windows.onFocusChanged.addListener((windowId) => {
     }
   });
 });
-
-async function saveStorageToCloud() {
-  const items = await getSync();
-  const keys = items ? Object.keys(items) : [];
-  keys.sort();
-  if (keys.length === 0 || items[keys[keys.length - 1]] !== chromeLocal.profiles) {
-    const data = {};
-    data[Date.now()] = chromeLocal.profiles;
-    await Promise.all([setSync(data), setLocal({ savedToCloud: true })]);
-  }
-  if (keys.length >= MAX_PROFILES_IN_CLOUD) {
-    await removeSync(keys.slice(0, keys.length - MAX_PROFILES_IN_CLOUD));
-  }
-}
 
 async function resetContextMenu() {
   if (chromeLocal.isPaused) {
@@ -224,40 +181,20 @@ async function initialize() {
     title: 'Lock',
     contexts: ['browser_action']
   });
-  chromeLocal = await initStorage();
-  loadActiveProfiles();
-  setupHeaderModListener();
-  await resetBadge();
-  await resetContextMenu();
+  await loadProfilesFromStorage(async (params) => {
+    chromeLocal = params.chromeLocal;
+    activeProfiles = params.activeProfiles;
+    selectedActiveProfile = params.selectedActiveProfile;
+    setupHeaderModListener();
+    await resetBadge();
+    await resetContextMenu();
+  });
 
   chrome.webRequest.onSendHeaders.removeListener(loadSignedInUser);
   chrome.webRequest.onSendHeaders.addListener(loadSignedInUser, {
     urls: [process.env.CHECK_LOGIN_URL, `${process.env.CHECK_LOGIN_URL}?*`]
   });
-
-  chrome.storage.onChanged.addListener(async (changes, areaName) => {
-    if (areaName !== 'local') {
-      return;
-    }
-    const profilesUpdated =
-      !lodashIsUndefined(changes.profiles) &&
-      !lodashIsEqual(chromeLocal.profiles, changes.profiles.newValue);
-    const selectedProfileUpdated =
-      !lodashIsUndefined(changes.selectedProfile) &&
-      !lodashIsEqual(chromeLocal.selectedProfile, changes.selectedProfile.newValue);
-    for (const [key, value] of Object.entries(changes)) {
-      chromeLocal[key] = value.newValue;
-    }
-    if (profilesUpdated || selectedProfileUpdated) {
-      loadActiveProfiles();
-      saveStorageToCloud();
-      setupHeaderModListener();
-    }
-    await resetBadge();
-    await resetContextMenu();
-  });
 }
-initialize();
 
 chrome.runtime.onMessageExternal.addListener(async function (request, sender, sendResponse) {
   if (!sender.origin.startsWith(process.env.URL_BASE)) {
@@ -285,3 +222,5 @@ chrome.runtime.onMessageExternal.addListener(async function (request, sender, se
 window.saveToStorage = function (items) {
   return setLocal(items);
 };
+
+initialize();
