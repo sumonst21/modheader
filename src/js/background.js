@@ -5,6 +5,7 @@ import { isChromiumBasedBrowser } from './user-agent.js';
 import { modifyRequestUrls, modifyRequestHeaders, modifyResponseHeaders } from './modifier.js';
 import { loadProfilesFromStorage } from './worker-data-manager.js';
 import { onMessageReceived } from './message-handler.js';
+import { onCommandReceived } from './command-handler.js';
 import { addTabUpdatedListener } from './tabs.js';
 import { initContextMenu, resetContextMenu } from './context-menu-manager.js';
 
@@ -105,6 +106,10 @@ chrome.runtime.onMessageExternal.addListener(async function (request, sender, se
   if (await onMessageReceived({ chromeLocal, request })) {
     sendResponse({ success: true });
   }
+});
+
+chrome.commands.onCommand.addListener(async (command) => {
+  await onCommandReceived(chromeLocal, command);
 });
 
 window.saveToStorage = function (items) {

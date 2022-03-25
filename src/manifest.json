@@ -22,6 +22,34 @@
   "externally_connectable": {
     "matches": ["*://modheader.com/*"]
   },
+  "commands": {
+    "_execute_browser_action": {
+      "suggested_key": {
+        "default": "Alt+Shift+H"
+      }
+    },
+    "toggle_pause": {
+      "description": "Toggle pause/resume",
+      "suggested_key": {
+        "default": "Alt+Shift+P"
+      }
+    },
+    "toggle_lock": {
+      "description": "Toggle lock tab"
+    },
+    "switch_to_profile_1": {
+      "description": "Switch to 1st profile"
+    },
+    "switch_to_profile_2": {
+      "description": "Switch to 2nd profile"
+    },
+    "switch_to_profile_3": {
+      "description": "Switch to 3rd profile"
+    },
+    "switch_to_profile_4": {
+      "description": "Switch to 4th profile"
+    }
+  },
   "web_accessible_resources": ["images/icon_bw.png"],
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
 }
