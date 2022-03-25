@@ -10,6 +10,10 @@ const { FilterType, addFilter, removeFilter, optimizeFilters, passFilters } = aw
 );
 
 describe('filter', () => {
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
+
   test('addFilter - empty inputs', async () => {
     const actual = await addFilter([]);
 

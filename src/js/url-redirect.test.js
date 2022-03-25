@@ -10,6 +10,10 @@ const { addUrlRedirect, removeUrlRedirect, optimizeUrlRedirects, redirectUrl } =
 );
 
 describe('url-redirect', () => {
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
+
   test('addUrlRedirect - empty inputs', async () => {
     const actual = await addUrlRedirect([]);
 

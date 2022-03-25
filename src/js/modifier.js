@@ -26,7 +26,7 @@ export function modifyRequestUrls({ chromeLocal, activeProfiles, details }) {
 }
 
 function modifyHeader(url, currentProfile, source, dest) {
-  if (!source.length) {
+  if (!source || !source.length) {
     return;
   }
   // Create an index map so that we can more efficiently override
@@ -63,7 +63,7 @@ function modifyHeader(url, currentProfile, source, dest) {
 }
 
 export function modifyRequestHeaders({ chromeLocal, activeProfiles, details }) {
-  if (isEnabled(chromeLocal, details)) {
+  if (isEnabled(chromeLocal, details) && activeProfiles.length > 0) {
     for (const currentProfile of activeProfiles) {
       if (passFilters({ url: details.url, type: details.type, filters: currentProfile.filters })) {
         modifyHeader(details.url, currentProfile, currentProfile.headers, details.requestHeaders);
@@ -79,7 +79,7 @@ export function modifyRequestHeaders({ chromeLocal, activeProfiles, details }) {
 }
 
 export function modifyResponseHeaders({ chromeLocal, activeProfiles, details }) {
-  if (isEnabled(chromeLocal, details)) {
+  if (isEnabled(chromeLocal, details) && activeProfiles.length > 0) {
     let responseHeaders = lodashCloneDeep(details.responseHeaders);
     for (const currentProfile of activeProfiles) {
       if (passFilters({ url: details.url, type: details.type, filters: currentProfile.filters })) {
