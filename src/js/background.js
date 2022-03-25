@@ -5,6 +5,7 @@ import { loadSignedInUser } from './identity.js';
 import { isChromiumBasedBrowser } from './user-agent.js';
 import { modifyRequestUrls, modifyRequestHeaders, modifyResponseHeaders } from './modifier.js';
 import { loadProfilesFromStorage } from './worker-data-manager.js';
+import { onMessageReceived } from './message-handler.js';
 
 let chromeLocal = {
   isPaused: true
@@ -201,21 +202,8 @@ chrome.runtime.onMessageExternal.addListener(async function (request, sender, se
     sendResponse({ error: 'Unsupported origin' });
     return;
   }
-  switch (request.type) {
-    case 'EXISTS':
-      sendResponse({ success: true });
-      break;
-    case 'IMPORT':
-      chromeLocal.profiles.push(JSON.parse(request.profile));
-      await setLocal({ profiles: chromeLocal.profiles });
-      sendResponse({ success: true });
-      break;
-    case 'SWITCH_TO_LATEST':
-      await setLocal({ selectedProfile: chromeLocal.profiles.length - 1 });
-      sendResponse({ success: true });
-      break;
-    default:
-      break;
+  if (await onMessageReceived({ chromeLocal, request })) {
+    sendResponse({ success: true });
   }
 });
 

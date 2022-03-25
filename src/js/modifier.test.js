@@ -1,7 +1,5 @@
 import { FilterType } from './filter.js';
-import { modifyRequestHeaders, modifyResponseHeaders } from './modifier.js';
-
-const { modifyRequestUrls } = await import('./modifier.js');
+import { modifyRequestUrls, modifyRequestHeaders, modifyResponseHeaders } from './modifier.js';
 
 describe('modifier', () => {
   describe('Modify request urls', () => {
