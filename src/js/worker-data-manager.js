@@ -11,26 +11,18 @@ const MAX_PROFILES_IN_CLOUD = 50;
 
 export async function loadProfilesFromStorage(dataChangeCallback) {
   let chromeLocal = await initStorage();
-  dataChangeCallback(reloadActiveProfiles(chromeLocal));
+  await dataChangeCallback(reloadActiveProfiles(chromeLocal));
 
-  addStorageChangeListener(async (changes, areaName) => {
-    if (areaName !== 'local') {
-      return;
-    }
+  addStorageChangeListener(async (changes) => {
     const profilesUpdated =
       !lodashIsUndefined(changes.profiles) &&
       !lodashIsEqual(chromeLocal.profiles, changes.profiles.newValue);
-    const selectedProfileUpdated =
-      !lodashIsUndefined(changes.selectedProfile) &&
-      !lodashIsEqual(chromeLocal.selectedProfile, changes.selectedProfile.newValue);
     for (const [key, value] of Object.entries(changes)) {
       chromeLocal[key] = value.newValue;
     }
-    if (profilesUpdated || selectedProfileUpdated) {
-      dataChangeCallback(reloadActiveProfiles(chromeLocal));
-      if (profilesUpdated) {
-        await saveStorageToCloud(chromeLocal);
-      }
+    await dataChangeCallback(reloadActiveProfiles(chromeLocal));
+    if (profilesUpdated) {
+      await saveStorageToCloud(chromeLocal);
     }
   });
 }

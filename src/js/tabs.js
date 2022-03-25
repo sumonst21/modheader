@@ -18,3 +18,23 @@ export async function getActiveTab() {
     );
   });
 }
+
+export function addTabUpdatedListener(callback) {
+  chrome.tabs.onActivated.addListener((activeInfo) => {
+    chrome.tabs.get(activeInfo.tabId, callback);
+  });
+
+  chrome.windows.onFocusChanged.addListener((windowId) => {
+    if (windowId === chrome.windows.WINDOW_ID_NONE) {
+      return;
+    }
+    chrome.windows.get(windowId, { populate: true }, async (win) => {
+      for (const tab of win.tabs) {
+        if (tab.active) {
+          await callback(tab);
+          break;
+        }
+      }
+    });
+  });
+}

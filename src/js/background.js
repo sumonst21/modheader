@@ -1,11 +1,12 @@
-import { removeLocal, setLocal } from './storage.js';
-import { clearContextMenu, createContextMenu, updateContextMenu } from './context-menu.js';
-import { setBrowserAction } from './browser-action.js';
+import { setLocal } from './storage.js';
+import { resetBrowserActions } from './browser-action-manager.js';
 import { loadSignedInUser } from './identity.js';
 import { isChromiumBasedBrowser } from './user-agent.js';
 import { modifyRequestUrls, modifyRequestHeaders, modifyResponseHeaders } from './modifier.js';
 import { loadProfilesFromStorage } from './worker-data-manager.js';
 import { onMessageReceived } from './message-handler.js';
+import { addTabUpdatedListener } from './tabs.js';
+import { initContextMenu, resetContextMenu } from './context-menu-manager.js';
 
 let chromeLocal = {
   isPaused: true
@@ -30,8 +31,6 @@ function setupHeaderModListener() {
   chrome.webRequest.onBeforeSendHeaders.removeListener(modifyRequestHeaderHandler_);
   chrome.webRequest.onHeadersReceived.removeListener(modifyResponseHeaderHandler_);
 
-  // Chrome 72+ requires 'extraHeaders' to be added for some headers to be modifiable.
-  // Older versions break with it.
   let hasRequestHeadersModification = false;
   let hasResponseHeadersModification = false;
   let hasUrlReplacement = false;
@@ -46,6 +45,8 @@ function setupHeaderModListener() {
       hasUrlReplacement = true;
     }
   }
+  // Chrome 72+ requires 'extraHeaders' to be added for some headers to be modifiable.
+  // Firefox will break with it.
   if (hasRequestHeadersModification) {
     chrome.webRequest.onBeforeSendHeaders.addListener(
       modifyRequestHeaderHandler_,
@@ -74,121 +75,20 @@ function setupHeaderModListener() {
 
 async function onTabUpdated(tab) {
   await setLocal({ activeTabId: tab.id });
-  await resetBadge();
-  await resetContextMenu();
-}
-
-chrome.tabs.onActivated.addListener((activeInfo) => {
-  chrome.tabs.get(activeInfo.tabId, onTabUpdated);
-});
-
-chrome.windows.onFocusChanged.addListener((windowId) => {
-  if (windowId === chrome.windows.WINDOW_ID_NONE) {
-    return;
-  }
-  chrome.windows.get(windowId, { populate: true }, async (win) => {
-    for (const tab of win.tabs) {
-      if (tab.active) {
-        await onTabUpdated(tab);
-        break;
-      }
-    }
-  });
-});
-
-async function resetContextMenu() {
-  if (chromeLocal.isPaused) {
-    await updateContextMenu('pause', {
-      title: 'Unpause ModHeader',
-      contexts: ['browser_action'],
-      onclick: async () => {
-        await removeLocal('isPaused');
-      }
-    });
-  } else {
-    await updateContextMenu('pause', {
-      title: 'Pause ModHeader',
-      contexts: ['browser_action'],
-      onclick: async () => {
-        await setLocal({ isPaused: true });
-      }
-    });
-  }
-  if (chromeLocal.lockedTabId) {
-    await updateContextMenu('lock', {
-      title: 'Unlock to all tabs',
-      contexts: ['browser_action'],
-      onclick: async () => {
-        await removeLocal('lockedTabId');
-      }
-    });
-  } else {
-    await updateContextMenu('lock', {
-      title: 'Lock to this tab',
-      contexts: ['browser_action'],
-      onclick: async () => {
-        await setLocal({ lockedTabId: chromeLocal.activeTabId });
-      }
-    });
-  }
-}
-
-async function resetBadge() {
-  if (chromeLocal.isPaused) {
-    await setBrowserAction({
-      icon: 'images/icon_bw.png',
-      text: '\u275A\u275A',
-      color: '#666'
-    });
-  } else {
-    let numHeaders = 0;
-    for (const currentProfile of activeProfiles) {
-      numHeaders +=
-        currentProfile.headers.length +
-        currentProfile.respHeaders.length +
-        currentProfile.urlReplacements.length;
-    }
-    if (numHeaders === 0) {
-      await setBrowserAction({
-        icon: 'images/icon_bw.png',
-        text: '',
-        color: '#ffffff'
-      });
-    } else if (chromeLocal.lockedTabId && chromeLocal.lockedTabId !== chromeLocal.activeTabId) {
-      await setBrowserAction({
-        icon: 'images/icon_bw.png',
-        text: '\uD83D\uDD12',
-        color: '#ff8e8e'
-      });
-    } else {
-      await setBrowserAction({
-        icon: 'images/icon.png',
-        text: numHeaders.toString(),
-        color: selectedActiveProfile.backgroundColor
-      });
-    }
-  }
+  await resetBrowserActions({ chromeLocal, activeProfiles, selectedActiveProfile });
+  await resetContextMenu(chromeLocal);
 }
 
 async function initialize() {
-  await clearContextMenu();
-  await createContextMenu({
-    id: 'pause',
-    title: 'Pause',
-    contexts: ['browser_action']
-  });
-  await createContextMenu({
-    id: 'lock',
-    title: 'Lock',
-    contexts: ['browser_action']
-  });
+  addTabUpdatedListener(onTabUpdated);
+  await initContextMenu(chromeLocal);
   await loadProfilesFromStorage(async (params) => {
     chromeLocal = params.chromeLocal;
     activeProfiles = params.activeProfiles;
     selectedActiveProfile = params.selectedActiveProfile;
     setupHeaderModListener();
-    await resetBadge();
-    await resetContextMenu();
+    await resetBrowserActions({ chromeLocal, activeProfiles, selectedActiveProfile });
+    await resetContextMenu(chromeLocal);
   });
 
   chrome.webRequest.onSendHeaders.removeListener(loadSignedInUser);

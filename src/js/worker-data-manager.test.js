@@ -167,8 +167,7 @@ describe('worker-data-manager', () => {
           profiles: {
             newValue: [profile2]
           }
-        },
-        'local'
+        }
       );
     });
     const callback = jest.fn();
@@ -218,7 +217,6 @@ describe('worker-data-manager', () => {
             newValue: [profile2]
           }
         },
-        'local'
       );
     });
     const callback = jest.fn();
@@ -267,8 +265,7 @@ describe('worker-data-manager', () => {
           selectedProfile: {
             newValue: 1
           }
-        },
-        'local'
+        }
       );
     });
     const callback = jest.fn();
