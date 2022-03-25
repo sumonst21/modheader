@@ -1,4 +1,4 @@
-import { setLocal } from './storage.js';
+import { setProfiles, setSelectedProfileIndex } from './storage-loader.js';
 
 export const MessageType = {
   EXISTS: 'EXISTS',
@@ -12,10 +12,10 @@ export async function onMessageReceived({ chromeLocal, request }) {
       return true;
     case MessageType.IMPORT:
       chromeLocal.profiles.push(JSON.parse(request.profile));
-      await setLocal({ profiles: chromeLocal.profiles });
+      await setProfiles(chromeLocal.profiles);
       return true;
     case MessageType.SWITCH_TO_LATEST:
-      await setLocal({ selectedProfile: chromeLocal.profiles.length - 1 });
+      await setSelectedProfileIndex(chromeLocal.profiles.length - 1);
       return true;
     default:
       return false;

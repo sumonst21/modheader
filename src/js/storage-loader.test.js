@@ -3,6 +3,7 @@ import { jest } from '@jest/globals';
 const mockStorage = {
   getLocal: jest.fn(),
   setLocal: jest.fn(),
+  removeLocal: jest.fn(),
   getSync: jest.fn()
 };
 jest.unstable_mockModule('./storage.js', () => mockStorage);

@@ -1,5 +1,5 @@
 import { clearContextMenu, createContextMenu, updateContextMenu } from './context-menu.js';
-import { removeLocal, setLocal } from './storage.js';
+import { setLockedTabId, setPaused } from './storage-loader.js';
 
 const PAUSE_MENU_ID = 'pause';
 const LOCK_MENU_ID = 'lock';
@@ -43,23 +43,23 @@ export async function resetContextMenu(chromeLocal) {
   if (chromeLocal.isPaused) {
     await updateContextMenuIfNeeded(PAUSE_MENU_ID, {
       title: 'Unpause ModHeader',
-      onclick: () => removeLocal('isPaused')
+      onclick: () => setPaused(false)
     });
   } else {
     await updateContextMenuIfNeeded(PAUSE_MENU_ID, {
       title: 'Pause ModHeader',
-      onclick: () => setLocal({ isPaused: true })
+      onclick: () => setPaused(true)
     });
   }
   if (chromeLocal.lockedTabId) {
     await updateContextMenuIfNeeded(LOCK_MENU_ID, {
       title: 'Unlock all tabs',
-      onclick: () => removeLocal('lockedTabId')
+      onclick: () => setLockedTabId(undefined)
     });
   } else {
     await updateContextMenuIfNeeded(LOCK_MENU_ID, {
       title: 'Lock to this tab',
-      onclick: () => setLocal({ lockedTabId: chromeLocal.activeTabId })
+      onclick: () => setLockedTabId(chromeLocal.activeTabId)
     });
   }
 }

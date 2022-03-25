@@ -1,7 +1,31 @@
 import lodashIsUndefined from 'lodash/isUndefined.js';
 import lodashIsEmpty from 'lodash/isEmpty.js';
 import { fixProfiles } from './profile.js';
-import { getLocal, setLocal, getSync } from './storage.js';
+import { getLocal, setLocal, getSync, removeLocal } from './storage.js';
+
+export async function setProfiles(profiles) {
+  await setLocal({ profiles });
+}
+
+export async function setSelectedProfileIndex(index) {
+  await setLocal({ selectedProfile: index });
+}
+
+export async function setPaused(isPaused) {
+  if (isPaused) {
+    await setLocal({ isPaused: true });
+  } else {
+    await removeLocal('isPaused');
+  }
+}
+
+export async function setLockedTabId(lockedTabId) {
+  if (lockedTabId) {
+    await setLocal({ lockedTabId });
+  } else {
+    await removeLocal('lockedTabId');
+  }
+}
 
 export async function initStorage() {
   let chromeLocal = await getLocal();

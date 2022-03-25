@@ -3,7 +3,8 @@ import lodashCloneDeep from 'lodash/cloneDeep.js';
 import lodashIsEqual from 'lodash/isEqual.js';
 import lodashIsUndefined from 'lodash/isUndefined.js';
 import { hideMessage } from './toast.js';
-import { getLocal, setLocal, removeLocal } from './storage.js';
+import { getLocal } from './storage.js';
+import { setPaused, setLockedTabId } from './storage-loader.js';
 import { signedInUser } from './identity.js';
 import {
   undoChange,
@@ -28,11 +29,7 @@ selectedProfileIndex.subscribe(($selectedProfileIndex) => {
 isPaused.subscribe(async ($isPaused) => {
   setChangeField('isPaused', $isPaused);
   if (get(isInitialized)) {
-    if ($isPaused) {
-      await setLocal({ isPaused: true });
-    } else {
-      await removeLocal('isPaused');
-    }
+    await setPaused($isPaused);
   }
 });
 isLocked.subscribe(async ($isLocked) => {
@@ -40,9 +37,9 @@ isLocked.subscribe(async ($isLocked) => {
   if (get(isInitialized)) {
     if ($isLocked) {
       const { activeTabId } = await getLocal('activeTabId');
-      await setLocal({ lockedTabId: activeTabId });
+      await setLockedTabId(activeTabId);
     } else {
-      await removeLocal('lockedTabId');
+      await setLockedTabId(undefined);
     }
   }
 });

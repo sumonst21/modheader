@@ -1,9 +1,10 @@
 import { jest } from '@jest/globals';
 
-const mockStorage = {
-  setLocal: jest.fn()
+const mockStorageLoader = {
+  setProfiles: jest.fn(),
+  setSelectedProfileIndex: jest.fn()
 };
-jest.unstable_mockModule('./storage.js', () => mockStorage);
+jest.unstable_mockModule('./storage-loader.js', () => mockStorageLoader);
 
 const { MessageType, onMessageReceived } = await import('./message-handler.js');
 
@@ -19,8 +20,8 @@ describe('message-handler', () => {
     const request = { type: MessageType.IMPORT, profile: JSON.stringify({ title: 'Test' }) };
     await expect(onMessageReceived({ chromeLocal, request })).resolves.toEqual(true);
 
-    expect(mockStorage.setLocal).toHaveBeenCalledTimes(1);
-    expect(mockStorage.setLocal).toHaveBeenCalledWith({ profiles: [{ title: 'Test' }] });
+    expect(mockStorageLoader.setProfiles).toHaveBeenCalledTimes(1);
+    expect(mockStorageLoader.setProfiles).toHaveBeenCalledWith([{ title: 'Test' }]);
   });
 
   test('onMessageReceived - SWITCH_TO_LATEST', async () => {
@@ -28,8 +29,8 @@ describe('message-handler', () => {
     const request = { type: MessageType.SWITCH_TO_LATEST };
     await expect(onMessageReceived({ chromeLocal, request })).resolves.toEqual(true);
 
-    expect(mockStorage.setLocal).toHaveBeenCalledTimes(1);
-    expect(mockStorage.setLocal).toHaveBeenCalledWith({ selectedProfile: 1 });
+    expect(mockStorageLoader.setSelectedProfileIndex).toHaveBeenCalledTimes(1);
+    expect(mockStorageLoader.setSelectedProfileIndex).toHaveBeenCalledWith(1);
   });
 
   test('onMessageReceived - Unknown message type', async () => {

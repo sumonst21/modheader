@@ -5,11 +5,15 @@ import { signedInUser } from './identity.js';
 import { __testing__ as changeStackTesting } from './change-stack.js';
 
 const mockStorage = {
-  getLocal: jest.fn(),
-  setLocal: jest.fn(),
-  removeLocal: jest.fn()
+  getLocal: jest.fn()
 };
 jest.unstable_mockModule('./storage.js', () => mockStorage);
+
+const mockStorageLoader = {
+  setPaused: jest.fn(),
+  setLockedTabId: jest.fn()
+};
+jest.unstable_mockModule('./storage-loader.js', () => mockStorageLoader);
 
 const {
   init,
@@ -210,8 +214,8 @@ describe('datasource', () => {
     ]);
     expect(get(isLocked)).toEqual(true);
     await flushPromises();
-    expect(mockStorage.setLocal).toHaveBeenCalledTimes(1);
-    expect(mockStorage.setLocal).toHaveBeenCalledWith({ lockedTabId: 'lockedTab' });
+    expect(mockStorageLoader.setLockedTabId).toHaveBeenCalledTimes(1);
+    expect(mockStorageLoader.setLockedTabId).toHaveBeenCalledWith('lockedTab');
 
     // Second commit
     jest.clearAllMocks();
@@ -228,8 +232,8 @@ describe('datasource', () => {
     ]);
     expect(get(isLocked)).toEqual(false);
     await flushPromises();
-    expect(mockStorage.removeLocal).toHaveBeenCalledTimes(1);
-    expect(mockStorage.removeLocal).toHaveBeenCalledWith('lockedTabId');
+    expect(mockStorageLoader.setLockedTabId).toHaveBeenCalledTimes(1);
+    expect(mockStorageLoader.setLockedTabId).toHaveBeenCalledWith(undefined);
 
     // Undo second commit to get back to first commit
     jest.clearAllMocks();
@@ -241,8 +245,8 @@ describe('datasource', () => {
     ]);
     expect(get(isLocked)).toEqual(true);
     await flushPromises();
-    expect(mockStorage.setLocal).toHaveBeenCalledTimes(1);
-    expect(mockStorage.setLocal).toHaveBeenCalledWith({ lockedTabId: 'lockedTab' });
+    expect(mockStorageLoader.setLockedTabId).toHaveBeenCalledTimes(1);
+    expect(mockStorageLoader.setLockedTabId).toHaveBeenCalledWith('lockedTab');
   });
 
   test('Commit data add to change stack - change isPaused', async () => {
@@ -257,8 +261,8 @@ describe('datasource', () => {
     ]);
     expect(get(isPaused)).toEqual(true);
     await flushPromises();
-    expect(mockStorage.setLocal).toHaveBeenCalledTimes(1);
-    expect(mockStorage.setLocal).toHaveBeenCalledWith({ isPaused: true });
+    expect(mockStorageLoader.setPaused).toHaveBeenCalledTimes(1);
+    expect(mockStorageLoader.setPaused).toHaveBeenCalledWith(true);
 
     // Second commit
     jest.clearAllMocks();
@@ -275,8 +279,8 @@ describe('datasource', () => {
     ]);
     expect(get(isPaused)).toEqual(false);
     await flushPromises();
-    expect(mockStorage.removeLocal).toHaveBeenCalledTimes(1);
-    expect(mockStorage.removeLocal).toHaveBeenCalledWith('isPaused');
+    expect(mockStorageLoader.setPaused).toHaveBeenCalledTimes(1);
+    expect(mockStorageLoader.setPaused).toHaveBeenCalledWith(false);
 
     // Undo second commit to get back to first commit
     jest.clearAllMocks();
@@ -288,7 +292,7 @@ describe('datasource', () => {
     ]);
     expect(get(isPaused)).toEqual(true);
     await flushPromises();
-    expect(mockStorage.setLocal).toHaveBeenCalledTimes(1);
-    expect(mockStorage.setLocal).toHaveBeenCalledWith({ isPaused: true });
+    expect(mockStorageLoader.setPaused).toHaveBeenCalledTimes(1);
+    expect(mockStorageLoader.setPaused).toHaveBeenCalledWith(true);
   });
 });
