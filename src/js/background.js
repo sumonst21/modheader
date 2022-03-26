@@ -1,13 +1,24 @@
 import { setLocal } from './storage.js';
 import { resetBrowserActions } from './browser-action-manager.js';
 import { loadSignedInUser } from './identity.js';
-import { isChromiumBasedBrowser } from './user-agent.js';
 import { modifyRequestUrls, modifyRequestHeaders, modifyResponseHeaders } from './modifier.js';
 import { loadProfilesFromStorage } from './worker-data-manager.js';
 import { onMessageReceived } from './message-handler.js';
 import { onCommandReceived } from './command-handler.js';
 import { addTabUpdatedListener } from './tabs.js';
 import { initContextMenu, resetContextMenu } from './context-menu-manager.js';
+import {
+  addBeforeRequestListener,
+  addBeforeSendHeadersListener,
+  addHeadersReceivedListener,
+  addSendHeadersListener,
+  removeBeforeRequestListener,
+  removeBeforeSendHeadersListener,
+  removeHeadersReceivedListener
+} from './web-request.js';
+
+const ALL_URLS_FILTER = ['<all_urls>'];
+const LOGIN_URL_FILTER = [process.env.CHECK_LOGIN_URL, `${process.env.CHECK_LOGIN_URL}?*`];
 
 let chromeLocal = {
   isPaused: true
@@ -28,49 +39,20 @@ function modifyResponseHeaderHandler_(details) {
 }
 
 function setupHeaderModListener() {
-  chrome.webRequest.onBeforeRequest.removeListener(modifyRequestHandler_);
-  chrome.webRequest.onBeforeSendHeaders.removeListener(modifyRequestHeaderHandler_);
-  chrome.webRequest.onHeadersReceived.removeListener(modifyResponseHeaderHandler_);
-
-  let hasRequestHeadersModification = false;
-  let hasResponseHeadersModification = false;
-  let hasUrlReplacement = false;
-  for (const currentProfile of activeProfiles) {
-    if (currentProfile.headers.length > 0) {
-      hasRequestHeadersModification = true;
-    }
-    if (currentProfile.respHeaders.length > 0) {
-      hasResponseHeadersModification = true;
-    }
-    if (currentProfile.urlReplacements.length > 0) {
-      hasUrlReplacement = true;
-    }
+  if (activeProfiles.find((p) => p.urlReplacements.length > 0)) {
+    addBeforeRequestListener(modifyRequestHandler_, ALL_URLS_FILTER);
+  } else {
+    removeBeforeRequestListener(modifyRequestHandler_);
   }
-  // Chrome 72+ requires 'extraHeaders' to be added for some headers to be modifiable.
-  // Firefox will break with it.
-  if (hasRequestHeadersModification) {
-    chrome.webRequest.onBeforeSendHeaders.addListener(
-      modifyRequestHeaderHandler_,
-      { urls: ['<all_urls>'] },
-      isChromiumBasedBrowser()
-        ? ['requestHeaders', 'blocking', 'extraHeaders']
-        : ['requestHeaders', 'blocking']
-    );
+  if (activeProfiles.find((p) => p.headers.length > 0)) {
+    addBeforeSendHeadersListener(modifyRequestHeaderHandler_, ALL_URLS_FILTER);
+  } else {
+    removeBeforeSendHeadersListener(modifyRequestHeaderHandler_);
   }
-  if (hasResponseHeadersModification) {
-    chrome.webRequest.onHeadersReceived.addListener(
-      modifyResponseHeaderHandler_,
-      { urls: ['<all_urls>'] },
-      isChromiumBasedBrowser()
-        ? ['responseHeaders', 'blocking', 'extraHeaders']
-        : ['responseHeaders', 'blocking']
-    );
-  }
-
-  if (hasUrlReplacement) {
-    chrome.webRequest.onBeforeRequest.addListener(modifyRequestHandler_, { urls: ['<all_urls>'] }, [
-      'blocking'
-    ]);
+  if (activeProfiles.find((p) => p.respHeaders.length > 0)) {
+    addHeadersReceivedListener(modifyResponseHeaderHandler_, ALL_URLS_FILTER);
+  } else {
+    removeHeadersReceivedListener(modifyResponseHeaderHandler_);
   }
 }
 
@@ -82,7 +64,8 @@ async function onTabUpdated(tab) {
 
 async function initialize() {
   addTabUpdatedListener(onTabUpdated);
-  await initContextMenu(chromeLocal);
+  await initContextMenu();
+  addSendHeadersListener(loadSignedInUser, LOGIN_URL_FILTER);
   await loadProfilesFromStorage(async (params) => {
     chromeLocal = params.chromeLocal;
     activeProfiles = params.activeProfiles;
@@ -90,11 +73,6 @@ async function initialize() {
     setupHeaderModListener();
     await resetBrowserActions({ chromeLocal, activeProfiles, selectedActiveProfile });
     await resetContextMenu(chromeLocal);
-  });
-
-  chrome.webRequest.onSendHeaders.removeListener(loadSignedInUser);
-  chrome.webRequest.onSendHeaders.addListener(loadSignedInUser, {
-    urls: [process.env.CHECK_LOGIN_URL, `${process.env.CHECK_LOGIN_URL}?*`]
   });
 }
 
@@ -116,4 +94,4 @@ window.saveToStorage = function (items) {
   return setLocal(items);
 };
 
-initialize();
+await initialize();
