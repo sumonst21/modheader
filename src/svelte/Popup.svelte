@@ -129,3 +129,20 @@
     </Actions>
   </Snackbar>
 {/await}
+
+<style module>
+  .app-content {
+    margin-left: 0 !important;
+    width: 580px;
+    position: absolute;
+    left: 36px;
+  }
+
+  .top-app-bar-container {
+    height: 48px;
+  }
+
+  .extra-gap {
+    margin: 2px;
+  }
+</style>

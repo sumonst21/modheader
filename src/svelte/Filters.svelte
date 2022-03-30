@@ -197,3 +197,9 @@
     </div>
   {/each}
 </div>
+
+<style module>
+  .filter-select-field {
+    height: 26px !important;
+  }
+</style>

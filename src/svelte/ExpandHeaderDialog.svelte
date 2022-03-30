@@ -60,3 +60,13 @@
     </Button>
   </Actions>
 </Dialog>
+
+<style module>
+  .expand-header-dialog-content {
+    padding-top: 5px;
+  }
+
+  .expand-header-dialog-textfield {
+    margin: 5px;
+  }
+</style>

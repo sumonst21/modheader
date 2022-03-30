@@ -128,3 +128,10 @@
     {/if}
   </div>
 </Dialog>
+
+<style module>
+  .export-text-field {
+    width: 100%;
+    font-size: 1.4em;
+  }
+</style>

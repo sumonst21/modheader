@@ -30,3 +30,17 @@
   on:change={() => dispatch('change')}
   on:focus={selectText}
 />
+
+<style module>
+  .autocomplete-input {
+    border: none;
+    height: 30px;
+    width: 100%;
+    top: -4px;
+  }
+
+  .autocomplete-input :global(.mdc-text-field__input) {
+    border-bottom-color: rgba(0.5, 0.5, 0.5, 0.1) !important;
+    padding-bottom: 10px !important;
+  }
+</style>

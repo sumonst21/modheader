@@ -1,17 +1,36 @@
+import css from 'rollup-plugin-css-only';
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import zip from 'rollup-plugin-zip';
 import svelte from 'rollup-plugin-svelte';
 import replace from '@rollup/plugin-replace';
 import { terser } from 'rollup-plugin-terser';
+import cssModules from 'svelte-preprocess-cssmodules';
 import { chromeExtension, simpleReloader } from 'rollup-plugin-chrome-extension';
 import { emptyDir } from 'rollup-plugin-empty-dir';
+import fs from 'fs';
 
 const production = !process.env.ROLLUP_WATCH;
 const URL_BASE = production ? 'https://modheader.com' : 'http://localhost:3005';
 const CHECK_LOGIN_URL = production
   ? 'https://modheader.com/u/extension-signed-in'
   : 'http://localhost/u/extension-signed-in';
+
+function insertCssPlugin() {
+  return {
+    name: 'insert-css',
+    generateBundle(options, bundle) {
+      if (bundle && bundle['popup.html']) {
+        const popupHtml = bundle['popup.html'].source;
+        this.emitFile({
+          type: 'asset',
+          fileName: 'popup.html',
+          source: popupHtml.replace('</head>', '<link rel="stylesheet" href="bundle.css"></head>')
+        });
+      }
+    }
+  };
+}
 
 export default {
   input: 'src/manifest.json',
@@ -44,10 +63,15 @@ export default {
     }),
     simpleReloader(),
     svelte({
+      preprocess: [cssModules()],
       compilerOptions: {
         dev: !production
       }
     }),
+    css({
+      output: 'bundle.css'
+    }),
+    insertCssPlugin(),
     resolve({
       browser: true,
       dedupe: ['svelte']

@@ -45,3 +45,19 @@
     </List>
   </Menu>
 </div>
+
+<style module>
+  .resource-type-menu-button {
+    display: inline;
+    text-align: left;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 220px;
+    height: 28px;
+    margin: 0 2px;
+  }
+
+  .resource-type-menu-cell {
+    flex-basis: 200px;
+  }
+</style>

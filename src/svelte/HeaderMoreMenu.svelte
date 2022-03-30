@@ -71,3 +71,9 @@
     </List>
   </Menu>
 </div>
+
+<style module>
+  .icon-with-text {
+    margin-right: 4px;
+  }
+</style>
