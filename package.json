@@ -6,6 +6,7 @@
   "scripts": {
     "postinstall": "npm run smui-theme-light && npm run smui-theme-dark",
     "test": "jest",
+    "test:update-snapshot": "jest --updateSnapshot",
     "smui-theme-light": "sass --no-source-map -I node_modules theme/_smui-theme.scss src/styles/smui.css",
     "smui-theme-dark": "sass --no-source-map -I node_modules theme/dark/_smui-theme.scss src/styles/smui-dark.css",
     "build-chrome": "cross-env NODE_ENV=production BROWSER=chrome node utils/build.js",
