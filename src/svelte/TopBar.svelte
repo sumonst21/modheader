@@ -1,32 +1,24 @@
 <script>
   import TopAppBar, { Row, Section } from '@smui/top-app-bar';
   import Snackbar, { Actions, Label } from '@smui/snackbar';
-  import Menu from '@smui/menu';
-  import List, { Item } from '@smui/list';
   import IconButton from '@smui/icon-button';
   import Button from '@smui/button';
-  import { mdiPlus, mdiPlay, mdiPause, mdiShare, mdiUndo } from '@mdi/js';
+  import { mdiShare, mdiUndo } from '@mdi/js';
+  import TopBarAddMenu from './TopBarAddMenu.svelte';
+  import TopBarPauseButton from './TopBarPauseButton.svelte';
+  import TopBarTabLockButton from './TopBarTabLockButton.svelte';
   import TopBarMoreMenu from './TopBarMoreMenu.svelte';
-  import SignInButton from './SignInButton.svelte';
+  import TopBarSignInButton from './TopBarSignInButton.svelte';
   import ProfileBadgeDialog from './ProfileBadgeDialog.svelte';
   import MdiIcon from './MdiIcon.svelte';
   import { isPaused, isLocked, undo } from '../js/datasource';
   import { selectedProfile, updateProfile, buttonColor } from '../js/profile';
-  import { addHeader } from '../js/header';
-  import { addFilter } from '../js/filter';
-  import { addUrlRedirect } from '../js/url-redirect';
   import { canUndoChange } from '../js/change-stack';
   import { showExportDialog } from '../js/dialog.js';
 
   let pauseSnackbar;
   let tabLockSnackbar;
-  let moreMenu;
-  let addMenu;
   let profileBadgeDialog;
-
-  function togglePause() {
-    isPaused.set(!$isPaused);
-  }
 
   $: {
     if (pauseSnackbar && tabLockSnackbar) {
@@ -83,71 +75,9 @@
           <MdiIcon size="24" icon={mdiUndo} color={$buttonColor} />
         </IconButton>
       {/if}
-      <IconButton dense on:click={() => addMenu.setOpen(true)} title="Add">
-        <MdiIcon size="24" icon={mdiPlus} color={$buttonColor} />
-      </IconButton>
-      <Menu bind:this={addMenu} class="add-menu">
-        <List>
-          <Item
-            on:SMUI:action={() =>
-              updateProfile({
-                headers: addHeader($selectedProfile.headers)
-              })}
-          >
-            Request header
-          </Item>
-          <Item
-            on:SMUI:action={() =>
-              updateProfile({
-                respHeaders: addHeader($selectedProfile.respHeaders)
-              })}
-          >
-            Response header
-          </Item>
-          <Item
-            on:SMUI:action={async () =>
-              updateProfile({
-                urlReplacements: await addUrlRedirect($selectedProfile.urlReplacements)
-              })}
-          >
-            URL redirect
-          </Item>
-          <Item
-            on:SMUI:action={async () =>
-              updateProfile({
-                filters: await addFilter($selectedProfile.filters)
-              })}>Filter</Item
-          >
-        </List>
-      </Menu>
-      <IconButton
-        dense
-        on:click={() => togglePause()}
-        title={$isPaused ? 'Resume ModHeader' : 'Pause ModHeader'}
-      >
-        {#if $isPaused}
-          <MdiIcon size="24" icon={mdiPlay} color={$buttonColor} />
-        {:else}
-          <MdiIcon size="24" icon={mdiPause} color={$buttonColor} />
-        {/if}
-      </IconButton>
-      {#if $isLocked}
-        <Button
-          on:click={() => isLocked.set(false)}
-          title="Unlock tab"
-          style="min-width: fit-content; color: {$buttonColor}"
-        >
-          Unlock
-        </Button>
-      {:else}
-        <Button
-          on:click={() => isLocked.set(true)}
-          title="Lock to tab"
-          style="min-width: fit-content; color: {$buttonColor}"
-        >
-          Lock tab
-        </Button>
-      {/if}
+      <TopBarAddMenu />
+      <TopBarPauseButton />
+      <TopBarTabLockButton />
       <IconButton
         dense
         on:click={() => showExportDialog.set(true)}
@@ -155,8 +85,8 @@
       >
         <MdiIcon size="24" icon={mdiShare} color={$buttonColor} />
       </IconButton>
-      <SignInButton />
-      <TopBarMoreMenu bind:this={moreMenu} />
+      <TopBarSignInButton />
+      <TopBarMoreMenu />
     </Section>
   </Row>
 </TopAppBar>
