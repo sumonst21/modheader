@@ -8,7 +8,6 @@ import { terser } from 'rollup-plugin-terser';
 import cssModules from 'svelte-preprocess-cssmodules';
 import { chromeExtension, simpleReloader } from 'rollup-plugin-chrome-extension';
 import { emptyDir } from 'rollup-plugin-empty-dir';
-import fs from 'fs';
 
 const production = !process.env.ROLLUP_WATCH;
 const URL_BASE = production ? 'https://modheader.com' : 'http://localhost:3005';
