@@ -65,12 +65,14 @@ export default {
       preprocess: [cssModules()],
       compilerOptions: {
         dev: !production
-      }
+      },
+      emitCss: production
     }),
-    css({
-      output: 'bundle.css'
-    }),
-    insertCssPlugin(),
+    production &&
+      css({
+        output: 'bundle.css'
+      }),
+    production && insertCssPlugin(),
     resolve({
       browser: true,
       dedupe: ['svelte']

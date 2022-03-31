@@ -228,6 +228,7 @@
       {/if}
       <IconButton
         dense
+        id="more-menu"
         on:click={() => {
           moreMenu.setOpen(true);
         }}
@@ -284,7 +285,7 @@
             <MdiIcon class="more-menu-icon" size="24" icon={mdiShare} color="#666" />
             Export / share profile(s)
           </Item>
-          <Item on:SMUI:action={() => importDialog.show()}>
+          <Item on:SMUI:action={() => importDialog.show()} id="import-profile">
             <MdiIcon class="more-menu-icon" size="24" icon={mdiFileImportOutline} color="#666" />
             Import profile(s)
           </Item>
