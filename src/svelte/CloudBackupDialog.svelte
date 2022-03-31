@@ -11,8 +11,8 @@
   import { DISABLED_COLOR, PRIMARY_COLOR } from '../js/constants';
   import { getSync } from '../js/storage';
   import { restoreToProfiles } from '../js/profile';
+  import { showCloudBackupDialog } from '../js/dialog.js';
 
-  let dialogVisible;
   let cloudBackupList = [];
 
   export async function show() {
@@ -35,7 +35,7 @@
       }
     }
     cloudBackupList = lodashOrderBy(savedData, ['timeInMs'], ['desc']);
-    dialogVisible = true;
+    showCloudBackupDialog.set(true);
   }
 
   function formatEntry(entry) {
@@ -55,11 +55,11 @@
 
   function restoreEntry(entry) {
     restoreToProfiles(entry.profiles);
-    dialogVisible = false;
+    done();
   }
 
   function done() {
-    dialogVisible = false;
+    showCloudBackupDialog.set(false);
   }
 
   function deleteEntry(entry) {
@@ -74,13 +74,17 @@
   }
 </script>
 
-<Dialog bind:open={dialogVisible} aria-labelledby="dialog-title" aria-describedby="dialog-content">
+<Dialog
+  bind:open={$showCloudBackupDialog}
+  aria-labelledby="dialog-title"
+  aria-describedby="dialog-content"
+>
   <Title id="dialog-title">
     Cloud backup
     <IconButton
       aria-label="Close"
       class="dialog-close-button"
-      on:click={() => (dialogVisible = false)}
+      on:click={() => showCloudBackupDialog.set(false)}
     >
       <MdiIcon size="32" icon={mdiClose} color="#888" />
     </IconButton>

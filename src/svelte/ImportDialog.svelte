@@ -11,27 +11,29 @@
   import { showMessage } from '../js/toast';
   import { getLocal } from '../js/storage';
   import { importProfiles } from '../js/profile';
+  import { showImportDialog } from '../js/dialog.js';
   import { isChromiumBasedBrowser } from '../js/user-agent.js';
 
   const SHARE_URL_PREFIX = 'https://modheader.com/p/';
   const OLD_SHARE_URL_PREFIX = 'https://bewisse.com/modheader/p/';
   let importTextbox;
   let importText;
-  let dialogVisible;
   let uploadFileInput;
 
-  export async function show() {
-    const { currentTabUrl } = await getLocal('currentTabUrl');
-    if (
-      currentTabUrl &&
-      (currentTabUrl.startsWith(SHARE_URL_PREFIX) || currentTabUrl.startsWith(OLD_SHARE_URL_PREFIX))
-    ) {
-      importText = currentTabUrl;
-    } else {
-      importText = '';
+  showImportDialog.subscribe(async (show) => {
+    if (show) {
+      const { currentTabUrl } = await getLocal('currentTabUrl');
+      if (
+        currentTabUrl &&
+        (currentTabUrl.startsWith(SHARE_URL_PREFIX) ||
+          currentTabUrl.startsWith(OLD_SHARE_URL_PREFIX))
+      ) {
+        importText = currentTabUrl;
+      } else {
+        importText = '';
+      }
     }
-    dialogVisible = true;
-  }
+  });
 
   function done() {
     try {
@@ -49,7 +51,7 @@
         }
       }
       importProfiles(importedProfiles);
-      dialogVisible = false;
+      showImportDialog.set(false);
     } catch (err) {
       showMessage('Failed to import profiles. Please double check your exported profile.');
     }
@@ -64,7 +66,7 @@
         importedProfiles = [importedProfiles];
       }
       importProfiles(importedProfiles);
-      dialogVisible = false;
+      showImportDialog.set(false);
     };
     reader.readAsText(file, 'utf8');
   }
@@ -81,13 +83,17 @@
   }
 </script>
 
-<Dialog bind:open={dialogVisible} aria-labelledby="dialog-title" aria-describedby="dialog-content">
+<Dialog
+  bind:open={$showImportDialog}
+  aria-labelledby="dialog-title"
+  aria-describedby="dialog-content"
+>
   <Title id="dialog-title">
     Import profile
     <IconButton
       aria-label="Close"
       class="dialog-close-button"
-      on:click={() => (dialogVisible = false)}
+      on:click={() => showImportDialog.set(false)}
     >
       <MdiIcon size="32" icon={mdiClose} color="#888" />
     </IconButton>

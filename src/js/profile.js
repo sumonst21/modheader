@@ -6,7 +6,7 @@ import lodashIsArray from 'lodash/isArray.js';
 import lodashDebounce from 'lodash/debounce.js';
 import { takeRight } from './utils.js';
 import { createHeader } from './header.js';
-import { generateBackgroundColor, generateTextColor } from './color.js';
+import { lightOrDark, generateBackgroundColor, generateTextColor } from './color.js';
 import { profiles, commitData, selectedProfileIndex, isInitialized } from './datasource.js';
 import { showMessage } from './toast.js';
 
@@ -28,6 +28,12 @@ export const selectedProfile = derived(
   [profiles, selectedProfileIndex],
   ([$profiles, $selectedProfileIndex]) => $profiles[$selectedProfileIndex] || {},
   {}
+);
+export const buttonColor = derived(
+  [selectedProfile],
+  ([$selectedProfile]) =>
+    lightOrDark($selectedProfile.backgroundColor) === 'light' ? 'black' : 'white',
+  'white'
 );
 
 const debouncedSave = lodashDebounce(save, 500, { leading: true, trailing: true });

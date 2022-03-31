@@ -10,6 +10,9 @@
   import Drawer from './Drawer.svelte';
   import Filters from './Filters.svelte';
   import Headers from './Headers.svelte';
+  import ExportDialog from './ExportDialog.svelte';
+  import ImportDialog from './ImportDialog.svelte';
+  import CloudBackupDialog from './CloudBackupDialog.svelte';
   import { isPaused, undo, init } from '../js/datasource';
   import { selectedProfile, save, updateProfile } from '../js/profile';
   import { addUrlRedirect, removeUrlRedirect } from '../js/url-redirect';
@@ -18,6 +21,9 @@
   import { toastMessage, undoable } from '../js/toast';
   import { KNOWN_REQUEST_HEADERS, KNOWN_RESPONSE_HEADERS } from '../js/constants';
 
+  let exportDialog;
+  let importDialog;
+  let cloudBackupDialog;
   let snackbar;
   let snackbarMessage;
 
@@ -116,6 +122,10 @@
       {/if}
     </div>
   </AppContent>
+
+  <ExportDialog bind:this={exportDialog} />
+  <ImportDialog bind:this={importDialog} />
+  <CloudBackupDialog bind:this={cloudBackupDialog} />
 
   <Snackbar timeoutMs={4000} bind:this={snackbar} labelText={snackbarMessage}>
     <SnackbarLabel />

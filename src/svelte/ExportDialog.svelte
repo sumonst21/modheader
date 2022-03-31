@@ -13,6 +13,7 @@
   import { DISABLED_COLOR, PRIMARY_COLOR } from '../js/constants';
   import { showMessage } from '../js/toast';
   import { profiles } from '../js/datasource';
+  import { showExportDialog } from '../js/dialog.js';
   import { selectedProfile } from '../js/profile';
 
   const TABS = [
@@ -22,13 +23,7 @@
   let activeTab = TABS[0];
   let exportUrlTextbox;
   let exportJsonTextbox;
-  let dialogVisible;
   let selectedProfiles = [];
-
-  export function show() {
-    selectedProfiles = [$selectedProfile];
-    dialogVisible = true;
-  }
 
   async function copyExportText(textbox) {
     textbox.select();
@@ -40,19 +35,29 @@
     showMessage('Copied to clipboard!');
   }
 
+  showExportDialog.subscribe((show) => {
+    if (show) {
+      selectedProfiles = [$selectedProfile];
+    }
+  });
+
   $: exportedText = JSON.stringify(selectedProfiles);
   $: exportedUrl = `https://modheader.com/p/${lzString.compressToEncodedURIComponent(
     exportedText
   )}`;
 </script>
 
-<Dialog bind:open={dialogVisible} aria-labelledby="dialog-title" aria-describedby="dialog-content">
+<Dialog
+  bind:open={$showExportDialog}
+  aria-labelledby="dialog-title"
+  aria-describedby="dialog-content"
+>
   <Title id="dialog-title">
     Export / share profile(s)
     <IconButton
       aria-label="Close"
       class="dialog-close-button"
-      on:click={() => (dialogVisible = false)}
+      on:click={() => showExportDialog.set(false)}
     >
       <MdiIcon size="32" icon={mdiClose} color="#888" />
     </IconButton>

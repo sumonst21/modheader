@@ -2,84 +2,30 @@
   import TopAppBar, { Row, Section } from '@smui/top-app-bar';
   import Snackbar, { Actions, Label } from '@smui/snackbar';
   import Menu from '@smui/menu';
-  import List, { Subheader, Item, Separator } from '@smui/list';
+  import List, { Item } from '@smui/list';
   import IconButton from '@smui/icon-button';
   import Button from '@smui/button';
-  import {
-    mdiCheckboxBlankOutline,
-    mdiCheckboxMarked,
-    mdiRadioboxBlank,
-    mdiRadioboxMarked,
-    mdiPlus,
-    mdiTrashCan,
-    mdiPlay,
-    mdiPause,
-    mdiDotsVertical,
-    mdiContentCopy,
-    mdiFileImportOutline,
-    mdiShare,
-    mdiCloudDownloadOutline,
-    mdiCommentCheckOutline,
-    mdiCommentRemoveOutline,
-    mdiUndo,
-    mdiThemeLightDark
-  } from '@mdi/js';
-  import { lightOrDark } from '../js/color';
-  import ExportDialog from './ExportDialog.svelte';
-  import ImportDialog from './ImportDialog.svelte';
+  import { mdiPlus, mdiPlay, mdiPause, mdiShare, mdiUndo } from '@mdi/js';
+  import TopBarMoreMenu from './TopBarMoreMenu.svelte';
+  import SignInButton from './SignInButton.svelte';
   import ProfileBadgeDialog from './ProfileBadgeDialog.svelte';
-  import CloudBackupDialog from './CloudBackupDialog.svelte';
   import MdiIcon from './MdiIcon.svelte';
-  import ProfilePicture from './ProfilePicture.svelte';
-  import { selectedProfileIndex, isPaused, isLocked, undo } from '../js/datasource';
-  import { removeProfile, cloneProfile, selectedProfile, updateProfile } from '../js/profile';
+  import { isPaused, isLocked, undo } from '../js/datasource';
+  import { selectedProfile, updateProfile, buttonColor } from '../js/profile';
   import { addHeader } from '../js/header';
   import { addFilter } from '../js/filter';
   import { addUrlRedirect } from '../js/url-redirect';
   import { canUndoChange } from '../js/change-stack';
-  import { signedInUser, signOut } from '../js/identity';
-  import { showMessage } from '../js/toast';
-  import { setPreferredColorScheme } from '../js/color-scheme';
-  import { CURRENT_BROWSER } from '../js/user-agent.js';
+  import { showExportDialog } from '../js/dialog.js';
 
   let pauseSnackbar;
   let tabLockSnackbar;
   let moreMenu;
   let addMenu;
-  let exportDialog;
-  let importDialog;
-  let cloudBackupDialog;
   let profileBadgeDialog;
-  let darkModeMenu;
-  let accountMenu;
 
   function togglePause() {
     isPaused.set(!$isPaused);
-  }
-
-  function toggleComment() {
-    updateProfile({
-      hideComment: !$selectedProfile.hideComment
-    });
-  }
-
-  async function signIn() {
-    const url = new URL(`${process.env.URL_BASE}/login`);
-    url.searchParams.set('for', CURRENT_BROWSER);
-    url.searchParams.set('extension_id', chrome.runtime.id);
-    chrome.tabs.create({
-      url: url.href
-    });
-  }
-
-  function toggleAlwaysOn() {
-    const alwaysOn = !$selectedProfile.alwaysOn;
-    updateProfile({ alwaysOn });
-    if (alwaysOn) {
-      showMessage('This profile will stay active even when it is not selected');
-    } else {
-      showMessage('This profile will only be active when selected.');
-    }
   }
 
   $: {
@@ -97,10 +43,6 @@
       }
     }
   }
-
-  $: appendMode = ($selectedProfile.appendMode || false).toString();
-  $: sendEmptyHeader = ($selectedProfile.sendEmptyHeader || false).toString();
-  $: color = lightOrDark($selectedProfile.backgroundColor) === 'light' ? 'black' : 'white';
 </script>
 
 <ProfileBadgeDialog bind:this={profileBadgeDialog} />
@@ -138,11 +80,11 @@
     <Section align="end">
       {#if $canUndoChange}
         <IconButton dense on:click={() => undo()} title="Undo">
-          <MdiIcon size="24" icon={mdiUndo} {color} />
+          <MdiIcon size="24" icon={mdiUndo} color={$buttonColor} />
         </IconButton>
       {/if}
       <IconButton dense on:click={() => addMenu.setOpen(true)} title="Add">
-        <MdiIcon size="24" icon={mdiPlus} {color} />
+        <MdiIcon size="24" icon={mdiPlus} color={$buttonColor} />
       </IconButton>
       <Menu bind:this={addMenu} class="add-menu">
         <List>
@@ -184,16 +126,16 @@
         title={$isPaused ? 'Resume ModHeader' : 'Pause ModHeader'}
       >
         {#if $isPaused}
-          <MdiIcon size="24" icon={mdiPlay} {color} />
+          <MdiIcon size="24" icon={mdiPlay} color={$buttonColor} />
         {:else}
-          <MdiIcon size="24" icon={mdiPause} {color} />
+          <MdiIcon size="24" icon={mdiPause} color={$buttonColor} />
         {/if}
       </IconButton>
       {#if $isLocked}
         <Button
           on:click={() => isLocked.set(false)}
           title="Unlock tab"
-          style="min-width: fit-content; color: {color}"
+          style="min-width: fit-content; color: {$buttonColor}"
         >
           Unlock
         </Button>
@@ -201,157 +143,23 @@
         <Button
           on:click={() => isLocked.set(true)}
           title="Lock to tab"
-          style="min-width: fit-content; color: {color}"
+          style="min-width: fit-content; color: {$buttonColor}"
         >
           Lock tab
         </Button>
       {/if}
-      <IconButton dense on:click={() => exportDialog.show()} title="Export / share profile(s)">
-        <MdiIcon size="24" icon={mdiShare} {color} />
-      </IconButton>
-      {#if $signedInUser}
-        <IconButton dense title="Account" on:click={() => accountMenu.setOpen(true)}>
-          <ProfilePicture picture={$signedInUser.picture} />
-        </IconButton>
-
-        <Menu bind:this={accountMenu} anchorCorner="TOP_LEFT">
-          <List>
-            <Item on:SMUI:action={() => signOut()}>Sign out</Item>
-          </List>
-        </Menu>
-      {:else}
-        <Button
-          style="min-width: fit-content; color: {color}"
-          on:click={() => signIn()}
-          title="Sign in">Sign in</Button
-        >
-      {/if}
       <IconButton
         dense
-        id="more-menu"
-        on:click={() => {
-          moreMenu.setOpen(true);
-        }}
-        title="More"
+        on:click={() => showExportDialog.set(true)}
+        title="Export / share profile(s)"
       >
-        <MdiIcon size="24" icon={mdiDotsVertical} {color} />
+        <MdiIcon size="24" icon={mdiShare} color={$buttonColor} />
       </IconButton>
-      <Menu bind:this={moreMenu}>
-        <List>
-          <Item on:SMUI:action={() => toggleComment()}>
-            <MdiIcon
-              class="more-menu-icon"
-              size="24"
-              icon={$selectedProfile.hideComment ? mdiCommentCheckOutline : mdiCommentRemoveOutline}
-              color="#666"
-            />
-            {$selectedProfile.hideComment ? 'Show comment' : 'Hide comment'}
-          </Item>
-          <Item
-            on:SMUI:action={() => toggleAlwaysOn()}
-            title={$selectedProfile.alwaysOn
-              ? `This profile will stay active even when it is not selected.`
-              : `This profile will only be active when selected.`}
-          >
-            <MdiIcon
-              class="more-menu-icon"
-              size="24"
-              icon={$selectedProfile.alwaysOn ? mdiCheckboxMarked : mdiCheckboxBlankOutline}
-              color="#666"
-            />
-            Always stay enabled
-          </Item>
-          <Item on:SMUI:action={() => darkModeMenu.setOpen(true)} title={`Dark mode`}>
-            <MdiIcon class="more-menu-icon" size="24" icon={mdiThemeLightDark} color="#666" />
-            Dark mode
-          </Item>
-          <Menu bind:this={darkModeMenu}>
-            <List>
-              <Item on:SMUI:action={() => setPreferredColorScheme(undefined)}>System default</Item>
-              <Item on:SMUI:action={() => setPreferredColorScheme('dark')}>Dark mode</Item>
-              <Item on:SMUI:action={() => setPreferredColorScheme('light')}>Light mode</Item>
-            </List>
-          </Menu>
-          <Separator nav />
-          <Item on:SMUI:action={() => removeProfile($selectedProfileIndex)}>
-            <MdiIcon class="more-menu-icon" size="24" icon={mdiTrashCan} color="#666" />
-            Delete profile
-          </Item>
-          <Item on:SMUI:action={() => cloneProfile($selectedProfile)}>
-            <MdiIcon class="more-menu-icon" size="24" icon={mdiContentCopy} color="#666" />
-            Clone profile
-          </Item>
-          <Item on:SMUI:action={() => exportDialog.show()}>
-            <MdiIcon class="more-menu-icon" size="24" icon={mdiShare} color="#666" />
-            Export / share profile(s)
-          </Item>
-          <Item on:SMUI:action={() => importDialog.show()} id="import-profile">
-            <MdiIcon class="more-menu-icon" size="24" icon={mdiFileImportOutline} color="#666" />
-            Import profile(s)
-          </Item>
-          <Item on:SMUI:action={() => cloudBackupDialog.show()}>
-            <MdiIcon class="more-menu-icon" size="24" icon={mdiCloudDownloadOutline} color="#666" />
-            Restore cloud backup
-          </Item>
-          <Separator nav />
-          <Subheader>Header override mode</Subheader>
-          <Item on:SMUI:action={() => updateProfile({ appendMode: false })}>
-            <MdiIcon
-              class="more-menu-icon"
-              size="24"
-              icon={appendMode === 'false' ? mdiRadioboxMarked : mdiRadioboxBlank}
-              color="#666"
-            />
-            <Label>Override existing value</Label>
-          </Item>
-          <Item on:SMUI:action={() => updateProfile({ appendMode: true })}>
-            <MdiIcon
-              class="more-menu-icon"
-              size="24"
-              icon={appendMode === 'true' ? mdiRadioboxMarked : mdiRadioboxBlank}
-              color="#666"
-            />
-            <Label>Value concatenation</Label>
-          </Item>
-          <Item on:SMUI:action={() => updateProfile({ appendMode: 'comma' })}>
-            <MdiIcon
-              class="more-menu-icon"
-              size="24"
-              icon={appendMode === 'comma' ? mdiRadioboxMarked : mdiRadioboxBlank}
-              color="#666"
-            />
-            <Label>Comma separated</Label>
-          </Item>
-
-          <Separator nav />
-          <Subheader>Empty header mode</Subheader>
-          <Item on:SMUI:action={() => updateProfile({ sendEmptyHeader: false })}>
-            <MdiIcon
-              class="more-menu-icon"
-              size="24"
-              icon={sendEmptyHeader === 'false' ? mdiRadioboxMarked : mdiRadioboxBlank}
-              color="#666"
-            />
-            <Label>Remove empty header</Label>
-          </Item>
-          <Item on:SMUI:action={() => updateProfile({ sendEmptyHeader: true })}>
-            <MdiIcon
-              class="more-menu-icon"
-              size="24"
-              icon={sendEmptyHeader === 'true' ? mdiRadioboxMarked : mdiRadioboxBlank}
-              color="#666"
-            />
-            <Label>Send empty header</Label>
-          </Item>
-        </List>
-      </Menu>
+      <SignInButton />
+      <TopBarMoreMenu bind:this={moreMenu} />
     </Section>
   </Row>
 </TopAppBar>
-
-<ExportDialog bind:this={exportDialog} />
-<ImportDialog bind:this={importDialog} />
-<CloudBackupDialog bind:this={cloudBackupDialog} />
 
 <Snackbar timeoutMs={10000} bind:this={pauseSnackbar}>
   <Label>ModHeader is Paused</Label>
