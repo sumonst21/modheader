@@ -26,6 +26,7 @@
     [FilterType.RESOURCE_TYPES]: 'Resource Type'
   };
 
+  export let id;
   export let profileIndex;
   export let filters;
   let sortMenu;
@@ -70,7 +71,7 @@
   });
 </script>
 
-<div class="data-table {clazz}">
+<div class="data-table {clazz}" {id}>
   <div class="data-table-row data-table-title-row">
     <Checkbox
       class="data-table-cell flex-fixed-icon"

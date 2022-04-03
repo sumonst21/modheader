@@ -9,6 +9,7 @@
   }
 
   const dispatch = createEventDispatcher();
+  export let name;
   // ID to the datalist of items the user can select from
   export let list;
   // the text displayed when no option is selected
@@ -21,6 +22,7 @@
 <Textfield
   class="data-table-cell flex-grow autocomplete-input"
   bind:this={textField}
+  {name}
   type="text"
   input$placeholder={placeholder}
   input$list={list}

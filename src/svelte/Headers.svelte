@@ -23,6 +23,7 @@
 
   const dispatch = createEventDispatcher();
 
+  export let id;
   export let headers;
   export let title;
   export let autocompleteListId;
@@ -92,7 +93,7 @@
   </datalist>
 {/if}
 
-<div class="data-table {clazz}" transition:fly>
+<div class="data-table {clazz}" {id} transition:fly>
   <div class="data-table-row data-table-title-row">
     <Checkbox
       class="data-table-cell flex-fixed-icon"
@@ -197,6 +198,7 @@
         indeterminate={false}
       />
       <AutoComplete
+        name="header-name"
         list={autocompleteListId}
         bind:value={header.name}
         on:change={refreshHeaders}
@@ -204,6 +206,7 @@
         placeholder={nameLabel}
       />
       <AutoComplete
+        name="header-value"
         bind:value={header.value}
         on:change={refreshHeaders}
         selectAllOnFocus={true}
@@ -211,6 +214,7 @@
       />
       {#if !$selectedProfile.hideComment}
         <AutoComplete
+          name="header-comment"
           bind:value={header.comment}
           on:change={refreshHeaders}
           placeholder="Comment"

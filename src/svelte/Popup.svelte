@@ -53,6 +53,7 @@
     <div class={$isPaused ? 'disabled' : ''}>
       {#if $selectedProfile.headers.length > 0}
         <Headers
+          id="request-headers"
           headers={lodashCloneDeep($selectedProfile.headers)}
           class="extra-gap"
           title="Request headers"
@@ -73,6 +74,7 @@
       {/if}
       {#if $selectedProfile.respHeaders.length > 0}
         <Headers
+          id="response-headers"
           headers={lodashCloneDeep($selectedProfile.respHeaders)}
           class="extra-gap"
           title="Response headers"
@@ -96,6 +98,7 @@
       {/if}
       {#if $selectedProfile.urlReplacements.length > 0}
         <Headers
+          id="url-replacements"
           headers={lodashCloneDeep($selectedProfile.urlReplacements)}
           class="extra-gap"
           title="Redirect URLs"
@@ -118,7 +121,11 @@
         />
       {/if}
       {#if $selectedProfile.filters.length > 0}
-        <Filters filters={lodashCloneDeep($selectedProfile.filters)} class="extra-gap" />
+        <Filters
+          id="filters"
+          filters={lodashCloneDeep($selectedProfile.filters)}
+          class="extra-gap"
+        />
       {/if}
     </div>
   </AppContent>
