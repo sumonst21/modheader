@@ -36,7 +36,7 @@
       Response header
     </Item>
     <Item
-      id="add-url-redirect"
+      id="add-url-replacement"
       on:SMUI:action={async () =>
         updateProfile({
           urlReplacements: await addUrlRedirect($selectedProfile.urlReplacements)
