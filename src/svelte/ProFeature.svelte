@@ -16,7 +16,7 @@
 {:else}
   <div class="pro-feature-container" on:click|capture|preventDefault|stopPropagation={showUpgrade}>
     <slot />
-    <MdiIcon class="pro-feature-lock" icon={mdiLock} size="12" color="#fcba03" />
+    <MdiIcon class="pro-feature-lock" icon={mdiLock} size="12" color="#e6a900" />
   </div>
 {/if}
 
@@ -30,8 +30,8 @@
 
   .pro-feature-lock {
     position: absolute;
-    bottom: 2px;
-    right: 2px;
+    top: 2px;
+    left: 2px;
     width: 12px !important;
     height: 12px !important;
   }

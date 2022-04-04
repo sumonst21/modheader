@@ -17,6 +17,7 @@
   import { fade } from 'svelte/transition';
   import MdiIcon from './MdiIcon.svelte';
   import ProfileBadge from './ProfileBadge.svelte';
+  import ProFeature from './ProFeature.svelte';
   import { showMessage } from '../js/toast.js';
   import { profiles } from '../js/datasource.js';
   import { CURRENT_BROWSER } from '../js/user-agent.js';
@@ -98,19 +99,26 @@
             <Text class="main-drawer-item-text">{profile.title}</Text>
           </Item>
         {/each}
-        <Item
-          class="main-drawer-item"
-          title="Add profile"
-          on:click={() => {
-            addProfile();
-            expand = false;
-          }}
-        >
-          <span class="main-drawer-icon-container">
-            <MdiIcon size="24" class="main-drawer-icon" icon={mdiFilePlus} color={PRIMARY_COLOR} />
-          </span>
-          <Text class="main-drawer-item-text">Add profile</Text>
-        </Item>
+        <ProFeature>
+          <Item
+            class="main-drawer-item"
+            title="Add profile"
+            on:click={() => {
+              addProfile();
+              expand = false;
+            }}
+          >
+            <span class="main-drawer-icon-container">
+              <MdiIcon
+                size="24"
+                class="main-drawer-icon"
+                icon={mdiFilePlus}
+                color={PRIMARY_COLOR}
+              />
+            </span>
+            <Text class="main-drawer-item-text">Add profile</Text>
+          </Item>
+        </ProFeature>
         <Item
           class="main-drawer-item"
           title="Sort profiles"
