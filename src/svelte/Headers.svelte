@@ -12,11 +12,11 @@
     mdiDotsVertical
   } from '@mdi/js';
   import { createEventDispatcher } from 'svelte';
-  import lodashOrderBy from 'lodash/orderBy';
-  import lodashClone from 'lodash/clone';
-  import lodashDebounce from 'lodash/debounce';
+  import lodashOrderBy from 'lodash/orderBy.js';
+  import lodashClone from 'lodash/clone.js';
+  import lodashDebounce from 'lodash/debounce.js';
   import { fly } from 'svelte/transition';
-  import { selectedProfile } from '../js/profile';
+  import { selectedProfile } from '../js/profile.js';
   import AutoComplete from './Autocomplete.svelte';
   import MdiIcon from './MdiIcon.svelte';
   import HeaderMoreMenu from './HeaderMoreMenu.svelte';
@@ -30,7 +30,6 @@
   export let autocompleteNames;
   export let nameLabel = 'Name';
   export let valueLabel = 'Value';
-  let dialog;
   let moreMenu;
   let clazz;
   export { clazz as class };

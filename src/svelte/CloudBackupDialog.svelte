@@ -3,14 +3,14 @@
   import List, { Item, Text } from '@smui/list';
   import Button, { Label } from '@smui/button';
   import IconButton from '@smui/icon-button';
-  import lodashOrderBy from 'lodash/orderBy';
-  import lodashIsNumber from 'lodash/isNumber';
-  import lodashIsNaN from 'lodash/isNaN';
+  import lodashOrderBy from 'lodash/orderBy.js';
+  import lodashIsNumber from 'lodash/isNumber.js';
+  import lodashIsNaN from 'lodash/isNaN.js';
   import { mdiTrashCanOutline, mdiCancel, mdiClose } from '@mdi/js';
   import MdiIcon from './MdiIcon.svelte';
-  import { DISABLED_COLOR, PRIMARY_COLOR } from '../js/constants';
-  import { getSync } from '../js/storage';
-  import { restoreToProfiles } from '../js/profile';
+  import { DISABLED_COLOR, PRIMARY_COLOR } from '../js/constants.js';
+  import { getSync } from '../js/storage.js';
+  import { restoreToProfiles } from '../js/profile.js';
   import { showCloudBackupDialog } from '../js/dialog.js';
 
   let cloudBackupList = [];

@@ -18,7 +18,10 @@ import {
 } from './web-request.js';
 
 const ALL_URLS_FILTER = ['<all_urls>'];
-const LOGIN_URL_FILTER = [process.env.CHECK_LOGIN_URL, `${process.env.CHECK_LOGIN_URL}?*`];
+const LOGIN_URL_FILTER = [
+  `${process.env.URL_BASE}/u/extension-signed-in`,
+  `${process.env.URL_BASE}/u/extension-signed-in?*`
+];
 
 let chromeLocal = {
   isPaused: true

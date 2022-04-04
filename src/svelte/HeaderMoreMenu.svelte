@@ -3,7 +3,7 @@
   import Menu from '@smui/menu';
   import List, { Item, Text } from '@smui/list';
   import { mdiContentCopy, mdiArrowExpand, mdiDotsVertical, mdiClose } from '@mdi/js';
-  import lodashClone from 'lodash/clone';
+  import lodashClone from 'lodash/clone.js';
   import { createEventDispatcher } from 'svelte';
   import MdiIcon from './MdiIcon.svelte';
   import ExpandHeaderDialog from './ExpandHeaderDialog.svelte';

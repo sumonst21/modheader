@@ -11,9 +11,9 @@
   import TopBarSignInButton from './TopBarSignInButton.svelte';
   import ProfileBadgeDialog from './ProfileBadgeDialog.svelte';
   import MdiIcon from './MdiIcon.svelte';
-  import { isPaused, isLocked, undo } from '../js/datasource';
-  import { selectedProfile, updateProfile, buttonColor } from '../js/profile';
-  import { canUndoChange } from '../js/change-stack';
+  import { isPaused, isLocked, undo } from '../js/datasource.js';
+  import { selectedProfile, updateProfile, buttonColor } from '../js/profile.js';
+  import { canUndoChange } from '../js/change-stack.js';
   import { showExportDialog } from '../js/dialog.js';
 
   let pauseSnackbar;

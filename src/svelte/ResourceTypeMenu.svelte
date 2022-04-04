@@ -3,7 +3,7 @@
   import Menu from '@smui/menu';
   import List, { Item } from '@smui/list';
   import { createEventDispatcher } from 'svelte';
-  import lodashWithout from 'lodash/without';
+  import lodashWithout from 'lodash/without.js';
 
   const KNOWN_RESOURCE_TYPES = {
     main_frame: 'Main Frame',

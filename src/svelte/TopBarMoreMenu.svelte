@@ -18,17 +18,17 @@
     mdiThemeLightDark
   } from '@mdi/js';
   import MdiIcon from './MdiIcon.svelte';
-  import { selectedProfileIndex } from '../js/datasource';
+  import { selectedProfileIndex } from '../js/datasource.js';
   import {
     removeProfile,
     cloneProfile,
     selectedProfile,
     updateProfile,
     buttonColor
-  } from '../js/profile';
-  import { showMessage } from '../js/toast';
+  } from '../js/profile.js';
+  import { showMessage } from '../js/toast.js';
   import { showExportDialog, showImportDialog, showCloudBackupDialog } from '../js/dialog.js';
-  import { setPreferredColorScheme } from '../js/color-scheme';
+  import { setPreferredColorScheme } from '../js/color-scheme.js';
 
   let menu;
   let darkModeMenu;

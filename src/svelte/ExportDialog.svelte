@@ -10,9 +10,9 @@
   import lzString from 'lz-string';
   import { mdiDownload, mdiSelectAll, mdiContentCopy, mdiClose } from '@mdi/js';
   import MdiIcon from './MdiIcon.svelte';
-  import { DISABLED_COLOR, PRIMARY_COLOR } from '../js/constants';
-  import { showMessage } from '../js/toast';
-  import { profiles } from '../js/datasource';
+  import { DISABLED_COLOR, PRIMARY_COLOR } from '../js/constants.js';
+  import { showMessage } from '../js/toast.js';
+  import { profiles } from '../js/datasource.js';
   import { showExportDialog } from '../js/dialog.js';
   import { selectedProfile } from '../js/profile';
 

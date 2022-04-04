@@ -7,8 +7,8 @@
   import IconButton from '@smui/icon-button';
   import { mdiContentSave, mdiClose } from '@mdi/js';
   import MdiIcon from './MdiIcon.svelte';
-  import { PRIMARY_COLOR } from '../js/constants';
-  import { selectedProfile, updateProfile } from '../js/profile';
+  import { PRIMARY_COLOR } from '../js/constants.js';
+  import { selectedProfile, updateProfile } from '../js/profile.js';
 
   const TABS = [
     { label: 'Background', value: 'backgroundColor' },

@@ -13,17 +13,15 @@
   import ExportDialog from './ExportDialog.svelte';
   import ImportDialog from './ImportDialog.svelte';
   import CloudBackupDialog from './CloudBackupDialog.svelte';
-  import { isPaused, undo, init } from '../js/datasource';
-  import { selectedProfile, save, updateProfile } from '../js/profile';
-  import { addUrlRedirect, removeUrlRedirect } from '../js/url-redirect';
-  import { addHeader, removeHeader } from '../js/header';
+  import UpgradeDialog from './UpgradeDialog.svelte';
+  import { isPaused, undo, init } from '../js/datasource.js';
+  import { selectedProfile, save, updateProfile } from '../js/profile.js';
+  import { addUrlRedirect, removeUrlRedirect } from '../js/url-redirect.js';
+  import { addHeader, removeHeader } from '../js/header.js';
   import MdiIcon from './MdiIcon.svelte';
-  import { toastMessage, undoable } from '../js/toast';
-  import { KNOWN_REQUEST_HEADERS, KNOWN_RESPONSE_HEADERS } from '../js/constants';
+  import { toastMessage, undoable } from '../js/toast.js';
+  import { KNOWN_REQUEST_HEADERS, KNOWN_RESPONSE_HEADERS } from '../js/constants.js';
 
-  let exportDialog;
-  let importDialog;
-  let cloudBackupDialog;
   let snackbar;
   let snackbarMessage;
 
@@ -130,9 +128,10 @@
     </div>
   </AppContent>
 
-  <ExportDialog bind:this={exportDialog} />
-  <ImportDialog bind:this={importDialog} />
-  <CloudBackupDialog bind:this={cloudBackupDialog} />
+  <ExportDialog />
+  <ImportDialog />
+  <CloudBackupDialog />
+  <UpgradeDialog />
 
   <Snackbar timeoutMs={4000} bind:this={snackbar} labelText={snackbarMessage}>
     <SnackbarLabel />

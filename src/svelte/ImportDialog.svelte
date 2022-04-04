@@ -1,16 +1,16 @@
 <script>
-  import lodashIsEmpty from 'lodash/isEmpty';
-  import lodashIsArray from 'lodash/isArray';
+  import lodashIsEmpty from 'lodash/isEmpty.js';
+  import lodashIsArray from 'lodash/isArray.js';
   import Dialog, { Title, Content } from '@smui/dialog';
   import Button, { Label } from '@smui/button';
   import IconButton from '@smui/icon-button';
   import { mdiClose, mdiFileImport, mdiCheck } from '@mdi/js';
   import lzString from 'lz-string';
   import MdiIcon from './MdiIcon.svelte';
-  import { DISABLED_COLOR, PRIMARY_COLOR } from '../js/constants';
-  import { showMessage } from '../js/toast';
-  import { getLocal } from '../js/storage';
-  import { importProfiles } from '../js/profile';
+  import { DISABLED_COLOR, PRIMARY_COLOR } from '../js/constants.js';
+  import { showMessage } from '../js/toast.js';
+  import { getLocal } from '../js/storage.js';
+  import { importProfiles } from '../js/profile.js';
   import { showImportDialog } from '../js/dialog.js';
   import { isChromiumBasedBrowser } from '../js/user-agent.js';
 

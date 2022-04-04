@@ -4,10 +4,10 @@
   import IconButton from '@smui/icon-button';
   import { mdiPlus } from '@mdi/js';
   import MdiIcon from './MdiIcon.svelte';
-  import { selectedProfile, updateProfile, buttonColor } from '../js/profile';
-  import { addHeader } from '../js/header';
-  import { addFilter } from '../js/filter';
-  import { addUrlRedirect } from '../js/url-redirect';
+  import { selectedProfile, updateProfile, buttonColor } from '../js/profile.js';
+  import { addHeader } from '../js/header.js';
+  import { addFilter } from '../js/filter.js';
+  import { addUrlRedirect } from '../js/url-redirect.js';
 
   let addMenu;
 </script>

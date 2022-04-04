@@ -17,8 +17,8 @@
   import { fade } from 'svelte/transition';
   import MdiIcon from './MdiIcon.svelte';
   import ProfileBadge from './ProfileBadge.svelte';
-  import { showMessage } from '../js/toast';
-  import { profiles } from '../js/datasource';
+  import { showMessage } from '../js/toast.js';
+  import { profiles } from '../js/datasource.js';
   import { CURRENT_BROWSER } from '../js/user-agent.js';
   import {
     addProfile,

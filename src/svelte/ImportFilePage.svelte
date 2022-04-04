@@ -1,11 +1,11 @@
 <script>
-  import lodashIsArray from 'lodash/isArray';
+  import lodashIsArray from 'lodash/isArray.js';
   import Snackbar, { Actions, Label as SnackbarLabel } from '@smui/snackbar';
   import Button, { Label } from '@smui/button';
   import { mdiFileImport } from '@mdi/js';
   import MdiIcon from './MdiIcon.svelte';
-  import { PRIMARY_COLOR } from '../js/constants';
-  import { importProfiles, save } from '../js/profile';
+  import { PRIMARY_COLOR } from '../js/constants.js';
+  import { importProfiles, save } from '../js/profile.js';
 
   let snackbar;
   let uploadFileInput;

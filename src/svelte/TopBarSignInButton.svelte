@@ -4,8 +4,8 @@
   import IconButton from '@smui/icon-button';
   import Button from '@smui/button';
   import ProfilePicture from './ProfilePicture.svelte';
-  import { buttonColor } from '../js/profile';
-  import { signedInUser, signOut } from '../js/identity';
+  import { buttonColor } from '../js/profile.js';
+  import { signedInUser, signOut } from '../js/identity.js';
   import { CURRENT_BROWSER } from '../js/user-agent.js';
 
   let accountMenu;
