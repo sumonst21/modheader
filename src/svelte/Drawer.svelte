@@ -99,10 +99,10 @@
             <Text class="main-drawer-item-text">{profile.title}</Text>
           </Item>
         {/each}
-        <ProFeature>
+        <ProFeature requirePro={$profiles.length >= 3} let:upgradeRequired>
           <Item
             class="main-drawer-item"
-            title="Add profile"
+            title={upgradeRequired ? 'Upgrade to Pro to add more profiles' : 'Add profile'}
             on:click={() => {
               addProfile();
               expand = false;

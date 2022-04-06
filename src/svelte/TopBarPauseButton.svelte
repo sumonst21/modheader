@@ -7,11 +7,12 @@
   import { isPaused } from '../js/datasource.js';
 </script>
 
-<ProFeature>
+<ProFeature let:upgradeRequired>
   <IconButton
     dense
     on:click={() => isPaused.set(!$isPaused)}
-    title={$isPaused ? 'Resume ModHeader' : 'Pause ModHeader'}
+    title={($isPaused ? 'Resume ModHeader' : 'Pause ModHeader') +
+      (upgradeRequired ? ' - Upgrade to Pro required' : '')}
   >
     {#if $isPaused}
       <MdiIcon size="24" icon={mdiPlay} color={$buttonColor} />

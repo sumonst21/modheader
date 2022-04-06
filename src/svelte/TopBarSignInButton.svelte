@@ -21,15 +21,17 @@
 </script>
 
 {#if $signedInUser}
-  <IconButton dense title="Account" on:click={() => accountMenu.setOpen(true)}>
-    <ProfilePicture picture={$signedInUser.picture} />
-  </IconButton>
+  <div>
+    <IconButton dense title="Account" on:click={() => accountMenu.setOpen(true)}>
+      <ProfilePicture picture={$signedInUser.picture} />
+    </IconButton>
 
-  <Menu bind:this={accountMenu} anchorCorner="TOP_LEFT">
-    <List>
-      <Item on:SMUI:action={() => signOut()}>Sign out</Item>
-    </List>
-  </Menu>
+    <Menu bind:this={accountMenu} anchorCorner="TOP_LEFT">
+      <List>
+        <Item on:SMUI:action={() => signOut()}>Sign out</Item>
+      </List>
+    </Menu>
+  </div>
 {:else}
   <Button
     style="min-width: fit-content; color: {$buttonColor}"

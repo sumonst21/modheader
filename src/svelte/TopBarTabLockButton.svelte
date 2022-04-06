@@ -5,11 +5,11 @@
   import { isLocked } from '../js/datasource.js';
 </script>
 
-<ProFeature>
+<ProFeature let:upgradeRequired>
   {#if $isLocked}
     <Button
       on:click={() => isLocked.set(false)}
-      title="Unlock tab"
+      title={upgradeRequired ? 'Unlock tab - Upgrade to Pro required' : 'Unlock tab'}
       style="height: inherit; min-width: fit-content; color: {$buttonColor}"
     >
       Unlock
@@ -17,7 +17,7 @@
   {:else}
     <Button
       on:click={() => isLocked.set(true)}
-      title="Lock to tab"
+      title={upgradeRequired ? 'Unlock tab - Upgrade to Pro required' : 'Lock to tab'}
       style="height: inherit; min-width: fit-content; color: {$buttonColor}"
     >
       Lock tab
