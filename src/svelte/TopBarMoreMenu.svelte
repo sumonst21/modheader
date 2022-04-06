@@ -5,6 +5,7 @@
   import {
     mdiCheckboxBlankOutline,
     mdiCheckboxMarked,
+    mdiFullscreen,
     mdiRadioboxBlank,
     mdiRadioboxMarked,
     mdiTrashCan,
@@ -32,6 +33,18 @@
 
   let menu;
   let darkModeMenu;
+
+  function openInTab() {
+    chrome.tabs.update(
+      null,
+      {
+        url: chrome.runtime.getURL('app.html')
+      },
+      () => {
+        window.close();
+      }
+    );
+  }
 
   function toggleComment() {
     updateProfile({
@@ -65,6 +78,10 @@
 </IconButton>
 <Menu bind:this={menu}>
   <List>
+    <Item on:SMUI:action={() => openInTab()}>
+      <MdiIcon class="more-menu-icon" size="24" icon={mdiFullscreen} color="#666" />
+      Open in tab
+    </Item>
     <Item on:SMUI:action={() => toggleComment()}>
       <MdiIcon
         class="more-menu-icon"

@@ -116,7 +116,7 @@
   }
 
   .top-bar {
-    width: 585px;
+    width: var(--top-bar-width);
   }
 
   .top-bar-profile-badge {

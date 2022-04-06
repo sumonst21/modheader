@@ -265,7 +265,7 @@
   }
 
   .profiles-list {
-    min-height: 320px;
+    min-height: var(--profiles-list-min-height);
   }
 
   .scrim {

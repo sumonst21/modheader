@@ -19,9 +19,6 @@
 html,
 body {
   font-family: Roboto, Helvetica Neue, sans-serif;
-  height: 460px;
-  /** Fix FF popup disappearance on long window. */
-  width: 620px !important;
   position: relative !important;
   overflow-x: hidden;
   margin: 0;
