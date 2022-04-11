@@ -10,8 +10,13 @@
     sub_frame: 'Sub Frame',
     stylesheet: 'Stylesheet',
     image: 'Image',
+    font: 'Font',
     object: 'Object',
     xmlhttprequest: 'XmlHttpRequest',
+    ping: 'Ping',
+    csp_report: 'CSP Report',
+    media: 'Media',
+    websocket: 'Web Socket',
     other: 'Other'
   };
   const dispatch = createEventDispatcher();
