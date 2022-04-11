@@ -15,7 +15,7 @@ export function modifyRequestUrls({ chromeLocal, activeProfiles, details }) {
   if (isEnabled(chromeLocal, details)) {
     let newUrl = details.url;
     for (const currentProfile of activeProfiles) {
-      if (passFilters({ url: newUrl, type: details.type, filters: currentProfile })) {
+      if (passFilters({ url: newUrl, type: details.type, profile: currentProfile })) {
         newUrl = redirectUrl({ urlRedirects: currentProfile.urlReplacements, url: newUrl });
       }
     }
@@ -80,7 +80,8 @@ export function modifyRequestHeaders({ chromeLocal, activeProfiles, details }) {
 
 export function modifyResponseHeaders({ chromeLocal, activeProfiles, details }) {
   if (isEnabled(chromeLocal, details) && activeProfiles.length > 0) {
-    let responseHeaders = lodashCloneDeep(details.responseHeaders);
+    const originalResponseHeaders = details.responseHeaders || [];
+    let responseHeaders = lodashCloneDeep(originalResponseHeaders);
     for (const currentProfile of activeProfiles) {
       if (passFilters({ url: details.url, type: details.type, profile: currentProfile })) {
         modifyHeader(details.url, currentProfile, currentProfile.respHeaders, responseHeaders);
@@ -89,7 +90,7 @@ export function modifyResponseHeaders({ chromeLocal, activeProfiles, details }) 
         }
       }
     }
-    if (!lodashIsEqual(responseHeaders, details.responseHeaders)) {
+    if (!lodashIsEqual(responseHeaders, originalResponseHeaders)) {
       return {
         responseHeaders
       };

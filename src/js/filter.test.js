@@ -5,9 +5,14 @@ const mockTabs = {
 };
 jest.doMock('./tabs.js', () => mockTabs);
 
-const { FilterType, addFilter, removeFilter, optimizeFilters, passFilters } = require(
-  './filter.js'
-);
+const {
+  addUrlFilter,
+  addResourceFilter,
+  removeFilter,
+  optimizeUrlFilters,
+  optimizeResourceFilters,
+  passFilters
+} = require('./filter.js');
 
 describe('filter', () => {
   afterEach(() => {
@@ -15,14 +20,12 @@ describe('filter', () => {
   });
 
   test('addFilter - empty inputs', async () => {
-    const actual = await addFilter([]);
+    const actual = await addUrlFilter([]);
 
     expect(actual).toEqual([
       {
         comment: '',
         enabled: true,
-        resourceType: [],
-        type: FilterType.URLS,
         urlRegex: ''
       }
     ]);
@@ -30,26 +33,22 @@ describe('filter', () => {
 
   test('addFilter - prefill url', async () => {
     mockTabs.getActiveTab.mockResolvedValue({ url: 'https://modheader.com/test' });
-    const actual = await addFilter([]);
+    const actual = await addUrlFilter([]);
 
     expect(actual).toEqual([
       {
         comment: '',
         enabled: true,
-        resourceType: [],
-        type: FilterType.URLS,
         urlRegex: '.*://modheader.com/.*'
       }
     ]);
   });
 
   test('addFilter - append to existing inputs', async () => {
-    const actual = await addFilter([
+    const actual = await addUrlFilter([
       {
         comment: 'Test 1',
         enabled: true,
-        resourceType: [],
-        type: FilterType.URLS,
         urlRegex: 'test'
       }
     ]);
@@ -58,16 +57,35 @@ describe('filter', () => {
       {
         comment: 'Test 1',
         enabled: true,
-        resourceType: [],
-        type: FilterType.URLS,
         urlRegex: 'test'
       },
       {
         comment: '',
         enabled: true,
-        resourceType: [],
-        type: FilterType.URLS,
         urlRegex: ''
+      }
+    ]);
+  });
+
+  test('addResourceFilter', async () => {
+    const actual = await addResourceFilter([
+      {
+        comment: 'Test 1',
+        enabled: true,
+        resourceType: ['main_frame']
+      }
+    ]);
+
+    expect(actual).toEqual([
+      {
+        comment: 'Test 1',
+        enabled: true,
+        resourceType: ['main_frame']
+      },
+      {
+        comment: '',
+        enabled: true,
+        resourceType: []
       }
     ]);
   });
@@ -109,25 +127,16 @@ describe('filter', () => {
     ]);
   });
 
-  test('optimize filters', async () => {
-    const filters = optimizeFilters([
+  test('optimize url filters', async () => {
+    const filters = optimizeUrlFilters([
       {
         comment: 'Converted to Regex',
         enabled: true,
-        type: FilterType.URLS,
-        urlRegex: '.*.google.com.*'
-      },
-      {
-        comment: 'Converted to Set',
-        enabled: true,
-        resourceType: ['main_frame'],
-        type: FilterType.URLS,
         urlRegex: '.*.google.com.*'
       },
       {
         comment: 'Removed',
         enabled: false,
-        type: FilterType.URLS,
         urlRegex: '.*.google.com.*'
       }
     ]);
@@ -135,25 +144,32 @@ describe('filter', () => {
       {
         comment: 'Converted to Regex',
         enabled: true,
-        resourceType: new Set(),
-        type: FilterType.URLS,
-        urlRegex: new RegExp('.*.google.com.*')
-      },
-      {
-        comment: 'Converted to Set',
-        enabled: true,
-        resourceType: new Set(['main_frame']),
-        type: FilterType.URLS,
         urlRegex: new RegExp('.*.google.com.*')
       }
     ]);
   });
 
+  test('optimize resource filters', async () => {
+    const filters = optimizeResourceFilters([
+      {
+        comment: 'Converted to Set',
+        enabled: true,
+        resourceType: ['main_frame']
+      }
+    ]);
+    expect(filters).toEqual([
+      {
+        comment: 'Converted to Set',
+        enabled: true,
+        resourceType: new Set(['main_frame'])
+      }
+    ]);
+  });
+
   test('pass filters - urls filter', async () => {
-    const filters = optimizeFilters([
+    const filters = optimizeUrlFilters([
       {
         enabled: true,
-        type: FilterType.URLS,
         urlRegex: '.*.google.com.*'
       }
     ]);
@@ -161,78 +177,88 @@ describe('filter', () => {
       passFilters({
         url: 'https://www.google.com/search',
         type: 'main_frame',
-        filters
+        profile: {
+          urlFilters: filters,
+          excludeUrlFilters: [],
+          resourceFilters: []
+        }
       })
     ).toEqual(true);
     expect(
       passFilters({
         url: 'https://www.bing.com/search',
         type: 'main_frame',
-        filters
+        profile: {
+          urlFilters: filters,
+          excludeUrlFilters: [],
+          resourceFilters: []
+        }
       })
     ).toEqual(false);
   });
 
   test('pass filters - excluded urls filter', async () => {
-    const filters = optimizeFilters([
-      { enabled: true, type: FilterType.EXCLUDE_URLS, urlRegex: '.*.google.com.*' }
-    ]);
+    const filters = optimizeUrlFilters([{ enabled: true, urlRegex: '.*.google.com.*' }]);
     expect(
       passFilters({
         url: 'https://www.google.com/search',
         type: 'main_frame',
-        filters
+        profile: {
+          urlFilters: [],
+          excludeUrlFilters: filters,
+          resourceFilters: []
+        }
       })
     ).toEqual(false);
     expect(
       passFilters({
         url: 'https://www.bing.com/search',
         type: 'main_frame',
-        filters
+        profile: {
+          urlFilters: [],
+          excludeUrlFilters: filters,
+          resourceFilters: []
+        }
       })
     ).toEqual(true);
   });
 
-  test('pass filters - urls and excluded urls both match - last filter takes precedent', async () => {
+  test('pass filters - urls and excluded urls both match - exclude takes precedent', async () => {
     expect(
       passFilters({
         url: 'https://www.google.com/search',
         type: 'main_frame',
-        filters: optimizeFilters([
-          { enabled: true, type: FilterType.URLS, urlRegex: '.*.google.com.*' },
-          { enabled: true, type: FilterType.EXCLUDE_URLS, urlRegex: '.*.google.com.*' }
-        ])
+        profile: {
+          urlFilters: optimizeUrlFilters([{ enabled: true, urlRegex: '.*.google.com.*' }]),
+          excludeUrlFilters: optimizeUrlFilters([{ enabled: true, urlRegex: '.*.google.com.*' }]),
+          resourceFilters: []
+        }
       })
     ).toEqual(false);
-
-    expect(
-      passFilters({
-        url: 'https://www.google.com/search',
-        type: 'main_frame',
-        filters: optimizeFilters([
-          { enabled: true, type: FilterType.EXCLUDE_URLS, urlRegex: '.*.google.com.*' },
-          { enabled: true, type: FilterType.URLS, urlRegex: '.*.google.com.*' }
-        ])
-      })
-    ).toEqual(true);
   });
 
   test('pass filters - resource filter', async () => {
-    const filters = optimizeFilters([
-      { enabled: true, type: FilterType.RESOURCE_TYPES, resourceType: ['main_frame'] }
-    ]);
+    const filters = optimizeResourceFilters([{ enabled: true, resourceType: ['main_frame'] }]);
     expect(
       passFilters({
         url: 'https://www.google.com/search',
         type: 'main_frame',
-        filters
+        profile: {
+          urlFilters: [],
+          excludeUrlFilters: [],
+          resourceFilters: filters
+        }
       })
     ).toEqual(true);
     expect(
       passFilters({
         url: 'https://www.google.com/search',
         type: 'sub_frame',
-        filters
+        profile: {
+          urlFilters: [],
+          excludeUrlFilters: [],
+          resourceFilters: filters
+        }
       })
     ).toEqual(false);
   });

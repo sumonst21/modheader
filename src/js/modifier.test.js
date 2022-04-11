@@ -1,11 +1,13 @@
 import { FilterType } from './filter.js';
 import { modifyRequestUrls, modifyRequestHeaders, modifyResponseHeaders } from './modifier.js';
+import { fixProfiles } from './profile.js';
 
 describe('modifier', () => {
   describe('Modify request urls', () => {
     test('Nothing changed', () => {
       const chromeLocal = {};
       const activeProfiles = [];
+      fixProfiles(activeProfiles);
       const details = {};
       const actual = modifyRequestUrls({ chromeLocal, activeProfiles, details });
 
@@ -24,6 +26,7 @@ describe('modifier', () => {
           ]
         }
       ];
+      fixProfiles(activeProfiles);
       const details = {
         url: 'https://bewisse.com/'
       };
@@ -43,6 +46,7 @@ describe('modifier', () => {
           ]
         }
       ];
+      fixProfiles(activeProfiles);
       const details = {
         url: 'https://bewisse.com/'
       };
@@ -72,6 +76,7 @@ describe('modifier', () => {
           ]
         }
       ];
+      fixProfiles(activeProfiles);
       const details = {
         url: 'https://bewisse.com/',
         tabId: '1'
@@ -109,6 +114,7 @@ describe('modifier', () => {
           ]
         }
       ];
+      fixProfiles(activeProfiles);
       const details = {
         url: 'https://bewisse.com/'
       };
@@ -135,6 +141,7 @@ describe('modifier', () => {
           ]
         }
       ];
+      fixProfiles(activeProfiles);
       const details = {
         url: 'https://bewisse.com/'
       };
@@ -166,6 +173,7 @@ describe('modifier', () => {
           ]
         }
       ];
+      fixProfiles(activeProfiles);
       const details = {
         url: 'https://modheader.com/',
         requestHeaders: [
@@ -200,6 +208,7 @@ describe('modifier', () => {
           ]
         }
       ];
+      fixProfiles(activeProfiles);
       const details = {
         url: 'https://modheader.com/',
         requestHeaders: [
@@ -234,6 +243,7 @@ describe('modifier', () => {
           ]
         }
       ];
+      fixProfiles(activeProfiles);
       const details = {
         url: 'https://modheader.com/',
         requestHeaders: [
@@ -267,6 +277,7 @@ describe('modifier', () => {
           ]
         }
       ];
+      fixProfiles(activeProfiles);
       const details = {
         url: 'https://modheader.com/',
         requestHeaders: []
@@ -295,6 +306,7 @@ describe('modifier', () => {
           ]
         }
       ];
+      fixProfiles(activeProfiles);
       const details = {
         url: 'https://modheader.com/',
         requestHeaders: [
@@ -324,6 +336,7 @@ describe('modifier', () => {
           ]
         }
       ];
+      fixProfiles(activeProfiles);
       const details = {
         url: 'https://modheader.com/',
         requestHeaders: [
@@ -366,6 +379,7 @@ describe('modifier', () => {
           ]
         }
       ];
+      fixProfiles(activeProfiles);
       const details = {
         url: 'https://modheader.com/',
         requestHeaders: [
@@ -395,6 +409,7 @@ describe('modifier', () => {
         },
         {}
       ];
+      fixProfiles(activeProfiles);
       const details = {
         url: 'https://modheader.com/',
         requestHeaders: [
@@ -421,6 +436,7 @@ describe('modifier', () => {
     test('Nothing changed', () => {
       const chromeLocal = {};
       const activeProfiles = [];
+      fixProfiles(activeProfiles);
       const details = {};
       const actual = modifyResponseHeaders({ chromeLocal, activeProfiles, details });
 
@@ -439,6 +455,7 @@ describe('modifier', () => {
           ]
         }
       ];
+      fixProfiles(activeProfiles);
       const details = {
         url: 'https://modheader.com/',
         responseHeaders: [
@@ -473,6 +490,7 @@ describe('modifier', () => {
           ]
         }
       ];
+      fixProfiles(activeProfiles);
       const details = {
         url: 'https://modheader.com/',
         responseHeaders: [
@@ -507,6 +525,7 @@ describe('modifier', () => {
           ]
         }
       ];
+      fixProfiles(activeProfiles);
       const details = {
         url: 'https://modheader.com/',
         responseHeaders: [
@@ -540,6 +559,7 @@ describe('modifier', () => {
           ]
         }
       ];
+      fixProfiles(activeProfiles);
       const details = {
         url: 'https://modheader.com/',
         responseHeaders: []
@@ -568,6 +588,7 @@ describe('modifier', () => {
           ]
         }
       ];
+      fixProfiles(activeProfiles);
       const details = {
         url: 'https://modheader.com/',
         responseHeaders: [
@@ -597,6 +618,7 @@ describe('modifier', () => {
           ]
         }
       ];
+      fixProfiles(activeProfiles);
       const details = {
         url: 'https://modheader.com/',
         responseHeaders: [
@@ -639,6 +661,7 @@ describe('modifier', () => {
           ]
         }
       ];
+      fixProfiles(activeProfiles);
       const details = {
         url: 'https://modheader.com/',
         responseHeaders: [
@@ -668,6 +691,7 @@ describe('modifier', () => {
         },
         {}
       ];
+      fixProfiles(activeProfiles);
       const details = {
         url: 'https://modheader.com/',
         responseHeaders: [

@@ -15,6 +15,7 @@ const mockToast = {
 jest.doMock('./toast.js', () => mockToast);
 
 const {
+  PROFILE_VERSION,
   selectedProfile,
   fixProfiles,
   addProfile,
@@ -44,9 +45,12 @@ describe('profile', () => {
 
     expect(profiles).toEqual([
       {
+        version: PROFILE_VERSION,
         appendMode: false,
         backgroundColor: expect.any(String),
-        filters: [],
+        urlFilters: [],
+        excludeUrlFilters: [],
+        resourceFilters: [],
         headers: [
           {
             comment: '',
@@ -69,9 +73,12 @@ describe('profile', () => {
   test('Fix profiles - Do not mutate good profile', () => {
     const profiles = [
       {
+        version: PROFILE_VERSION,
         appendMode: false,
         backgroundColor: '#000000',
-        filters: [],
+        urlFilters: [],
+        excludeUrlFilters: [],
+        resourceFilters: [],
         headers: [
           {
             comment: '',
@@ -92,9 +99,12 @@ describe('profile', () => {
 
     expect(profiles).toEqual([
       {
+        version: PROFILE_VERSION,
         appendMode: false,
         backgroundColor: '#000000',
-        filters: [],
+        urlFilters: [],
+        excludeUrlFilters: [],
+        resourceFilters: [],
         headers: [
           {
             comment: '',
@@ -120,9 +130,12 @@ describe('profile', () => {
 
     expect(profiles).toEqual([
       {
+        version: PROFILE_VERSION,
         appendMode: false,
         backgroundColor: expect.any(String),
-        filters: [],
+        urlFilters: [],
+        excludeUrlFilters: [],
+        resourceFilters: [],
         headers: [
           {
             comment: '',
@@ -140,54 +153,6 @@ describe('profile', () => {
       }
     ]);
     expect(isMutated).toEqual(true);
-  });
-
-  test('Fix profiles - Do not mutate good profile', () => {
-    const profiles = [
-      {
-        appendMode: false,
-        backgroundColor: '#000000',
-        filters: [],
-        headers: [
-          {
-            comment: '',
-            enabled: true,
-            name: '',
-            value: ''
-          }
-        ],
-        hideComment: true,
-        respHeaders: [],
-        shortTitle: '1',
-        textColor: '#ffffff',
-        title: 'Profile 1',
-        urlReplacements: []
-      }
-    ];
-    const isMutated = fixProfiles(profiles);
-
-    expect(profiles).toEqual([
-      {
-        appendMode: false,
-        backgroundColor: '#000000',
-        filters: [],
-        headers: [
-          {
-            comment: '',
-            enabled: true,
-            name: '',
-            value: ''
-          }
-        ],
-        hideComment: true,
-        respHeaders: [],
-        shortTitle: '1',
-        textColor: '#ffffff',
-        title: 'Profile 1',
-        urlReplacements: []
-      }
-    ]);
-    expect(isMutated).toEqual(false);
   });
 
   test('Add profile', () => {

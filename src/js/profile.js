@@ -11,7 +11,7 @@ import { lightOrDark, generateBackgroundColor, generateTextColor } from './color
 import { profiles, commitData, selectedProfileIndex, isInitialized } from './datasource.js';
 import { showMessage } from './toast.js';
 
-const PROFILE_VERSION = 2;
+export const PROFILE_VERSION = 2;
 let latestProfiles = [];
 let latestSelectedProfileIndex = 0;
 profiles.subscribe(($profiles) => {

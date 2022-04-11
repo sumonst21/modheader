@@ -87,7 +87,10 @@ describe('worker-data-manager', () => {
             }
           ],
           respHeaders: [],
-          urlReplacements: []
+          urlReplacements: [],
+          urlFilters: [],
+          excludeUrlFilters: [],
+          resourceFilters: []
         }
       ],
       selectedActiveProfile: {
@@ -98,7 +101,10 @@ describe('worker-data-manager', () => {
           }
         ],
         respHeaders: [],
-        urlReplacements: []
+        urlReplacements: [],
+        urlFilters: [],
+        excludeUrlFilters: [],
+        resourceFilters: []
       }
     });
   });
@@ -109,14 +115,20 @@ describe('worker-data-manager', () => {
       title: 'Profile 1',
       headers: [],
       respHeaders: [],
-      urlReplacements: []
+      urlReplacements: [],
+      urlFilters: [],
+      excludeUrlFilters: [],
+      resourceFilters: []
     };
     // Profile 2 should be kept because it is the selected profile.
     const profile2 = {
       title: 'Profile 2',
       headers: [],
       respHeaders: [],
-      urlReplacements: []
+      urlReplacements: [],
+      urlFilters: [],
+      excludeUrlFilters: [],
+      resourceFilters: []
     };
     // Profile 3 should be kept because it is always on, but it is not the selected profile.
     const profile3 = {
@@ -124,7 +136,10 @@ describe('worker-data-manager', () => {
       title: 'Profile 3',
       headers: [],
       respHeaders: [],
-      urlReplacements: []
+      urlReplacements: [],
+      urlFilters: [],
+      excludeUrlFilters: [],
+      resourceFilters: []
     };
     mockStorageLoader.initStorage.mockResolvedValue({
       profiles: [profile1, profile2, profile3],
@@ -149,26 +164,30 @@ describe('worker-data-manager', () => {
       title: 'Profile 1',
       headers: [],
       respHeaders: [],
-      urlReplacements: []
+      urlReplacements: [],
+      urlFilters: [],
+      excludeUrlFilters: [],
+      resourceFilters: []
     };
     const profile2 = {
       title: 'Profile 2',
       headers: [],
       respHeaders: [],
-      urlReplacements: []
+      urlReplacements: [],
+      urlFilters: [],
+      excludeUrlFilters: [],
+      resourceFilters: []
     };
     mockStorageLoader.initStorage.mockResolvedValue({
       profiles: [profile1],
       selectedProfile: 0
     });
     mockStorage.addStorageChangeListener.mockImplementation((fn) => {
-      fn(
-        {
-          profiles: {
-            newValue: [profile2]
-          }
+      fn({
+        profiles: {
+          newValue: [profile2]
         }
-      );
+      });
     });
     const callback = jest.fn();
     await loadProfilesFromStorage(callback);
@@ -198,26 +217,30 @@ describe('worker-data-manager', () => {
       title: 'Profile 1',
       headers: [],
       respHeaders: [],
-      urlReplacements: []
+      urlReplacements: [],
+      urlFilters: [],
+      excludeUrlFilters: [],
+      resourceFilters: []
     };
     const profile2 = {
       title: 'Profile 2',
       headers: [],
       respHeaders: [],
-      urlReplacements: []
+      urlReplacements: [],
+      urlFilters: [],
+      excludeUrlFilters: [],
+      resourceFilters: []
     };
     mockStorageLoader.initStorage.mockResolvedValue({
       profiles: [profile1],
       selectedProfile: 0
     });
     mockStorage.addStorageChangeListener.mockImplementation((fn) => {
-      fn(
-        {
-          profiles: {
-            newValue: [profile2]
-          }
-        },
-      );
+      fn({
+        profiles: {
+          newValue: [profile2]
+        }
+      });
     });
     const callback = jest.fn();
     mockStorage.getSync.mockResolvedValue({
@@ -247,26 +270,30 @@ describe('worker-data-manager', () => {
       title: 'Profile 1',
       headers: [],
       respHeaders: [],
-      urlReplacements: []
+      urlReplacements: [],
+      urlFilters: [],
+      excludeUrlFilters: [],
+      resourceFilters: []
     };
     const profile2 = {
       title: 'Profile 2',
       headers: [],
       respHeaders: [],
-      urlReplacements: []
+      urlReplacements: [],
+      urlFilters: [],
+      excludeUrlFilters: [],
+      resourceFilters: []
     };
     mockStorageLoader.initStorage.mockResolvedValue({
       profiles: [profile1, profile2],
       selectedProfile: 0
     });
     mockStorage.addStorageChangeListener.mockImplementation((fn) => {
-      fn(
-        {
-          selectedProfile: {
-            newValue: 1
-          }
+      fn({
+        selectedProfile: {
+          newValue: 1
         }
-      );
+      });
     });
     const callback = jest.fn();
     await loadProfilesFromStorage(callback);
