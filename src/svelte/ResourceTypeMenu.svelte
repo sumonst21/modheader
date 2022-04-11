@@ -20,7 +20,11 @@
 </script>
 
 <div class="resource-type-menu-cell data-table-cell flex-grow">
-  <Button class="resource-type-menu-button" on:click={() => resourceTypeMenu.setOpen(true)}>
+  <Button
+    name="resource-type"
+    class="resource-type-menu-button"
+    on:click={() => resourceTypeMenu.setOpen(true)}
+  >
     {resourceType && resourceType.length > 0
       ? resourceType.map((rt) => KNOWN_RESOURCE_TYPES[rt]).join(', ')
       : 'Select resource'}
@@ -29,6 +33,7 @@
     <List>
       {#each Object.entries(KNOWN_RESOURCE_TYPES) as [value, label]}
         <Item
+          data-resource-type={value}
           on:SMUI:action={() => {
             if (resourceType.includes(value)) {
               resourceType = lodashWithout(resourceType, value);
