@@ -1,12 +1,12 @@
 <script>
   import Menu from '@smui/menu';
-  import List, { Item } from '@smui/list';
+  import List, { Item, Separator } from '@smui/list';
   import IconButton from '@smui/icon-button';
   import { mdiPlus } from '@mdi/js';
   import MdiIcon from './MdiIcon.svelte';
   import { selectedProfile, updateProfile, buttonColor } from '../js/profile.js';
   import { addHeader } from '../js/header.js';
-  import { addFilter } from '../js/filter.js';
+  import { addUrlFilter, addResourceFilter } from '../js/filter.js';
   import { addUrlRedirect } from '../js/url-redirect.js';
 
   let addMenu;
@@ -45,12 +45,27 @@
       >
         URL redirect
       </Item>
+      <Separator />
       <Item
-        id="add-filter"
+        id="add-url-filter"
         on:SMUI:action={async () =>
           updateProfile({
-            filters: await addFilter($selectedProfile.filters)
-          })}>Filter</Item
+            urlFilters: await addUrlFilter($selectedProfile.urlFilters)
+          })}>URL Filter</Item
+      >
+      <Item
+        id="add-url-filter"
+        on:SMUI:action={async () =>
+          updateProfile({
+            excludeUrlFilters: await addUrlFilter($selectedProfile.excludeUrlFilters)
+          })}>Exclude URL Filter</Item
+      >
+      <Item
+        id="add-resource-filter"
+        on:SMUI:action={async () =>
+          updateProfile({
+            resourceFilters: await addResourceFilter($selectedProfile.resourceFilters)
+          })}>Resource Filter</Item
       >
     </List>
   </Menu>
@@ -58,6 +73,6 @@
 
 <style module>
   .add-menu {
-    width: 200px;
+    width: 250px;
   }
 </style>

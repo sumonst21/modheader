@@ -6,10 +6,12 @@ import lodashIsArray from 'lodash/isArray.js';
 import lodashDebounce from 'lodash/debounce.js';
 import { takeRight } from './utils.js';
 import { createHeader } from './header.js';
+import { FilterType } from './filter.js';
 import { lightOrDark, generateBackgroundColor, generateTextColor } from './color.js';
 import { profiles, commitData, selectedProfileIndex, isInitialized } from './datasource.js';
 import { showMessage } from './toast.js';
 
+const PROFILE_VERSION = 2;
 let latestProfiles = [];
 let latestSelectedProfileIndex = 0;
 profiles.subscribe(($profiles) => {
@@ -67,72 +69,74 @@ function isExistingProfileTitle_(title) {
 export function fixProfiles(profiles) {
   let isMutated = false;
   if (profiles.length === 0) {
-    profiles.push({
-      title: 'Profile 1',
-      hideComment: true,
-      headers: [createHeader()],
-      respHeaders: [],
-      filters: [],
-      urlReplacements: [],
-      appendMode: false,
-      backgroundColor: generateBackgroundColor(),
-      textColor: generateTextColor(),
-      shortTitle: '1'
-    });
+    profiles.push(createProfile());
     isMutated = true;
   }
   for (let index = 0; index < profiles.length; ++index) {
     const profile = profiles[index];
-    if (profile.appendMode === undefined) {
-      profile.appendMode = false;
-    }
-    if (profile.hideComment === undefined) {
-      profile.hideComment = true;
-    }
-    if (!profile.title) {
-      profile.title = 'Profile ' + (index + 1);
-      isMutated = true;
-    }
-    if (!profile.shortTitle) {
-      profile.shortTitle = takeRight(index + 1);
-      isMutated = true;
-    }
-    if (!profile.headers || !lodashIsArray(profile.headers)) {
-      profile.headers = [createHeader()];
-      isMutated = true;
-    }
-    if (!profile.respHeaders || !lodashIsArray(profile.respHeaders)) {
-      profile.respHeaders = [];
-      isMutated = true;
-    }
-    if (!profile.urlReplacements || !lodashIsArray(profile.urlReplacements)) {
-      profile.urlReplacements = [];
-      isMutated = true;
-    }
-    if (!profile.filters || !lodashIsArray(profile.filters)) {
-      profile.filters = [];
-      isMutated = true;
-    }
-    for (let filter of profile.filters) {
-      if (!filter.resourceType) {
-        filter.resourceType = [];
-        isMutated = true;
-      }
-      if (!filter.comment) {
-        filter.comment = '';
-        isMutated = true;
-      }
-    }
-    if (!profile.backgroundColor) {
-      profile.backgroundColor = generateBackgroundColor();
-      isMutated = true;
-    }
-    if (!profile.textColor) {
-      profile.textColor = generateTextColor();
+    if (!profile.version) {
+      upgradeFromProfileVersion1({ profile, index });
       isMutated = true;
     }
   }
   return isMutated;
+}
+
+function upgradeFromProfileVersion1({ profile, index }) {
+  profile.version = PROFILE_VERSION;
+  if (profile.appendMode === undefined) {
+    profile.appendMode = false;
+  }
+  if (profile.hideComment === undefined) {
+    profile.hideComment = true;
+  }
+  if (!profile.title) {
+    profile.title = 'Profile ' + (index + 1);
+  }
+  if (!profile.shortTitle) {
+    profile.shortTitle = takeRight(index + 1);
+  }
+  if (!profile.headers || !lodashIsArray(profile.headers)) {
+    profile.headers = [createHeader()];
+  }
+  if (!profile.respHeaders || !lodashIsArray(profile.respHeaders)) {
+    profile.respHeaders = [];
+  }
+  if (!profile.urlReplacements || !lodashIsArray(profile.urlReplacements)) {
+    profile.urlReplacements = [];
+  }
+  profile.urlFilters = [];
+  profile.excludeUrlFilters = [];
+  profile.resourceFilters = [];
+  for (const filter of profile.filters || []) {
+    const type = filter.type;
+    delete filter.type;
+    if (!filter.comment) {
+      filter.comment = '';
+    }
+    switch (type) {
+      case FilterType.URLS:
+        profile.urlFilters.push(filter);
+        break;
+      case FilterType.EXCLUDE_URLS:
+        profile.excludeUrlFilters.push(filter);
+        break;
+      case FilterType.RESOURCE_TYPES:
+        if (!filter.resourceType) {
+          filter.resourceType = [];
+        }
+        profile.resourceFilters.push(filter);
+        break;
+    }
+  }
+  delete profile.filters;
+
+  if (!profile.backgroundColor) {
+    profile.backgroundColor = generateBackgroundColor();
+  }
+  if (!profile.textColor) {
+    profile.textColor = generateTextColor();
+  }
 }
 
 function createProfile() {
@@ -141,11 +145,14 @@ function createProfile() {
     ++index;
   }
   const profile = {
+    version: PROFILE_VERSION,
     title: 'Profile ' + index,
     hideComment: true,
     headers: [createHeader()],
     respHeaders: [],
-    filters: [],
+    urlFilters: [],
+    excludeUrlFilters: [],
+    resourceFilters: [],
     urlReplacements: [],
     appendMode: false,
     backgroundColor: generateBackgroundColor(),

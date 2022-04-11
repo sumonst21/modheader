@@ -15,6 +15,7 @@
   import CloudBackupDialog from './CloudBackupDialog.svelte';
   import UpgradeDialog from './UpgradeDialog.svelte';
   import { isPaused, undo, init } from '../js/datasource.js';
+  import { FilterType } from '../js/filter.js';
   import { selectedProfile, save, updateProfile } from '../js/profile.js';
   import { addUrlRedirect, removeUrlRedirect } from '../js/url-redirect.js';
   import { addHeader, removeHeader } from '../js/header.js';
@@ -118,13 +119,24 @@
           }}
         />
       {/if}
-      {#if $selectedProfile.filters.length > 0}
-        <Filters
-          id="filters"
-          filters={lodashCloneDeep($selectedProfile.filters)}
-          class="extra-gap"
-        />
-      {/if}
+      <Filters
+        id="url-filters"
+        filters={lodashCloneDeep($selectedProfile.urlFilters)}
+        filterType={FilterType.URLS}
+        class="extra-gap"
+      />
+      <Filters
+        id="exclude-url-filters"
+        filters={lodashCloneDeep($selectedProfile.excludeUrlFilters)}
+        filterType={FilterType.EXCLUDE_URLS}
+        class="extra-gap"
+      />
+      <Filters
+        id="resource-filters"
+        filters={lodashCloneDeep($selectedProfile.resourceFilters)}
+        filterType={FilterType.RESOURCE_TYPES}
+        class="extra-gap"
+      />
     </div>
   </AppContent>
 

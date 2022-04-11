@@ -15,7 +15,7 @@ export function modifyRequestUrls({ chromeLocal, activeProfiles, details }) {
   if (isEnabled(chromeLocal, details)) {
     let newUrl = details.url;
     for (const currentProfile of activeProfiles) {
-      if (passFilters({ url: newUrl, type: details.type, filters: currentProfile.filters })) {
+      if (passFilters({ url: newUrl, type: details.type, filters: currentProfile })) {
         newUrl = redirectUrl({ urlRedirects: currentProfile.urlReplacements, url: newUrl });
       }
     }
@@ -65,7 +65,7 @@ function modifyHeader(url, currentProfile, source, dest) {
 export function modifyRequestHeaders({ chromeLocal, activeProfiles, details }) {
   if (isEnabled(chromeLocal, details) && activeProfiles.length > 0) {
     for (const currentProfile of activeProfiles) {
-      if (passFilters({ url: details.url, type: details.type, filters: currentProfile.filters })) {
+      if (passFilters({ url: details.url, type: details.type, profile: currentProfile })) {
         modifyHeader(details.url, currentProfile, currentProfile.headers, details.requestHeaders);
         if (!currentProfile.sendEmptyHeader) {
           details.requestHeaders = details.requestHeaders.filter((entry) => !!entry.value);
@@ -82,7 +82,7 @@ export function modifyResponseHeaders({ chromeLocal, activeProfiles, details }) 
   if (isEnabled(chromeLocal, details) && activeProfiles.length > 0) {
     let responseHeaders = lodashCloneDeep(details.responseHeaders);
     for (const currentProfile of activeProfiles) {
-      if (passFilters({ url: details.url, type: details.type, filters: currentProfile.filters })) {
+      if (passFilters({ url: details.url, type: details.type, profile: currentProfile })) {
         modifyHeader(details.url, currentProfile, currentProfile.respHeaders, responseHeaders);
         if (!currentProfile.sendEmptyHeader) {
           responseHeaders = responseHeaders.filter((entry) => !!entry.value);

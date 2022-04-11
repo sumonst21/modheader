@@ -8,7 +8,7 @@ export const FilterType = {
   RESOURCE_TYPES: 'types'
 };
 
-export async function addFilter(filters) {
+export async function addUrlFilter(filters) {
   let urlRegex = '';
   const tab = await getActiveTab();
   if (tab && !lodashIsEmpty(tab.url)) {
@@ -21,8 +21,17 @@ export async function addFilter(filters) {
     ...filters,
     {
       enabled: true,
-      type: FilterType.URLS,
       urlRegex: urlRegex,
+      comment: ''
+    }
+  ];
+}
+
+export async function addResourceFilter(filters) {
+  return [
+    ...filters,
+    {
+      enabled: true,
       comment: '',
       resourceType: []
     }
@@ -35,65 +44,67 @@ export function removeFilter(filters, filterIndex) {
   return filters;
 }
 
-export function optimizeFilters(filters) {
+export function optimizeUrlFilters(filters) {
   if (!filters) {
-    return undefined;
+    return [];
   }
   return filters
     .filter((f) => f.enabled)
     .map((f) => ({
       ...f,
-      resourceType: new Set(f.resourceType),
       urlRegex: new RegExp(f.urlRegex)
+    }));
+}
+
+export function optimizeResourceFilters(filters) {
+  if (!filters) {
+    return [];
+  }
+  return filters
+    .filter((f) => f.enabled)
+    .map((f) => ({
+      ...f,
+      resourceType: new Set(f.resourceType)
     }));
 }
 
 /**
  * Check whether the current request url pass the given list of filters.
  */
-export function passFilters({ url, type, filters }) {
-  if (!filters) {
-    return true;
-  }
+export function passFilters({ url, type, profile }) {
   let allowUrls = undefined;
-  let hasUrlFilters = false;
   let allowTypes = false;
-  let hasResourceTypeFilters = false;
-  for (const filter of filters) {
-    switch (filter.type) {
-      case FilterType.URLS:
-        hasUrlFilters = true;
-        if (allowUrls === undefined) {
-          allowUrls = false;
-        }
-        try {
-          if (filter.urlRegex.test(url)) {
-            allowUrls = true;
-          }
-        } catch {
-          allowUrls = false;
-        }
-        break;
-      case FilterType.EXCLUDE_URLS:
-        hasUrlFilters = true;
-        if (allowUrls === undefined) {
-          allowUrls = true;
-        }
-        try {
-          if (filter.urlRegex.test(url)) {
-            allowUrls = false;
-          }
-        } catch {
-          allowUrls = true;
-        }
-        break;
-      case FilterType.RESOURCE_TYPES:
-        hasResourceTypeFilters = true;
-        if (filter.resourceType.has(type)) {
-          allowTypes = true;
-        }
-        break;
+  for (const filter of profile.urlFilters) {
+    if (allowUrls === undefined) {
+      allowUrls = false;
+    }
+    try {
+      if (filter.urlRegex.test(url)) {
+        allowUrls = true;
+      }
+    } catch {
+      allowUrls = false;
     }
   }
-  return (!hasUrlFilters || allowUrls) && (!hasResourceTypeFilters || allowTypes);
+  for (const filter of profile.excludeUrlFilters) {
+    if (allowUrls === undefined) {
+      allowUrls = true;
+    }
+    try {
+      if (filter.urlRegex.test(url)) {
+        allowUrls = false;
+      }
+    } catch {
+      allowUrls = true;
+    }
+  }
+  for (const filter of profile.resourceFilters) {
+    if (filter.resourceType.has(type)) {
+      allowTypes = true;
+    }
+  }
+  return (
+    ((profile.urlFilters.length === 0 && profile.excludeUrlFilters.length === 0) || allowUrls) &&
+    (profile.resourceFilters.length === 0 || allowTypes)
+  );
 }

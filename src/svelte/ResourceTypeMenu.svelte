@@ -23,7 +23,7 @@
   <Button class="resource-type-menu-button" on:click={() => resourceTypeMenu.setOpen(true)}>
     {resourceType && resourceType.length > 0
       ? resourceType.map((rt) => KNOWN_RESOURCE_TYPES[rt]).join(', ')
-      : 'Select Resource Type'}
+      : 'Select resource'}
   </Button>
   <Menu bind:this={resourceTypeMenu}>
     <List>
@@ -52,7 +52,6 @@
     text-align: left;
     text-overflow: ellipsis;
     white-space: nowrap;
-    max-width: 220px;
     height: 28px;
     margin: 0 2px;
   }
