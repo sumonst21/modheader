@@ -120,19 +120,19 @@
         />
       {/if}
       <Filters
-        id="url-filters"
+        id="url-filter"
         filters={lodashCloneDeep($selectedProfile.urlFilters)}
         filterType={FilterType.URLS}
         class="extra-gap"
       />
       <Filters
-        id="exclude-url-filters"
+        id="exclude-url-filter"
         filters={lodashCloneDeep($selectedProfile.excludeUrlFilters)}
         filterType={FilterType.EXCLUDE_URLS}
         class="extra-gap"
       />
       <Filters
-        id="resource-filters"
+        id="resource-filter"
         filters={lodashCloneDeep($selectedProfile.resourceFilters)}
         filterType={FilterType.RESOURCE_TYPES}
         class="extra-gap"

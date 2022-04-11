@@ -194,7 +194,7 @@
           class="data-table-cell flex-fixed-icon"
         />
         {#if filterType === FilterType.URLS || filterType === FilterType.EXCLUDE_URLS}
-          <AutoComplete bind:value={filter.urlRegex} placeholder=".*://.*.google.com/.*" />
+          <AutoComplete name="url-regex" bind:value={filter.urlRegex} placeholder=".*://.*.google.com/.*" />
         {:else}
           <ResourceTypeMenu bind:resourceType={filter.resourceType} {resourceTypeMenuLocation} />
         {/if}

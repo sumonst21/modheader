@@ -54,7 +54,7 @@
           })}>URL Filter</Item
       >
       <Item
-        id="add-url-filter"
+        id="add-exclude-url-filter"
         on:SMUI:action={async () =>
           updateProfile({
             excludeUrlFilters: await addUrlFilter($selectedProfile.excludeUrlFilters)
