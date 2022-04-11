@@ -3,24 +3,41 @@ import lodashIsUndefined from 'lodash/isUndefined.js';
 import lodashIsEqual from 'lodash/isEqual.js';
 import { addStorageChangeListener, getSync, removeSync, setSync } from './storage.js';
 import { filterEnabledMods } from './utils.js';
+import { fixProfiles } from './profile.js';
 import { optimizeResourceFilters, optimizeUrlFilters } from './filter.js';
 import { optimizeUrlRedirects } from './url-redirect.js';
-import { initStorage } from './storage-loader.js';
+import { initStorage, setProfiles } from './storage-loader.js';
 
 const MAX_PROFILES_IN_CLOUD = 50;
 
 export async function loadProfilesFromStorage(dataChangeCallback) {
   let chromeLocal = await initStorage();
-  await dataChangeCallback(reloadActiveProfiles(chromeLocal));
+  let reloadResponse = reloadActiveProfiles(chromeLocal);
+  await dataChangeCallback(reloadResponse);
 
   addStorageChangeListener(async (changes) => {
     const profilesUpdated =
       !lodashIsUndefined(changes.profiles) &&
       !lodashIsEqual(chromeLocal.profiles, changes.profiles.newValue);
+    if (profilesUpdated) {
+      // Profiles need to be upgraded. Convert and resave to localStorage. The change will trigger the storage change
+      // listener to get invoked again.
+      let newProfiles = changes.profiles.newValue;
+      if (lodashIsUndefined(newProfiles)) {
+        newProfiles = [];
+      }
+      if (fixProfiles(newProfiles)) {
+        await setProfiles(newProfiles);
+        return;
+      }
+    }
     for (const [key, value] of Object.entries(changes)) {
       chromeLocal[key] = value.newValue;
     }
-    await dataChangeCallback(reloadActiveProfiles(chromeLocal));
+    if (profilesUpdated || changes.selectedProfile?.newValue) {
+      reloadResponse = reloadActiveProfiles(chromeLocal);
+    }
+    await dataChangeCallback(reloadResponse);
     if (profilesUpdated) {
       await saveStorageToCloud(chromeLocal);
     }
