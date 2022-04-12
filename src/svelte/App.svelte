@@ -4,7 +4,7 @@
   import IconButton from '@smui/icon-button';
   import Button from '@smui/button';
   import { mdiClose } from '@mdi/js';
-  import { onDestroy } from 'svelte';
+  import { onDestroy, onMount } from 'svelte';
   import lodashCloneDeep from 'lodash/cloneDeep';
   import TopBar from './TopBar.svelte';
   import Drawer from './Drawer.svelte';
@@ -20,6 +20,7 @@
   import MdiIcon from './MdiIcon.svelte';
   import { toastMessage, undoable } from '../js/toast.js';
   import { ModifierType } from '../js/modifier-type.js';
+  import { reloadColorScheme } from '../js/color-scheme.js';
 
   let snackbar;
   let snackbarMessage;
@@ -35,6 +36,10 @@
         snackbar.close();
       }
     }
+  });
+
+  onMount(() => {
+    reloadColorScheme();
   });
 
   onDestroy(unsubscribeToastMessage);

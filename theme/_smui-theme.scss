@@ -1,3 +1,5 @@
+@use '@material/button/index' as mdc-button;
+
 @use '@smui/button/_style.scss' as button;
 @use '@smui/checkbox/_style.scss' as checkbox;
 @use '@smui/chips/_style.scss' as chips;
@@ -31,6 +33,11 @@ button::-moz-focus-inner {
 
 .mdc-dialog__content {
   overflow-x: hidden !important;
+}
+
+.chip-button {
+  @include mdc-button.shape-radius(999px);
+  text-transform: none !important;
 }
 
 .small-icon-button {
@@ -82,7 +89,6 @@ button::-moz-focus-inner {
 .data-table-row {
   display: flex;
   justify-content: start;
-  height: 32px;
 }
 
 .data-table-title-row {

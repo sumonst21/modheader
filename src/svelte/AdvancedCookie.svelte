@@ -1,7 +1,6 @@
 <script>
   import Button from '@smui/button';
-  import Menu from '@smui/menu';
-  import List, { Item } from '@smui/list';
+  import MenuSurface from '@smui/menu-surface';
   import Chip from './Chip.svelte';
   import { createEventDispatcher } from 'svelte';
 
@@ -85,27 +84,6 @@
 </script>
 
 <div class="advanced-cookie-row">
-  {#if fields.find((f) => modifier[f.field] === undefined)}
-    <Button name="cookie-attribute" on:click={() => addAttributeMenu.setOpen(true)}>
-      Add cookie attribute
-    </Button>
-    <Menu bind:this={addAttributeMenu}>
-      <List>
-        {#each fields.filter((f) => modifier[f.field] === undefined) as field}
-          <Item
-            data-field={field.field}
-            on:SMUI:action={() => {
-              modifier[field.field] = field.default;
-              dispatchChange();
-            }}
-          >
-            Add {field.field} attribute
-          </Item>
-        {/each}
-      </List>
-    </Menu>
-  {/if}
-
   {#each fields.filter((f) => modifier[f.field] !== undefined) as field}
     <Chip
       on:click={() => {
@@ -122,4 +100,28 @@
         : modifier[field.field]}
     </Chip>
   {/each}
+
+  {#if fields.find((f) => modifier[f.field] === undefined)}
+    <Button name="cookie-attribute" on:click={() => addAttributeMenu.setOpen(true)}>
+      Add cookie attribute
+    </Button>
+    <MenuSurface bind:this={addAttributeMenu}>
+      <div>
+        {#each fields.filter((f) => modifier[f.field] === undefined) as field}
+          <Button
+            variant="raised"
+            class="chip-button"
+            data-field={field.field}
+            on:click={() => {
+              modifier[field.field] = field.default;
+              addAttributeMenu.setOpen(false);
+              dispatchChange();
+            }}
+          >
+            {field.field}
+          </Button>
+        {/each}
+      </div>
+    </MenuSurface>
+  {/if}
 </div>

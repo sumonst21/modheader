@@ -25,6 +25,16 @@
 </script>
 
 <div class="resource-type-menu-cell data-table-cell flex-grow">
+  {#each resourceType as value}
+    <Chip
+      on:close={() => {
+        resourceType = lodashWithout(resourceType, value);
+        dispatch('change');
+      }}
+    >
+      {KNOWN_RESOURCE_TYPES[value]}
+    </Chip>
+  {/each}
   <Button
     name="resource-type"
     class="resource-type-menu-button"
@@ -37,6 +47,8 @@
       {#each Object.entries(KNOWN_RESOURCE_TYPES).filter(([value]) => !resourceType.includes(value)) as [value, label]}
         <Button
           data-resource-type={value}
+          variant="raised"
+          class="chip-button"
           on:click={() => {
             resourceType = resourceType.concat([value]);
             resourceTypeMenu.setOpen(false);
@@ -48,16 +60,6 @@
       {/each}
     </div>
   </MenuSurface>
-  {#each resourceType as value}
-    <Chip
-      on:close={() => {
-        resourceType = lodashWithout(resourceType, value);
-        dispatch('change');
-      }}
-    >
-      {KNOWN_RESOURCE_TYPES[value]}
-    </Chip>
-  {/each}
 </div>
 
 <style module>

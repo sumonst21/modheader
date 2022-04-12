@@ -20,7 +20,7 @@
   </span>
   <button class="mdc-deprecated-chip-trailing-action" on:click={() => dispatch('close')}>
     <span class="mdc-deprecated-chip-trailing-action__icon">
-      <MdiIcon icon={mdiCloseCircle} color="#fff" />
+      <MdiIcon icon={mdiCloseCircle} color="#888" />
     </span>
   </button>
 </div>
