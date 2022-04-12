@@ -125,42 +125,46 @@
               <Text>Clear all</Text>
             </Item>
             <Separator nav />
-            <Item on:SMUI:action={() => sort('type', 'asc')}>
-              <MdiIcon
-                class="more-menu-icon"
-                size="24"
-                icon={mdiSortAlphabeticalAscending}
-                color="#666"
-              />
-              <Text>Type - ascending</Text>
-            </Item>
-            <Item on:SMUI:action={() => sort('type', 'desc')}>
-              <MdiIcon
-                class="more-menu-icon"
-                size="24"
-                icon={mdiSortAlphabeticalDescending}
-                color="#666"
-              />
-              <Text>Type - descending</Text>
-            </Item>
-            <Item on:SMUI:action={() => sort('urlRegex', 'asc')}>
-              <MdiIcon
-                class="more-menu-icon"
-                size="24"
-                icon={mdiSortAlphabeticalAscending}
-                color="#666"
-              />
-              <Text>URL regex - ascending</Text>
-            </Item>
-            <Item on:SMUI:action={() => sort('urlRegex', 'desc')}>
-              <MdiIcon
-                class="more-menu-icon"
-                size="24"
-                icon={mdiSortAlphabeticalDescending}
-                color="#666"
-              />
-              <Text>URL regex - descending</Text>
-            </Item>
+            {#if filterType === FilterType.RESOURCE_TYPES}
+              <Item on:SMUI:action={() => sort('type', 'asc')}>
+                <MdiIcon
+                  class="more-menu-icon"
+                  size="24"
+                  icon={mdiSortAlphabeticalAscending}
+                  color="#666"
+                />
+                <Text>Type - ascending</Text>
+              </Item>
+              <Item on:SMUI:action={() => sort('type', 'desc')}>
+                <MdiIcon
+                  class="more-menu-icon"
+                  size="24"
+                  icon={mdiSortAlphabeticalDescending}
+                  color="#666"
+                />
+                <Text>Type - descending</Text>
+              </Item>
+            {/if}
+            {#if filterType === FilterType.URLS || filterType === FilterType.EXCLUDE_URLS}
+              <Item on:SMUI:action={() => sort('urlRegex', 'asc')}>
+                <MdiIcon
+                  class="more-menu-icon"
+                  size="24"
+                  icon={mdiSortAlphabeticalAscending}
+                  color="#666"
+                />
+                <Text>URL regex - ascending</Text>
+              </Item>
+              <Item on:SMUI:action={() => sort('urlRegex', 'desc')}>
+                <MdiIcon
+                  class="more-menu-icon"
+                  size="24"
+                  icon={mdiSortAlphabeticalDescending}
+                  color="#666"
+                />
+                <Text>URL regex - descending</Text>
+              </Item>
+            {/if}
             {#if !$selectedProfile.hideComment}
               <Item on:SMUI:action={() => sort('comment', 'asc')}>
                 <MdiIcon
@@ -194,7 +198,11 @@
           class="data-table-cell flex-fixed-icon"
         />
         {#if filterType === FilterType.URLS || filterType === FilterType.EXCLUDE_URLS}
-          <AutoComplete name="url-regex" bind:value={filter.urlRegex} placeholder=".*://.*.google.com/.*" />
+          <AutoComplete
+            name="url-regex"
+            bind:value={filter.urlRegex}
+            placeholder=".*://.*.google.com/.*"
+          />
         {:else}
           <ResourceTypeMenu bind:resourceType={filter.resourceType} {resourceTypeMenuLocation} />
         {/if}

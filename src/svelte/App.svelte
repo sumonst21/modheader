@@ -21,7 +21,7 @@
   import { addHeader, removeHeader } from '../js/header.js';
   import MdiIcon from './MdiIcon.svelte';
   import { toastMessage, undoable } from '../js/toast.js';
-  import { KNOWN_REQUEST_HEADERS, KNOWN_RESPONSE_HEADERS } from '../js/constants.js';
+  import { ModifierType } from '../js/modifier-type.js';
 
   let snackbar;
   let snackbarMessage;
@@ -52,12 +52,8 @@
     <div class={$isPaused ? 'disabled' : ''}>
       {#if $selectedProfile.headers.length > 0}
         <Headers
-          id="request-header"
+          modifierType={ModifierType.REQUEST_HEADER}
           headers={lodashCloneDeep($selectedProfile.headers)}
-          class="extra-gap"
-          title="Request headers"
-          autocompleteListId="request-autocomplete"
-          autocompleteNames={KNOWN_REQUEST_HEADERS}
           on:add={() => {
             updateProfile({ headers: addHeader($selectedProfile.headers) });
           }}
@@ -73,12 +69,8 @@
       {/if}
       {#if $selectedProfile.respHeaders.length > 0}
         <Headers
-          id="response-header"
+          modifierType={ModifierType.RESPONSE_HEADER}
           headers={lodashCloneDeep($selectedProfile.respHeaders)}
-          class="extra-gap"
-          title="Response headers"
-          autocompleteListId="response-autocomplete"
-          autocompleteNames={KNOWN_RESPONSE_HEADERS}
           profile={selectedProfile}
           on:add={() => {
             updateProfile({
@@ -97,11 +89,8 @@
       {/if}
       {#if $selectedProfile.setCookieHeaders.length > 0}
         <Headers
-          id="set-cookie-modifier"
+          modifierType={ModifierType.SET_COOKIE_MODIFIER}
           headers={lodashCloneDeep($selectedProfile.setCookieHeaders)}
-          class="extra-gap"
-          title="Set-Cookie response modifier"
-          autocompleteListId="set-cookie-autocomplete"
           profile={selectedProfile}
           on:add={() => {
             updateProfile({
@@ -120,12 +109,8 @@
       {/if}
       {#if $selectedProfile.urlReplacements.length > 0}
         <Headers
-          id="url-replacement"
+          modifierType={ModifierType.URL_REPLACEMENT}
           headers={lodashCloneDeep($selectedProfile.urlReplacements)}
-          class="extra-gap"
-          title="Redirect URLs"
-          nameLabel="Original URL"
-          valueLabel="Redirect URL"
           profile={$selectedProfile}
           on:add={async () => {
             updateProfile({
