@@ -1,6 +1,6 @@
 <script>
   import Button from '@smui/button';
-  import Menu from '@smui/menu';
+  import MenuSurface  from '@smui/menu-surface';
   import List, { Item } from '@smui/list';
   import { createEventDispatcher } from 'svelte';
   import lodashWithout from 'lodash/without.js';
@@ -34,7 +34,7 @@
       ? resourceType.map((rt) => KNOWN_RESOURCE_TYPES[rt]).join(', ')
       : 'Select resource'}
   </Button>
-  <Menu bind:this={resourceTypeMenu}>
+  <MenuSurface bind:this={resourceTypeMenu}>
     <List>
       {#each Object.entries(KNOWN_RESOURCE_TYPES) as [value, label]}
         <Item
@@ -53,7 +53,7 @@
         </Item>
       {/each}
     </List>
-  </Menu>
+  </MenuSurface>
 </div>
 
 <style module>

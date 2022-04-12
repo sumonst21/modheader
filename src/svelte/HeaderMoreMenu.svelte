@@ -20,7 +20,6 @@
   export let valueLabel;
   export let selectedHeaderIndex;
   export let selectedHeader;
-  let menuAnchor;
   let dialog;
   let moreHeaderMenu;
 </script>

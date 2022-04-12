@@ -9,16 +9,14 @@
   import TopBar from './TopBar.svelte';
   import Drawer from './Drawer.svelte';
   import Filters from './Filters.svelte';
-  import Headers from './Headers.svelte';
+  import Modifiers from './Modifiers.svelte';
   import ExportDialog from './ExportDialog.svelte';
   import ImportDialog from './ImportDialog.svelte';
   import CloudBackupDialog from './CloudBackupDialog.svelte';
   import UpgradeDialog from './UpgradeDialog.svelte';
   import { isPaused, undo, init } from '../js/datasource.js';
   import { FilterType } from '../js/filter.js';
-  import { selectedProfile, save, updateProfile } from '../js/profile.js';
-  import { addUrlRedirect, removeUrlRedirect } from '../js/url-redirect.js';
-  import { addHeader, removeHeader } from '../js/header.js';
+  import { selectedProfile, save } from '../js/profile.js';
   import MdiIcon from './MdiIcon.svelte';
   import { toastMessage, undoable } from '../js/toast.js';
   import { ModifierType } from '../js/modifier-type.js';
@@ -51,80 +49,30 @@
     </div>
     <div class={$isPaused ? 'disabled' : ''}>
       {#if $selectedProfile.headers.length > 0}
-        <Headers
+        <Modifiers
           modifierType={ModifierType.REQUEST_HEADER}
           headers={lodashCloneDeep($selectedProfile.headers)}
-          on:add={() => {
-            updateProfile({ headers: addHeader($selectedProfile.headers) });
-          }}
-          on:remove={(event) => {
-            updateProfile({
-              headers: removeHeader($selectedProfile.headers, event.detail)
-            });
-          }}
-          on:refresh={(event) => {
-            updateProfile({ headers: event.detail });
-          }}
         />
       {/if}
       {#if $selectedProfile.respHeaders.length > 0}
-        <Headers
+        <Modifiers
           modifierType={ModifierType.RESPONSE_HEADER}
           headers={lodashCloneDeep($selectedProfile.respHeaders)}
           profile={selectedProfile}
-          on:add={() => {
-            updateProfile({
-              respHeaders: addHeader($selectedProfile.respHeaders)
-            });
-          }}
-          on:remove={(event) => {
-            updateProfile({
-              respHeaders: removeHeader($selectedProfile.respHeaders, event.detail)
-            });
-          }}
-          on:refresh={(event) => {
-            updateProfile({ respHeaders: event.detail });
-          }}
         />
       {/if}
       {#if $selectedProfile.setCookieHeaders.length > 0}
-        <Headers
+        <Modifiers
           modifierType={ModifierType.SET_COOKIE_MODIFIER}
           headers={lodashCloneDeep($selectedProfile.setCookieHeaders)}
           profile={selectedProfile}
-          on:add={() => {
-            updateProfile({
-              setCookieHeaders: addHeader($selectedProfile.setCookieHeaders)
-            });
-          }}
-          on:remove={(event) => {
-            updateProfile({
-              setCookieHeaders: removeHeader($selectedProfile.setCookieHeaders, event.detail)
-            });
-          }}
-          on:refresh={(event) => {
-            updateProfile({ setCookieHeaders: event.detail });
-          }}
         />
       {/if}
       {#if $selectedProfile.urlReplacements.length > 0}
-        <Headers
+        <Modifiers
           modifierType={ModifierType.URL_REPLACEMENT}
           headers={lodashCloneDeep($selectedProfile.urlReplacements)}
           profile={$selectedProfile}
-          on:add={async () => {
-            updateProfile({
-              urlReplacements: await addUrlRedirect($selectedProfile.urlReplacements)
-            });
-          }}
-          on:remove={(event) => {
-            updateProfile({
-              urlReplacements: removeUrlRedirect($selectedProfile.urlReplacements, event.detail)
-            });
-          }}
-          on:refresh={(event) => {
-            updateProfile({ urlReplacements: event.detail });
-          }}
         />
       {/if}
       <Filters

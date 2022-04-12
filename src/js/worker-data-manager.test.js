@@ -15,9 +15,25 @@ const mockStorageLoader = {
 };
 jest.doMock('./storage-loader.js', () => mockStorageLoader);
 
+const mockProfile = {
+  fixProfiles: jest.fn(),
+  setProfiles: jest.fn()
+};
+jest.doMock('./profile.js', () => mockProfile);
+
 const { loadProfilesFromStorage } = require('./worker-data-manager.js');
 
 MockDate.set(10000000);
+
+const EMPTY_PROFILE = {
+  headers: [],
+  respHeaders: [],
+  setCookieHeaders: [],
+  urlReplacements: [],
+  urlFilters: [],
+  excludeUrlFilters: [],
+  resourceFilters: []
+};
 
 describe('worker-data-manager', () => {
   beforeEach(() => {
@@ -80,31 +96,23 @@ describe('worker-data-manager', () => {
       },
       activeProfiles: [
         {
+          ...EMPTY_PROFILE,
           headers: [
             {
               name: 'Foo',
               value: 'Bar'
             }
           ],
-          respHeaders: [],
-          urlReplacements: [],
-          urlFilters: [],
-          excludeUrlFilters: [],
-          resourceFilters: []
         }
       ],
       selectedActiveProfile: {
+        ...EMPTY_PROFILE,
         headers: [
           {
             name: 'Foo',
             value: 'Bar'
           }
         ],
-        respHeaders: [],
-        urlReplacements: [],
-        urlFilters: [],
-        excludeUrlFilters: [],
-        resourceFilters: []
       }
     });
   });
@@ -112,34 +120,19 @@ describe('worker-data-manager', () => {
   test('Load multiple active profiles from storage', async () => {
     // Profile 1 should be dropped because it is not selected and not always on.
     const profile1 = {
+      ...EMPTY_PROFILE,
       title: 'Profile 1',
-      headers: [],
-      respHeaders: [],
-      urlReplacements: [],
-      urlFilters: [],
-      excludeUrlFilters: [],
-      resourceFilters: []
     };
     // Profile 2 should be kept because it is the selected profile.
     const profile2 = {
+      ...EMPTY_PROFILE,
       title: 'Profile 2',
-      headers: [],
-      respHeaders: [],
-      urlReplacements: [],
-      urlFilters: [],
-      excludeUrlFilters: [],
-      resourceFilters: []
     };
     // Profile 3 should be kept because it is always on, but it is not the selected profile.
     const profile3 = {
+      ...EMPTY_PROFILE,
       alwaysOn: true,
       title: 'Profile 3',
-      headers: [],
-      respHeaders: [],
-      urlReplacements: [],
-      urlFilters: [],
-      excludeUrlFilters: [],
-      resourceFilters: []
     };
     mockStorageLoader.initStorage.mockResolvedValue({
       profiles: [profile1, profile2, profile3],
@@ -161,22 +154,12 @@ describe('worker-data-manager', () => {
 
   test('Save to cloud on data change - profiles changed', async () => {
     const profile1 = {
+      ...EMPTY_PROFILE,
       title: 'Profile 1',
-      headers: [],
-      respHeaders: [],
-      urlReplacements: [],
-      urlFilters: [],
-      excludeUrlFilters: [],
-      resourceFilters: []
     };
     const profile2 = {
+      ...EMPTY_PROFILE,
       title: 'Profile 2',
-      headers: [],
-      respHeaders: [],
-      urlReplacements: [],
-      urlFilters: [],
-      excludeUrlFilters: [],
-      resourceFilters: []
     };
     mockStorageLoader.initStorage.mockResolvedValue({
       profiles: [profile1],
@@ -214,22 +197,12 @@ describe('worker-data-manager', () => {
 
   test('Save to cloud on data change - profiles not saved to cloud if already in sync', async () => {
     const profile1 = {
+      ...EMPTY_PROFILE,
       title: 'Profile 1',
-      headers: [],
-      respHeaders: [],
-      urlReplacements: [],
-      urlFilters: [],
-      excludeUrlFilters: [],
-      resourceFilters: []
     };
     const profile2 = {
+      ...EMPTY_PROFILE,
       title: 'Profile 2',
-      headers: [],
-      respHeaders: [],
-      urlReplacements: [],
-      urlFilters: [],
-      excludeUrlFilters: [],
-      resourceFilters: []
     };
     mockStorageLoader.initStorage.mockResolvedValue({
       profiles: [profile1],
@@ -267,22 +240,12 @@ describe('worker-data-manager', () => {
 
   test('Save to cloud on data change - selection changed not saved to cloud', async () => {
     const profile1 = {
+      ...EMPTY_PROFILE,
       title: 'Profile 1',
-      headers: [],
-      respHeaders: [],
-      urlReplacements: [],
-      urlFilters: [],
-      excludeUrlFilters: [],
-      resourceFilters: []
     };
     const profile2 = {
+      ...EMPTY_PROFILE,
       title: 'Profile 2',
-      headers: [],
-      respHeaders: [],
-      urlReplacements: [],
-      urlFilters: [],
-      excludeUrlFilters: [],
-      resourceFilters: []
     };
     mockStorageLoader.initStorage.mockResolvedValue({
       profiles: [profile1, profile2],

@@ -9,6 +9,10 @@ export function createHeader() {
   };
 }
 
+export function addSetCookieHeader(headers) {
+  return [...headers, createHeader()];
+}
+
 export function addHeader(headers) {
   return [...headers, createHeader()];
 }

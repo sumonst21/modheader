@@ -9,7 +9,10 @@ export function filterEnabledMods(rows) {
     for (const row of rows) {
       // Overrides the header if it is enabled and its name is not empty.
       if (row.enabled && row.name) {
-        output.push({ name: row.name, value: row.value });
+        const rowCopy = { ...row };
+        delete rowCopy.enabled;
+        delete rowCopy.comment;
+        output.push(rowCopy);
       }
     }
   }

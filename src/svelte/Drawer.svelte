@@ -182,6 +182,7 @@
         const profile = $profiles[selectedProfileIndex];
         const alwaysOn = !profile.alwaysOn;
         updateProfile({ alwaysOn }, selectedProfileIndex);
+        contextMenu.setOpen(false);
         if (alwaysOn) {
           showMessage(`${profile.title} will stay active even when it is not selected`);
         } else {

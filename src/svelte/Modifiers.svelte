@@ -1,7 +1,7 @@
 <script>
   import IconButton from '@smui/icon-button';
   import Checkbox from '@smui/checkbox';
-  import Menu from '@smui/menu';
+  import MenuSurface from '@smui/menu-surface';
   import List, { Item, Separator, Text } from '@smui/list';
   import {
     mdiPlus,
@@ -11,19 +11,19 @@
     mdiSortAlphabeticalDescending,
     mdiDotsVertical
   } from '@mdi/js';
-  import { createEventDispatcher } from 'svelte';
   import lodashOrderBy from 'lodash/orderBy.js';
   import lodashClone from 'lodash/clone.js';
   import lodashDebounce from 'lodash/debounce.js';
   import { fly } from 'svelte/transition';
-  import { selectedProfile } from '../js/profile.js';
+  import { selectedProfile, updateProfile } from '../js/profile.js';
   import AutoComplete from './Autocomplete.svelte';
+  import AdvancedCookie from './AdvancedCookie.svelte';
   import MdiIcon from './MdiIcon.svelte';
   import HeaderMoreMenu from './HeaderMoreMenu.svelte';
   import { ModifierType } from '../js/modifier-type.js';
+  import { addHeader, addSetCookieHeader, removeHeader } from '../js/header.js';
+  import { addUrlRedirect, removeUrlRedirect } from '../js/url-redirect.js';
   import { KNOWN_REQUEST_HEADERS, KNOWN_RESPONSE_HEADERS } from '../js/constants.js';
-
-  const dispatch = createEventDispatcher();
 
   const MODIFIER_TYPES = {
     [ModifierType.REQUEST_HEADER]: {
@@ -31,41 +31,66 @@
       nameLabel: 'Name',
       valueLabel: 'Value',
       autocompleteListId: 'request-autocomplete',
-      autocompleteNames: KNOWN_REQUEST_HEADERS
+      autocompleteNames: KNOWN_REQUEST_HEADERS,
+      addHandler: () => updateProfile({ headers: addHeader($selectedProfile.headers) }),
+      removeHandler: (headerIndex) =>
+        updateProfile({
+          headers: removeHeader($selectedProfile.headers, headerIndex)
+        }),
+      refreshHandler: (data) => updateProfile({ headers: data })
     },
     [ModifierType.RESPONSE_HEADER]: {
       title: 'Response headers',
       nameLabel: 'Name',
       valueLabel: 'Value',
-      autocompleteListId: "response-autocomplete",
-      autocompleteNames: KNOWN_RESPONSE_HEADERS
+      autocompleteListId: 'response-autocomplete',
+      autocompleteNames: KNOWN_RESPONSE_HEADERS,
+      addHandler: () =>
+        updateProfile({
+          respHeaders: addHeader($selectedProfile.respHeaders)
+        }),
+      removeHandler: (headerIndex) =>
+        updateProfile({
+          respHeaders: removeHeader($selectedProfile.respHeaders, headerIndex)
+        }),
+      refreshHandler: (data) => updateProfile({ respHeaders: data })
     },
     [ModifierType.SET_COOKIE_MODIFIER]: {
       title: 'Set-Cookie response modifier',
       nameLabel: 'Name',
-      valueLabel: 'Value'
+      valueLabel: 'Value',
+      advancedComponent: AdvancedCookie,
+      addHandler: () =>
+        updateProfile({
+          setCookieHeaders: addSetCookieHeader($selectedProfile.setCookieHeaders)
+        }),
+      removeHandler: (headerIndex) =>
+        updateProfile({
+          setCookieHeaders: removeHeader($selectedProfile.setCookieHeaders, headerIndex)
+        }),
+      refreshHandler: (data) => updateProfile({ setCookieHeaders: data })
     },
     [ModifierType.URL_REPLACEMENT]: {
       title: 'Redirect URLs',
       nameLabel: 'Original URL',
-      valueLabel: 'Redirect URL'
+      valueLabel: 'Redirect URL',
+      addHandler: async () =>
+        updateProfile({
+          urlReplacements: await addUrlRedirect($selectedProfile.urlReplacements)
+        }),
+      removeHandler: (headerIndex) =>
+        updateProfile({
+          urlReplacements: removeUrlRedirect($selectedProfile.urlReplacements, headerIndex)
+        }),
+      refreshHandler: (data) => updateProfile({ urlReplacements: data })
     }
   };
 
   export let modifierType;
   export let headers;
   let moreMenu;
-
   let allChecked;
   let allUnchecked;
-
-  function addHeader() {
-    dispatch('add');
-  }
-
-  function removeHeader(headerIndex) {
-    dispatch('remove', headerIndex);
-  }
 
   function copy(headerIndex) {
     headers = [
@@ -82,7 +107,7 @@
   }
 
   function refreshHeaders() {
-    dispatch('refresh', headers);
+    MODIFIER_TYPES[modifierType].refreshHandler(headers);
     allChecked = headers.every((h) => h.enabled);
     allUnchecked = headers.every((h) => !h.enabled);
   }
@@ -134,9 +159,9 @@
         <MdiIcon size="32" color="#666" icon={mdiDotsVertical} />
       </IconButton>
 
-      <Menu bind:this={moreMenu}>
+      <MenuSurface bind:this={moreMenu}>
         <List>
-          <Item on:SMUI:action={() => addHeader(headers)}>
+          <Item on:SMUI:action={() => MODIFIER_TYPES[modifierType].addHandler()}>
             <MdiIcon class="more-menu-icon" size="24" icon={mdiPlus} color="#666" />
             <Text>Add</Text>
           </Item>
@@ -207,11 +232,11 @@
             </Item>
           {/if}
         </List>
-      </Menu>
+      </MenuSurface>
     </div>
   </div>
   {#each headers as header, headerIndex}
-    <div class="data-table-row {header.enabled ? '' : 'data-table-row-unchecked'}">
+    <div class="data-table-row" class:data-table-row-unchecked={!header.enabled}>
       <Checkbox
         class="data-table-cell flex-fixed-icon"
         bind:checked={header.enabled}
@@ -246,7 +271,7 @@
         dense
         aria-label="Delete"
         class="small-icon-button data-table-cell flex-fixed-icon"
-        on:click={() => removeHeader(headerIndex)}
+        on:click={() => MODIFIER_TYPES[modifierType].removeHandler(headerIndex)}
       >
         <MdiIcon size="24" icon={mdiClose} color="red" />
       </IconButton>
@@ -254,6 +279,7 @@
         title={MODIFIER_TYPES[modifierType].title}
         nameLabel={MODIFIER_TYPES[modifierType].nameLabel}
         valueLabel={MODIFIER_TYPES[modifierType].valueLabel}
+        extraMoreMenuItems={MODIFIER_TYPES[modifierType].extraMoreMenuItems}
         selectedHeaderIndex={headerIndex}
         selectedHeader={header}
         on:copy={(e) => copy(e.detail)}
@@ -263,5 +289,14 @@
         }}
       />
     </div>
+    {#if MODIFIER_TYPES[modifierType].advancedComponent}
+      <div class:data-table-row-unchecked={!header.enabled}>
+        <svelte:component
+          this={MODIFIER_TYPES[modifierType].advancedComponent}
+          modifier={header}
+          on:change={refreshHeaders}
+        />
+      </div>
+    {/if}
   {/each}
 </div>

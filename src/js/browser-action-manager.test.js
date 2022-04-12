@@ -43,7 +43,12 @@ describe('browser-action-manager', () => {
   test('Show locked mode', async () => {
     const chromeLocal = { lockedTabId: '1', activeTabId: '2' };
     const activeProfiles = [
-      { headers: [{ name: 'foo', value: 'bar' }], respHeaders: [], urlReplacements: [] }
+      {
+        headers: [{ name: 'foo', value: 'bar' }],
+        respHeaders: [],
+        setCookieHeaders: [],
+        urlReplacements: []
+      }
     ];
     const selectedActiveProfile = {};
     await resetBrowserActions({ chromeLocal, activeProfiles, selectedActiveProfile });
@@ -59,7 +64,12 @@ describe('browser-action-manager', () => {
   test('Show number of modifications', async () => {
     const chromeLocal = {};
     const activeProfiles = [
-      { headers: [{ name: 'foo', value: 'bar' }], respHeaders: [], urlReplacements: [] }
+      {
+        headers: [{ name: 'foo', value: 'bar' }],
+        respHeaders: [],
+        setCookieHeaders: [],
+        urlReplacements: []
+      }
     ];
     const selectedActiveProfile = {
       backgroundColor: '#123456'
