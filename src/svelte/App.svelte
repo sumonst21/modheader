@@ -95,6 +95,29 @@
           }}
         />
       {/if}
+      {#if $selectedProfile.setCookieHeaders.length > 0}
+        <Headers
+          id="set-cookie-modifier"
+          headers={lodashCloneDeep($selectedProfile.setCookieHeaders)}
+          class="extra-gap"
+          title="Set-Cookie response modifier"
+          autocompleteListId="set-cookie-autocomplete"
+          profile={selectedProfile}
+          on:add={() => {
+            updateProfile({
+              setCookieHeaders: addHeader($selectedProfile.setCookieHeaders)
+            });
+          }}
+          on:remove={(event) => {
+            updateProfile({
+              setCookieHeaders: removeHeader($selectedProfile.setCookieHeaders, event.detail)
+            });
+          }}
+          on:refresh={(event) => {
+            updateProfile({ setCookieHeaders: event.detail });
+          }}
+        />
+      {/if}
       {#if $selectedProfile.urlReplacements.length > 0}
         <Headers
           id="url-replacement"

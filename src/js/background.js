@@ -52,7 +52,7 @@ function setupHeaderModListener() {
   } else {
     removeBeforeSendHeadersListener(modifyRequestHeaderHandler_);
   }
-  if (activeProfiles.find((p) => p.respHeaders.length > 0)) {
+  if (activeProfiles.find((p) => p.respHeaders.length > 0 || p.setCookieHeaders.length > 0)) {
     addHeadersReceivedListener(modifyResponseHeaderHandler_, ALL_URLS_FILTER);
   } else {
     removeHeadersReceivedListener(modifyResponseHeaderHandler_);
