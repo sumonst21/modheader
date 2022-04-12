@@ -1,8 +1,8 @@
 <script>
   import Button from '@smui/button';
-  import MenuSurface  from '@smui/menu-surface';
-  import List, { Item } from '@smui/list';
+  import MenuSurface from '@smui/menu-surface';
   import { createEventDispatcher } from 'svelte';
+  import Chip from './Chip.svelte';
   import lodashWithout from 'lodash/without.js';
 
   const KNOWN_RESOURCE_TYPES = {
@@ -30,30 +30,34 @@
     class="resource-type-menu-button"
     on:click={() => resourceTypeMenu.setOpen(true)}
   >
-    {resourceType && resourceType.length > 0
-      ? resourceType.map((rt) => KNOWN_RESOURCE_TYPES[rt]).join(', ')
-      : 'Select resource'}
+    Select resource type
   </Button>
   <MenuSurface bind:this={resourceTypeMenu}>
-    <List>
-      {#each Object.entries(KNOWN_RESOURCE_TYPES) as [value, label]}
-        <Item
+    <div>
+      {#each Object.entries(KNOWN_RESOURCE_TYPES).filter(([value]) => !resourceType.includes(value)) as [value, label]}
+        <Button
           data-resource-type={value}
-          on:SMUI:action={() => {
-            if (resourceType.includes(value)) {
-              resourceType = lodashWithout(resourceType, value);
-            } else {
-              resourceType = resourceType.concat([value]);
-            }
+          on:click={() => {
+            resourceType = resourceType.concat([value]);
+            resourceTypeMenu.setOpen(false);
             dispatch('change');
           }}
-          activated={resourceType.includes(value)}
         >
           {label}
-        </Item>
+        </Button>
       {/each}
-    </List>
+    </div>
   </MenuSurface>
+  {#each resourceType as value}
+    <Chip
+      on:close={() => {
+        resourceType = lodashWithout(resourceType, value);
+        dispatch('change');
+      }}
+    >
+      {KNOWN_RESOURCE_TYPES[value]}
+    </Chip>
+  {/each}
 </div>
 
 <style module>
