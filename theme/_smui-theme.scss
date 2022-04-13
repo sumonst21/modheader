@@ -38,6 +38,8 @@ button::-moz-focus-inner {
 .chip-button {
   @include mdc-button.shape-radius(999px);
   text-transform: none !important;
+  height: 24px;
+  margin: 2px;
 }
 
 .small-icon-button {

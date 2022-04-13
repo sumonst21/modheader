@@ -3,6 +3,8 @@
   import MenuSurface from '@smui/menu-surface';
   import { createEventDispatcher } from 'svelte';
   import Chip from './Chip.svelte';
+  import MdiIcon from './MdiIcon.svelte';
+  import { mdiChevronDown } from '@mdi/js';
   import lodashWithout from 'lodash/without.js';
 
   const KNOWN_RESOURCE_TYPES = {
@@ -35,12 +37,9 @@
       {KNOWN_RESOURCE_TYPES[value]}
     </Chip>
   {/each}
-  <Button
-    name="resource-type"
-    class="resource-type-menu-button"
-    on:click={() => resourceTypeMenu.setOpen(true)}
-  >
-    Select resource type
+  <Button name="resource-type" on:click={() => resourceTypeMenu.setOpen(true)}>
+    Resource type
+    <MdiIcon icon={mdiChevronDown} color="#888" size="24" />
   </Button>
   <MenuSurface bind:this={resourceTypeMenu}>
     <div>
@@ -63,16 +62,7 @@
 </div>
 
 <style module>
-  .resource-type-menu-button {
-    display: inline;
-    text-align: left;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    height: 28px;
-    margin: 0 2px;
-  }
-
   .resource-type-menu-cell {
-    flex-basis: 200px;
+    flex-basis: 500px;
   }
 </style>

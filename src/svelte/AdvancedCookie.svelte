@@ -2,6 +2,8 @@
   import Button from '@smui/button';
   import MenuSurface from '@smui/menu-surface';
   import Chip from './Chip.svelte';
+  import MdiIcon from './MdiIcon.svelte';
+  import { mdiChevronDown } from '@mdi/js';
   import { createEventDispatcher } from 'svelte';
 
   const dispatch = createEventDispatcher();
@@ -102,26 +104,35 @@
   {/each}
 
   {#if fields.find((f) => modifier[f.field] === undefined)}
-    <Button name="cookie-attribute" on:click={() => addAttributeMenu.setOpen(true)}>
-      Add cookie attribute
-    </Button>
-    <MenuSurface bind:this={addAttributeMenu}>
-      <div>
-        {#each fields.filter((f) => modifier[f.field] === undefined) as field}
-          <Button
-            variant="raised"
-            class="chip-button"
-            data-field={field.field}
-            on:click={() => {
-              modifier[field.field] = field.default;
-              addAttributeMenu.setOpen(false);
-              dispatchChange();
-            }}
-          >
-            {field.field}
-          </Button>
-        {/each}
-      </div>
-    </MenuSurface>
+    <div>
+      <Button name="cookie-attribute" on:click={() => addAttributeMenu.setOpen(true)}>
+        Cookie attribute
+        <MdiIcon icon={mdiChevronDown} color="#888" size="24" />
+      </Button>
+      <MenuSurface bind:this={addAttributeMenu}>
+        <div>
+          {#each fields.filter((f) => modifier[f.field] === undefined) as field}
+            <Button
+              variant="raised"
+              class="chip-button"
+              data-field={field.field}
+              on:click={() => {
+                modifier[field.field] = field.default;
+                addAttributeMenu.setOpen(false);
+                dispatchChange();
+              }}
+            >
+              {field.field}
+            </Button>
+          {/each}
+        </div>
+      </MenuSurface>
+    </div>
   {/if}
 </div>
+
+<style module>
+  .advanced-cookie-row {
+    margin-left: 32px;
+  }
+</style>
