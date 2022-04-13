@@ -11,27 +11,20 @@
   import TopBarSignInButton from './TopBarSignInButton.svelte';
   import ProfileBadgeDialog from './ProfileBadgeDialog.svelte';
   import MdiIcon from './MdiIcon.svelte';
-  import { isPaused, isLocked, undo } from '../js/datasource.js';
+  import { isPaused, undo } from '../js/datasource.js';
   import { selectedProfile, updateProfile, buttonColor } from '../js/profile.js';
   import { canUndoChange } from '../js/change-stack.js';
   import { showExportDialog } from '../js/dialog.js';
 
   let pauseSnackbar;
-  let tabLockSnackbar;
   let profileBadgeDialog;
 
   $: {
-    if (pauseSnackbar && tabLockSnackbar) {
+    if (pauseSnackbar) {
       if ($isPaused) {
-        tabLockSnackbar.close();
         pauseSnackbar.open();
       } else {
         pauseSnackbar.close();
-        if ($isLocked) {
-          tabLockSnackbar.open();
-        } else {
-          tabLockSnackbar.close();
-        }
       }
     }
   }
@@ -40,7 +33,7 @@
 <ProfileBadgeDialog bind:this={profileBadgeDialog} />
 
 <TopAppBar
-  variant
+  variant="fixed"
   dense
   class="top-bar"
   style="background-color: {$selectedProfile.backgroundColor};"
@@ -97,12 +90,6 @@
     <Button on:click={() => isPaused.set(false)}>Resume</Button>
   </Actions>
 </Snackbar>
-<Snackbar timeoutMs={10000} bind:this={tabLockSnackbar}>
-  <Label>Tab lock is active</Label>
-  <Actions>
-    <Button on:click={() => isLocked.set(false)}>Unlock</Button>
-  </Actions>
-</Snackbar>
 
 <style module>
   .profile-title {
@@ -116,6 +103,7 @@
   }
 
   .top-bar {
+    height: 48px;
     width: var(--top-bar-width);
   }
 

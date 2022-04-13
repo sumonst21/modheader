@@ -2,6 +2,7 @@
   export let size;
   export let icon;
   export let color;
+  export let alt;
   let clazz;
   export { clazz as class };
 </script>
@@ -12,6 +13,7 @@
   height={size}
   class="mdi-icon {clazz || ''}"
   fill={color}
+  {alt}
   viewBox="0 0 24 24"
 >
   <path d={icon} />

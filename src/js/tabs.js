@@ -1,3 +1,5 @@
+let tabInfo = {};
+
 export async function getActiveTab() {
   return new Promise((resolve, reject) => {
     chrome.tabs.query(
@@ -45,22 +47,23 @@ export async function getTab(tabId) {
   });
 }
 
-export function addTabUpdatedListener(callback) {
-  chrome.tabs.onActivated.addListener((activeInfo) => {
-    chrome.tabs.get(activeInfo.tabId, callback);
-  });
+export function lookupTabInfo(tabId) {
+  return tabInfo[tabId];
+}
 
-  chrome.windows.onFocusChanged.addListener((windowId) => {
-    if (windowId === chrome.windows.WINDOW_ID_NONE) {
-      return;
-    }
-    chrome.windows.get(windowId, { populate: true }, async (win) => {
-      for (const tab of win.tabs) {
-        if (tab.active) {
-          await callback(tab);
-          break;
-        }
-      }
-    });
-  });
+async function refreshTabInfo() {
+  const tabs = await queryTabs({});
+  tabInfo = {};
+  for (const tab of tabs) {
+    tabInfo[tab.id] = {
+      groupId: tab.groupId,
+      windowId: tab.windowId
+    };
+  }
+}
+
+export async function setupTabUpdatedListener() {
+  chrome.tabs.onAttached.addListener(refreshTabInfo);
+  chrome.tabs.onUpdated.addListener(refreshTabInfo);
+  await refreshTabInfo();
 }

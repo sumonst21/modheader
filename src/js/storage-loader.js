@@ -19,14 +19,6 @@ export async function setPaused(isPaused) {
   }
 }
 
-export async function setLockedTabId(lockedTabId) {
-  if (lockedTabId) {
-    await setLocal({ lockedTabId });
-  } else {
-    await removeLocal('lockedTabId');
-  }
-}
-
 export async function initStorage() {
   let chromeLocal = await getLocal();
   let isMutated;

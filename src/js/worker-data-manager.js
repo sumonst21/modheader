@@ -4,7 +4,7 @@ import lodashIsEqual from 'lodash/isEqual.js';
 import { addStorageChangeListener, getSync, removeSync, setSync } from './storage.js';
 import { filterEnabledMods } from './utils.js';
 import { fixProfiles } from './profile.js';
-import { optimizeResourceFilters, optimizeUrlFilters } from './filter.js';
+import { optimizeResourceFilters, optimizeTabFilters, optimizeUrlFilters } from './filter.js';
 import { optimizeUrlRedirects } from './url-redirect.js';
 import { initStorage, setProfiles } from './storage-loader.js';
 
@@ -61,6 +61,7 @@ function reloadActiveProfiles(chromeLocal) {
       profile.urlFilters = optimizeUrlFilters(profile.urlFilters);
       profile.excludeUrlFilters = optimizeUrlFilters(profile.excludeUrlFilters);
       profile.resourceFilters = optimizeResourceFilters(profile.resourceFilters);
+      profile.tabFilters = optimizeTabFilters(profile.tabFilters);
       if (i === chromeLocal.selectedProfile) {
         selectedActiveProfile = profile;
       }

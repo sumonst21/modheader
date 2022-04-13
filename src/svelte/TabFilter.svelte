@@ -8,7 +8,7 @@
   import { createEventDispatcher } from 'svelte';
 
   const TAB_GROUP_ID_NONE = -1;
-  const MAX_TITLE_LENGTH = 45;
+  const MAX_TITLE_LENGTH = 35;
   const dispatch = createEventDispatcher();
   export let filter;
 
@@ -70,7 +70,9 @@
       </Button>
     {/await}
   {:else if filter.tabId}
-    {#await getTab(filter.tabId) then tab}
+    {#await getTab(filter.tabId)}
+      <div>Loading</div>
+    {:then tab}
       <div class="regular-text">
         <Chip
           showCloseButton={false}
@@ -89,12 +91,18 @@
         {#if tab.favIconUrl}
           <img
             src={tab.favIconUrl}
-            class="vertical-align-text-bottom mx-2"
+            class="vertical-align-text-bottom mx-1"
             width="18"
             height="18"
+            alt={tab.title}
           />
         {:else}
-          <MdiIcon icon={mdiFileQuestion} size="18" color="#888" />
+          <MdiIcon
+            class="vertical-align-text-bottom"
+            icon={mdiFileQuestion}
+            size="18"
+            color="#888"
+          />
         {/if}
         {shortTitle(tab.title || tab.url || 'Unknown tab')}
       </div>

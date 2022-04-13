@@ -10,8 +10,7 @@ const mockStorage = {
 jest.doMock('./storage.js', () => mockStorage);
 
 const mockStorageLoader = {
-  setPaused: jest.fn(),
-  setLockedTabId: jest.fn()
+  setPaused: jest.fn()
 };
 jest.doMock('./storage-loader.js', () => mockStorageLoader);
 
@@ -22,7 +21,6 @@ const {
   isInitialized,
   profiles,
   selectedProfileIndex,
-  isLocked,
   isPaused
 } = require('./datasource.js');
 
@@ -30,7 +28,6 @@ describe('datasource', () => {
   beforeEach(() => {
     profiles.set([]);
     selectedProfileIndex.set(0);
-    isLocked.set(false);
     isPaused.set(false);
     isInitialized.set(true);
     changeStackTesting.changes.length = 0;
@@ -48,7 +45,6 @@ describe('datasource', () => {
         }
       ],
       selectedProfile: 0,
-      lockedTabId: 'tabId',
       isPaused: true,
       signedInUser: {
         email: 'foobar@gmail.com'
@@ -63,7 +59,6 @@ describe('datasource', () => {
       }
     ]);
     expect(get(selectedProfileIndex)).toEqual(0);
-    expect(get(isLocked)).toEqual(true);
     expect(get(isPaused)).toEqual(true);
     expect(get(signedInUser)).toEqual({
       email: 'foobar@gmail.com'
@@ -79,7 +74,6 @@ describe('datasource', () => {
 
     expect(get(profiles)).toEqual([]);
     expect(get(selectedProfileIndex)).toEqual(0);
-    expect(get(isLocked)).toEqual(false);
     expect(get(isPaused)).toEqual(false);
     expect(get(signedInUser)).toEqual(undefined);
   });
@@ -199,54 +193,6 @@ describe('datasource', () => {
       }
     ]);
     expect(get(selectedProfileIndex)).toEqual(1);
-  });
-
-  test('Commit and undo - change isLocked', async () => {
-    mockStorage.getLocal.mockResolvedValue({ activeTabId: 'lockedTab' });
-    // First commit
-    commitData({
-      newIsLocked: true
-    });
-    expect(changeStackTesting.changes).toEqual([
-      expect.objectContaining({
-        isLocked: true
-      })
-    ]);
-    expect(get(isLocked)).toEqual(true);
-    await flushPromises();
-    expect(mockStorageLoader.setLockedTabId).toHaveBeenCalledTimes(1);
-    expect(mockStorageLoader.setLockedTabId).toHaveBeenCalledWith('lockedTab');
-
-    // Second commit
-    jest.clearAllMocks();
-    commitData({
-      newIsLocked: false
-    });
-    expect(changeStackTesting.changes).toEqual([
-      expect.objectContaining({
-        isLocked: true
-      }),
-      expect.objectContaining({
-        isLocked: false
-      })
-    ]);
-    expect(get(isLocked)).toEqual(false);
-    await flushPromises();
-    expect(mockStorageLoader.setLockedTabId).toHaveBeenCalledTimes(1);
-    expect(mockStorageLoader.setLockedTabId).toHaveBeenCalledWith(undefined);
-
-    // Undo second commit to get back to first commit
-    jest.clearAllMocks();
-    undo();
-    expect(changeStackTesting.changes).toEqual([
-      expect.objectContaining({
-        isLocked: true
-      })
-    ]);
-    expect(get(isLocked)).toEqual(true);
-    await flushPromises();
-    expect(mockStorageLoader.setLockedTabId).toHaveBeenCalledTimes(1);
-    expect(mockStorageLoader.setLockedTabId).toHaveBeenCalledWith('lockedTab');
   });
 
   test('Commit data add to change stack - change isPaused', async () => {

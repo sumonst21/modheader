@@ -40,27 +40,6 @@ describe('browser-action-manager', () => {
     });
   });
 
-  test('Show locked mode', async () => {
-    const chromeLocal = { lockedTabId: '1', activeTabId: '2' };
-    const activeProfiles = [
-      {
-        headers: [{ name: 'foo', value: 'bar' }],
-        respHeaders: [],
-        setCookieHeaders: [],
-        urlReplacements: []
-      }
-    ];
-    const selectedActiveProfile = {};
-    await resetBrowserActions({ chromeLocal, activeProfiles, selectedActiveProfile });
-
-    expect(mockBrowserAction.setBrowserAction).toHaveBeenCalledTimes(1);
-    expect(mockBrowserAction.setBrowserAction).toHaveBeenCalledWith({
-      icon: __testing__.DISABLED_ICON,
-      text: __testing__.LOCKED_TEXT,
-      color: '#ff8e8e'
-    });
-  });
-
   test('Show number of modifications', async () => {
     const chromeLocal = {};
     const activeProfiles = [

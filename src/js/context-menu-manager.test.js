@@ -39,28 +39,4 @@ describe('context-menu-manager', () => {
       })
     );
   });
-
-  test('Show lock menu', async () => {
-    const chromeLocal = {};
-    await resetContextMenu(chromeLocal);
-
-    expect(mockContextMenu.updateContextMenu).toHaveBeenCalledWith(
-      __testing__.LOCK_MENU_ID,
-      expect.objectContaining({
-        title: 'Lock to this tab'
-      })
-    );
-  });
-
-  test('Show unlock menu', async () => {
-    const chromeLocal = { lockedTabId: '1' };
-    await resetContextMenu(chromeLocal);
-
-    expect(mockContextMenu.updateContextMenu).toHaveBeenCalledWith(
-      __testing__.LOCK_MENU_ID,
-      expect.objectContaining({
-        title: 'Unlock all tabs'
-      })
-    );
-  });
 });

@@ -6,18 +6,22 @@ import { passFilters } from './filter.js';
 import { redirectUrl } from './url-redirect.js';
 import { evaluateValue } from './utils.js';
 
-function isEnabled(chromeLocal, details) {
-  if (chromeLocal.isPaused) {
-    return false;
-  }
-  return !chromeLocal.lockedTabId || chromeLocal.lockedTabId === details.tabId;
+function isEnabled(chromeLocal) {
+  return !chromeLocal.isPaused;
 }
 
 export function modifyRequestUrls({ chromeLocal, activeProfiles, details }) {
-  if (isEnabled(chromeLocal, details)) {
+  if (isEnabled(chromeLocal)) {
     let newUrl = details.url;
     for (const currentProfile of activeProfiles) {
-      if (passFilters({ url: newUrl, type: details.type, profile: currentProfile })) {
+      if (
+        passFilters({
+          url: newUrl,
+          type: details.type,
+          tabId: details.tabId,
+          profile: currentProfile
+        })
+      ) {
         newUrl = redirectUrl({ urlRedirects: currentProfile.urlReplacements, url: newUrl });
       }
     }
@@ -116,9 +120,16 @@ function modifySetCookie(url, currentProfile, source, dest) {
 }
 
 export function modifyRequestHeaders({ chromeLocal, activeProfiles, details }) {
-  if (isEnabled(chromeLocal, details) && activeProfiles.length > 0) {
+  if (isEnabled(chromeLocal) && activeProfiles.length > 0) {
     for (const currentProfile of activeProfiles) {
-      if (passFilters({ url: details.url, type: details.type, profile: currentProfile })) {
+      if (
+        passFilters({
+          url: details.url,
+          type: details.type,
+          tabId: details.tabId,
+          profile: currentProfile
+        })
+      ) {
         modifyHeader(details.url, currentProfile, currentProfile.headers, details.requestHeaders);
         if (!currentProfile.sendEmptyHeader) {
           details.requestHeaders = details.requestHeaders.filter((entry) => !!entry.value);
@@ -132,11 +143,18 @@ export function modifyRequestHeaders({ chromeLocal, activeProfiles, details }) {
 }
 
 export function modifyResponseHeaders({ chromeLocal, activeProfiles, details }) {
-  if (isEnabled(chromeLocal, details) && activeProfiles.length > 0) {
+  if (isEnabled(chromeLocal) && activeProfiles.length > 0) {
     const originalResponseHeaders = details.responseHeaders || [];
     let responseHeaders = lodashCloneDeep(originalResponseHeaders);
     for (const currentProfile of activeProfiles) {
-      if (passFilters({ url: details.url, type: details.type, profile: currentProfile })) {
+      if (
+        passFilters({
+          url: details.url,
+          type: details.type,
+          tabId: details.tabId,
+          profile: currentProfile
+        })
+      ) {
         modifyHeader(details.url, currentProfile, currentProfile.respHeaders, responseHeaders);
         modifySetCookie(
           details.url,

@@ -65,37 +65,6 @@ describe('modifier', () => {
       expect(actualChanged).toEqual({ redirectUrl: 'https://modheader.com/' });
     });
 
-    test('Locked profile - Tab mismatch', () => {
-      const activeProfiles = [
-        {
-          urlReplacements: [
-            {
-              name: new RegExp('bewisse.com'),
-              value: 'modheader.com'
-            }
-          ]
-        }
-      ];
-      fixProfiles(activeProfiles);
-      const details = {
-        url: 'https://bewisse.com/',
-        tabId: '1'
-      };
-      const actualUnchanged = modifyRequestUrls({
-        chromeLocal: { lockedTabId: '2' },
-        activeProfiles,
-        details
-      });
-      expect(actualUnchanged).toEqual(undefined);
-
-      const actualChanged = modifyRequestUrls({
-        chromeLocal: { lockedTabId: '1' },
-        activeProfiles,
-        details
-      });
-      expect(actualChanged).toEqual({ redirectUrl: 'https://modheader.com/' });
-    });
-
     test('Filtering matched', () => {
       const chromeLocal = {};
       const activeProfiles = [

@@ -50,10 +50,7 @@
   <Drawer />
 
   <AppContent class="app-content">
-    <div class="top-app-bar-container">
-      <TopBar />
-    </div>
-    <div class={$isPaused ? 'disabled' : ''}>
+    <div class:disabled={$isPaused} class="main-content">
       {#if $selectedProfile.headers.length > 0}
         <Modifiers
           modifierType={ModifierType.REQUEST_HEADER}
@@ -83,32 +80,35 @@
       {/if}
       {#if $selectedProfile.tabFilters.length || $selectedProfile.urlFilters.length || $selectedProfile.excludeUrlFilters.length || $selectedProfile.resourceFilters.length}
         <Separator />
+        <div class="filter-background">
+          <Filters
+            id="tab-filter"
+            filters={lodashCloneDeep($selectedProfile.tabFilters)}
+            filterType={FilterType.TABS}
+            class="extra-gap"
+          />
+          <Filters
+            id="url-filter"
+            filters={lodashCloneDeep($selectedProfile.urlFilters)}
+            filterType={FilterType.URLS}
+            class="extra-gap"
+          />
+          <Filters
+            id="exclude-url-filter"
+            filters={lodashCloneDeep($selectedProfile.excludeUrlFilters)}
+            filterType={FilterType.EXCLUDE_URLS}
+            class="extra-gap"
+          />
+          <Filters
+            id="resource-filter"
+            filters={lodashCloneDeep($selectedProfile.resourceFilters)}
+            filterType={FilterType.RESOURCE_TYPES}
+            class="extra-gap"
+          />
+        </div>
       {/if}
-      <Filters
-        id="tab-filter"
-        filters={lodashCloneDeep($selectedProfile.tabFilters)}
-        filterType={FilterType.TABS}
-        class="extra-gap"
-      />
-      <Filters
-        id="url-filter"
-        filters={lodashCloneDeep($selectedProfile.urlFilters)}
-        filterType={FilterType.URLS}
-        class="extra-gap"
-      />
-      <Filters
-        id="exclude-url-filter"
-        filters={lodashCloneDeep($selectedProfile.excludeUrlFilters)}
-        filterType={FilterType.EXCLUDE_URLS}
-        class="extra-gap"
-      />
-      <Filters
-        id="resource-filter"
-        filters={lodashCloneDeep($selectedProfile.resourceFilters)}
-        filterType={FilterType.RESOURCE_TYPES}
-        class="extra-gap"
-      />
     </div>
+    <TopBar />
   </AppContent>
 
   <ExportDialog />
@@ -137,8 +137,15 @@
     left: 36px;
   }
 
-  .top-app-bar-container {
-    height: 48px;
+  .main-content {
+    position: absolute;
+    top: 48px;
+    left: 0;
+    right: 0;
+  }
+
+  .filter-background {
+    background-color: var(--filter-background);
   }
 
   .extra-gap {

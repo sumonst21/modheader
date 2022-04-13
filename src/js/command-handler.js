@@ -1,8 +1,7 @@
-import { setLockedTabId, setPaused, setSelectedProfileIndex } from './storage-loader.js';
+import { setPaused, setSelectedProfileIndex } from './storage-loader.js';
 
 const Command = {
   TOGGLE_PAUSE: 'toggle_pause',
-  TOGGLE_LOCK: 'toggle_lock',
   SWITCH_TO_PROFILE_1: 'switch_to_profile_1',
   SWITCH_TO_PROFILE_2: 'switch_to_profile_2',
   SWITCH_TO_PROFILE_3: 'switch_to_profile_3',
@@ -21,9 +20,6 @@ export async function onCommandReceived(chromeLocal, command) {
   switch (command) {
     case Command.TOGGLE_PAUSE:
       await setPaused(!chromeLocal.isPaused);
-      break;
-    case Command.TOGGLE_LOCK:
-      await setLockedTabId(!chromeLocal.lockedTabId ? chromeLocal.activeTabId : undefined);
       break;
     case Command.SWITCH_TO_PROFILE_1:
       await switchToProfile(chromeLocal, 0);

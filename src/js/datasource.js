@@ -4,7 +4,7 @@ import lodashIsEqual from 'lodash/isEqual.js';
 import lodashIsUndefined from 'lodash/isUndefined.js';
 import { hideMessage } from './toast.js';
 import { getLocal } from './storage.js';
-import { setPaused, setLockedTabId } from './storage-loader.js';
+import { setPaused } from './storage-loader.js';
 import { signedInUser } from './identity.js';
 import {
   undoChange,
@@ -17,7 +17,6 @@ import {
 export const profiles = writable([]);
 export const selectedProfileIndex = writable(0);
 export const isPaused = writable(false);
-export const isLocked = writable(false);
 export const isInitialized = writable(false);
 
 profiles.subscribe(($profiles) => {
@@ -30,17 +29,6 @@ isPaused.subscribe(async ($isPaused) => {
   setChangeField('isPaused', $isPaused);
   if (get(isInitialized)) {
     await setPaused($isPaused);
-  }
-});
-isLocked.subscribe(async ($isLocked) => {
-  setChangeField('isLocked', $isLocked);
-  if (get(isInitialized)) {
-    if ($isLocked) {
-      const { activeTabId } = await getLocal('activeTabId');
-      await setLockedTabId(activeTabId);
-    } else {
-      await setLockedTabId(undefined);
-    }
   }
 });
 isInitialized.subscribe(($isInitialized) => {
@@ -58,7 +46,6 @@ export function undo() {
   }
   const currentProfiles = get(profiles);
   const currentSelectedProfileIndex = get(selectedProfileIndex);
-  const currentIsLocked = get(isLocked);
   const currentIsPaused = get(isPaused);
   while (lastChange) {
     if (
@@ -73,9 +60,6 @@ export function undo() {
     ) {
       break;
     }
-    if (!lodashIsUndefined(lastChange.isLocked) && lastChange.isLocked !== currentIsLocked) {
-      break;
-    }
     if (!lodashIsUndefined(lastChange.isPaused) && lastChange.isPaused !== currentIsPaused) {
       break;
     }
@@ -84,29 +68,23 @@ export function undo() {
   commitData({
     newProfiles: lastChange.profiles || currentProfiles,
     newIndex: lastChange.selectedProfileIndex,
-    newIsLocked: lastChange.isLocked,
     newIsPaused: lastChange.isPaused
   });
   hideMessage();
 }
 
-export function commitData({ newProfiles = [], newIndex = 0, newIsLocked, newIsPaused } = {}) {
+export function commitData({ newProfiles = [], newIndex = 0, newIsPaused } = {}) {
   commit(() => {
     newIndex = Math.max(0, Math.min(newProfiles.length - 1, newIndex));
-    if (lodashIsUndefined(newIsLocked)) {
-      newIsLocked = get(isLocked);
-    }
     if (lodashIsUndefined(newIsPaused)) {
       newIsPaused = get(isPaused);
     }
     profiles.set(newProfiles);
     selectedProfileIndex.set(newIndex);
-    isLocked.set(newIsLocked);
     isPaused.set(newIsPaused);
     return {
       profiles: lodashCloneDeep(newProfiles),
       selectedProfileIndex: newIndex,
-      isLocked: newIsLocked,
       isPaused: newIsPaused
     };
   });
@@ -114,18 +92,11 @@ export function commitData({ newProfiles = [], newIndex = 0, newIsLocked, newIsP
 
 export async function init() {
   isInitialized.set(false);
-  const chromeLocal = await getLocal([
-    'profiles',
-    'selectedProfile',
-    'signedInUser',
-    'lockedTabId',
-    'isPaused'
-  ]);
+  const chromeLocal = await getLocal(['profiles', 'selectedProfile', 'signedInUser', 'isPaused']);
   signedInUser.set(chromeLocal.signedInUser);
   commitData({
     newProfiles: chromeLocal.profiles,
     newIndex: chromeLocal.selectedProfile,
-    newIsLocked: !!chromeLocal.lockedTabId,
     newIsPaused: !!chromeLocal.isPaused
   });
   isInitialized.set(true);

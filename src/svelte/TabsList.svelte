@@ -9,11 +9,18 @@
 
 {#each tabs.slice(0, MAX_TABS) as tab}
   {#if tab.favIconUrl}
-    <img src={tab.favIconUrl} class="vertical-align-text-bottom mx-1" width="18" height="18" />
+    <img
+      src={tab.favIconUrl}
+      class="vertical-align-text-bottom mx-1"
+      width="18"
+      height="18"
+      alt={tab.title}
+    />
   {:else}
     <MdiIcon
-      class="vertical-align-text-bottom mx-1"
+      class="vertical-align-text-bottom"
       icon={mdiFileQuestion}
+      alt={tab.title}
       size="18"
       color="#888"
     />

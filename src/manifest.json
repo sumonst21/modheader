@@ -34,9 +34,6 @@
         "default": "Alt+Shift+P"
       }
     },
-    "toggle_lock": {
-      "description": "Toggle lock tab"
-    },
     "switch_to_profile_1": {
       "description": "Switch to 1st profile"
     },

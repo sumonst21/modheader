@@ -1,7 +1,6 @@
 import { jest } from '@jest/globals';
 
 const mockStorageLoader = {
-  setLockedTabId: jest.fn(),
   setPaused: jest.fn(),
   setSelectedProfileIndex: jest.fn()
 };
@@ -24,22 +23,6 @@ describe('command-handler', () => {
 
     expect(mockStorageLoader.setPaused).toHaveBeenCalledTimes(1);
     expect(mockStorageLoader.setPaused).toHaveBeenCalledWith(false);
-  });
-
-  test('Toggle lock - to locked', async () => {
-    const chromeLocal = { activeTabId: '2' };
-    await onCommandReceived(chromeLocal, __testing__.Command.TOGGLE_LOCK);
-
-    expect(mockStorageLoader.setLockedTabId).toHaveBeenCalledTimes(1);
-    expect(mockStorageLoader.setLockedTabId).toHaveBeenCalledWith('2');
-  });
-
-  test('Toggle lock - to unlocked', async () => {
-    const chromeLocal = { lockedTabId: '1', activeTabId: '2' };
-    await onCommandReceived(chromeLocal, __testing__.Command.TOGGLE_LOCK);
-
-    expect(mockStorageLoader.setLockedTabId).toHaveBeenCalledTimes(1);
-    expect(mockStorageLoader.setLockedTabId).toHaveBeenCalledWith(undefined);
   });
 
   test('Switch profile - ignore profile out of bound', async () => {

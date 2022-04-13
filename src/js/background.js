@@ -5,7 +5,7 @@ import { modifyRequestUrls, modifyRequestHeaders, modifyResponseHeaders } from '
 import { loadProfilesFromStorage } from './worker-data-manager.js';
 import { onMessageReceived } from './message-handler.js';
 import { onCommandReceived } from './command-handler.js';
-import { addTabUpdatedListener } from './tabs.js';
+import {addTabUpdatedListener, setupTabUpdatedListener} from './tabs.js';
 import { initContextMenu, resetContextMenu } from './context-menu-manager.js';
 import {
   addBeforeRequestListener,
@@ -59,14 +59,8 @@ function setupHeaderModListener() {
   }
 }
 
-async function onTabUpdated(tab) {
-  await setLocal({ activeTabId: tab.id });
-  await resetBrowserActions({ chromeLocal, activeProfiles, selectedActiveProfile });
-  await resetContextMenu(chromeLocal);
-}
-
 async function initialize() {
-  addTabUpdatedListener(onTabUpdated);
+  await setupTabUpdatedListener();
   await initContextMenu();
   addSendHeadersListener(loadSignedInUser, LOGIN_URL_FILTER);
   await loadProfilesFromStorage(async (params) => {

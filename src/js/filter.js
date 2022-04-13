@@ -1,4 +1,4 @@
-import { getActiveTab } from './tabs.js';
+import { getActiveTab, lookupTabInfo } from './tabs.js';
 import lodashIsEmpty from 'lodash/isEmpty.js';
 import lodashCloneDeep from 'lodash/cloneDeep.js';
 
@@ -82,12 +82,20 @@ export function optimizeResourceFilters(filters) {
     }));
 }
 
+export function optimizeTabFilters(filters) {
+  if (!filters) {
+    return [];
+  }
+  return filters.filter((f) => f.enabled);
+}
+
 /**
  * Check whether the current request url pass the given list of filters.
  */
-export function passFilters({ url, type, profile }) {
+export function passFilters({ url, type, tabId, profile }) {
   let allowUrls = undefined;
   let allowTypes = false;
+  let allowTabs = false;
   for (const filter of profile.urlFilters) {
     if (allowUrls === undefined) {
       allowUrls = false;
@@ -95,6 +103,7 @@ export function passFilters({ url, type, profile }) {
     try {
       if (filter.urlRegex.test(url)) {
         allowUrls = true;
+        break;
       }
     } catch {
       allowUrls = false;
@@ -107,6 +116,7 @@ export function passFilters({ url, type, profile }) {
     try {
       if (filter.urlRegex.test(url)) {
         allowUrls = false;
+        break;
       }
     } catch {
       allowUrls = true;
@@ -115,10 +125,25 @@ export function passFilters({ url, type, profile }) {
   for (const filter of profile.resourceFilters) {
     if (filter.resourceType.has(type)) {
       allowTypes = true;
+      break;
+    }
+  }
+  const tabInfo = lookupTabInfo(tabId) || {};
+  for (const filter of profile.tabFilters) {
+    if (filter.tabId) {
+      allowTabs = filter.tabId === tabId;
+      break;
+    } else if (filter.windowId) {
+      allowTabs = filter.windowId === tabInfo.windowId;
+      break;
+    } else if (filter.groupId) {
+      allowTabs = filter.groupId === tabInfo.groupId;
+      break;
     }
   }
   return (
     ((profile.urlFilters.length === 0 && profile.excludeUrlFilters.length === 0) || allowUrls) &&
-    (profile.resourceFilters.length === 0 || allowTypes)
+    (profile.resourceFilters.length === 0 || allowTypes) &&
+    (profile.tabFilters.length === 0 || allowTabs)
   );
 }
