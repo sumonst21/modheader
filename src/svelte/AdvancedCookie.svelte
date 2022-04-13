@@ -105,6 +105,7 @@
   {#each fields.filter((f) => modifier[f.field] !== undefined) as field}
     <span>
       <Chip
+        fieldName={field.field}
         on:click={() => {
           showField = field.field;
           dispatchChange();

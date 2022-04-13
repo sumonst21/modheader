@@ -36,6 +36,7 @@
   >
     <Textfield
       style="min-width: 100px"
+      data-field-name={fieldName}
       label={fieldName}
       bind:this={textfield}
       bind:value={modifier[fieldName]}

@@ -4,10 +4,16 @@
   import { mdiCloseCircle } from '@mdi/js';
   import { createEventDispatcher } from 'svelte';
 
+  export let fieldName;
   const dispatch = createEventDispatcher();
 </script>
 
-<div class="mdc-chip small-chip" role="row" use:Ripple={{ surface: true }}>
+<div
+  class="mdc-chip small-chip"
+  role="row"
+  use:Ripple={{ surface: true }}
+  data-field-name={fieldName}
+>
   <span role="gridcell">
     <span
       class="mdc-chip__primary-action"

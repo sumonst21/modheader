@@ -29,6 +29,7 @@
 <div class="resource-type-menu-cell data-table-cell flex-grow">
   {#each resourceType as value}
     <Chip
+      fieldName={resourceType}
       on:close={() => {
         resourceType = lodashWithout(resourceType, value);
         dispatch('change');
