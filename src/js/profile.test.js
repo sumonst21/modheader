@@ -51,6 +51,7 @@ describe('profile', () => {
         urlFilters: [],
         excludeUrlFilters: [],
         resourceFilters: [],
+        tabFilters: [],
         headers: [
           {
             comment: '',
@@ -80,6 +81,7 @@ describe('profile', () => {
         urlFilters: [],
         excludeUrlFilters: [],
         resourceFilters: [],
+        tabFilters: [],
         headers: [
           {
             comment: '',
@@ -107,6 +109,7 @@ describe('profile', () => {
         urlFilters: [],
         excludeUrlFilters: [],
         resourceFilters: [],
+        tabFilters: [],
         headers: [
           {
             comment: '',
@@ -139,6 +142,7 @@ describe('profile', () => {
         urlFilters: [],
         excludeUrlFilters: [],
         resourceFilters: [],
+        tabFilters: [],
         headers: [
           {
             comment: '',

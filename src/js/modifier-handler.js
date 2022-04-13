@@ -45,7 +45,7 @@ export const MODIFIER_TYPES = {
     refreshHandler: (data) => updateProfile({ respHeaders: data })
   },
   [ModifierType.SET_COOKIE_MODIFIER]: {
-    title: 'Set-Cookie response modifier',
+    title: 'Set-Cookie response modifiers',
     nameLabel: 'Name',
     valueLabel: 'Value',
     fieldName: 'setCookieHeaders',

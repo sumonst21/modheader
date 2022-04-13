@@ -5,6 +5,7 @@
   import { createEventDispatcher } from 'svelte';
 
   export let fieldName;
+  export let showCloseButton;
   const dispatch = createEventDispatcher();
 </script>
 
@@ -24,11 +25,13 @@
       <span class="mdc-chip__text"><slot /></span>
     </span>
   </span>
-  <button class="mdc-deprecated-chip-trailing-action" on:click={() => dispatch('close')}>
-    <span class="mdc-deprecated-chip-trailing-action__icon">
-      <MdiIcon icon={mdiCloseCircle} color="#888" />
-    </span>
-  </button>
+  {#if showCloseButton}
+    <button class="mdc-deprecated-chip-trailing-action" on:click={() => dispatch('close')}>
+      <span class="mdc-deprecated-chip-trailing-action__icon">
+        <MdiIcon icon={mdiCloseCircle} color="#888" />
+      </span>
+    </button>
+  {/if}
 </div>
 
 <style module>

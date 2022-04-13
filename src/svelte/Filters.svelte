@@ -11,25 +11,30 @@
     mdiSortAlphabeticalDescending,
     mdiDotsVertical
   } from '@mdi/js';
-  import lodashOrderBy from 'lodash/orderBy';
-  import lodashDebounce from 'lodash/debounce';
-  import { selectedProfile, updateProfile } from '../js/profile';
-  import { FilterType, addUrlFilter, addResourceFilter, removeFilter } from '../js/filter';
+  import lodashOrderBy from 'lodash/orderBy.js';
+  import lodashDebounce from 'lodash/debounce.js';
+  import { selectedProfile, updateProfile } from '../js/profile.js';
+  import { FilterType, addUrlFilter, addResourceFilter, removeFilter } from '../js/filter.js';
   import AutoComplete from './Autocomplete.svelte';
   import MdiIcon from './MdiIcon.svelte';
+  import TabFilter from './TabFilter.svelte';
   import ResourceTypeMenu from './ResourceTypeMenu.svelte';
 
   const FILTER_TYPES = {
+    [FilterType.TABS]: {
+      label: 'Tab filters',
+      profileFieldName: 'tabFilters'
+    },
     [FilterType.URLS]: {
-      label: 'URL Pattern',
+      label: 'URL patterns',
       profileFieldName: 'urlFilters'
     },
     [FilterType.EXCLUDE_URLS]: {
-      label: 'Exclude URL Pattern',
+      label: 'Exclude URL patterns',
       profileFieldName: 'excludeUrlFilters'
     },
     [FilterType.RESOURCE_TYPES]: {
-      label: 'Resource Type',
+      label: 'Resource types',
       profileFieldName: 'resourceFilters'
     }
   };
@@ -203,8 +208,17 @@
             bind:value={filter.urlRegex}
             placeholder=".*://.*.google.com/.*"
           />
-        {:else}
+        {:else if filterType === FilterType.RESOURCE_TYPES}
           <ResourceTypeMenu bind:resourceType={filter.resourceType} {resourceTypeMenuLocation} />
+        {:else if filterType === FilterType.TABS}
+          <TabFilter
+            {filter}
+            on:change={refreshFilters}
+            on:remove={() =>
+              updateProfile({
+                [FILTER_TYPES[filterType].profileFieldName]: removeFilter(filters, filterIndex)
+              })}
+          />
         {/if}
         {#if !$selectedProfile.hideComment}
           <AutoComplete bind:value={filter.comment} placeholder="Comment" />
@@ -224,9 +238,3 @@
     {/each}
   </div>
 {/if}
-
-<style module>
-  :global(.filter-select-field) {
-    height: 26px !important;
-  }
-</style>

@@ -111,6 +111,7 @@ function upgradeFromProfileVersion1({ profile, index }) {
   profile.urlFilters = [];
   profile.excludeUrlFilters = [];
   profile.resourceFilters = [];
+  profile.tabFilters = [];
   for (const filter of profile.filters || []) {
     const type = filter.type;
     delete filter.type;
@@ -157,6 +158,7 @@ function createProfile() {
     urlFilters: [],
     excludeUrlFilters: [],
     resourceFilters: [],
+    tabFilters: [],
     urlReplacements: [],
     appendMode: false,
     backgroundColor: generateBackgroundColor(),

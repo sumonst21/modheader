@@ -3,6 +3,7 @@
   import Snackbar, { Actions, Label as SnackbarLabel } from '@smui/snackbar';
   import IconButton from '@smui/icon-button';
   import Button from '@smui/button';
+  import { Separator } from '@smui/list';
   import { mdiClose } from '@mdi/js';
   import { onDestroy, onMount } from 'svelte';
   import lodashCloneDeep from 'lodash/cloneDeep';
@@ -80,6 +81,15 @@
           profile={$selectedProfile}
         />
       {/if}
+      {#if $selectedProfile.tabFilters.length || $selectedProfile.urlFilters.length || $selectedProfile.excludeUrlFilters.length || $selectedProfile.resourceFilters.length}
+        <Separator />
+      {/if}
+      <Filters
+        id="tab-filter"
+        filters={lodashCloneDeep($selectedProfile.tabFilters)}
+        filterType={FilterType.TABS}
+        class="extra-gap"
+      />
       <Filters
         id="url-filter"
         filters={lodashCloneDeep($selectedProfile.urlFilters)}

@@ -28,7 +28,7 @@
 
     <Menu bind:this={accountMenu} anchorCorner="TOP_LEFT">
       <List>
-        <Item on:SMUI:action={() => signOut()}>Sign out</Item>
+        <Item on:SMUI:action={() => signOut()}>Log out</Item>
       </List>
     </Menu>
   </div>
@@ -36,6 +36,6 @@
   <Button
     style="min-width: fit-content; color: {$buttonColor}"
     on:click={() => signIn()}
-    title="Sign in">Sign in</Button
+    title="Login">Login</Button
   >
 {/if}

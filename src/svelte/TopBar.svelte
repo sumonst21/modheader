@@ -5,8 +5,8 @@
   import Button from '@smui/button';
   import { mdiShare, mdiUndo } from '@mdi/js';
   import TopBarAddMenu from './TopBarAddMenu.svelte';
+  import TopBarFilterMenu from './TopBarFilterMenu.svelte';
   import TopBarPauseButton from './TopBarPauseButton.svelte';
-  import TopBarTabLockButton from './TopBarTabLockButton.svelte';
   import TopBarMoreMenu from './TopBarMoreMenu.svelte';
   import TopBarSignInButton from './TopBarSignInButton.svelte';
   import ProfileBadgeDialog from './ProfileBadgeDialog.svelte';
@@ -76,8 +76,8 @@
         </IconButton>
       {/if}
       <TopBarAddMenu />
+      <TopBarFilterMenu />
       <TopBarPauseButton />
-      <TopBarTabLockButton />
       <IconButton
         dense
         on:click={() => showExportDialog.set(true)}

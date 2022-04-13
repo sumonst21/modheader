@@ -3,6 +3,8 @@ import lodashIsEmpty from 'lodash/isEmpty.js';
 import lodashCloneDeep from 'lodash/cloneDeep.js';
 
 export const FilterType = {
+  TABS: 'tabs',
+  TAB_GROUPS: 'tabGroups',
   URLS: 'urls',
   EXCLUDE_URLS: 'excludeUrls',
   RESOURCE_TYPES: 'types'
@@ -34,6 +36,18 @@ export async function addResourceFilter(filters) {
       enabled: true,
       comment: '',
       resourceType: []
+    }
+  ];
+}
+
+export async function addTabFilter(filters) {
+  const tab = await getActiveTab();
+  return [
+    ...filters,
+    {
+      enabled: true,
+      comment: '',
+      tabId: tab.id || ''
     }
   ];
 }

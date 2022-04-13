@@ -19,6 +19,32 @@ export async function getActiveTab() {
   });
 }
 
+export async function queryTabs(queryParams) {
+  return new Promise((resolve, reject) => {
+    chrome.tabs.query(queryParams, (tabs) => {
+      if (chrome.runtime.lastError) {
+        reject(chrome.runtime.lastError);
+      } else if (tabs && tabs.length > 0) {
+        resolve(tabs);
+      } else {
+        reject(`Query found no tabs`);
+      }
+    });
+  });
+}
+
+export async function getTab(tabId) {
+  return new Promise((resolve, reject) => {
+    chrome.tabs.get(tabId, (tab) => {
+      if (chrome.runtime.lastError) {
+        reject(chrome.runtime.lastError);
+      } else {
+        resolve(tab);
+      }
+    });
+  });
+}
+
 export function addTabUpdatedListener(callback) {
   chrome.tabs.onActivated.addListener((activeInfo) => {
     chrome.tabs.get(activeInfo.tabId, callback);
