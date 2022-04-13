@@ -135,7 +135,8 @@
 {#if MODIFIER_TYPES[modifierType].autocompleteListId && MODIFIER_TYPES[modifierType].autocompleteNames}
   <datalist id={MODIFIER_TYPES[modifierType].autocompleteListId}>
     {#each MODIFIER_TYPES[modifierType].autocompleteNames as item}
-      <option value={item} />{/each}
+      <option value={item} />
+    {/each}
   </datalist>
 {/if}
 
@@ -245,7 +246,7 @@
       />
       <AutoComplete
         name="header-name"
-        list={MODIFIER_TYPES[modifierType].autocompleteListId}
+        list={header.name ? MODIFIER_TYPES[modifierType].autocompleteListId : undefined}
         bind:value={header.name}
         on:change={refreshHeaders}
         selectAllOnFocus={true}
