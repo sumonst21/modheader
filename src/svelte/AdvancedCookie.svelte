@@ -3,6 +3,7 @@
   import MenuSurface from '@smui/menu-surface';
   import Chip from './Chip.svelte';
   import MdiIcon from './MdiIcon.svelte';
+  import CookieAttributeTextField from './CookieAttributeTextField.svelte';
   import { mdiChevronDown } from '@mdi/js';
   import { createEventDispatcher } from 'svelte';
 
@@ -12,17 +13,31 @@
     {
       field: 'domain',
       default: '',
-      clickHandler: (modifier) => {}
+      component: CookieAttributeTextField,
+      updateFieldHandler: (modifier) => {
+        modifier.domain = modifier.domain.trim();
+      }
     },
     {
       field: 'maxAge',
       default: 60 * 60 * 24,
-      clickHandler: (modifier) => {}
+      component: CookieAttributeTextField,
+      updateFieldHandler: (modifier) => {
+        const maxAge = Number.parseInt(modifier.maxAge);
+        if (!Number.isNaN(maxAge)) {
+          modifier.maxAge = maxAge;
+        } else {
+          modifier.maxAge = 60 * 60 * 24;
+        }
+      }
     },
     {
       field: 'path',
       default: '/',
-      clickHandler: (modifier) => {}
+      component: CookieAttributeTextField,
+      updateFieldHandler: (modifier) => {
+        modifier.path = modifier.path.trim();
+      }
     },
     {
       field: 'secure',
@@ -80,6 +95,7 @@
 
   export let modifier;
   let addAttributeMenu;
+  let showField;
 
   const CHECKED = '✓';
   const UNCHECKED = '✗';
@@ -87,20 +103,35 @@
 
 <div class="advanced-cookie-row">
   {#each fields.filter((f) => modifier[f.field] !== undefined) as field}
-    <Chip
-      on:click={() => {
-        field.clickHandler(modifier);
-        dispatchChange();
-      }}
-      on:close={() => {
-        delete modifier[field.field];
-        dispatchChange();
-      }}
-    >
-      {field.field}: {field.type === 'boolean'
-        ? boolToUnicode(modifier[field.field])
-        : modifier[field.field]}
-    </Chip>
+    <span>
+      <Chip
+        on:click={() => {
+          showField = field.field;
+          dispatchChange();
+        }}
+        on:close={() => {
+          delete modifier[field.field];
+          dispatchChange();
+        }}
+      >
+        {field.field}: {field.type === 'boolean'
+          ? boolToUnicode(modifier[field.field])
+          : modifier[field.field]}
+      </Chip>
+      {#if field.component}
+        <svelte:component
+          this={field.component}
+          open={showField === field.field}
+          {modifier}
+          fieldName={field.field}
+          on:change={() => {
+            field.updateFieldHandler(modifier);
+            dispatchChange();
+          }}
+          on:close={() => (showField = undefined)}
+        />
+      {/if}
+    </span>
   {/each}
 
   {#if fields.find((f) => modifier[f.field] === undefined)}
