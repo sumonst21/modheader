@@ -4,6 +4,7 @@
   import List, { Item, Separator, Text } from '@smui/list';
   import {
     mdiPlus,
+    mdiFormatListBulleted,
     mdiTrashCanOutline,
     mdiSortAlphabeticalAscending,
     mdiSortAlphabeticalDescending,
@@ -11,6 +12,7 @@
   } from '@mdi/js';
   import lodashOrderBy from 'lodash/orderBy.js';
   import { selectedProfile } from '../js/profile.js';
+  import CustomizeAutocompleteDialog from './CustomizeAutocompleteDialog.svelte';
   import MdiIcon from './MdiIcon.svelte';
   import { createEventDispatcher } from 'svelte';
 
@@ -19,6 +21,7 @@
   export let modifierHandler;
   export let modifiers;
   let moreMenu;
+  let customizeAutocompleteDialog;
 
   function dispatchRefresh() {
     dispatch('refresh', modifiers);
@@ -38,6 +41,8 @@
   <MdiIcon size="32" color="#666" icon={mdiDotsVertical} />
 </IconButton>
 
+<CustomizeAutocompleteDialog bind:this={customizeAutocompleteDialog} {modifierHandler} />
+
 <Menu bind:this={moreMenu}>
   <List>
     <Item on:SMUI:action={() => modifierHandler.addHandler()}>
@@ -52,6 +57,15 @@
     >
       <MdiIcon class="more-menu-icon" size="24" icon={mdiTrashCanOutline} color="#666" />
       <Text>Clear all</Text>
+    </Item>
+    <Item
+      on:SMUI:action={() => {
+        customizeAutocompleteDialog.open();
+        dispatchRefresh();
+      }}
+    >
+      <MdiIcon class="more-menu-icon" size="24" icon={mdiFormatListBulleted} color="#666" />
+      <Text>Customize autocomplete</Text>
     </Item>
     <Separator nav />
     <Item on:SMUI:action={() => sort('name', 'asc')}>

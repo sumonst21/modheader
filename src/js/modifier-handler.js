@@ -15,6 +15,8 @@ export const MODIFIER_TYPES = {
     title: 'Request headers',
     nameLabel: 'Name',
     valueLabel: 'Value',
+    fieldName: 'headers',
+    customAutocompleteFieldName: 'headersAutocomplete',
     autocompleteListId: 'request-autocomplete',
     autocompleteNames: KNOWN_REQUEST_HEADERS,
     addHandler: () => updateProfile({ headers: addHeader(getSelectedProfile().headers) }),
@@ -28,6 +30,8 @@ export const MODIFIER_TYPES = {
     title: 'Response headers',
     nameLabel: 'Name',
     valueLabel: 'Value',
+    fieldName: 'respHeaders',
+    customAutocompleteFieldName: 'respHeadersAutocomplete',
     autocompleteListId: 'response-autocomplete',
     autocompleteNames: KNOWN_RESPONSE_HEADERS,
     addHandler: () =>
@@ -44,6 +48,8 @@ export const MODIFIER_TYPES = {
     title: 'Set-Cookie response modifier',
     nameLabel: 'Name',
     valueLabel: 'Value',
+    fieldName: 'setCookieHeaders',
+    customAutocompleteFieldName: 'setCookieHeadersAutocomplete',
     advancedComponent: AdvancedCookie,
     addHandler: () =>
       updateProfile({
@@ -59,6 +65,8 @@ export const MODIFIER_TYPES = {
     title: 'Redirect URLs',
     nameLabel: 'Original URL',
     valueLabel: 'Redirect URL',
+    fieldName: 'urlReplacements',
+    customAutocompleteFieldName: 'urlReplacementsAutocomplete',
     addHandler: async () =>
       updateProfile({
         urlReplacements: await addUrlRedirect(getSelectedProfile().urlReplacements)

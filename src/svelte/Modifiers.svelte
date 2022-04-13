@@ -47,6 +47,10 @@
   });
   $: headers, refreshHeadersDebounce();
   $: modifierHandler = MODIFIER_TYPES[modifierType];
+  $: customAutocomplete =
+    modifierHandler &&
+    $selectedProfile &&
+    $selectedProfile[modifierHandler.customAutocompleteFieldName];
 
   selectedProfile.subscribe(() => {
     refreshHeadersDebounce.cancel();
@@ -55,7 +59,28 @@
 
 {#if modifierHandler.autocompleteListId && modifierHandler.autocompleteNames}
   <datalist id={modifierHandler.autocompleteListId}>
+    {#if customAutocomplete && customAutocomplete.autocompleteName.length > 0}
+      {#each customAutocomplete.autocompleteName as item}
+        <option value={item} />
+      {/each}
+    {/if}
     {#each modifierHandler.autocompleteNames as item}
+      <option value={item} />
+    {/each}
+  </datalist>
+{/if}
+
+{#if customAutocomplete && customAutocomplete.autocompleteName}
+  <datalist id="{modifierHandler.customAutocompleteFieldName}-name">
+    {#each customAutocomplete.autocompleteName as item}
+      <option value={item} />
+    {/each}
+  </datalist>
+{/if}
+
+{#if customAutocomplete && customAutocomplete.autocompleteValue}
+  <datalist id="{modifierHandler.customAutocompleteFieldName}-value">
+    {#each customAutocomplete.autocompleteValue as item}
       <option value={item} />
     {/each}
   </datalist>
@@ -93,7 +118,9 @@
       />
       <AutoComplete
         name="header-name"
-        list={header.name ? modifierHandler.autocompleteListId : undefined}
+        list={header.name
+          ? modifierHandler.autocompleteListId
+          : `${modifierHandler.customAutocompleteFieldName}-name`}
         bind:value={header.name}
         on:change={refreshHeaders}
         selectAllOnFocus={true}
@@ -101,6 +128,7 @@
       />
       <AutoComplete
         name="header-value"
+        list={`${modifierHandler.customAutocompleteFieldName}-value`}
         bind:value={header.value}
         on:change={refreshHeaders}
         selectAllOnFocus={true}

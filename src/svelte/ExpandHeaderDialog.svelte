@@ -68,5 +68,6 @@
 
   .expand-header-dialog-textfield {
     margin: 5px;
+    width: 90%;
   }
 </style>
