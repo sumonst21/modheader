@@ -11,6 +11,7 @@ import { lightOrDark, generateBackgroundColor, generateTextColor } from './color
 import { profiles, commitData, selectedProfileIndex, isInitialized } from './datasource.js';
 import { showMessage } from './toast.js';
 import lodashClone from 'lodash/clone.js';
+import { AppendMode } from './append-mode.js';
 
 export const PROFILE_VERSION = 2;
 let latestProfiles = [];
@@ -85,9 +86,6 @@ export function fixProfiles(profiles) {
 
 function upgradeFromProfileVersion1({ profile, index }) {
   profile.version = PROFILE_VERSION;
-  if (profile.appendMode === undefined) {
-    profile.appendMode = false;
-  }
   if (profile.hideComment === undefined) {
     profile.hideComment = true;
   }
@@ -108,6 +106,15 @@ function upgradeFromProfileVersion1({ profile, index }) {
   }
   if (!profile.urlReplacements || !lodashIsArray(profile.urlReplacements)) {
     profile.urlReplacements = [];
+  }
+  let appendMode = AppendMode.OVERRIDE;
+  if (profile.appendMode === 'comma') {
+    appendMode = AppendMode.COMMA_SEPARATED_APPEND;
+  } else if (profile.appendMode === 'true' || profile.appendMode === true) {
+    appendMode = AppendMode.APPEND;
+  }
+  for (const modifier of [...profile.headers, ...profile.respHeaders]) {
+    modifier.appendMode = appendMode;
   }
   profile.urlFilters = [];
   profile.excludeUrlFilters = [];
@@ -155,13 +162,12 @@ function createProfile() {
     hideComment: true,
     headers: [createHeader()],
     respHeaders: [],
+    urlReplacements: [],
     setCookieHeaders: [],
     urlFilters: [],
     excludeUrlFilters: [],
     resourceFilters: [],
     tabFilters: [],
-    urlReplacements: [],
-    appendMode: false,
     backgroundColor: generateBackgroundColor(),
     textColor: generateTextColor(),
     shortTitle: takeRight(index)

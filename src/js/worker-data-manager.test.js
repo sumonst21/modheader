@@ -100,6 +100,7 @@ describe('worker-data-manager', () => {
           ...EMPTY_PROFILE,
           headers: [
             {
+              enabled: true,
               name: 'Foo',
               value: 'Bar'
             }
@@ -110,6 +111,7 @@ describe('worker-data-manager', () => {
         ...EMPTY_PROFILE,
         headers: [
           {
+            enabled: true,
             name: 'Foo',
             value: 'Bar'
           }

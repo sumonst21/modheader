@@ -121,6 +121,8 @@ describe('url-redirect', () => {
     ]);
     expect(urlRedirects).toEqual([
       {
+        comment: 'Converted to Regex',
+        enabled: true,
         name: new RegExp('bewisse.com'),
         value: 'modheader.com'
       }

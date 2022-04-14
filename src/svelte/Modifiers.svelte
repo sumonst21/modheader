@@ -152,9 +152,7 @@
         <MdiIcon size="24" icon={mdiClose} color="red" />
       </IconButton>
       <HeaderMoreMenu
-        title={modifierHandler.title}
-        nameLabel={modifierHandler.nameLabel}
-        valueLabel={modifierHandler.valueLabel}
+        {modifierHandler}
         selectedHeaderIndex={headerIndex}
         selectedHeader={header}
         on:copy={(e) => copy(e.detail)}

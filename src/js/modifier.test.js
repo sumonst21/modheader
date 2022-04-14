@@ -1,6 +1,7 @@
 import { FilterType } from './filter.js';
 import { modifyRequestUrls, modifyRequestHeaders, modifyResponseHeaders } from './modifier.js';
 import { fixProfiles } from './profile.js';
+import { AppendMode } from './append-mode.js';
 
 describe('modifier', () => {
   describe('Modify request urls', () => {
@@ -168,11 +169,11 @@ describe('modifier', () => {
       const chromeLocal = {};
       const activeProfiles = [
         {
-          appendMode: true,
           headers: [
             {
               name: 'foo',
-              value: 'Test bar'
+              value: 'Test bar',
+              appendMode: AppendMode.APPEND
             }
           ]
         }
@@ -684,7 +685,8 @@ describe('modifier', () => {
           setCookieHeaders: [
             {
               name: 'foo',
-              value: 'Test'
+              value: 'Test',
+              path: '/_/test'
             }
           ]
         }
@@ -705,77 +707,7 @@ describe('modifier', () => {
         responseHeaders: [
           {
             name: 'set-cookie',
-            value: 'foo=Test; Path=/'
-          }
-        ]
-      });
-    });
-
-    test('Modify set cookie header - Append mode', () => {
-      const chromeLocal = {};
-      const activeProfiles = [
-        {
-          appendMode: true,
-          setCookieHeaders: [
-            {
-              name: 'foo',
-              value: 'Test'
-            }
-          ]
-        }
-      ];
-      fixProfiles(activeProfiles);
-      const details = {
-        url: 'https://modheader.com/',
-        responseHeaders: [
-          {
-            name: 'set-cookie',
-            value: 'foo=Original; Path=/'
-          }
-        ]
-      };
-      const actual = modifyResponseHeaders({ chromeLocal, activeProfiles, details });
-
-      expect(actual).toEqual({
-        responseHeaders: [
-          {
-            name: 'set-cookie',
-            value: 'foo=OriginalTest; Path=/'
-          }
-        ]
-      });
-    });
-
-    test('Modify set cookie header - Comma append mode', () => {
-      const chromeLocal = {};
-      const activeProfiles = [
-        {
-          appendMode: 'comma',
-          setCookieHeaders: [
-            {
-              name: 'foo',
-              value: 'Test'
-            }
-          ]
-        }
-      ];
-      fixProfiles(activeProfiles);
-      const details = {
-        url: 'https://modheader.com/',
-        responseHeaders: [
-          {
-            name: 'set-cookie',
-            value: 'foo=Original; Path=/'
-          }
-        ]
-      };
-      const actual = modifyResponseHeaders({ chromeLocal, activeProfiles, details });
-
-      expect(actual).toEqual({
-        responseHeaders: [
-          {
-            name: 'set-cookie',
-            value: 'foo=Original%2CTest; Path=/'
+            value: 'foo=Test; Path=/_/test'
           }
         ]
       });

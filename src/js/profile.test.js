@@ -46,7 +46,6 @@ describe('profile', () => {
     expect(profiles).toEqual([
       {
         version: PROFILE_VERSION,
-        appendMode: false,
         backgroundColor: expect.any(String),
         urlFilters: [],
         excludeUrlFilters: [],
@@ -137,7 +136,6 @@ describe('profile', () => {
     expect(profiles).toEqual([
       {
         version: PROFILE_VERSION,
-        appendMode: false,
         backgroundColor: expect.any(String),
         urlFilters: [],
         excludeUrlFilters: [],

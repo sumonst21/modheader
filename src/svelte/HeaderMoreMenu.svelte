@@ -1,12 +1,14 @@
 <script>
   import IconButton from '@smui/icon-button';
   import Menu from '@smui/menu';
-  import List, { Item, Text } from '@smui/list';
+  import List, { Separator, Item, Label, Text } from '@smui/list';
   import { mdiContentCopy, mdiArrowExpand, mdiDotsVertical, mdiClose } from '@mdi/js';
+  import lodashOmit from 'lodash/omit.js';
   import lodashClone from 'lodash/clone.js';
   import { createEventDispatcher } from 'svelte';
   import MdiIcon from './MdiIcon.svelte';
   import ExpandHeaderDialog from './ExpandHeaderDialog.svelte';
+  import { AppendMode } from '../js/append-mode.js';
 
   const dispatch = createEventDispatcher();
 
@@ -15,9 +17,12 @@
     dialog.open();
   }
 
-  export let title;
-  export let nameLabel;
-  export let valueLabel;
+  function dispatchUpdate(header) {
+    dispatch('update', { headerIndex: selectedHeaderIndex, header });
+    moreHeaderMenu.setOpen(false);
+  }
+
+  export let modifierHandler;
   export let selectedHeaderIndex;
   export let selectedHeader;
   let dialog;
@@ -26,13 +31,11 @@
 
 <ExpandHeaderDialog
   bind:this={dialog}
-  {nameLabel}
-  on:save={(event) => {
-    dispatch('update', { headerIndex: selectedHeaderIndex, header: event.detail });
-  }}
+  nameLabel={modifierHandler.nameLabel}
+  on:save={(event) => dispatchUpdate(event.detail)}
   {selectedHeader}
-  {title}
-  {valueLabel}
+  title={modifierHandler.title}
+  valueLabel={modifierHandler.valueLabel}
 />
 
 <div>
@@ -57,16 +60,25 @@
         <MdiIcon class="icon-with-text" color="#666" icon={mdiContentCopy} size="24" />
         <Text>Duplicate</Text>
       </Item>
-      <Item
-        on:SMUI:action={() =>
-          dispatch('update', {
-            headerIndex: selectedHeaderIndex,
-            header: { ...selectedHeader, value: '' }
-          })}
-      >
+      <Item on:SMUI:action={() => dispatchUpdate({ ...selectedHeader, value: '' })}>
         <MdiIcon class="icon-with-text" color="#666" icon={mdiClose} size="24" />
         <Text>Clear value</Text>
       </Item>
+      {#if modifierHandler.supportAppendMode}
+        <Separator nav />
+        {#if selectedHeader.appendMode}
+          <Item on:SMUI:action={() => dispatchUpdate(lodashOmit(selectedHeader, ['appendMode']))}>
+            <Label>Clear append mode</Label>
+          </Item>
+        {:else}
+          <Item
+            on:SMUI:action={() =>
+              dispatchUpdate({ ...selectedHeader, appendMode: AppendMode.APPEND })}
+          >
+            <Label>Append instead of override</Label>
+          </Item>
+        {/if}
+      {/if}
     </List>
   </Menu>
 </div>

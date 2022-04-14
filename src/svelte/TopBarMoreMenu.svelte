@@ -138,36 +138,6 @@
         Restore cloud backup
       </Item>
       <Separator nav />
-      <Subheader>Header override mode</Subheader>
-      <Item on:SMUI:action={() => updateProfile({ appendMode: false })}>
-        <MdiIcon
-          class="more-menu-icon"
-          size="24"
-          icon={appendMode === 'false' ? mdiRadioboxMarked : mdiRadioboxBlank}
-          color="#666"
-        />
-        <Label>Override existing value</Label>
-      </Item>
-      <Item on:SMUI:action={() => updateProfile({ appendMode: true })}>
-        <MdiIcon
-          class="more-menu-icon"
-          size="24"
-          icon={appendMode === 'true' ? mdiRadioboxMarked : mdiRadioboxBlank}
-          color="#666"
-        />
-        <Label>Value concatenation</Label>
-      </Item>
-      <Item on:SMUI:action={() => updateProfile({ appendMode: 'comma' })}>
-        <MdiIcon
-          class="more-menu-icon"
-          size="24"
-          icon={appendMode === 'comma' ? mdiRadioboxMarked : mdiRadioboxBlank}
-          color="#666"
-        />
-        <Label>Comma separated</Label>
-      </Item>
-
-      <Separator nav />
       <Subheader>Empty header mode</Subheader>
       <Item on:SMUI:action={() => updateProfile({ sendEmptyHeader: false })}>
         <MdiIcon

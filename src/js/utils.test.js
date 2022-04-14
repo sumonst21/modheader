@@ -18,7 +18,7 @@ describe('utils', () => {
       { enabled: true, value: 'Test 3' }
     ]);
 
-    expect(actual).toEqual([{ name: 'Test 1' }]);
+    expect(actual).toEqual([{ enabled: true, name: 'Test 1' }]);
   });
 
   test('evaluateValue - simple value', () => {

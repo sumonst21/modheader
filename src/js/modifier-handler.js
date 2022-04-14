@@ -4,6 +4,7 @@ import { KNOWN_REQUEST_HEADERS, KNOWN_RESPONSE_HEADERS } from './constants.js';
 import { selectedProfile, updateProfile } from './profile.js';
 import { addHeader, addSetCookieHeader, removeHeader } from './header.js';
 import AdvancedCookie from '../svelte/AdvancedCookie.svelte';
+import AdvancedHeader from '../svelte/AdvancedHeader.svelte';
 import { addUrlRedirect, removeUrlRedirect } from './url-redirect.js';
 
 function getSelectedProfile() {
@@ -19,6 +20,8 @@ export const MODIFIER_TYPES = {
     customAutocompleteFieldName: 'headersAutocomplete',
     autocompleteListId: 'request-autocomplete',
     autocompleteNames: KNOWN_REQUEST_HEADERS,
+    supportAppendMode: true,
+    advancedComponent: AdvancedHeader,
     addHandler: () => updateProfile({ headers: addHeader(getSelectedProfile().headers) }),
     removeHandler: (headerIndex) =>
       updateProfile({
@@ -34,6 +37,8 @@ export const MODIFIER_TYPES = {
     customAutocompleteFieldName: 'respHeadersAutocomplete',
     autocompleteListId: 'response-autocomplete',
     autocompleteNames: KNOWN_RESPONSE_HEADERS,
+    supportAppendMode: true,
+    advancedComponent: AdvancedHeader,
     addHandler: () =>
       updateProfile({
         respHeaders: addHeader(getSelectedProfile().respHeaders)
