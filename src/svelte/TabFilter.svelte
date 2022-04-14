@@ -39,7 +39,7 @@
 <div class="data-table-cell flex-grow">
   {#if filter.groupId}
     {#await queryTabs({ groupId: filter.groupId }) then tabs}
-      <div class="regular-text">
+      <div>
         <Chip
           fieldName="tab-group"
           on:click={async () => {
@@ -58,7 +58,7 @@
     {/await}
   {:else if filter.windowId}
     {#await queryTabs({ windowId: filter.windowId }) then tabs}
-      <div class="regular-text">
+      <div>
         <Chip fieldName="window" on:click={useCurrentTab}>Window</Chip>
         <TabsList {tabs} />
       </div>
@@ -69,7 +69,7 @@
     {/await}
   {:else if filter.tabId}
     {#await getTab(filter.tabId) then tab}
-      <div class="regular-text">
+      <div>
         <Chip
           fieldName="single-tab"
           on:click={() => {

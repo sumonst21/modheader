@@ -27,5 +27,5 @@
   {/if}
 {/each}
 {#if tabs.length > MAX_TABS}
-  <span class="regular-text">and {tabs.length - MAX_TABS} more...</span>
+  <span>and {tabs.length - MAX_TABS} more...</span>
 {/if}
