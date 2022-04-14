@@ -10,15 +10,18 @@
   const TrailingActionConfigs = {
     [TrailingAction.TOGGLE]: {
       icon: mdiChevronRightCircle,
-      dispatchAction: 'click'
+      dispatchAction: 'click',
+      tooltip: 'Click to change behavior'
     },
     [TrailingAction.CLOSE]: {
       icon: mdiCloseCircle,
-      dispatchAction: 'close'
+      dispatchAction: 'close',
+      tooltip: 'Click on the chip to edit, click on X to remove.'
     },
     [TrailingAction.DROPDOWN]: {
       icon: mdiChevronDownCircle,
-      dispatchAction: 'click'
+      dispatchAction: 'click',
+      tooltip: 'Click to add behavior'
     }
   };
 </script>
@@ -30,12 +33,14 @@
 
   export let fieldName;
   export let trailingAction = TrailingAction.TOGGLE;
+  export let tooltip = '';
   const dispatch = createEventDispatcher();
 </script>
 
 <div
   class="mdc-chip small-chip"
   role="row"
+  title={tooltip || TrailingActionConfigs[trailingAction].tooltip}
   use:Ripple={{ surface: true }}
   data-field-name={fieldName}
 >

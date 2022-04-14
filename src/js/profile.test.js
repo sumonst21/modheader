@@ -75,7 +75,6 @@ describe('profile', () => {
     const profiles = [
       {
         version: PROFILE_VERSION,
-        appendMode: false,
         backgroundColor: '#000000',
         urlFilters: [],
         excludeUrlFilters: [],
@@ -103,7 +102,6 @@ describe('profile', () => {
     expect(profiles).toEqual([
       {
         version: PROFILE_VERSION,
-        appendMode: false,
         backgroundColor: '#000000',
         urlFilters: [],
         excludeUrlFilters: [],
@@ -157,6 +155,70 @@ describe('profile', () => {
         title: 'Profile 1',
         urlReplacements: []
       }
+    ]);
+    expect(isMutated).toEqual(true);
+  });
+
+  test('Fix profiles - fix append mode', () => {
+    const profiles = [
+      {
+        appendMode: true,
+        headers: [
+          {
+            comment: '',
+            enabled: true,
+            name: '',
+            value: ''
+          }
+        ]
+      }
+    ];
+    const isMutated = fixProfiles(profiles);
+
+    expect(profiles).toEqual([
+      expect.objectContaining({
+        headers: [
+          {
+            appendMode: 'append',
+            comment: '',
+            enabled: true,
+            name: '',
+            value: ''
+          }
+        ]
+      })
+    ]);
+    expect(isMutated).toEqual(true);
+  });
+
+  test('Fix profiles - fix send empty header', () => {
+    const profiles = [
+      {
+        sendEmptyHeader: true,
+        headers: [
+          {
+            comment: '',
+            enabled: true,
+            name: '',
+            value: ''
+          }
+        ]
+      }
+    ];
+    const isMutated = fixProfiles(profiles);
+
+    expect(profiles).toEqual([
+      expect.objectContaining({
+        headers: [
+          {
+            sendEmptyHeader: true,
+            comment: '',
+            enabled: true,
+            name: '',
+            value: ''
+          }
+        ]
+      })
     ]);
     expect(isMutated).toEqual(true);
   });

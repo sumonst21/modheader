@@ -60,6 +60,12 @@ function modifyHeader(url, currentProfile, source, dest) {
   for (const header of source) {
     const normalizedHeaderName = header.name.toLowerCase();
     const index = indexMap[normalizedHeaderName];
+    if (!header.value) {
+      if (index !== undefined && !header.sendEmptyHeader) {
+        dest[index].needRemoval = true;
+        continue;
+      }
+    }
     const headerValue = evaluateValue({
       value: header.value,
       url,
@@ -105,9 +111,6 @@ function modifySetCookie(url, currentProfile, source, dest) {
   }
   setCookieHeaderIndices.reverse();
   for (const [name, value] of Object.entries(cookieMap)) {
-    if (!value.value && !currentProfile.sendEmptyHeader) {
-      continue;
-    }
     const serializedCookieHeader = cookie.serialize(name, value.value, value);
     if (setCookieHeaderIndices.length > 0) {
       const index = setCookieHeaderIndices.pop();
@@ -130,9 +133,7 @@ export function modifyRequestHeaders({ chromeLocal, activeProfiles, details }) {
         })
       ) {
         modifyHeader(details.url, currentProfile, currentProfile.headers, details.requestHeaders);
-        if (!currentProfile.sendEmptyHeader) {
-          details.requestHeaders = details.requestHeaders.filter((entry) => !!entry.value);
-        }
+        details.requestHeaders = details.requestHeaders.filter((entry) => !entry.needRemoval);
       }
     }
     return {
@@ -144,7 +145,7 @@ export function modifyRequestHeaders({ chromeLocal, activeProfiles, details }) {
 export function modifyResponseHeaders({ chromeLocal, activeProfiles, details }) {
   if (isEnabled(chromeLocal) && activeProfiles.length > 0) {
     const originalResponseHeaders = details.responseHeaders || [];
-    let responseHeaders = lodashCloneDeep(originalResponseHeaders);
+    let responseHeaders;
     for (const currentProfile of activeProfiles) {
       if (
         passFilters({
@@ -154,6 +155,9 @@ export function modifyResponseHeaders({ chromeLocal, activeProfiles, details }) 
           profile: currentProfile
         })
       ) {
+        if (!responseHeaders) {
+          responseHeaders = lodashCloneDeep(originalResponseHeaders);
+        }
         modifyHeader(details.url, currentProfile, currentProfile.respHeaders, responseHeaders);
         modifySetCookie(
           details.url,
@@ -161,12 +165,10 @@ export function modifyResponseHeaders({ chromeLocal, activeProfiles, details }) 
           currentProfile.setCookieHeaders,
           responseHeaders
         );
-        if (!currentProfile.sendEmptyHeader) {
-          responseHeaders = responseHeaders.filter((entry) => !!entry.value);
-        }
+        responseHeaders = responseHeaders.filter((entry) => !entry.needRemoval);
       }
     }
-    if (!lodashIsEqual(responseHeaders, originalResponseHeaders)) {
+    if (responseHeaders && !lodashIsEqual(responseHeaders, originalResponseHeaders)) {
       return {
         responseHeaders
       };

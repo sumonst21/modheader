@@ -42,6 +42,7 @@
       <div>
         <Chip
           fieldName="tab-group"
+          tooltip="Enable ModHeader only on the selected tab group. Click to change behavior."
           on:click={async () => {
             const tab = await getActiveTab();
             delete filter.groupId;
@@ -59,7 +60,11 @@
   {:else if filter.windowId}
     {#await queryTabs({ windowId: filter.windowId }) then tabs}
       <div>
-        <Chip fieldName="window" on:click={useCurrentTab}>Window</Chip>
+        <Chip
+          fieldName="window"
+          tooltip="Enable ModHeader only on the selected window. Click to change behavior."
+          on:click={useCurrentTab}>Window</Chip
+        >
         <TabsList {tabs} />
       </div>
     {:catch error}
@@ -72,6 +77,7 @@
       <div>
         <Chip
           fieldName="single-tab"
+          tooltip="Enable ModHeader only on the selected tab. Click to change behavior."
           on:click={() => {
             delete filter.tabId;
             if (tab.groupId && tab.groupId !== TAB_GROUP_ID_NONE) {

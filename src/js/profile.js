@@ -113,9 +113,17 @@ function upgradeFromProfileVersion1({ profile, index }) {
   } else if (profile.appendMode === 'true' || profile.appendMode === true) {
     appendMode = AppendMode.APPEND;
   }
-  for (const modifier of [...profile.headers, ...profile.respHeaders]) {
+  delete profile.appendMode;
+  const allHeaders = [...profile.headers, ...profile.respHeaders];
+  for (const modifier of allHeaders) {
     modifier.appendMode = appendMode;
   }
+  if (profile.sendEmptyHeader) {
+    for (const modifier of allHeaders) {
+      modifier.sendEmptyHeader = true;
+    }
+  }
+  delete profile.sendEmptyHeader;
   profile.urlFilters = [];
   profile.excludeUrlFilters = [];
   profile.resourceFilters = [];

@@ -12,26 +12,40 @@
   export let modifier;
 </script>
 
-{#if modifier.appendMode}
+{#if modifier.appendMode || (modifier.name && !modifier.value)}
   <div class="advanced-header-row">
-    <Chip
-      fieldName="append-mode"
-      trailingAction="close"
-      on:click={() => {
-        if (modifier.appendMode === AppendMode.APPEND) {
-          modifier.appendMode = AppendMode.COMMA_SEPARATED_APPEND;
-        } else {
-          modifier.appendMode = AppendMode.APPEND;
-        }
-        dispatchChange();
-      }}
-      on:close={() => {
-        delete modifier.appendMode;
-        dispatchChange();
-      }}
-    >
-      {modifier.appendMode === AppendMode.APPEND ? 'append value' : 'append with comma separated'}
-    </Chip>
+    {#if modifier.name && !modifier.value}
+      <Chip
+        fieldName="send-empty-header"
+        tooltip={modifier.sendEmptyHeader
+          ? 'Header will be replaced with empty value instead of removed. Click to change behavior'
+          : 'Header will be removed if found. Enter a value to override header value. Click to change behavior'}
+        on:click={() => {
+          modifier.sendEmptyHeader = !modifier.sendEmptyHeader;
+          dispatchChange();
+        }}>{modifier.sendEmptyHeader ? 'Send empty header' : 'Remove header if found'}</Chip
+      >
+    {/if}
+    {#if modifier.appendMode}
+      <Chip
+        fieldName="append-mode"
+        trailingAction="close"
+        on:click={() => {
+          if (modifier.appendMode === AppendMode.APPEND) {
+            modifier.appendMode = AppendMode.COMMA_SEPARATED_APPEND;
+          } else {
+            modifier.appendMode = AppendMode.APPEND;
+          }
+          dispatchChange();
+        }}
+        on:close={() => {
+          delete modifier.appendMode;
+          dispatchChange();
+        }}
+      >
+        {modifier.appendMode === AppendMode.APPEND ? 'append value' : 'append with comma separated'}
+      </Chip>
+    {/if}
   </div>
 {/if}
 

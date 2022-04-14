@@ -131,6 +131,9 @@
 
     <Chip
       fieldName="attribute-override"
+      tooltip={modifier.attributeOverride
+        ? 'Cookie value and attributes will be completely overridden. Click to change behavior.'
+        : 'Cookie value will be overridden, but existing cookie attributes will not be changed. Click to change behavior.'}
       on:click={() => {
         modifier.attributeOverride = !modifier.attributeOverride;
         dispatchChange();

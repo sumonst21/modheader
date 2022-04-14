@@ -300,11 +300,11 @@ describe('modifier', () => {
       const activeProfiles = [
         {
           ...EMPTY_PROFILE,
-          sendEmptyHeader: true,
           headers: [
             {
               name: 'foo',
-              value: ''
+              value: '',
+              sendEmptyHeader: true
             }
           ]
         }
@@ -572,11 +572,11 @@ describe('modifier', () => {
       const activeProfiles = [
         {
           ...EMPTY_PROFILE,
-          sendEmptyHeader: true,
           respHeaders: [
             {
               name: 'foo',
-              value: ''
+              value: '',
+              sendEmptyHeader: true
             }
           ]
         }
@@ -845,34 +845,6 @@ describe('modifier', () => {
       };
       const actual = modifyResponseHeaders({ chromeLocal, activeProfiles, details });
 
-      expect(actual).toEqual(undefined);
-    });
-
-    test('Modify set-cookie header - Send empty header', () => {
-      const chromeLocal = {};
-      const activeProfiles = [
-        {
-          ...EMPTY_PROFILE,
-          sendEmptyHeader: true,
-          setCookieHeaders: [
-            {
-              name: 'foo',
-              value: ''
-            }
-          ]
-        }
-      ];
-      const details = {
-        url: 'https://modheader.com/',
-        responseHeaders: [
-          {
-            name: 'set-cookie',
-            value: 'foo=Original; Path=/'
-          }
-        ]
-      };
-      const actual = modifyResponseHeaders({ chromeLocal, activeProfiles, details });
-
       expect(actual).toEqual({
         responseHeaders: [
           {
@@ -933,7 +905,7 @@ describe('modifier', () => {
         {
           ...EMPTY_PROFILE,
           setCookieHeaders: []
-        },
+        }
       ];
       const details = {
         url: 'https://modheader.com/',
