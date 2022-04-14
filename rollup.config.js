@@ -1,4 +1,3 @@
-import css from 'rollup-plugin-css-only';
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import zip from 'rollup-plugin-zip';
@@ -12,22 +11,6 @@ import { emptyDir } from 'rollup-plugin-empty-dir';
 const production = !process.env.ROLLUP_WATCH;
 const URL_BASE = 'https://modheader.com';
 // const URL_BASE = 'http://localhost:3005';
-
-function insertCssPlugin() {
-  return {
-    name: 'insert-css',
-    generateBundle(options, bundle) {
-      if (bundle && bundle['popup.html']) {
-        const popupHtml = bundle['popup.html'].source;
-        this.emitFile({
-          type: 'asset',
-          fileName: 'popup.html',
-          source: popupHtml.replace('</head>', '<link rel="stylesheet" href="bundle.css"></head>')
-        });
-      }
-    }
-  };
-}
 
 export default {
   input: 'src/manifest.json',
@@ -63,13 +46,8 @@ export default {
       compilerOptions: {
         dev: !production
       },
-      emitCss: production
+      emitCss: false
     }),
-    production &&
-      css({
-        output: 'bundle.css'
-      }),
-    production && insertCssPlugin(),
     resolve({
       browser: true,
       dedupe: ['svelte']

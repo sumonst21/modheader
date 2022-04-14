@@ -51,10 +51,10 @@ describe('e2e test', () => {
   });
 
   afterAll(async () => {
-    if (driver) {
-      await driver.close();
-    }
     stopServer();
+    if (driver) {
+      await driver.quit();
+    }
   });
 
   async function compareScreenshot(customSnapshotIdentifier) {
@@ -389,6 +389,80 @@ describe('e2e test', () => {
       const headers = await getHeaders(driver);
       expect(headers.requestHeaders.request).toBeUndefined();
       expect(headers.responseHeaders.response).toBeUndefined();
+    });
+
+    test('Add tab filter', async () => {
+      await driver.get(popupUrl);
+
+      const popupPage = new PopupPage(driver);
+      await popupPage.setModifier({
+        modifierType: ModifierType.REQUEST_HEADER,
+        name: 'request',
+        value: 'test-request-header'
+      });
+
+      await popupPage.addModifier(ModifierType.RESPONSE_HEADER);
+      await popupPage.setModifier({
+        modifierType: ModifierType.RESPONSE_HEADER,
+        name: 'response',
+        value: 'test-response-header'
+      });
+      await popupPage.addFilter(FilterType.TAB_FILTER);
+
+      await compareScreenshot('request-headers-with-tab-filter-matched');
+
+      const matchedHeaders = await getHeaders(driver);
+      expect(matchedHeaders.requestHeaders.request).toEqual('test-request-header');
+      expect(matchedHeaders.responseHeaders.response).toEqual('test-response-header');
+
+      const originalWindow = await driver.getWindowHandle();
+      await driver.switchTo().newWindow('tab');
+      const unmatchedHeaders = await getHeaders(driver);
+      expect(unmatchedHeaders.requestHeaders.request).toBeUndefined();
+      expect(unmatchedHeaders.responseHeaders.response).toBeUndefined();
+      await driver.close();
+      await driver.switchTo().window(originalWindow);
+    });
+
+    test('Add window filter', async () => {
+      await driver.get(popupUrl);
+
+      const popupPage = new PopupPage(driver);
+      await popupPage.setModifier({
+        modifierType: ModifierType.REQUEST_HEADER,
+        name: 'request',
+        value: 'test-request-header'
+      });
+
+      await popupPage.addModifier(ModifierType.RESPONSE_HEADER);
+      await popupPage.setModifier({
+        modifierType: ModifierType.RESPONSE_HEADER,
+        name: 'response',
+        value: 'test-response-header'
+      });
+      await popupPage.addFilter(FilterType.TAB_FILTER);
+      await popupPage.toggleTabFilter();
+
+      await compareScreenshot('request-headers-with-window-filter-matched');
+
+      const matchedHeaders = await getHeaders(driver);
+      expect(matchedHeaders.requestHeaders.request).toEqual('test-request-header');
+      expect(matchedHeaders.responseHeaders.response).toEqual('test-response-header');
+
+      const originalWindow = await driver.getWindowHandle();
+      await driver.switchTo().newWindow('tab');
+      const matchedHeadersInDifferentTab = await getHeaders(driver);
+      expect(matchedHeadersInDifferentTab.requestHeaders.request).toEqual('test-request-header');
+      expect(matchedHeadersInDifferentTab.responseHeaders.response).toEqual('test-response-header');
+      await driver.close();
+      await driver.switchTo().window(originalWindow);
+
+      await driver.switchTo().newWindow('window');
+      const unmatchedHeaders = await getHeaders(driver);
+      expect(unmatchedHeaders.requestHeaders.request).toBeUndefined();
+      expect(unmatchedHeaders.responseHeaders.response).toBeUndefined();
+      await driver.close();
+      await driver.switchTo().window(originalWindow);
     });
   });
 });

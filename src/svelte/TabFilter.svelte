@@ -41,6 +41,7 @@
     {#await queryTabs({ groupId: filter.groupId }) then tabs}
       <div class="regular-text">
         <Chip
+          fieldName="tab-group"
           showCloseButton={false}
           on:click={async () => {
             const tab = await getActiveTab();
@@ -60,7 +61,7 @@
   {:else if filter.windowId}
     {#await queryTabs({ windowId: filter.windowId }) then tabs}
       <div class="regular-text">
-        <Chip showCloseButton={false} on:click={useCurrentTab}>Window</Chip>
+        <Chip fieldName="window" showCloseButton={false} on:click={useCurrentTab}>Window</Chip>
         <TabsList {tabs} />
       </div>
     {:catch error}
@@ -73,6 +74,7 @@
     {#await getTab(filter.tabId) then tab}
       <div class="regular-text">
         <Chip
+          fieldName="single-tab"
           showCloseButton={false}
           on:click={() => {
             delete filter.tabId;
