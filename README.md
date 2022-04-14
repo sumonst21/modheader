@@ -37,6 +37,7 @@ If you find ModHeader useful, please consider making a donation. If you use it f
 ## Features
 
 - Add/modify/remove request headers and response headers
+- Modify individual cookies in Set-Cookie header 
 - Enable header modification based on URL/resource type
 - Add comments to header
 - Multiple different profiles
@@ -45,7 +46,9 @@ If you find ModHeader useful, please consider making a donation. If you use it f
 - Export and import header
 - Clone profile
 - Cloud backup
-- Tab locking!
+- Customize autocomplete names and values
+- Advanced filtering by tab, tab group, or window
+- Dark mode support
 
 ## Screenshots
 
@@ -55,16 +58,36 @@ If you find ModHeader useful, please consider making a donation. If you use it f
 <img src="https://static.modheader.com/screenshots/screenshot-caption-4.png">
 <img src="https://static.modheader.com/screenshots/screenshot-caption-5.png">
 
-## Forking and contribution
+## License
 
-Feel free to send pull requests to add new features to ModHeader. It will benefit everyone! That said, I reserve the rights to reject pull requests that does not seem useful, or if they add too much complexity for very little benefits.
+Although ModHeader is open source on GitHub, we do not want developers to fork and redistribute it without our
+permissions. This is to protect our efforts as well as prevent spread of malicious extensions that pretend to be
+ModHeader. You are free to fork and modify ModHeader for personal use. However, please reach out to us at
+support@modheader.com before redistributing your own version of ModHeader to other people.
 
-You may fork and redistribute ModHeader for a small group of friends / colleagues, but please do not impersonate ModHeader, or try to sell it for a profit. If you use ModHeader in any commercial product, please let me know.
+For more details on our terms of use and license, please consult https://modheader.com/terms. If you have
+questions, please reach out to us at support@modheader.com.
 
 ## Installation
 
-Run `npm install` first, then run `npm run start` to start development. The built packages will be in the build/ directory.
+Run `npm install` first, then run `npm run start` to start development. The built packages will be in the dist/ directory.
 
 ## Selenium usage
 
 If you need to use ModHeader for Selenium tests, please visit: [modheader_selenium](https://github.com/bewisse/modheader_selenium)
+
+## Testing
+
+ModHeader has two sets of tests: unit tests and e2e tests.
+
+- Unit tests:
+
+  - Run using `npm run test` command.
+  - This will run all the unit tests (`*.test.js` files) in src/js/.
+
+- E2E tests:
+  - Run using `npm run test-e2e` command.
+  - This will run all the e2e-tests (`*.test.e2e.js` files) in e2e-tests/.
+  - This will bring up Chrome WebDriver and load the ModHeader extension in a browser to make
+    sure all features are still working correctly.
+  - Before running this, before to build ModHeader using `npm run start` or `npm run build`
