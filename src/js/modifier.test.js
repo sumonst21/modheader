@@ -1,14 +1,26 @@
 import { FilterType } from './filter.js';
 import { modifyRequestUrls, modifyRequestHeaders, modifyResponseHeaders } from './modifier.js';
-import { fixProfiles } from './profile.js';
 import { AppendMode } from './append-mode.js';
+import { PROFILE_VERSION } from './profile.js';
+
+const EMPTY_PROFILE = {
+  version: PROFILE_VERSION,
+  title: 'Test profile',
+  headers: [],
+  respHeaders: [],
+  urlReplacements: [],
+  setCookieHeaders: [],
+  urlFilters: [],
+  excludeUrlFilters: [],
+  resourceFilters: [],
+  tabFilters: []
+};
 
 describe('modifier', () => {
   describe('Modify request urls', () => {
     test('Nothing changed', () => {
       const chromeLocal = {};
-      const activeProfiles = [];
-      fixProfiles(activeProfiles);
+      const activeProfiles = [EMPTY_PROFILE];
       const details = {};
       const actual = modifyRequestUrls({ chromeLocal, activeProfiles, details });
 
@@ -19,6 +31,7 @@ describe('modifier', () => {
       const chromeLocal = {};
       const activeProfiles = [
         {
+          ...EMPTY_PROFILE,
           urlReplacements: [
             {
               name: new RegExp('bewisse.com'),
@@ -27,7 +40,6 @@ describe('modifier', () => {
           ]
         }
       ];
-      fixProfiles(activeProfiles);
       const details = {
         url: 'https://bewisse.com/'
       };
@@ -39,6 +51,7 @@ describe('modifier', () => {
     test('Paused profile', () => {
       const activeProfiles = [
         {
+          ...EMPTY_PROFILE,
           urlReplacements: [
             {
               name: new RegExp('bewisse.com'),
@@ -47,7 +60,6 @@ describe('modifier', () => {
           ]
         }
       ];
-      fixProfiles(activeProfiles);
       const details = {
         url: 'https://bewisse.com/'
       };
@@ -70,6 +82,7 @@ describe('modifier', () => {
       const chromeLocal = {};
       const activeProfiles = [
         {
+          ...EMPTY_PROFILE,
           urlReplacements: [
             {
               name: new RegExp('bewisse.com'),
@@ -84,7 +97,6 @@ describe('modifier', () => {
           ]
         }
       ];
-      fixProfiles(activeProfiles);
       const details = {
         url: 'https://bewisse.com/'
       };
@@ -97,21 +109,20 @@ describe('modifier', () => {
       const chromeLocal = {};
       const activeProfiles = [
         {
+          ...EMPTY_PROFILE,
           urlReplacements: [
             {
               name: new RegExp('bewisse.com'),
               value: 'modheader.com'
             }
           ],
-          filters: [
+          urlFilters: [
             {
-              type: FilterType.URLS,
               urlRegex: new RegExp('modheader.com')
             }
           ]
         }
       ];
-      fixProfiles(activeProfiles);
       const details = {
         url: 'https://bewisse.com/'
       };
@@ -122,19 +133,11 @@ describe('modifier', () => {
   });
 
   describe('Modify request headers', () => {
-    test('Nothing changed', () => {
-      const chromeLocal = {};
-      const activeProfiles = [];
-      const details = {};
-      const actual = modifyRequestHeaders({ chromeLocal, activeProfiles, details });
-
-      expect(actual).toEqual(undefined);
-    });
-
     test('Modify header - Override value, ignore header case', () => {
       const chromeLocal = {};
       const activeProfiles = [
         {
+          ...EMPTY_PROFILE,
           headers: [
             {
               name: 'foo',
@@ -143,7 +146,6 @@ describe('modifier', () => {
           ]
         }
       ];
-      fixProfiles(activeProfiles);
       const details = {
         url: 'https://modheader.com/',
         requestHeaders: [
@@ -169,6 +171,7 @@ describe('modifier', () => {
       const chromeLocal = {};
       const activeProfiles = [
         {
+          ...EMPTY_PROFILE,
           headers: [
             {
               name: 'foo',
@@ -178,7 +181,6 @@ describe('modifier', () => {
           ]
         }
       ];
-      fixProfiles(activeProfiles);
       const details = {
         url: 'https://modheader.com/',
         requestHeaders: [
@@ -204,16 +206,16 @@ describe('modifier', () => {
       const chromeLocal = {};
       const activeProfiles = [
         {
-          appendMode: 'comma',
+          ...EMPTY_PROFILE,
           headers: [
             {
               name: 'foo',
-              value: 'Test bar'
+              value: 'Test bar',
+              appendMode: AppendMode.COMMA_SEPARATED_APPEND
             }
           ]
         }
       ];
-      fixProfiles(activeProfiles);
       const details = {
         url: 'https://modheader.com/',
         requestHeaders: [
@@ -239,6 +241,7 @@ describe('modifier', () => {
       const chromeLocal = {};
       const activeProfiles = [
         {
+          ...EMPTY_PROFILE,
           headers: [
             {
               name: 'foo',
@@ -247,7 +250,6 @@ describe('modifier', () => {
           ]
         }
       ];
-      fixProfiles(activeProfiles);
       const details = {
         url: 'https://modheader.com/',
         requestHeaders: []
@@ -268,6 +270,7 @@ describe('modifier', () => {
       const chromeLocal = {};
       const activeProfiles = [
         {
+          ...EMPTY_PROFILE,
           headers: [
             {
               name: 'foo',
@@ -276,7 +279,6 @@ describe('modifier', () => {
           ]
         }
       ];
-      fixProfiles(activeProfiles);
       const details = {
         url: 'https://modheader.com/',
         requestHeaders: [
@@ -297,6 +299,7 @@ describe('modifier', () => {
       const chromeLocal = {};
       const activeProfiles = [
         {
+          ...EMPTY_PROFILE,
           sendEmptyHeader: true,
           headers: [
             {
@@ -306,7 +309,6 @@ describe('modifier', () => {
           ]
         }
       ];
-      fixProfiles(activeProfiles);
       const details = {
         url: 'https://modheader.com/',
         requestHeaders: [
@@ -332,6 +334,7 @@ describe('modifier', () => {
       const chromeLocal = {};
       const activeProfiles = [
         {
+          ...EMPTY_PROFILE,
           headers: [
             {
               name: 'foo',
@@ -340,16 +343,16 @@ describe('modifier', () => {
           ]
         },
         {
-          appendMode: 'comma',
+          ...EMPTY_PROFILE,
           headers: [
             {
               name: 'Foo',
-              value: 'Test Profile 2'
+              value: 'Test Profile 2',
+              appendMode: AppendMode.COMMA_SEPARATED_APPEND
             }
           ]
         }
       ];
-      fixProfiles(activeProfiles);
       const details = {
         url: 'https://modheader.com/',
         requestHeaders: [
@@ -375,11 +378,10 @@ describe('modifier', () => {
       const chromeLocal = {};
       const activeProfiles = [
         {
+          ...EMPTY_PROFILE,
           headers: []
-        },
-        {}
+        }
       ];
-      fixProfiles(activeProfiles);
       const details = {
         url: 'https://modheader.com/',
         requestHeaders: [
@@ -403,20 +405,11 @@ describe('modifier', () => {
   });
 
   describe('Modify response headers', () => {
-    test('Nothing changed', () => {
-      const chromeLocal = {};
-      const activeProfiles = [];
-      fixProfiles(activeProfiles);
-      const details = {};
-      const actual = modifyResponseHeaders({ chromeLocal, activeProfiles, details });
-
-      expect(actual).toEqual(undefined);
-    });
-
     test('Modify header - Override value, ignore header case', () => {
       const chromeLocal = {};
       const activeProfiles = [
         {
+          ...EMPTY_PROFILE,
           respHeaders: [
             {
               name: 'foo',
@@ -425,7 +418,6 @@ describe('modifier', () => {
           ]
         }
       ];
-      fixProfiles(activeProfiles);
       const details = {
         url: 'https://modheader.com/',
         responseHeaders: [
@@ -451,16 +443,16 @@ describe('modifier', () => {
       const chromeLocal = {};
       const activeProfiles = [
         {
-          appendMode: true,
+          ...EMPTY_PROFILE,
           respHeaders: [
             {
               name: 'foo',
-              value: 'Test bar'
+              value: 'Test bar',
+              appendMode: AppendMode.APPEND
             }
           ]
         }
       ];
-      fixProfiles(activeProfiles);
       const details = {
         url: 'https://modheader.com/',
         responseHeaders: [
@@ -486,16 +478,16 @@ describe('modifier', () => {
       const chromeLocal = {};
       const activeProfiles = [
         {
-          appendMode: 'comma',
+          ...EMPTY_PROFILE,
           respHeaders: [
             {
               name: 'foo',
-              value: 'Test bar'
+              value: 'Test bar',
+              appendMode: AppendMode.COMMA_SEPARATED_APPEND
             }
           ]
         }
       ];
-      fixProfiles(activeProfiles);
       const details = {
         url: 'https://modheader.com/',
         responseHeaders: [
@@ -521,6 +513,7 @@ describe('modifier', () => {
       const chromeLocal = {};
       const activeProfiles = [
         {
+          ...EMPTY_PROFILE,
           respHeaders: [
             {
               name: 'foo',
@@ -529,7 +522,6 @@ describe('modifier', () => {
           ]
         }
       ];
-      fixProfiles(activeProfiles);
       const details = {
         url: 'https://modheader.com/',
         responseHeaders: []
@@ -550,6 +542,7 @@ describe('modifier', () => {
       const chromeLocal = {};
       const activeProfiles = [
         {
+          ...EMPTY_PROFILE,
           respHeaders: [
             {
               name: 'foo',
@@ -558,7 +551,6 @@ describe('modifier', () => {
           ]
         }
       ];
-      fixProfiles(activeProfiles);
       const details = {
         url: 'https://modheader.com/',
         responseHeaders: [
@@ -579,6 +571,7 @@ describe('modifier', () => {
       const chromeLocal = {};
       const activeProfiles = [
         {
+          ...EMPTY_PROFILE,
           sendEmptyHeader: true,
           respHeaders: [
             {
@@ -588,7 +581,6 @@ describe('modifier', () => {
           ]
         }
       ];
-      fixProfiles(activeProfiles);
       const details = {
         url: 'https://modheader.com/',
         responseHeaders: [
@@ -614,6 +606,7 @@ describe('modifier', () => {
       const chromeLocal = {};
       const activeProfiles = [
         {
+          ...EMPTY_PROFILE,
           respHeaders: [
             {
               name: 'foo',
@@ -622,16 +615,16 @@ describe('modifier', () => {
           ]
         },
         {
-          appendMode: 'comma',
+          ...EMPTY_PROFILE,
           respHeaders: [
             {
               name: 'Foo',
-              value: 'Test Profile 2'
+              value: 'Test Profile 2',
+              appendMode: AppendMode.COMMA_SEPARATED_APPEND
             }
           ]
         }
       ];
-      fixProfiles(activeProfiles);
       const details = {
         url: 'https://modheader.com/',
         responseHeaders: [
@@ -657,11 +650,10 @@ describe('modifier', () => {
       const chromeLocal = {};
       const activeProfiles = [
         {
+          ...EMPTY_PROFILE,
           respHeaders: []
-        },
-        {}
+        }
       ];
-      fixProfiles(activeProfiles);
       const details = {
         url: 'https://modheader.com/',
         responseHeaders: [
@@ -678,10 +670,11 @@ describe('modifier', () => {
   });
 
   describe('Modify set cookie headers', () => {
-    test('Modify set cookie header - Override value', () => {
+    test('Modify set cookie header - Override value without changing attribute', () => {
       const chromeLocal = {};
       const activeProfiles = [
         {
+          ...EMPTY_PROFILE,
           setCookieHeaders: [
             {
               name: 'foo',
@@ -691,7 +684,6 @@ describe('modifier', () => {
           ]
         }
       ];
-      fixProfiles(activeProfiles);
       const details = {
         url: 'https://modheader.com/',
         responseHeaders: [
@@ -707,7 +699,44 @@ describe('modifier', () => {
         responseHeaders: [
           {
             name: 'set-cookie',
-            value: 'foo=Test; Path=/_/test'
+            value: 'foo=Test; Path=/'
+          }
+        ]
+      });
+    });
+
+    test('Modify set cookie header - Override value and attribute', () => {
+      const chromeLocal = {};
+      const activeProfiles = [
+        {
+          ...EMPTY_PROFILE,
+          setCookieHeaders: [
+            {
+              name: 'foo',
+              value: 'Test',
+              path: '/_/test',
+              httpOnly: true,
+              attributeOverride: true
+            }
+          ]
+        }
+      ];
+      const details = {
+        url: 'https://modheader.com/',
+        responseHeaders: [
+          {
+            name: 'set-cookie',
+            value: 'foo=Original; Path=/; Secure'
+          }
+        ]
+      };
+      const actual = modifyResponseHeaders({ chromeLocal, activeProfiles, details });
+
+      expect(actual).toEqual({
+        responseHeaders: [
+          {
+            name: 'set-cookie',
+            value: 'foo=Test; Path=/_/test; HttpOnly'
           }
         ]
       });
@@ -717,6 +746,7 @@ describe('modifier', () => {
       const chromeLocal = {};
       const activeProfiles = [
         {
+          ...EMPTY_PROFILE,
           setCookieHeaders: [
             {
               name: 'foo',
@@ -725,7 +755,6 @@ describe('modifier', () => {
           ]
         }
       ];
-      fixProfiles(activeProfiles);
       const details = {
         url: 'https://modheader.com/',
         responseHeaders: []
@@ -746,6 +775,7 @@ describe('modifier', () => {
       const chromeLocal = {};
       const activeProfiles = [
         {
+          ...EMPTY_PROFILE,
           setCookieHeaders: [
             {
               name: 'foo',
@@ -762,7 +792,6 @@ describe('modifier', () => {
           ]
         }
       ];
-      fixProfiles(activeProfiles);
       const details = {
         url: 'https://modheader.com/',
         responseHeaders: [
@@ -796,6 +825,7 @@ describe('modifier', () => {
       const chromeLocal = {};
       const activeProfiles = [
         {
+          ...EMPTY_PROFILE,
           setCookieHeaders: [
             {
               name: 'foo',
@@ -804,7 +834,6 @@ describe('modifier', () => {
           ]
         }
       ];
-      fixProfiles(activeProfiles);
       const details = {
         url: 'https://modheader.com/',
         responseHeaders: [
@@ -823,6 +852,7 @@ describe('modifier', () => {
       const chromeLocal = {};
       const activeProfiles = [
         {
+          ...EMPTY_PROFILE,
           sendEmptyHeader: true,
           setCookieHeaders: [
             {
@@ -832,7 +862,6 @@ describe('modifier', () => {
           ]
         }
       ];
-      fixProfiles(activeProfiles);
       const details = {
         url: 'https://modheader.com/',
         responseHeaders: [
@@ -858,6 +887,7 @@ describe('modifier', () => {
       const chromeLocal = {};
       const activeProfiles = [
         {
+          ...EMPTY_PROFILE,
           setCookieHeaders: [
             {
               name: 'foo',
@@ -865,8 +895,9 @@ describe('modifier', () => {
             }
           ]
         },
+        // Last profile modification wins
         {
-          appendMode: 'comma',
+          ...EMPTY_PROFILE,
           setCookieHeaders: [
             {
               name: 'foo',
@@ -875,7 +906,6 @@ describe('modifier', () => {
           ]
         }
       ];
-      fixProfiles(activeProfiles);
       const details = {
         url: 'https://modheader.com/',
         responseHeaders: [
@@ -891,7 +921,7 @@ describe('modifier', () => {
         responseHeaders: [
           {
             name: 'set-cookie',
-            value: 'foo=Profile1%2CProfile2; Path=/'
+            value: 'foo=Profile2; Path=/'
           }
         ]
       });
@@ -901,11 +931,10 @@ describe('modifier', () => {
       const chromeLocal = {};
       const activeProfiles = [
         {
+          ...EMPTY_PROFILE,
           setCookieHeaders: []
         },
-        {}
       ];
-      fixProfiles(activeProfiles);
       const details = {
         url: 'https://modheader.com/',
         responseHeaders: [

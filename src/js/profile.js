@@ -151,7 +151,7 @@ function upgradeFromProfileVersion1({ profile, index }) {
   }
 }
 
-function createProfile() {
+export function createProfile() {
   let index = 1;
   while (isExistingProfileTitle_('Profile ' + index)) {
     ++index;

@@ -97,7 +97,11 @@ function modifySetCookie(url, currentProfile, source, dest) {
     }
   }
   for (const cookie of source) {
-    cookieMap[cookie.name] = cookie;
+    if (cookie.attributeOverride || !cookieMap[cookie.name]) {
+      cookieMap[cookie.name] = cookie;
+    } else {
+      cookieMap[cookie.name].value = cookie.value;
+    }
   }
   setCookieHeaderIndices.reverse();
   for (const [name, value] of Object.entries(cookieMap)) {

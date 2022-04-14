@@ -9,7 +9,7 @@ let app;
 export function startServer() {
   app = polka()
     .get('/api/headers', (req, res) => {
-      res.setHeader('set-cookie', ['test=foobar; Path=/', 'test2=foobar2; Path=/']);
+      res.setHeader('set-cookie', ['test=foobar; Path=/api; Secure', 'test2=foobar2; Path=/; HttpOnly']);
       res.end(JSON.stringify(req.headers));
     })
     .get('/headers', (req, res) => {

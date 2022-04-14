@@ -102,12 +102,26 @@
 </script>
 
 <div class="advanced-cookie-row">
+  <Chip
+    fieldName="attribute-override"
+    showCloseButton={false}
+    on:click={() => {
+      modifier.attributeOverride = !modifier.attributeOverride;
+      dispatchChange();
+    }}
+  >
+    {modifier.attributeOverride ? 'Override attributes' : 'Retain existing attributes'}
+  </Chip>
   {#each fields.filter((f) => modifier[f.field] !== undefined) as field}
     <span>
       <Chip
         fieldName={field.field}
         on:click={() => {
-          showField = field.field;
+          if (field.clickHandler) {
+            field.clickHandler(modifier);
+          } else {
+            showField = field.field;
+          }
           dispatchChange();
         }}
         on:close={() => {
