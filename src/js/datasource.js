@@ -4,7 +4,7 @@ import lodashIsEqual from 'lodash/isEqual.js';
 import lodashIsUndefined from 'lodash/isUndefined.js';
 import { hideMessage } from './toast.js';
 import { getLocal } from './storage.js';
-import { setPaused } from './storage-loader.js';
+import { setPaused } from './storage-writer.js';
 import { signedInUser } from './identity.js';
 import {
   undoChange,

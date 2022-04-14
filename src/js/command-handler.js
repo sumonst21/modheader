@@ -1,4 +1,4 @@
-import { setPaused, setSelectedProfileIndex } from './storage-loader.js';
+import { setPaused, setSelectedProfileIndex } from './storage-writer.js';
 
 const Command = {
   TOGGLE_PAUSE: 'toggle_pause',

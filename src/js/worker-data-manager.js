@@ -6,7 +6,8 @@ import { filterEnabledMods } from './utils.js';
 import { fixProfiles } from './profile.js';
 import { optimizeResourceFilters, optimizeTabFilters, optimizeUrlFilters } from './filter.js';
 import { optimizeUrlRedirects } from './url-redirect.js';
-import { initStorage, setProfiles } from './storage-loader.js';
+import { initStorage } from './storage-loader.js';
+import { setProfiles } from './storage-writer.js';
 
 const MAX_PROFILES_IN_CLOUD = 50;
 

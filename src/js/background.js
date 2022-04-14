@@ -5,7 +5,7 @@ import { modifyRequestUrls, modifyRequestHeaders, modifyResponseHeaders } from '
 import { loadProfilesFromStorage } from './worker-data-manager.js';
 import { onMessageReceived } from './message-handler.js';
 import { onCommandReceived } from './command-handler.js';
-import {addTabUpdatedListener, setupTabUpdatedListener} from './tabs.js';
+import { setupTabUpdatedListener } from './tabs.js';
 import { initContextMenu, resetContextMenu } from './context-menu-manager.js';
 import {
   addBeforeRequestListener,

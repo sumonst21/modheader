@@ -1,5 +1,5 @@
 import { clearContextMenu, createContextMenu, updateContextMenu } from './context-menu.js';
-import { setPaused } from './storage-loader.js';
+import { setPaused } from './storage-writer.js';
 
 const PAUSE_MENU_ID = 'pause';
 const LOCK_MENU_ID = 'lock';

@@ -12,7 +12,7 @@ jest.doMock('./storage.js', () => mockStorage);
 const mockStorageLoader = {
   setPaused: jest.fn()
 };
-jest.doMock('./storage-loader.js', () => mockStorageLoader);
+jest.doMock('./storage-writer.js', () => mockStorageLoader);
 
 const {
   init,

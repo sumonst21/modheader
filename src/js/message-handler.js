@@ -1,4 +1,4 @@
-import { setProfiles, setSelectedProfileIndex } from './storage-loader.js';
+import { setProfiles, setSelectedProfileIndex } from './storage-writer.js';
 
 export const MessageType = {
   EXISTS: 'EXISTS',

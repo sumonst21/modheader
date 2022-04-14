@@ -4,7 +4,7 @@ const mockStorageLoader = {
   setPaused: jest.fn(),
   setSelectedProfileIndex: jest.fn()
 };
-jest.doMock('./storage-loader.js', () => mockStorageLoader);
+jest.doMock('./storage-writer.js', () => mockStorageLoader);
 
 const { onCommandReceived, __testing__ } = require('./command-handler.js');
 
