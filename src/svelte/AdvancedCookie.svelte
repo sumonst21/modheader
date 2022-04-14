@@ -4,7 +4,7 @@
   import Chip from './Chip.svelte';
   import MdiIcon from './MdiIcon.svelte';
   import CookieAttributeTextField from './CookieAttributeTextField.svelte';
-  import { mdiChevronDown } from '@mdi/js';
+  import { mdiChevronDownCircle } from '@mdi/js';
   import { createEventDispatcher } from 'svelte';
 
   const dispatch = createEventDispatcher();
@@ -102,20 +102,49 @@
 </script>
 
 <div class="advanced-cookie-row">
-  <Chip
-    fieldName="attribute-override"
-    showCloseButton={false}
-    on:click={() => {
-      modifier.attributeOverride = !modifier.attributeOverride;
-      dispatchChange();
-    }}
-  >
-    {modifier.attributeOverride ? 'Override attributes' : 'Retain existing attributes'}
-  </Chip>
+  <div>
+    {#if fields.find((f) => modifier[f.field] === undefined)}
+      <Chip
+        fieldName="cookie-attribute"
+        trailingAction="dropdown"
+        on:click={() => addAttributeMenu.setOpen(true)}
+      >
+        Add cookie attribute
+      </Chip>
+      <MenuSurface bind:this={addAttributeMenu} anchorCorner="BOTTOM_LEFT">
+        {#each fields.filter((f) => modifier[f.field] === undefined) as field}
+          <Button
+            variant="raised"
+            class="chip-button"
+            data-field={field.field}
+            on:click={() => {
+              modifier[field.field] = field.default;
+              addAttributeMenu.setOpen(false);
+              dispatchChange();
+            }}
+          >
+            {field.field}
+          </Button>
+        {/each}
+      </MenuSurface>
+    {/if}
+
+    <Chip
+      fieldName="attribute-override"
+      on:click={() => {
+        modifier.attributeOverride = !modifier.attributeOverride;
+        dispatchChange();
+      }}
+    >
+      {modifier.attributeOverride ? 'Override attributes' : 'Retain existing attributes'}
+    </Chip>
+  </div>
+
   {#each fields.filter((f) => modifier[f.field] !== undefined) as field}
     <span>
       <Chip
         fieldName={field.field}
+        trailingAction="close"
         on:click={() => {
           if (field.clickHandler) {
             field.clickHandler(modifier);
@@ -148,33 +177,6 @@
       {/if}
     </span>
   {/each}
-
-  {#if fields.find((f) => modifier[f.field] === undefined)}
-    <div>
-      <Button name="cookie-attribute" on:click={() => addAttributeMenu.setOpen(true)}>
-        Cookie attribute
-        <MdiIcon icon={mdiChevronDown} color="#888" size="24" />
-      </Button>
-      <MenuSurface bind:this={addAttributeMenu}>
-        <div>
-          {#each fields.filter((f) => modifier[f.field] === undefined) as field}
-            <Button
-              variant="raised"
-              class="chip-button"
-              data-field={field.field}
-              on:click={() => {
-                modifier[field.field] = field.default;
-                addAttributeMenu.setOpen(false);
-                dispatchChange();
-              }}
-            >
-              {field.field}
-            </Button>
-          {/each}
-        </div>
-      </MenuSurface>
-    </div>
-  {/if}
 </div>
 
 <style module>

@@ -95,7 +95,7 @@
       on:click={() => toggleAll()}
       disabled={headers.length === 0}
     />
-    <h3 class="data-table-title data-table-cell flex-grow">{modifierHandler.title}</h3>
+    <div class="data-table-title data-table-cell flex-grow">{modifierHandler.title}</div>
     <div class="data-table-cell" />
     <div class="data-table-cell">
       <ModifiersMoreMenu

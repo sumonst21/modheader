@@ -61,7 +61,7 @@ export class PopupPage {
       By.id(ModifierType.SET_COOKIE_MODIFIER.id)
     );
     const cookieAttributesButton = await modifiersContainer.findElement(
-      By.name('cookie-attribute')
+      By.xpath(`//*[@data-field-name="cookie-attribute"]`)
     );
     await cookieAttributesButton.click();
     await delay(100);
@@ -99,7 +99,9 @@ export class PopupPage {
     }
     if (resourceTypes) {
       for (const type of resourceTypes) {
-        const resourceTypeButtons = await filtersContainer.findElements(By.name('resource-type'));
+        const resourceTypeButtons = await filtersContainer.findElements(
+          By.xpath(`//*[@data-field-name="resource-type"]`)
+        );
         await resourceTypeButtons[index].click();
         await delay(100);
         await this.testUtils.clickBy(By.xpath(`//*[@data-resource-type="${type}"]`));

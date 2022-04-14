@@ -90,13 +90,22 @@ button::-moz-focus-inner {
 }
 
 .data-table {
-  margin-bottom: 10px;
+  padding-top: 4px;
+  padding-bottom: 4px;
   width: calc(100% - 10px);
 }
 
+.data-table:not(:last-child) {
+  border-bottom-width: 2px;
+  border-bottom-style: solid;
+  border-bottom-color: var(--separator-color);
+}
+
 .data-table-title {
-  margin: 6px 0;
-  font-size: 16px;
+  margin: 2px 0;
+  font-size: 1rem;
+  text-decoration: underline;
+  font-style: italic;
 }
 
 .data-table-row-unchecked {
@@ -106,11 +115,6 @@ button::-moz-focus-inner {
 .data-table-row {
   display: flex;
   justify-content: start;
-}
-
-.data-table-title-row {
-  margin-top: 5px;
-  height: 40px;
 }
 
 .data-table-cell {

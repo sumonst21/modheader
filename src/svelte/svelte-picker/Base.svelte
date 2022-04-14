@@ -1,6 +1,5 @@
 <script>
   import { onMount, createEventDispatcher } from 'svelte';
-  import { rgb2hex } from './utils.js';
 
   let className = '';
   export { className as class };
@@ -16,15 +15,6 @@
     document.addEventListener('mousedown', killTouchEvents);
     setStartColor();
   });
-
-  export const setColor = (color) => {
-    if (typeof color !== 'string') {
-      color = rgb2hex(color);
-    }
-
-    startColor = color;
-    setStartColor(color);
-  };
 
   // DOM
   let colorSquarePicker;

@@ -2,7 +2,7 @@
   import IconButton from '@smui/icon-button';
   import Checkbox from '@smui/checkbox';
   import Menu from '@smui/menu';
-  import List, { Item, Separator, Text } from '@smui/list';
+  import List, { Item, Text } from '@smui/list';
   import {
     mdiPlus,
     mdiClose,
@@ -101,7 +101,7 @@
         on:click={toggleAll}
         disabled={filters.length === 0}
       />
-      <h3 class="data-table-title data-table-cell flex-grow">{FILTER_TYPES[filterType].label}</h3>
+      <div class="data-table-title data-table-cell flex-grow">{FILTER_TYPES[filterType].label}</div>
       <div class="data-table-cell">
         <IconButton
           aria-label="Expand"
@@ -127,7 +127,6 @@
               <MdiIcon class="more-menu-icon" size="24" icon={mdiTrashCanOutline} color="#666" />
               <Text>Clear all</Text>
             </Item>
-            <Separator nav />
             {#if filterType === FilterType.RESOURCE_TYPES}
               <Item on:SMUI:action={() => sort('type', 'asc')}>
                 <MdiIcon

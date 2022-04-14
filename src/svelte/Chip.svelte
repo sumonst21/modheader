@@ -1,11 +1,35 @@
+<script context="module">
+  import { mdiChevronDownCircle, mdiChevronRightCircle, mdiCloseCircle } from '@mdi/js';
+
+  const TrailingAction = {
+    TOGGLE: 'toggle',
+    CLOSE: 'close',
+    DROPDOWN: 'dropdown'
+  };
+
+  const TrailingActionConfigs = {
+    [TrailingAction.TOGGLE]: {
+      icon: mdiChevronRightCircle,
+      dispatchAction: 'click'
+    },
+    [TrailingAction.CLOSE]: {
+      icon: mdiCloseCircle,
+      dispatchAction: 'close'
+    },
+    [TrailingAction.DROPDOWN]: {
+      icon: mdiChevronDownCircle,
+      dispatchAction: 'click'
+    }
+  };
+</script>
+
 <script>
   import Ripple from '@smui/ripple';
   import MdiIcon from './MdiIcon.svelte';
-  import { mdiCloseCircle } from '@mdi/js';
   import { createEventDispatcher } from 'svelte';
 
   export let fieldName;
-  export let showCloseButton = true;
+  export let trailingAction = TrailingAction.TOGGLE;
   const dispatch = createEventDispatcher();
 </script>
 
@@ -25,10 +49,13 @@
       <span class="mdc-chip__text"><slot /></span>
     </span>
   </span>
-  {#if showCloseButton}
-    <button class="mdc-deprecated-chip-trailing-action" on:click={() => dispatch('close')}>
+  {#if trailingAction !== TrailingAction.NONE}
+    <button
+      class="mdc-deprecated-chip-trailing-action"
+      on:click={() => dispatch(TrailingActionConfigs[trailingAction].dispatchAction)}
+    >
       <span class="mdc-deprecated-chip-trailing-action__icon">
-        <MdiIcon icon={mdiCloseCircle} color="#888" size="18" />
+        <MdiIcon icon={TrailingActionConfigs[trailingAction].icon} color="#888" size="18" />
       </span>
     </button>
   {/if}

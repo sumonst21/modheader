@@ -30,6 +30,7 @@
   {#each resourceType as value}
     <Chip
       fieldName={resourceType}
+      trailingAction="close"
       on:close={() => {
         resourceType = lodashWithout(resourceType, value);
         dispatch('change');
@@ -38,11 +39,14 @@
       {KNOWN_RESOURCE_TYPES[value]}
     </Chip>
   {/each}
-  <Button name="resource-type" on:click={() => resourceTypeMenu.setOpen(true)}>
+  <Chip
+    fieldName="resource-type"
+    on:click={() => resourceTypeMenu.setOpen(true)}
+    trailingAction="dropdown"
+  >
     Resource type
-    <MdiIcon icon={mdiChevronDown} color="#888" size="16" />
-  </Button>
-  <MenuSurface bind:this={resourceTypeMenu}>
+  </Chip>
+  <MenuSurface bind:this={resourceTypeMenu} anchorCorner="BOTTOM_LEFT">
     <div>
       {#each Object.entries(KNOWN_RESOURCE_TYPES).filter(([value]) => !resourceType.includes(value)) as [value, label]}
         <Button

@@ -42,7 +42,6 @@
       <div class="regular-text">
         <Chip
           fieldName="tab-group"
-          showCloseButton={false}
           on:click={async () => {
             const tab = await getActiveTab();
             delete filter.groupId;
@@ -53,29 +52,26 @@
         <TabsList {tabs} />
       </div>
     {:catch error}
-      <Button on:click={dispatchRemove}>
+      <Chip on:click={dispatchRemove} on:close={dispatchRemove} trailingAction="close">
         Tab group no longer exists. Removed?
-        <MdiIcon size="24" icon={mdiClose} color="red" />
-      </Button>
+      </Chip>
     {/await}
   {:else if filter.windowId}
     {#await queryTabs({ windowId: filter.windowId }) then tabs}
       <div class="regular-text">
-        <Chip fieldName="window" showCloseButton={false} on:click={useCurrentTab}>Window</Chip>
+        <Chip fieldName="window" on:click={useCurrentTab}>Window</Chip>
         <TabsList {tabs} />
       </div>
     {:catch error}
-      <Button on:click={dispatchRemove}>
+      <Chip on:click={dispatchRemove} on:close={dispatchRemove} trailingAction="close">
         Window no longer exists. Removed?
-        <MdiIcon size="24" icon={mdiClose} color="red" />
-      </Button>
+      </Chip>
     {/await}
   {:else if filter.tabId}
     {#await getTab(filter.tabId) then tab}
       <div class="regular-text">
         <Chip
           fieldName="single-tab"
-          showCloseButton={false}
           on:click={() => {
             delete filter.tabId;
             if (tab.groupId && tab.groupId !== TAB_GROUP_ID_NONE) {
@@ -107,10 +103,9 @@
         {shortTitle(tab.title || tab.url || 'Unknown tab')}
       </div>
     {:catch error}
-      <Button on:click={dispatchRemove}>
+      <Chip on:click={dispatchRemove} on:close={dispatchRemove} trailingAction="close">
         Tab no longer exists. Removed?
-        <MdiIcon size="24" icon={mdiClose} color="red" />
-      </Button>
+      </Chip>
     {/await}
   {:else}
     <Button on:click={useCurrentTab}>By current tab</Button>

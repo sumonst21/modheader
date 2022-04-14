@@ -3,7 +3,6 @@
   import Snackbar, { Actions, Label as SnackbarLabel } from '@smui/snackbar';
   import IconButton from '@smui/icon-button';
   import Button from '@smui/button';
-  import { Separator } from '@smui/list';
   import { mdiClose } from '@mdi/js';
   import { onDestroy, onMount } from 'svelte';
   import lodashCloneDeep from 'lodash/cloneDeep';
@@ -49,7 +48,7 @@
 {#await init() then initResult}
   <Drawer />
 
-  <AppContent class="app-content">
+  <AppContent class="app-content" style="--separator-color: {$selectedProfile.backgroundColor};">
     <div class:disabled={$isPaused} class="main-content">
       {#if $selectedProfile.headers.length > 0}
         <Modifiers
@@ -76,7 +75,6 @@
         />
       {/if}
       {#if $selectedProfile.tabFilters.length || $selectedProfile.urlFilters.length || $selectedProfile.excludeUrlFilters.length || $selectedProfile.resourceFilters.length}
-        <Separator />
         <div class="filter-background">
           <Filters
             id="tab-filter"

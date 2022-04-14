@@ -50,7 +50,7 @@
   aria-describedby="dialog-content"
   on:MDCDialog:closed={saveConfiguration}
 >
-  <Title id="dialog-title">{modifierHandler.title} - Autocomplete definition</Title>
+  <Title id="dialog-title">Customize autocomplete</Title>
   <Content id="dialog-content">
     <div class="dialog-content">
       <div>

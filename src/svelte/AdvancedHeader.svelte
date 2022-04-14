@@ -16,6 +16,7 @@
   <div class="advanced-header-row">
     <Chip
       fieldName="append-mode"
+      trailingAction="close"
       on:click={() => {
         if (modifier.appendMode === AppendMode.APPEND) {
           modifier.appendMode = AppendMode.COMMA_SEPARATED_APPEND;

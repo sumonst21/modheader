@@ -12,7 +12,6 @@
   export let startColor;
   let className = '';
   export { className as class };
-  export const setColor = (color) => base && base.setColor(color);
 
   let isFirstChange = true;
   const handleChange = ({ detail }) => {
@@ -25,4 +24,4 @@
   };
 </script>
 
-<Base bind:this={base} {className} {startColor} on:colorchange={handleChange} />
+<Base bind:this={base} class={className} {startColor} on:colorchange={handleChange} />
