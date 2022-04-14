@@ -40,12 +40,10 @@
   };
 
   export let id;
-  export let profileIndex;
   export let filters;
   export let filterType;
   let sortMenu;
   let clazz;
-  let resourceTypeMenuLocation;
   export { clazz as class };
 
   let allChecked;
@@ -74,7 +72,7 @@
   }
 
   function refreshFilters() {
-    updateProfile({ [FILTER_TYPES[filterType].profileFieldName]: filters }, profileIndex);
+    updateProfile({ [FILTER_TYPES[filterType].profileFieldName]: filters });
   }
 
   const refreshFiltersDebounce = lodashDebounce(
@@ -209,7 +207,7 @@
             placeholder=".*://.*.google.com/.*"
           />
         {:else if filterType === FilterType.RESOURCE_TYPES}
-          <ResourceTypeMenu bind:resourceType={filter.resourceType} {resourceTypeMenuLocation} />
+          <ResourceTypeMenu bind:resourceType={filter.resourceType} />
         {:else if filterType === FilterType.TABS}
           <TabFilter
             {filter}

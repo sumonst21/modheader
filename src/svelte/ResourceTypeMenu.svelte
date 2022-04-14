@@ -40,7 +40,7 @@
   {/each}
   <Button name="resource-type" on:click={() => resourceTypeMenu.setOpen(true)}>
     Resource type
-    <MdiIcon icon={mdiChevronDown} color="#888" size="24" />
+    <MdiIcon icon={mdiChevronDown} color="#888" size="16" />
   </Button>
   <MenuSurface bind:this={resourceTypeMenu}>
     <div>

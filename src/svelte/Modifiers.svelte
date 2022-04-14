@@ -155,7 +155,6 @@
         title={modifierHandler.title}
         nameLabel={modifierHandler.nameLabel}
         valueLabel={modifierHandler.valueLabel}
-        extraMoreMenuItems={modifierHandler.extraMoreMenuItems}
         selectedHeaderIndex={headerIndex}
         selectedHeader={header}
         on:copy={(e) => copy(e.detail)}

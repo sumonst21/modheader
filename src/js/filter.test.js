@@ -1,7 +1,8 @@
 import { jest } from '@jest/globals';
 
 const mockTabs = {
-  getActiveTab: jest.fn()
+  getActiveTab: jest.fn(),
+  lookupTabInfo: jest.fn()
 };
 jest.doMock('./tabs.js', () => mockTabs);
 
@@ -15,6 +16,12 @@ const {
 } = require('./filter.js');
 
 describe('filter', () => {
+  const TEST_TAB_ID = 2;
+
+  beforeEach(() => {
+    mockTabs.lookupTabInfo.mockReturnValue(undefined);
+  });
+
   afterEach(() => {
     jest.resetAllMocks();
   });
@@ -177,10 +184,12 @@ describe('filter', () => {
       passFilters({
         url: 'https://www.google.com/search',
         type: 'main_frame',
+        tabId: TEST_TAB_ID,
         profile: {
           urlFilters: filters,
           excludeUrlFilters: [],
-          resourceFilters: []
+          resourceFilters: [],
+          tabFilters: []
         }
       })
     ).toEqual(true);
@@ -188,10 +197,12 @@ describe('filter', () => {
       passFilters({
         url: 'https://www.bing.com/search',
         type: 'main_frame',
+        tabId: TEST_TAB_ID,
         profile: {
           urlFilters: filters,
           excludeUrlFilters: [],
-          resourceFilters: []
+          resourceFilters: [],
+          tabFilters: []
         }
       })
     ).toEqual(false);
@@ -203,10 +214,12 @@ describe('filter', () => {
       passFilters({
         url: 'https://www.google.com/search',
         type: 'main_frame',
+        tabId: TEST_TAB_ID,
         profile: {
           urlFilters: [],
           excludeUrlFilters: filters,
-          resourceFilters: []
+          resourceFilters: [],
+          tabFilters: []
         }
       })
     ).toEqual(false);
@@ -214,10 +227,12 @@ describe('filter', () => {
       passFilters({
         url: 'https://www.bing.com/search',
         type: 'main_frame',
+        tabId: TEST_TAB_ID,
         profile: {
           urlFilters: [],
           excludeUrlFilters: filters,
-          resourceFilters: []
+          resourceFilters: [],
+          tabFilters: []
         }
       })
     ).toEqual(true);
@@ -228,10 +243,12 @@ describe('filter', () => {
       passFilters({
         url: 'https://www.google.com/search',
         type: 'main_frame',
+        tabId: TEST_TAB_ID,
         profile: {
           urlFilters: optimizeUrlFilters([{ enabled: true, urlRegex: '.*.google.com.*' }]),
           excludeUrlFilters: optimizeUrlFilters([{ enabled: true, urlRegex: '.*.google.com.*' }]),
-          resourceFilters: []
+          resourceFilters: [],
+          tabFilters: []
         }
       })
     ).toEqual(false);
@@ -243,10 +260,12 @@ describe('filter', () => {
       passFilters({
         url: 'https://www.google.com/search',
         type: 'main_frame',
+        tabId: TEST_TAB_ID,
         profile: {
           urlFilters: [],
           excludeUrlFilters: [],
-          resourceFilters: filters
+          resourceFilters: filters,
+          tabFilters: []
         }
       })
     ).toEqual(true);
@@ -254,10 +273,12 @@ describe('filter', () => {
       passFilters({
         url: 'https://www.google.com/search',
         type: 'sub_frame',
+        tabId: TEST_TAB_ID,
         profile: {
           urlFilters: [],
           excludeUrlFilters: [],
-          resourceFilters: filters
+          resourceFilters: filters,
+          tabFilters: []
         }
       })
     ).toEqual(false);

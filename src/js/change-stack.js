@@ -42,8 +42,8 @@ export function stopIgnoringChange() {
 
 export function setChangeField(name, value) {
   if (!ignoringChangeStack) {
-    const valueCopy = lodashCloneDeep(value);
     if (changes.length === 0 || !lodashIsEqual(lodashLast(changes)[name], value)) {
+      const valueCopy = lodashCloneDeep(value);
       changes.push({ [name]: valueCopy });
       updateCanUndo();
     }

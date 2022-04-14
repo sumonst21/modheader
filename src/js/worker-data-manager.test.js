@@ -32,7 +32,8 @@ const EMPTY_PROFILE = {
   urlReplacements: [],
   urlFilters: [],
   excludeUrlFilters: [],
-  resourceFilters: []
+  resourceFilters: [],
+  tabFilters: []
 };
 
 describe('worker-data-manager', () => {
@@ -102,7 +103,7 @@ describe('worker-data-manager', () => {
               name: 'Foo',
               value: 'Bar'
             }
-          ],
+          ]
         }
       ],
       selectedActiveProfile: {
@@ -112,7 +113,7 @@ describe('worker-data-manager', () => {
             name: 'Foo',
             value: 'Bar'
           }
-        ],
+        ]
       }
     });
   });
@@ -121,18 +122,18 @@ describe('worker-data-manager', () => {
     // Profile 1 should be dropped because it is not selected and not always on.
     const profile1 = {
       ...EMPTY_PROFILE,
-      title: 'Profile 1',
+      title: 'Profile 1'
     };
     // Profile 2 should be kept because it is the selected profile.
     const profile2 = {
       ...EMPTY_PROFILE,
-      title: 'Profile 2',
+      title: 'Profile 2'
     };
     // Profile 3 should be kept because it is always on, but it is not the selected profile.
     const profile3 = {
       ...EMPTY_PROFILE,
       alwaysOn: true,
-      title: 'Profile 3',
+      title: 'Profile 3'
     };
     mockStorageLoader.initStorage.mockResolvedValue({
       profiles: [profile1, profile2, profile3],
@@ -155,11 +156,11 @@ describe('worker-data-manager', () => {
   test('Save to cloud on data change - profiles changed', async () => {
     const profile1 = {
       ...EMPTY_PROFILE,
-      title: 'Profile 1',
+      title: 'Profile 1'
     };
     const profile2 = {
       ...EMPTY_PROFILE,
-      title: 'Profile 2',
+      title: 'Profile 2'
     };
     mockStorageLoader.initStorage.mockResolvedValue({
       profiles: [profile1],
@@ -198,11 +199,11 @@ describe('worker-data-manager', () => {
   test('Save to cloud on data change - profiles not saved to cloud if already in sync', async () => {
     const profile1 = {
       ...EMPTY_PROFILE,
-      title: 'Profile 1',
+      title: 'Profile 1'
     };
     const profile2 = {
       ...EMPTY_PROFILE,
-      title: 'Profile 2',
+      title: 'Profile 2'
     };
     mockStorageLoader.initStorage.mockResolvedValue({
       profiles: [profile1],
@@ -241,11 +242,11 @@ describe('worker-data-manager', () => {
   test('Save to cloud on data change - selection changed not saved to cloud', async () => {
     const profile1 = {
       ...EMPTY_PROFILE,
-      title: 'Profile 1',
+      title: 'Profile 1'
     };
     const profile2 = {
       ...EMPTY_PROFILE,
-      title: 'Profile 2',
+      title: 'Profile 2'
     };
     mockStorageLoader.initStorage.mockResolvedValue({
       profiles: [profile1, profile2],

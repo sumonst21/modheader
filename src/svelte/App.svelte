@@ -61,21 +61,18 @@
         <Modifiers
           modifierType={ModifierType.RESPONSE_HEADER}
           headers={lodashCloneDeep($selectedProfile.respHeaders)}
-          profile={selectedProfile}
         />
       {/if}
       {#if $selectedProfile.setCookieHeaders.length > 0}
         <Modifiers
           modifierType={ModifierType.SET_COOKIE_MODIFIER}
           headers={lodashCloneDeep($selectedProfile.setCookieHeaders)}
-          profile={selectedProfile}
         />
       {/if}
       {#if $selectedProfile.urlReplacements.length > 0}
         <Modifiers
           modifierType={ModifierType.URL_REPLACEMENT}
           headers={lodashCloneDeep($selectedProfile.urlReplacements)}
-          profile={$selectedProfile}
         />
       {/if}
       {#if $selectedProfile.tabFilters.length || $selectedProfile.urlFilters.length || $selectedProfile.excludeUrlFilters.length || $selectedProfile.resourceFilters.length}

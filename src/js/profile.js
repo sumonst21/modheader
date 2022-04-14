@@ -10,6 +10,7 @@ import { FilterType } from './filter.js';
 import { lightOrDark, generateBackgroundColor, generateTextColor } from './color.js';
 import { profiles, commitData, selectedProfileIndex, isInitialized } from './datasource.js';
 import { showMessage } from './toast.js';
+import lodashClone from 'lodash/clone.js';
 
 export const PROFILE_VERSION = 2;
 let latestProfiles = [];
@@ -168,13 +169,23 @@ function createProfile() {
   return profile;
 }
 
-export function updateProfile(change, index = -1) {
-  if (index === -1) {
-    index = latestSelectedProfileIndex;
+export function updateProfile(change) {
+  const index = latestSelectedProfileIndex;
+  const latestProfile = latestProfiles[index];
+  // Detect if there is indeed a change. If the change is identical, then no need to reapply the change.
+  let hasChanged = false;
+  for (const [key, value] of Object.entries(change)) {
+    if (!lodashIsEqual(latestProfile[key], value)) {
+      hasChanged = true;
+      break;
+    }
   }
-  const copy = lodashCloneDeep(latestProfiles[index]);
-  Object.assign(copy, change);
-  if (!lodashIsEqual(latestProfiles[index], copy)) {
+  if (hasChanged) {
+    // Only deep clone the changes to minimize performance impact.
+    const copy = lodashClone(latestProfile);
+    for (const [key, value] of Object.entries(change)) {
+      copy[key] = lodashCloneDeep(value);
+    }
     latestProfiles[index] = copy;
     commitData({ newProfiles: latestProfiles, newIndex: index });
   }

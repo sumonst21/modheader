@@ -70,9 +70,7 @@
       </Button>
     {/await}
   {:else if filter.tabId}
-    {#await getTab(filter.tabId)}
-      <div>Loading</div>
-    {:then tab}
+    {#await getTab(filter.tabId) then tab}
       <div class="regular-text">
         <Chip
           showCloseButton={false}

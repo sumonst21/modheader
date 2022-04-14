@@ -11,11 +11,11 @@
   const dispatch = createEventDispatcher();
   export let name;
   // ID to the datalist of items the user can select from
-  export let list;
+  export let list = undefined;
   // the text displayed when no option is selected
-  export let placeholder;
+  export let placeholder = undefined;
   export let value;
-  export let selectAllOnFocus;
+  export let selectAllOnFocus = false;
   let textField;
 </script>
 

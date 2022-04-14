@@ -2,8 +2,8 @@
   export let size;
   export let icon;
   export let color;
-  export let alt;
-  let clazz;
+  export let alt = '';
+  let clazz = '';
   export { clazz as class };
 </script>
 
