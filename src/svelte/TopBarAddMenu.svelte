@@ -1,5 +1,5 @@
 <script>
-  import Menu from '@smui/menu';
+  import MenuSurface from '@smui/menu-surface';
   import List, { Item } from '@smui/list';
   import IconButton from '@smui/icon-button';
   import { mdiPlus } from '@mdi/js';
@@ -7,6 +7,12 @@
   import { selectedProfile, updateProfile, buttonColor } from '../js/profile.js';
   import { addHeader } from '../js/header.js';
   import { addUrlRedirect } from '../js/url-redirect.js';
+  import { addUrlFilter, addResourceFilter, addTabFilter } from '../js/filter.js';
+
+  async function updateProfileAndClose(profile) {
+    await updateProfile(profile);
+    addMenu.setOpen(false);
+  }
 
   let addMenu;
 </script>
@@ -15,50 +21,98 @@
   <IconButton dense on:click={() => addMenu.setOpen(true)} title="Add" id="add-button">
     <MdiIcon size="24" icon={mdiPlus} color={$buttonColor} />
   </IconButton>
-  <Menu bind:this={addMenu} class="add-menu">
-    <List>
-      <Item
-        id="add-request-header"
-        on:SMUI:action={() =>
-          updateProfile({
-            headers: addHeader($selectedProfile.headers)
-          })}
-      >
-        Request header
-      </Item>
-      <Item
-        id="add-response-header"
-        on:SMUI:action={() =>
-          updateProfile({
-            respHeaders: addHeader($selectedProfile.respHeaders)
-          })}
-      >
-        Response header
-      </Item>
-      <Item
-        id="add-set-cookie-modifier"
-        on:SMUI:action={() =>
-          updateProfile({
-            setCookieHeaders: addHeader($selectedProfile.setCookieHeaders)
-          })}
-      >
-        Set Cookie Modifier
-      </Item>
-      <Item
-        id="add-url-replacement"
-        on:SMUI:action={async () =>
-          updateProfile({
-            urlReplacements: await addUrlRedirect($selectedProfile.urlReplacements)
-          })}
-      >
-        URL redirect
-      </Item>
-    </List>
-  </Menu>
+  <MenuSurface
+    bind:this={addMenu}
+    class="add-menu"
+    quickOpen={true}
+    anchor={false}
+    anchorMargin={{ top: 48, right: 0, bottom: 0, left: 100 }}
+  >
+    <div class="add-menu-container">
+      <List>
+        <Item
+          id="add-request-header"
+          on:SMUI:action={() =>
+            updateProfileAndClose({
+              headers: addHeader($selectedProfile.headers)
+            })}
+        >
+          Request header
+        </Item>
+        <Item
+          id="add-response-header"
+          on:SMUI:action={() =>
+            updateProfileAndClose({
+              respHeaders: addHeader($selectedProfile.respHeaders)
+            })}
+        >
+          Response header
+        </Item>
+        <Item
+          id="add-set-cookie-modifier"
+          on:SMUI:action={() =>
+            updateProfileAndClose({
+              setCookieHeaders: addHeader($selectedProfile.setCookieHeaders)
+            })}
+        >
+          Set Cookie Modifier
+        </Item>
+        <Item
+          id="add-url-replacement"
+          on:SMUI:action={async () =>
+            updateProfileAndClose({
+              urlReplacements: await addUrlRedirect($selectedProfile.urlReplacements)
+            })}
+        >
+          URL redirect
+        </Item>
+      </List>
+      <div class="grid-border" />
+      <List>
+        <Item
+          id="add-tab-filter"
+          on:SMUI:action={async () =>
+            updateProfileAndClose({
+              tabFilters: await addTabFilter($selectedProfile.tabFilters)
+            })}>Tab Filter</Item
+        >
+        <Item
+          id="add-url-filter"
+          on:SMUI:action={async () =>
+            updateProfileAndClose({
+              urlFilters: await addUrlFilter($selectedProfile.urlFilters)
+            })}>URL Filter</Item
+        >
+        <Item
+          id="add-exclude-url-filter"
+          on:SMUI:action={async () =>
+            updateProfileAndClose({
+              excludeUrlFilters: await addUrlFilter($selectedProfile.excludeUrlFilters)
+            })}>Exclude URL Filter</Item
+        >
+        <Item
+          id="add-resource-filter"
+          on:SMUI:action={async () =>
+            updateProfileAndClose({
+              resourceFilters: await addResourceFilter($selectedProfile.resourceFilters)
+            })}>Resource Filter</Item
+        >
+      </List>
+    </div>
+  </MenuSurface>
 </div>
 
 <style module>
   .add-menu {
-    width: 250px;
+    width: 450px;
+  }
+
+  .add-menu-container {
+    display: grid;
+    grid-template-columns: auto 1px auto;
+  }
+
+  .grid-border {
+    border-left: 1px solid #888;
   }
 </style>

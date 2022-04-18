@@ -120,7 +120,7 @@ export class PopupPage {
   }
 
   async addFilter(filterType) {
-    await this.testUtils.clickBy(By.id('filter-button'));
+    await this.testUtils.clickBy(By.id('add-button'));
     await this.testUtils.clickBy(By.id(`add-${filterType.id}`));
   }
 }

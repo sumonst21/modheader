@@ -5,7 +5,6 @@
   import Button from '@smui/button';
   import { mdiShare, mdiUndo } from '@mdi/js';
   import TopBarAddMenu from './TopBarAddMenu.svelte';
-  import TopBarFilterMenu from './TopBarFilterMenu.svelte';
   import TopBarPauseButton from './TopBarPauseButton.svelte';
   import TopBarMoreMenu from './TopBarMoreMenu.svelte';
   import TopBarSignInButton from './TopBarSignInButton.svelte';
@@ -69,7 +68,6 @@
         </IconButton>
       {/if}
       <TopBarAddMenu />
-      <TopBarFilterMenu />
       <TopBarPauseButton />
       <IconButton
         dense
