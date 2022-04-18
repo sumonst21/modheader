@@ -48,7 +48,7 @@
             delete filter.groupId;
             filter.windowId = tab.windowId;
             dispatchChange();
-          }}>Tab group</Chip
+          }}>Filter by: tab group</Chip
         >
         <TabsList {tabs} />
       </div>
@@ -63,7 +63,7 @@
         <Chip
           fieldName="window"
           tooltip="Enable ModHeader only on the selected window. Click to change behavior."
-          on:click={useCurrentTab}>Window</Chip
+          on:click={useCurrentTab}>Filter by: window</Chip
         >
         <TabsList {tabs} />
       </div>
@@ -88,7 +88,7 @@
             dispatchChange();
           }}
         >
-          Single tab
+          Filter by: single tab
         </Chip>
         {#if tab.favIconUrl}
           <img

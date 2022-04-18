@@ -139,7 +139,7 @@
         dispatchChange();
       }}
     >
-      {modifier.attributeOverride ? 'Override attributes' : 'Retain existing attributes'}
+      Override mode: {modifier.attributeOverride ? 'override attributes' : 'retain attributes'}
     </Chip>
   </div>
 

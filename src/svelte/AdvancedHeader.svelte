@@ -23,7 +23,7 @@
         on:click={() => {
           modifier.sendEmptyHeader = !modifier.sendEmptyHeader;
           dispatchChange();
-        }}>{modifier.sendEmptyHeader ? 'Send empty header' : 'Remove header if found'}</Chip
+        }}>Empty header: {modifier.sendEmptyHeader ? 'send empty value' : 'remove'}</Chip
       >
     {/if}
     {#if modifier.appendMode}

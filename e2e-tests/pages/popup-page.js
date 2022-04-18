@@ -10,6 +10,9 @@ export const ModifierType = {
   RESPONSE_HEADER: {
     id: 'response-header'
   },
+  COOKIE_MODIFIER: {
+    id: 'cookie-modifier'
+  },
   SET_COOKIE_MODIFIER: {
     id: 'set-cookie-modifier'
   },

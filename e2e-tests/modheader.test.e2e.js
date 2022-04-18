@@ -1,6 +1,7 @@
 import chrome from 'selenium-webdriver/chrome';
 import { Builder, Key } from 'selenium-webdriver';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
+import cookie from 'cookie';
 import delay from 'delay';
 import 'chromedriver';
 import { startServer, stopServer, getHeaders, getTestServerOrigin } from './utils/test-server.js';
@@ -123,6 +124,36 @@ describe('e2e test', () => {
       const headers = await getHeaders(driver);
       expect(headers.responseHeaders.test).toEqual('hello world');
       expect(headers.responseHeaders.test2).toEqual('hello world 2');
+    });
+
+    test('Add cookie modifier', async () => {
+      await driver.get(popupUrl);
+
+      const popupPage = new PopupPage(driver);
+      await popupPage.addModifier(ModifierType.COOKIE_MODIFIER);
+      await popupPage.setModifier({
+        modifierType: ModifierType.COOKIE_MODIFIER,
+        name: 'test',
+        value: 'test-cookie-1'
+      });
+      await popupPage.addModifier(ModifierType.COOKIE_MODIFIER);
+      await popupPage.setModifier({
+        modifierType: ModifierType.COOKIE_MODIFIER,
+        index: 1,
+        name: 'test2',
+        value: 'test-cookie-2'
+      });
+
+      await compareScreenshot('cookies');
+
+      const headers = await getHeaders(driver);
+      const parsedRequestCookie = cookie.parse(headers.requestHeaders.cookie);
+      expect(parsedRequestCookie).toEqual(
+        expect.objectContaining({
+          test: 'test-cookie-1',
+          test2: 'test-cookie-2'
+        })
+      );
     });
 
     test('Add set cookie modifier', async () => {
