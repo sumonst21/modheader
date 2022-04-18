@@ -47,7 +47,7 @@ function setupHeaderModListener() {
   } else {
     removeBeforeRequestListener(modifyRequestHandler_);
   }
-  if (activeProfiles.find((p) => p.headers.length > 0)) {
+  if (activeProfiles.find((p) => p.headers.length > 0 || p.cookieHeaders.length > 0)) {
     addBeforeSendHeadersListener(modifyRequestHeaderHandler_, ALL_URLS_FILTER);
   } else {
     removeBeforeSendHeadersListener(modifyRequestHeaderHandler_);

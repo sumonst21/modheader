@@ -53,25 +53,31 @@
       {#if $selectedProfile.headers.length > 0}
         <Modifiers
           modifierType={ModifierType.REQUEST_HEADER}
-          headers={lodashCloneDeep($selectedProfile.headers)}
+          modifiers={lodashCloneDeep($selectedProfile.headers)}
         />
       {/if}
       {#if $selectedProfile.respHeaders.length > 0}
         <Modifiers
           modifierType={ModifierType.RESPONSE_HEADER}
-          headers={lodashCloneDeep($selectedProfile.respHeaders)}
+          modifiers={lodashCloneDeep($selectedProfile.respHeaders)}
+        />
+      {/if}
+      {#if $selectedProfile.cookieHeaders.length > 0}
+        <Modifiers
+          modifierType={ModifierType.COOKIE_MODIFIER}
+          modifiers={lodashCloneDeep($selectedProfile.cookieHeaders)}
         />
       {/if}
       {#if $selectedProfile.setCookieHeaders.length > 0}
         <Modifiers
           modifierType={ModifierType.SET_COOKIE_MODIFIER}
-          headers={lodashCloneDeep($selectedProfile.setCookieHeaders)}
+          modifiers={lodashCloneDeep($selectedProfile.setCookieHeaders)}
         />
       {/if}
       {#if $selectedProfile.urlReplacements.length > 0}
         <Modifiers
           modifierType={ModifierType.URL_REPLACEMENT}
-          headers={lodashCloneDeep($selectedProfile.urlReplacements)}
+          modifiers={lodashCloneDeep($selectedProfile.urlReplacements)}
         />
       {/if}
       {#if $selectedProfile.tabFilters.length || $selectedProfile.urlFilters.length || $selectedProfile.excludeUrlFilters.length || $selectedProfile.resourceFilters.length}

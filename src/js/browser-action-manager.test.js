@@ -46,6 +46,7 @@ describe('browser-action-manager', () => {
       {
         headers: [{ name: 'foo', value: 'bar' }],
         respHeaders: [],
+        cookieHeaders: [],
         setCookieHeaders: [],
         urlReplacements: []
       }

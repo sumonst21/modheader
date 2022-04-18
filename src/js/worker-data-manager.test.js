@@ -28,6 +28,7 @@ MockDate.set(10000000);
 const EMPTY_PROFILE = {
   headers: [],
   respHeaders: [],
+  cookieHeaders: [],
   setCookieHeaders: [],
   urlReplacements: [],
   urlFilters: [],

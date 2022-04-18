@@ -57,6 +57,7 @@ function reloadActiveProfiles(chromeLocal) {
       const profile = lodashCloneDeep(value);
       profile.headers = filterEnabledMods(profile.headers);
       profile.respHeaders = filterEnabledMods(profile.respHeaders);
+      profile.cookieHeaders = filterEnabledMods(profile.cookieHeaders);
       profile.setCookieHeaders = filterEnabledMods(profile.setCookieHeaders);
       profile.urlReplacements = optimizeUrlRedirects(profile.urlReplacements);
       profile.urlFilters = optimizeUrlFilters(profile.urlFilters);

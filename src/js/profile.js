@@ -101,6 +101,9 @@ function upgradeFromProfileVersion1({ profile, index }) {
   if (!profile.respHeaders || !lodashIsArray(profile.respHeaders)) {
     profile.respHeaders = [];
   }
+  if (!profile.cookieHeaders || !lodashIsArray(profile.cookieHeaders)) {
+    profile.cookieHeaders = [];
+  }
   if (!profile.setCookieHeaders || !lodashIsArray(profile.setCookieHeaders)) {
     profile.setCookieHeaders = [];
   }
@@ -171,6 +174,7 @@ export function createProfile() {
     headers: [createHeader()],
     respHeaders: [],
     urlReplacements: [],
+    cookieHeaders: [],
     setCookieHeaders: [],
     urlFilters: [],
     excludeUrlFilters: [],

@@ -669,6 +669,245 @@ describe('modifier', () => {
     });
   });
 
+  describe('Modify cookie headers', () => {
+    test('Modify cookie header - Override value', () => {
+      const chromeLocal = {};
+      const activeProfiles = [
+        {
+          ...EMPTY_PROFILE,
+          cookieHeaders: [
+            {
+              name: 'foo',
+              value: 'Test'
+            }
+          ]
+        }
+      ];
+      const details = {
+        url: 'https://modheader.com/',
+        requestHeaders: [
+          {
+            name: 'cookie',
+            value: 'foo=Original'
+          }
+        ]
+      };
+      const actual = modifyRequestHeaders({ chromeLocal, activeProfiles, details });
+
+      expect(actual).toEqual({
+        requestHeaders: [
+          {
+            name: 'cookie',
+            value: 'foo=Test'
+          }
+        ]
+      });
+    });
+
+    test('Modify cookie header - Override value previously created by request headers', () => {
+      const chromeLocal = {};
+      const activeProfiles = [
+        {
+          ...EMPTY_PROFILE,
+          headers: [{ name: 'cookie', value: 'foo=Original' }],
+          cookieHeaders: [
+            {
+              name: 'foo',
+              value: 'Test'
+            }
+          ]
+        }
+      ];
+      const details = {
+        url: 'https://modheader.com/',
+        requestHeaders: []
+      };
+      const actual = modifyRequestHeaders({ chromeLocal, activeProfiles, details });
+
+      expect(actual).toEqual({
+        requestHeaders: [
+          {
+            name: 'cookie',
+            value: 'foo=Test'
+          }
+        ]
+      });
+    });
+
+    test('Modify cookie header - Add new header', () => {
+      const chromeLocal = {};
+      const activeProfiles = [
+        {
+          ...EMPTY_PROFILE,
+          cookieHeaders: [
+            {
+              name: 'foo',
+              value: 'Test'
+            }
+          ]
+        }
+      ];
+      const details = {
+        url: 'https://modheader.com/',
+        requestHeaders: []
+      };
+      const actual = modifyRequestHeaders({ chromeLocal, activeProfiles, details });
+
+      expect(actual).toEqual({
+        requestHeaders: [
+          {
+            name: 'cookie',
+            value: 'foo=Test'
+          }
+        ]
+      });
+    });
+
+    test('Modify cookie header - multiple cookies', () => {
+      const chromeLocal = {};
+      const activeProfiles = [
+        {
+          ...EMPTY_PROFILE,
+          cookieHeaders: [
+            {
+              name: 'foo',
+              value: 'Test'
+            },
+            {
+              name: 'foo2',
+              value: 'Test2'
+            },
+            {
+              name: 'foo3',
+              value: 'Test3'
+            }
+          ]
+        }
+      ];
+      const details = {
+        url: 'https://modheader.com/',
+        requestHeaders: [
+          {
+            name: 'cookie',
+            value: 'foo=Original'
+          }
+        ]
+      };
+      const actual = modifyRequestHeaders({ chromeLocal, activeProfiles, details });
+
+      expect(actual).toEqual({
+        requestHeaders: [
+          {
+            name: 'cookie',
+            value: 'foo=Test; foo2=Test2; foo3=Test3'
+          }
+        ]
+      });
+    });
+
+    test('Modify cookie header - Remove header', () => {
+      const chromeLocal = {};
+      const activeProfiles = [
+        {
+          ...EMPTY_PROFILE,
+          cookieHeaders: [
+            {
+              name: 'foo',
+              value: ''
+            }
+          ]
+        }
+      ];
+      const details = {
+        url: 'https://modheader.com/',
+        requestHeaders: [
+          {
+            name: 'cookie',
+            value: 'foo=Original'
+          }
+        ]
+      };
+      const actual = modifyRequestHeaders({ chromeLocal, activeProfiles, details });
+
+      expect(actual).toEqual({
+        requestHeaders: []
+      });
+    });
+
+    test('Modify cookie header - Multiple profiles', () => {
+      const chromeLocal = {};
+      const activeProfiles = [
+        {
+          ...EMPTY_PROFILE,
+          cookieHeaders: [
+            {
+              name: 'foo',
+              value: 'Profile1'
+            }
+          ]
+        },
+        // Last profile modification wins
+        {
+          ...EMPTY_PROFILE,
+          cookieHeaders: [
+            {
+              name: 'foo',
+              value: 'Profile2'
+            }
+          ]
+        }
+      ];
+      const details = {
+        url: 'https://modheader.com/',
+        requestHeaders: [
+          {
+            name: 'cookie',
+            value: 'foo=Original'
+          }
+        ]
+      };
+      const actual = modifyRequestHeaders({ chromeLocal, activeProfiles, details });
+
+      expect(actual).toEqual({
+        requestHeaders: [
+          {
+            name: 'cookie',
+            value: 'foo=Profile2'
+          }
+        ]
+      });
+    });
+
+    test('Modify cookie header - No modifications', () => {
+      const chromeLocal = {};
+      const activeProfiles = [
+        {
+          ...EMPTY_PROFILE,
+          cookieHeaders: []
+        }
+      ];
+      const details = {
+        url: 'https://modheader.com/',
+        requestHeaders: [
+          {
+            name: 'cookie',
+            value: 'foo=Original'
+          }
+        ]
+      };
+      const actual = modifyRequestHeaders({ chromeLocal, activeProfiles, details });
+
+      expect(actual).toEqual({
+        requestHeaders: [
+          {
+            name: 'cookie',
+            value: 'foo=Original'
+          }
+        ]
+      });
+    });
+  });
+
   describe('Modify set cookie headers', () => {
     test('Modify set cookie header - Override value without changing attribute', () => {
       const chromeLocal = {};

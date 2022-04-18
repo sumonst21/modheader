@@ -84,6 +84,38 @@ function modifyHeader(url, currentProfile, source, dest) {
   }
 }
 
+function modifyCookie(url, currentProfile, source, dest) {
+  if (!source || !source.length) {
+    return;
+  }
+  const existingCookie = dest.find((header) => header.name.toLowerCase() === 'cookie');
+  const parsedCookie = cookie.parse(existingCookie ? existingCookie.value : '');
+  for (const cookieHeader of source) {
+    if (!cookieHeader.value) {
+      if (parsedCookie[cookieHeader.name] !== undefined && !cookieHeader.sendEmptyHeader) {
+        delete parsedCookie[cookieHeader.name];
+        continue;
+      }
+    }
+    parsedCookie[cookieHeader.name] = cookieHeader.value;
+  }
+  const finalCookieHeader = Object.entries(parsedCookie)
+    .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
+    .join('; ');
+  if (existingCookie) {
+    existingCookie.value = finalCookieHeader;
+    if (!finalCookieHeader) {
+      existingCookie.needRemoval = true;
+    }
+  } else {
+    const entry = { name: 'cookie', value: finalCookieHeader };
+    if (!finalCookieHeader) {
+      entry.needRemoval = true;
+    }
+    dest.push(entry);
+  }
+}
+
 function modifySetCookie(url, currentProfile, source, dest) {
   if (!source || !source.length) {
     return;
@@ -133,6 +165,12 @@ export function modifyRequestHeaders({ chromeLocal, activeProfiles, details }) {
         })
       ) {
         modifyHeader(details.url, currentProfile, currentProfile.headers, details.requestHeaders);
+        modifyCookie(
+          details.url,
+          currentProfile,
+          currentProfile.cookieHeaders,
+          details.requestHeaders
+        );
         details.requestHeaders = details.requestHeaders.filter((entry) => !entry.needRemoval);
       }
     }

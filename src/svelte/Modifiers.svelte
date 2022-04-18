@@ -13,39 +13,39 @@
   import { MODIFIER_TYPES } from '../js/modifier-handler.js';
 
   export let modifierType;
-  export let headers;
+  export let modifiers;
   let allChecked;
   let allUnchecked;
 
-  function copy(headerIndex) {
-    headers = [
-      ...headers.slice(0, headerIndex),
-      lodashClone(headers[headerIndex]),
-      ...headers.slice(headerIndex)
+  function copy(index) {
+    modifiers = [
+      ...modifiers.slice(0, index),
+      lodashClone(modifiers[index]),
+      ...modifiers.slice(index)
     ];
-    refreshHeaders();
+    refreshModifiers();
   }
 
-  function refreshHeaders() {
-    MODIFIER_TYPES[modifierType].refreshHandler(headers);
-    allChecked = headers.every((h) => h.enabled);
-    allUnchecked = headers.every((h) => !h.enabled);
+  function refreshModifiers() {
+    MODIFIER_TYPES[modifierType].refreshHandler(modifiers);
+    allChecked = modifiers.every((h) => h.enabled);
+    allUnchecked = modifiers.every((h) => !h.enabled);
   }
 
   function toggleAll() {
     if (!allChecked) {
-      headers.forEach((h) => (h.enabled = true));
+      modifiers.forEach((h) => (h.enabled = true));
     } else {
-      headers.forEach((h) => (h.enabled = false));
+      modifiers.forEach((h) => (h.enabled = false));
     }
-    refreshHeaders();
+    refreshModifiers();
   }
 
-  const refreshHeadersDebounce = lodashDebounce(refreshHeaders, 500, {
+  const refreshModifiersDebounce = lodashDebounce(refreshModifiers, 500, {
     leading: true,
     trailing: true
   });
-  $: headers, refreshHeadersDebounce();
+  $: modifiers, refreshModifiersDebounce();
   $: modifierHandler = MODIFIER_TYPES[modifierType];
   $: customAutocomplete =
     modifierHandler &&
@@ -53,7 +53,7 @@
     $selectedProfile[modifierHandler.customAutocompleteFieldName];
 
   selectedProfile.subscribe(() => {
-    refreshHeadersDebounce.cancel();
+    refreshModifiersDebounce.cancel();
   });
 </script>
 
@@ -93,52 +93,52 @@
       bind:checked={allChecked}
       indeterminate={!allChecked && !allUnchecked}
       on:click={() => toggleAll()}
-      disabled={headers.length === 0}
+      disabled={modifiers.length === 0}
     />
     <div class="data-table-title data-table-cell flex-grow">{modifierHandler.title}</div>
     <div class="data-table-cell" />
     <div class="data-table-cell">
       <ModifiersMoreMenu
         {modifierHandler}
-        modifiers={headers}
+        {modifiers}
         on:refresh={(event) => {
-          headers = event.detail;
-          refreshHeaders();
+          modifiers = event.detail;
+          refreshModifiers();
         }}
       />
     </div>
   </div>
-  {#each headers as header, headerIndex}
-    <div class="data-table-row" class:data-table-row-unchecked={!header.enabled}>
+  {#each modifiers as modifier, modifierIndex}
+    <div class="data-table-row" class:data-table-row-unchecked={!modifier.enabled}>
       <Checkbox
         class="data-table-cell flex-fixed-icon"
-        bind:checked={header.enabled}
-        on:change={refreshHeaders}
+        bind:checked={modifier.enabled}
+        on:change={refreshModifiers}
         indeterminate={false}
       />
       <AutoComplete
         name="header-name"
-        list={header.name
+        list={modifier.name
           ? modifierHandler.autocompleteListId
           : `${modifierHandler.customAutocompleteFieldName}-name`}
-        bind:value={header.name}
-        on:change={refreshHeaders}
+        bind:value={modifier.name}
+        on:change={refreshModifiers}
         selectAllOnFocus={true}
         placeholder={modifierHandler.nameLabel}
       />
       <AutoComplete
         name="header-value"
         list={`${modifierHandler.customAutocompleteFieldName}-value`}
-        bind:value={header.value}
-        on:change={refreshHeaders}
+        bind:value={modifier.value}
+        on:change={refreshModifiers}
         selectAllOnFocus={true}
         placeholder={modifierHandler.valueLabel}
       />
       {#if !$selectedProfile.hideComment}
         <AutoComplete
           name="header-comment"
-          bind:value={header.comment}
-          on:change={refreshHeaders}
+          bind:value={modifier.comment}
+          on:change={refreshModifiers}
           placeholder="Comment"
         />
       {/if}
@@ -147,27 +147,27 @@
         dense
         aria-label="Delete"
         class="small-icon-button data-table-cell flex-fixed-icon"
-        on:click={() => modifierHandler.removeHandler(headerIndex)}
+        on:click={() => modifierHandler.removeHandler(modifierIndex)}
       >
         <MdiIcon size="24" icon={mdiClose} color="red" />
       </IconButton>
       <HeaderMoreMenu
         {modifierHandler}
-        selectedHeaderIndex={headerIndex}
-        selectedHeader={header}
+        selectedHeaderIndex={modifierIndex}
+        selectedHeader={modifier}
         on:copy={(e) => copy(e.detail)}
         on:update={(e) => {
-          headers[e.detail.headerIndex] = e.detail.header;
-          refreshHeaders();
+          modifiers[e.detail.headerIndex] = e.detail.header;
+          refreshModifiers();
         }}
       />
     </div>
     {#if modifierHandler.advancedComponent}
-      <div class:data-table-row-unchecked={!header.enabled}>
+      <div class:data-table-row-unchecked={!modifier.enabled}>
         <svelte:component
           this={modifierHandler.advancedComponent}
-          modifier={header}
-          on:change={refreshHeaders}
+          {modifier}
+          on:change={refreshModifiers}
         />
       </div>
     {/if}

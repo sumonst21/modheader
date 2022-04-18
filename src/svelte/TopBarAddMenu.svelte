@@ -49,13 +49,22 @@
           Response header
         </Item>
         <Item
+          id="add-cookie-modifier"
+          on:SMUI:action={() =>
+            updateProfileAndClose({
+              cookieHeaders: addHeader($selectedProfile.cookieHeaders)
+            })}
+        >
+          Cookie request
+        </Item>
+        <Item
           id="add-set-cookie-modifier"
           on:SMUI:action={() =>
             updateProfileAndClose({
               setCookieHeaders: addHeader($selectedProfile.setCookieHeaders)
             })}
         >
-          Set Cookie Modifier
+          Set-Cookie response
         </Item>
         <Item
           id="add-url-replacement"

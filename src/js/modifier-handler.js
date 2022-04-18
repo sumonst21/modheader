@@ -49,6 +49,23 @@ export const MODIFIER_TYPES = {
       }),
     refreshHandler: (data) => updateProfile({ respHeaders: data })
   },
+  [ModifierType.COOKIE_MODIFIER]: {
+    title: 'Cookie request modifiers',
+    nameLabel: 'Name',
+    valueLabel: 'Value',
+    fieldName: 'cookieHeaders',
+    customAutocompleteFieldName: 'cookieHeadersAutocomplete',
+    advancedComponent: AdvancedHeader,
+    addHandler: () =>
+      updateProfile({
+        cookieHeaders: addHeader(getSelectedProfile().cookieHeaders)
+      }),
+    removeHandler: (headerIndex) =>
+      updateProfile({
+        cookieHeaders: removeHeader(getSelectedProfile().cookieHeaders, headerIndex)
+      }),
+    refreshHandler: (data) => updateProfile({ cookieHeaders: data })
+  },
   [ModifierType.SET_COOKIE_MODIFIER]: {
     title: 'Set-Cookie response modifiers',
     nameLabel: 'Name',
