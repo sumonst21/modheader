@@ -14,6 +14,17 @@ import lodashClone from 'lodash/clone.js';
 import { AppendMode } from './append-mode.js';
 
 export const PROFILE_VERSION = 2;
+const ARRAY_FIELDS = [
+  'headers',
+  'respHeaders',
+  'urlReplacements',
+  'cookieHeaders',
+  'setCookieHeaders',
+  'urlFilters',
+  'excludeUrlFilters',
+  'resourceFilters',
+  'tabFilters'
+];
 let latestProfiles = [];
 let latestSelectedProfileIndex = 0;
 profiles.subscribe(($profiles) => {
@@ -79,6 +90,37 @@ export function fixProfiles(profiles) {
     if (!profile.version) {
       upgradeFromProfileVersion1({ profile, index });
       isMutated = true;
+    }
+  }
+  for (const profile of profiles) {
+    if (profile.hideComment === undefined) {
+      profile.hideComment = true;
+      isMutated = true;
+    }
+    if (!profile.backgroundColor) {
+      profile.backgroundColor = generateBackgroundColor();
+      isMutated = true;
+    }
+    if (!profile.textColor) {
+      profile.textColor = generateTextColor();
+      isMutated = true;
+    }
+    if (!profile.shortTitle) {
+      profile.shortTitle = takeRight(profile.title);
+      isMutated = true;
+    }
+    for (const arrayField of ARRAY_FIELDS) {
+      if (!profile[arrayField]) {
+        profile[arrayField] = [];
+        isMutated = true;
+      } else {
+        for (const entry of profile[arrayField]) {
+          if (entry.comment === undefined) {
+            entry.comment = '';
+            isMutated = true;
+          }
+        }
+      }
     }
   }
   return isMutated;
@@ -239,6 +281,39 @@ export function sortProfiles(sortOrder) {
   } else {
     showMessage('Profiles sorted in descending order', { canUndo: true });
   }
+}
+
+export function exportProfiles(profiles, { keepStyles } = {}) {
+  const cloneProfiles = lodashCloneDeep(profiles);
+  for (const profile of cloneProfiles) {
+    if (profile.hideComment) {
+      delete profile.hideComment;
+    }
+    if (!keepStyles) {
+      delete profile.backgroundColor;
+      delete profile.textColor;
+    }
+    for (const arrayField of ARRAY_FIELDS) {
+      if (!profile[arrayField] || profile[arrayField].length === 0) {
+        delete profile[arrayField];
+      } else {
+        for (const entry of profile[arrayField]) {
+          if (!entry.comment) {
+            delete entry.comment;
+          }
+        }
+      }
+      const autocompleteField = `${arrayField}Autocomplete`;
+      if (
+        profile[autocompleteField] &&
+        profile[autocompleteField].autocompleteName.length === 0 &&
+        profile[autocompleteField].autocompleteValue.length === 0
+      ) {
+        delete profile[autocompleteField];
+      }
+    }
+  }
+  return JSON.stringify(cloneProfiles);
 }
 
 export function importProfiles(importProfiles) {

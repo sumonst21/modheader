@@ -9,8 +9,22 @@ const DARK_STYLE_SHEET_PARAMS = {
   href: 'styles/smui-dark.css'
 };
 
+export const ColorSchemes = {
+  SYSTEM_DEFAULT: 'system-default',
+  DARK: 'dark',
+  LIGHT: 'light'
+};
+
+export function getPreferredColorScheme() {
+  return localStorage.preferredColorScheme || ColorSchemes.SYSTEM_DEFAULT;
+}
+
 export function setPreferredColorScheme(preferredColorScheme) {
-  localStorage.preferredColorScheme = preferredColorScheme;
+  if (preferredColorScheme === ColorSchemes.SYSTEM_DEFAULT) {
+    delete localStorage.preferredColorScheme;
+  } else {
+    localStorage.preferredColorScheme = preferredColorScheme;
+  }
   reloadColorScheme();
 }
 
@@ -38,10 +52,10 @@ function removeStyleSheet(params) {
 
 export function reloadColorScheme() {
   const preferredColorScheme = localStorage.preferredColorScheme;
-  if (preferredColorScheme === 'light') {
+  if (preferredColorScheme === ColorSchemes.LIGHT) {
     removeStyleSheet(DARK_STYLE_SHEET_PARAMS);
     ensureStyleSheet(LIGHT_STYLE_SHEET_PARAMS);
-  } else if (preferredColorScheme === 'dark') {
+  } else if (preferredColorScheme === ColorSchemes.DARK) {
     removeStyleSheet(LIGHT_STYLE_SHEET_PARAMS);
     ensureStyleSheet(DARK_STYLE_SHEET_PARAMS);
   } else {

@@ -3,6 +3,8 @@
   import Dialog, { Title, Content } from '@smui/dialog';
   import Button, { Label } from '@smui/button';
   import Tab, { Label as TabLabel } from '@smui/tab';
+  import FormField from '@smui/form-field';
+  import Textfield from '@smui/textfield';
   import TabBar from '@smui/tab-bar';
   import IconButton from '@smui/icon-button';
   import Checkbox from '@smui/checkbox';
@@ -14,7 +16,7 @@
   import { showMessage } from '../js/toast.js';
   import { profiles } from '../js/datasource.js';
   import { showExportDialog } from '../js/dialog.js';
-  import { selectedProfile } from '../js/profile';
+  import { selectedProfile, exportProfiles } from '../js/profile';
 
   const TABS = [
     { label: 'URL', value: 'url' },
@@ -24,11 +26,12 @@
   let exportUrlTextbox;
   let exportJsonTextbox;
   let selectedProfiles = [];
+  let keepStyles = false;
 
-  async function copyExportText(textbox) {
-    textbox.select();
+  async function copyExportText(textbox, content) {
+    textbox.getElement().querySelector('textarea').select();
     if (navigator.clipboard && navigator.clipboard.writeText) {
-      await navigator.clipboard.writeText(exportedUrl);
+      await navigator.clipboard.writeText(content);
     } else {
       document.execCommand('copy');
     }
@@ -41,7 +44,7 @@
     }
   });
 
-  $: exportedText = JSON.stringify(selectedProfiles);
+  $: exportedText = exportProfiles(selectedProfiles, { keepStyles });
   $: exportedUrl = `https://modheader.com/p/${lzString.compressToEncodedURIComponent(
     exportedText
   )}`;
@@ -81,30 +84,33 @@
       </Tab>
     </TabBar>
     {#if activeTab.value === 'url'}
-      <input
+      <Textfield
         bind:this={exportUrlTextbox}
-        on:focus={() => copyExportText(exportUrlTextbox)}
+        on:focus={() => copyExportText(exportUrlTextbox, exportedUrl)}
         class="export-text-field"
         type="url"
+        input$rows="4"
+        textarea
         readonly
         value={exportedUrl}
       />
     {:else}
-      <input
+      <Textfield
         bind:this={exportJsonTextbox}
-        on:focus={() => copyExportText(exportJsonTextbox)}
+        on:focus={() => copyExportText(exportJsonTextbox, exportedText)}
         class="export-text-field"
-        type="text"
+        input$rows="4"
+        textarea
         readonly
         value={exportedText}
       />
     {/if}
   </Content>
   <div class="mdc-dialog__actions">
-    <Button on:click={() => (selectedProfiles = [...$profiles])}>
-      <MdiIcon size="24" icon={mdiSelectAll} color={PRIMARY_COLOR} />
-      <Label class="ml-small">Select All</Label>
-    </Button>
+    <FormField>
+      <Checkbox bind:checked={keepStyles} color="secondary" />
+      <span slot="label">Export styles</span>
+    </FormField>
     {#if activeTab.value === 'json'}
       {#if selectedProfiles.length === 0}
         <Button disabled>

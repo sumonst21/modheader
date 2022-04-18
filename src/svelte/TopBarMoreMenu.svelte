@@ -1,13 +1,11 @@
 <script>
-  import Menu from '@smui/menu';
-  import List, { Subheader, Item, Separator, Label } from '@smui/list';
+  import MenuSurface from '@smui/menu-surface';
+  import List, { Item, Separator } from '@smui/list';
   import IconButton from '@smui/icon-button';
   import {
     mdiCheckboxBlankOutline,
     mdiCheckboxMarked,
     mdiFullscreen,
-    mdiRadioboxBlank,
-    mdiRadioboxMarked,
     mdiTrashCan,
     mdiContentCopy,
     mdiFileImportOutline,
@@ -29,10 +27,20 @@
   } from '../js/profile.js';
   import { showMessage } from '../js/toast.js';
   import { showExportDialog, showImportDialog, showCloudBackupDialog } from '../js/dialog.js';
-  import { setPreferredColorScheme } from '../js/color-scheme.js';
+  import {
+    ColorSchemes,
+    getPreferredColorScheme,
+    setPreferredColorScheme
+  } from '../js/color-scheme.js';
+
+  const COLOR_SCHEME_LABEL = {
+    [ColorSchemes.SYSTEM_DEFAULT]: 'System default',
+    [ColorSchemes.LIGHT]: 'Light',
+    [ColorSchemes.DARK]: 'Dark'
+  };
 
   let menu;
-  let darkModeMenu;
+  let selectedColorScheme = getPreferredColorScheme();
 
   function openInTab() {
     chrome.tabs.create(
@@ -61,8 +69,23 @@
     }
   }
 
+  function getNextColorScheme(colorScheme) {
+    switch (colorScheme) {
+      case ColorSchemes.SYSTEM_DEFAULT:
+        return ColorSchemes.LIGHT;
+      case ColorSchemes.LIGHT:
+        return ColorSchemes.DARK;
+      case ColorSchemes.DARK:
+        return ColorSchemes.SYSTEM_DEFAULT;
+    }
+  }
+
+  function toggleColorScheme() {
+    selectedColorScheme = getNextColorScheme(selectedColorScheme);
+    setPreferredColorScheme(selectedColorScheme);
+  }
+
   $: appendMode = ($selectedProfile.appendMode || false).toString();
-  $: sendEmptyHeader = ($selectedProfile.sendEmptyHeader || false).toString();
 </script>
 
 <div>
@@ -76,13 +99,18 @@
   >
     <MdiIcon size="24" icon={mdiDotsVertical} color={$buttonColor} />
   </IconButton>
-  <Menu bind:this={menu}>
+  <MenuSurface bind:this={menu} class="more-menu">
     <List>
       <Item on:SMUI:action={() => openInTab()}>
         <MdiIcon class="more-menu-icon" size="24" icon={mdiFullscreen} color="#666" />
         Open in tab
       </Item>
-      <Item on:SMUI:action={() => toggleComment()}>
+      <Item
+        on:SMUI:action={() => {
+          toggleComment();
+          menu.setOpen(false);
+        }}
+      >
         <MdiIcon
           class="more-menu-icon"
           size="24"
@@ -92,7 +120,10 @@
         {$selectedProfile.hideComment ? 'Show comment' : 'Hide comment'}
       </Item>
       <Item
-        on:SMUI:action={() => toggleAlwaysOn()}
+        on:SMUI:action={() => {
+          toggleAlwaysOn();
+          menu.setOpen(false);
+        }}
         title={$selectedProfile.alwaysOn
           ? `This profile will stay active even when it is not selected.`
           : `This profile will only be active when selected.`}
@@ -105,58 +136,63 @@
         />
         Always stay enabled
       </Item>
-      <Item on:SMUI:action={() => darkModeMenu.setOpen(true)} title={`Dark mode`}>
+      <Item on:SMUI:action={() => toggleColorScheme()} title={`Dark mode`}>
         <MdiIcon class="more-menu-icon" size="24" icon={mdiThemeLightDark} color="#666" />
-        Dark mode
+        Dark mode: {COLOR_SCHEME_LABEL[selectedColorScheme]}
       </Item>
-      <Menu bind:this={darkModeMenu}>
-        <List>
-          <Item on:SMUI:action={() => setPreferredColorScheme(undefined)}>System default</Item>
-          <Item on:SMUI:action={() => setPreferredColorScheme('dark')}>Dark mode</Item>
-          <Item on:SMUI:action={() => setPreferredColorScheme('light')}>Light mode</Item>
-        </List>
-      </Menu>
       <Separator nav />
-      <Item on:SMUI:action={() => removeProfile($selectedProfileIndex)}>
+      <Item
+        on:SMUI:action={() => {
+          removeProfile($selectedProfileIndex);
+          menu.setOpen(false);
+        }}
+      >
         <MdiIcon class="more-menu-icon" size="24" icon={mdiTrashCan} color="#666" />
         Delete profile
       </Item>
-      <Item on:SMUI:action={() => cloneProfile($selectedProfile)}>
+      <Item
+        on:SMUI:action={() => {
+          cloneProfile($selectedProfile);
+          menu.setOpen(false);
+        }}
+      >
         <MdiIcon class="more-menu-icon" size="24" icon={mdiContentCopy} color="#666" />
         Clone profile
       </Item>
-      <Item on:SMUI:action={() => showExportDialog.set(true)}>
+      <Item
+        on:SMUI:action={() => {
+          showExportDialog.set(true);
+          menu.setOpen(false);
+        }}
+      >
         <MdiIcon class="more-menu-icon" size="24" icon={mdiShare} color="#666" />
         Export / share profile(s)
       </Item>
-      <Item on:SMUI:action={() => showImportDialog.set(true)} id="import-profile">
+      <Item
+        on:SMUI:action={() => {
+          showImportDialog.set(true);
+          menu.setOpen(false);
+        }}
+        id="import-profile"
+      >
         <MdiIcon class="more-menu-icon" size="24" icon={mdiFileImportOutline} color="#666" />
         Import profile(s)
       </Item>
-      <Item on:SMUI:action={() => showCloudBackupDialog.set(true)}>
+      <Item
+        on:SMUI:action={() => {
+          showCloudBackupDialog.set(true);
+          menu.setOpen(false);
+        }}
+      >
         <MdiIcon class="more-menu-icon" size="24" icon={mdiCloudDownloadOutline} color="#666" />
         Restore cloud backup
       </Item>
-      <Separator nav />
-      <Subheader>Empty header mode</Subheader>
-      <Item on:SMUI:action={() => updateProfile({ sendEmptyHeader: false })}>
-        <MdiIcon
-          class="more-menu-icon"
-          size="24"
-          icon={sendEmptyHeader === 'false' ? mdiRadioboxMarked : mdiRadioboxBlank}
-          color="#666"
-        />
-        <Label>Remove empty header</Label>
-      </Item>
-      <Item on:SMUI:action={() => updateProfile({ sendEmptyHeader: true })}>
-        <MdiIcon
-          class="more-menu-icon"
-          size="24"
-          icon={sendEmptyHeader === 'true' ? mdiRadioboxMarked : mdiRadioboxBlank}
-          color="#666"
-        />
-        <Label>Send empty header</Label>
-      </Item>
     </List>
-  </Menu>
+  </MenuSurface>
 </div>
+
+<style module>
+  .more-menu {
+    width: 300px;
+  }
+</style>
