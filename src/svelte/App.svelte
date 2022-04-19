@@ -13,6 +13,7 @@
   import ExportDialog from './ExportDialog.svelte';
   import ImportDialog from './ImportDialog.svelte';
   import CloudBackupDialog from './CloudBackupDialog.svelte';
+  import SignInRequiredDialog from './SignInRequiredDialog.svelte';
   import UpgradeDialog from './UpgradeDialog.svelte';
   import { isPaused, undo, init } from '../js/datasource.js';
   import { FilterType } from '../js/filter.js';
@@ -116,6 +117,7 @@
   <ImportDialog />
   <CloudBackupDialog />
   <UpgradeDialog />
+  <SignInRequiredDialog />
 
   <Snackbar timeoutMs={4000} bind:this={snackbar} labelText={snackbarMessage}>
     <SnackbarLabel />

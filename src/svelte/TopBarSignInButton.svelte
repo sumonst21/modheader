@@ -5,19 +5,9 @@
   import Button from '@smui/button';
   import ProfilePicture from './ProfilePicture.svelte';
   import { buttonColor } from '../js/profile.js';
-  import { signedInUser, signOut } from '../js/identity.js';
-  import { CURRENT_BROWSER } from '../js/user-agent.js';
+  import { signedInUser, signIn, signOut } from '../js/identity.js';
 
   let accountMenu;
-
-  async function signIn() {
-    const url = new URL(`${process.env.URL_BASE}/login`);
-    url.searchParams.set('for', CURRENT_BROWSER);
-    url.searchParams.set('extension_id', chrome.runtime.id);
-    chrome.tabs.create({
-      url: url.href
-    });
-  }
 </script>
 
 {#if $signedInUser}

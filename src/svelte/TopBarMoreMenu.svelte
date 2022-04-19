@@ -32,6 +32,7 @@
     getPreferredColorScheme,
     setPreferredColorScheme
   } from '../js/color-scheme.js';
+  import { requireSignIn } from '../js/identity.js';
 
   const COLOR_SCHEME_LABEL = {
     [ColorSchemes.SYSTEM_DEFAULT]: 'System default',
@@ -161,8 +162,14 @@
       </Item>
       <Item
         on:SMUI:action={() => {
-          showExportDialog.set(true);
-          menu.setOpen(false);
+          if (
+            requireSignIn({
+              requireSignInContent: 'Sign in to export / share profiles with your account'
+            })
+          ) {
+            showExportDialog.set(true);
+            menu.setOpen(false);
+          }
         }}
       >
         <MdiIcon class="more-menu-icon" size="24" icon={mdiShare} color="#666" />

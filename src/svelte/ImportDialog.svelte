@@ -83,59 +83,57 @@
   }
 </script>
 
-<Dialog
-  bind:open={$showImportDialog}
-  aria-labelledby="dialog-title"
-  aria-describedby="dialog-content"
->
-  <Title id="dialog-title">
-    Import profile
-    <IconButton
-      aria-label="Close"
-      class="dialog-close-button"
-      on:click={() => showImportDialog.set(false)}
-    >
-      <MdiIcon size="32" icon={mdiClose} color="#888" />
-    </IconButton>
-  </Title>
-  <Content id="dialog-content">
-    <div>Enter the URL / JSON encoded profile here to import.</div>
-    <textarea
-      bind:this={importTextbox}
-      class="extra-large-textarea"
-      rows="40"
-      bind:value={importText}
-    />
-  </Content>
-  <div class="mdc-dialog__actions">
-    {#if isChromiumBasedBrowser()}
-      <!-- Opening the file would close the popup in Firefox, so we can't support it. -->
-      <input
-        bind:this={uploadFileInput}
-        type="file"
-        class="hidden"
-        on:change={(e) => loadFile(e.target.files[0])}
+{#if $showImportDialog}
+  <Dialog bind:open={$showImportDialog}>
+    <Title>
+      Import profile
+      <IconButton
+        aria-label="Close"
+        class="dialog-close-button"
+        on:click={() => showImportDialog.set(false)}
+      >
+        <MdiIcon size="32" icon={mdiClose} color="#888" />
+      </IconButton>
+    </Title>
+    <Content>
+      <div>Enter the URL / JSON encoded profile here to import.</div>
+      <textarea
+        bind:this={importTextbox}
+        class="extra-large-textarea"
+        rows="40"
+        bind:value={importText}
       />
-      <Button on:click={() => uploadFileInput.click()}>
-        <MdiIcon size="24" icon={mdiFileImport} color={PRIMARY_COLOR} />
-        <Label class="ml-small">Load from file</Label>
+    </Content>
+    <div class="mdc-dialog__actions">
+      {#if isChromiumBasedBrowser()}
+        <!-- Opening the file would close the popup in Firefox, so we can't support it. -->
+        <input
+          bind:this={uploadFileInput}
+          type="file"
+          class="hidden"
+          on:change={(e) => loadFile(e.target.files[0])}
+        />
+        <Button on:click={() => uploadFileInput.click()}>
+          <MdiIcon size="24" icon={mdiFileImport} color={PRIMARY_COLOR} />
+          <Label class="ml-small">Load from file</Label>
+        </Button>
+      {:else}
+        <Button on:click={() => openImportFilePage()}>
+          <MdiIcon size="24" icon={mdiFileImport} color={PRIMARY_COLOR} />
+          <Label class="ml-small">Load from file</Label>
+        </Button>
+      {/if}
+      <Button disabled={lodashIsEmpty(importText)} on:click={() => done()}>
+        <MdiIcon
+          size="24"
+          icon={mdiCheck}
+          color={lodashIsEmpty(importText) ? DISABLED_COLOR : PRIMARY_COLOR}
+        />
+        <Label class="ml-small">Import</Label>
       </Button>
-    {:else}
-      <Button on:click={() => openImportFilePage()}>
-        <MdiIcon size="24" icon={mdiFileImport} color={PRIMARY_COLOR} />
-        <Label class="ml-small">Load from file</Label>
-      </Button>
-    {/if}
-    <Button disabled={lodashIsEmpty(importText)} on:click={() => done()}>
-      <MdiIcon
-        size="24"
-        icon={mdiCheck}
-        color={lodashIsEmpty(importText) ? DISABLED_COLOR : PRIMARY_COLOR}
-      />
-      <Label class="ml-small">Import</Label>
-    </Button>
-  </div>
-</Dialog>
+    </div>
+  </Dialog>
+{/if}
 
 <style module>
   .extra-large-textarea {

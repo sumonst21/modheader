@@ -30,86 +30,83 @@
   }
 </script>
 
-<Dialog
-  bind:open={dialogVisible}
-  class="profile-badge-dialog"
-  aria-labelledby="dialog-title"
-  aria-describedby="dialog-content"
->
-  <Title id="dialog-title">
-    Profile badge
-    <IconButton
-      aria-label="Close"
-      class="dialog-close-button"
-      on:click={() => (dialogVisible = false)}
-    >
-      <MdiIcon size="32" icon={mdiClose} color="#888" />
-    </IconButton>
-  </Title>
-  <Content id="dialog-content">
-    <div>
-      Change badge text:
-      <span class="profile-badge-preview" style="background: {backgroundColor}">
-        <input
-          class="profile-badge-preview-text"
-          bind:this={shortTitleTextfield}
-          bind:value={shortTitle}
-          style="color: {textColor}"
-          type="text"
-          maxlength="1"
-        />
-      </span>
-    </div>
+{#if dialogVisible}
+  <Dialog bind:open={dialogVisible} class="profile-badge-dialog">
+    <Title id="dialog-title">
+      Profile badge
+      <IconButton
+        aria-label="Close"
+        class="dialog-close-button"
+        on:click={() => (dialogVisible = false)}
+      >
+        <MdiIcon size="32" icon={mdiClose} color="#888" />
+      </IconButton>
+    </Title>
+    <Content>
+      <div>
+        Change badge text:
+        <span class="profile-badge-preview" style="background: {backgroundColor}">
+          <input
+            class="profile-badge-preview-text"
+            bind:this={shortTitleTextfield}
+            bind:value={shortTitle}
+            style="color: {textColor}"
+            type="text"
+            maxlength="1"
+          />
+        </span>
+      </div>
 
-    <TabBar tabs={TABS} let:tab bind:active={activeTab}>
-      <Tab {tab}>
-        <TabLabel>{tab.label}</TabLabel>
-      </Tab>
-    </TabBar>
-    <div class="color-picker-container">
-      {#if activeTab.value === 'backgroundColor'}
-        <ColorPicker
-          startColor={$selectedProfile.backgroundColor}
-          on:colorchange={(event) => {
-            const rgbString = event.detail.hex;
-            if (rgbString !== backgroundColor) {
-              backgroundColor = rgbString;
-            }
-          }}
-        />
-      {:else}
-        <ColorPicker
-          startColor={$selectedProfile.textColor}
-          on:colorchange={(event) => {
-            const rgbString = event.detail.hex;
-            if (rgbString !== textColor) {
-              textColor = rgbString;
-            }
-          }}
-        />
-      {/if}
+      <TabBar tabs={TABS} let:tab bind:active={activeTab}>
+        <Tab {tab}>
+          <TabLabel>{tab.label}</TabLabel>
+        </Tab>
+      </TabBar>
+      <div class="color-picker-container">
+        {#if activeTab.value === 'backgroundColor'}
+          <ColorPicker
+            startColor={$selectedProfile.backgroundColor}
+            on:colorchange={(event) => {
+              const rgbString = event.detail.hex;
+              if (rgbString !== backgroundColor) {
+                backgroundColor = rgbString;
+              }
+            }}
+          />
+        {:else}
+          <ColorPicker
+            startColor={$selectedProfile.textColor}
+            on:colorchange={(event) => {
+              const rgbString = event.detail.hex;
+              if (rgbString !== textColor) {
+                textColor = rgbString;
+              }
+            }}
+          />
+        {/if}
+      </div>
+    </Content>
+    <div class="mdc-dialog__actions">
+      <Button on:click={() => (dialogVisible = false)}>
+        <MdiIcon size="24" icon={mdiClose} color={PRIMARY_COLOR} />
+        <Label class="ml-small">Cancel</Label>
+      </Button>
+      <Button
+        on:click={() => {
+          updateProfile({
+            shortTitle,
+            backgroundColor,
+            textColor
+          });
+          dialogVisible = false;
+        }}
+      >
+        <MdiIcon size="24" icon={mdiContentSave} color={PRIMARY_COLOR} />
+        <Label class="ml-small">Save</Label>
+      </Button>
     </div>
-  </Content>
-  <div class="mdc-dialog__actions">
-    <Button on:click={() => (dialogVisible = false)}>
-      <MdiIcon size="24" icon={mdiClose} color={PRIMARY_COLOR} />
-      <Label class="ml-small">Cancel</Label>
-    </Button>
-    <Button
-      on:click={() => {
-        updateProfile({
-          shortTitle,
-          backgroundColor,
-          textColor
-        });
-        dialogVisible = false;
-      }}
-    >
-      <MdiIcon size="24" icon={mdiContentSave} color={PRIMARY_COLOR} />
-      <Label class="ml-small">Save</Label>
-    </Button>
-  </div>
-</Dialog>
+  </Dialog>
+{/if}
 
 <style module>
   .color-picker-container {

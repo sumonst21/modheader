@@ -5,29 +5,29 @@
   import { mdiClose, mdiArrowUpBold } from '@mdi/js';
   import MdiIcon from './MdiIcon.svelte';
   import { PRIMARY_COLOR } from '../js/constants';
-  import { showUpgradeDialog } from '../js/dialog.js';
-  import { upgrade } from '../js/identity.js';
+  import { requireSignInDialog, requireSignInDialogContent } from '../js/dialog.js';
+  import { signIn } from '../js/identity.js';
 </script>
 
-{#if $showUpgradeDialog}
-  <Dialog bind:open={$showUpgradeDialog}>
+{#if $requireSignInDialog}
+  <Dialog bind:open={$requireSignInDialog}>
     <Title>
-      Upgrade required
+      Sign in required
       <IconButton
         aria-label="Close"
         class="dialog-close-button"
-        on:click={() => showUpgradeDialog.set(false)}
+        on:click={() => requireSignInDialog.set(false)}
       >
         <MdiIcon size="32" icon={mdiClose} color="#888" />
       </IconButton>
     </Title>
-    <Content>
-      <div>Upgrade to Pro to use this feature.</div>
+    <Content class="dialog-content">
+      <div>{$requireSignInDialogContent}</div>
     </Content>
     <div class="mdc-dialog__actions">
-      <Button on:click={() => upgrade()}>
+      <Button on:click={() => signIn()}>
         <MdiIcon size="24" icon={mdiArrowUpBold} color={PRIMARY_COLOR} />
-        <Label class="ml-small">Upgrade</Label>
+        <Label class="ml-small">SignIn</Label>
       </Button>
     </div>
   </Dialog>

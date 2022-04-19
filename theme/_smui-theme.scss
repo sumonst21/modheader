@@ -3,6 +3,7 @@
 @use '@smui/button/_style.scss' as button;
 @use '@smui/checkbox/_style.scss' as checkbox;
 @use '@smui/chips/_style.scss' as chips;
+@use '@smui/linear-progress/_style.scss' as linear-progress;
 @use '@smui/dialog/_style.scss' as dialog;
 @use '@smui/drawer/_style.scss' as drawer;
 @use '@smui/form-field/_style.scss' as form-field;
@@ -142,4 +143,17 @@ button::-moz-focus-inner {
 
 .caption {
   font-size: 75%;
+}
+
+.dialog-content {
+  margin: 0;
+  padding: 0;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.error-text {
+  color: var(--mdc-theme-error);
 }

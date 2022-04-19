@@ -12,6 +12,7 @@
   import MdiIcon from './MdiIcon.svelte';
   import { isPaused, undo } from '../js/datasource.js';
   import { selectedProfile, updateProfile, buttonColor } from '../js/profile.js';
+  import { requireSignIn } from '../js/identity.js';
   import { canUndoChange } from '../js/change-stack.js';
   import { showExportDialog } from '../js/dialog.js';
 
@@ -71,7 +72,15 @@
       <TopBarPauseButton />
       <IconButton
         dense
-        on:click={() => showExportDialog.set(true)}
+        on:click={() => {
+          if (
+            requireSignIn({
+              requireSignInContent: 'Sign in to export / share profiles with your account'
+            })
+          ) {
+            showExportDialog.set(true);
+          }
+        }}
         title="Export / share profile(s)"
       >
         <MdiIcon size="24" icon={mdiShare} color={$buttonColor} />

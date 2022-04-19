@@ -44,44 +44,41 @@
   }
 </script>
 
-<Dialog
-  bind:open={dialogVisible}
-  aria-labelledby="dialog-title"
-  aria-describedby="dialog-content"
-  on:MDCDialog:closed={saveConfiguration}
->
-  <Title id="dialog-title">Customize autocomplete</Title>
-  <Content id="dialog-content">
-    <div class="dialog-content">
-      <div>
-        Enter the entries that you would like to show up in autocomplete. These autocomplete entries
-        will show up when you focus on an input and as you type.
+{#if dialogVisible}
+  <Dialog bind:open={dialogVisible} on:MDCDialog:closed={saveConfiguration}>
+    <Title>Customize autocomplete</Title>
+    <Content>
+      <div class="autocomplete-dialog-content">
+        <div>
+          Enter the entries that you would like to show up in autocomplete. These autocomplete
+          entries will show up when you focus on an input and as you type.
+        </div>
+        <Textfield
+          textarea
+          fullwidth
+          class="dialog-textfield"
+          bind:value={autocompleteName}
+          label="{modifierHandler.nameLabel} - One entry per line"
+        />
+        <Textfield
+          textarea
+          fullwidth
+          class="dialog-textfield"
+          bind:value={autocompleteValue}
+          label="{modifierHandler.valueLabel} - One entry per line"
+        />
       </div>
-      <Textfield
-        textarea
-        fullwidth
-        class="dialog-textfield"
-        bind:value={autocompleteName}
-        label="{modifierHandler.nameLabel} - One entry per line"
-      />
-      <Textfield
-        textarea
-        fullwidth
-        class="dialog-textfield"
-        bind:value={autocompleteValue}
-        label="{modifierHandler.valueLabel} - One entry per line"
-      />
-    </div>
-  </Content>
-  <Actions>
-    <Button>
-      <Label>Done</Label>
-    </Button>
-  </Actions>
-</Dialog>
+    </Content>
+    <Actions>
+      <Button>
+        <Label>Done</Label>
+      </Button>
+    </Actions>
+  </Dialog>
+{/if}
 
 <style module>
-  .dialog-content {
+  .autocomplete-dialog-content {
     padding-top: 5px;
   }
 

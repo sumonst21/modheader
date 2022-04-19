@@ -74,57 +74,55 @@
   }
 </script>
 
-<Dialog
-  bind:open={$showCloudBackupDialog}
-  aria-labelledby="dialog-title"
-  aria-describedby="dialog-content"
->
-  <Title id="dialog-title">
-    Cloud backup
-    <IconButton
-      aria-label="Close"
-      class="dialog-close-button"
-      on:click={() => showCloudBackupDialog.set(false)}
-    >
-      <MdiIcon size="32" icon={mdiClose} color="#888" />
-    </IconButton>
-  </Title>
-  <Content id="dialog-content" class="backup-dialog-content">
-    {#if cloudBackupList.length > 0}
-      <List>
-        {#each cloudBackupList as entry}
-          <Item on:SMUI:action={() => restoreEntry(entry)}>
-            <Text class="entry-label">{formatEntry(entry)}</Text>
-            <IconButton
-              dense
-              aria-label="Delete"
-              class="small-icon-button delete-entry-icon"
-              on:click={() => deleteEntry(entry)}
-            >
-              <MdiIcon size="24" icon={mdiTrashCanOutline} color="red" />
-            </IconButton>
-          </Item>
-        {/each}
-      </List>
-    {:else}
-      <div class="missing-backup-info">No cloud backup available</div>
-    {/if}
-  </Content>
-  <div class="mdc-dialog__actions">
-    <Button disabled={cloudBackupList.length === 0} on:click={() => deleteAllBackup()}>
-      <MdiIcon
-        size="24"
-        icon={mdiTrashCanOutline}
-        color={cloudBackupList.length === 0 ? DISABLED_COLOR : 'red'}
-      />
-      <Label class="ml-small">Delete all backup</Label>
-    </Button>
-    <Button on:click={() => done()}>
-      <MdiIcon size="24" icon={mdiCancel} color={PRIMARY_COLOR} />
-      <Label class="ml-small">Cancel</Label>
-    </Button>
-  </div>
-</Dialog>
+{#if $showCloudBackupDialog}
+  <Dialog bind:open={$showCloudBackupDialog}>
+    <Title>
+      Cloud backup
+      <IconButton
+        aria-label="Close"
+        class="dialog-close-button"
+        on:click={() => showCloudBackupDialog.set(false)}
+      >
+        <MdiIcon size="32" icon={mdiClose} color="#888" />
+      </IconButton>
+    </Title>
+    <Content>
+      {#if cloudBackupList.length > 0}
+        <List>
+          {#each cloudBackupList as entry}
+            <Item on:SMUI:action={() => restoreEntry(entry)}>
+              <Text class="entry-label">{formatEntry(entry)}</Text>
+              <IconButton
+                dense
+                aria-label="Delete"
+                class="small-icon-button delete-entry-icon"
+                on:click={() => deleteEntry(entry)}
+              >
+                <MdiIcon size="24" icon={mdiTrashCanOutline} color="red" />
+              </IconButton>
+            </Item>
+          {/each}
+        </List>
+      {:else}
+        <div class="missing-backup-info">No cloud backup available</div>
+      {/if}
+    </Content>
+    <div class="mdc-dialog__actions">
+      <Button disabled={cloudBackupList.length === 0} on:click={() => deleteAllBackup()}>
+        <MdiIcon
+          size="24"
+          icon={mdiTrashCanOutline}
+          color={cloudBackupList.length === 0 ? DISABLED_COLOR : 'red'}
+        />
+        <Label class="ml-small">Delete all backup</Label>
+      </Button>
+      <Button on:click={() => done()}>
+        <MdiIcon size="24" icon={mdiCancel} color={PRIMARY_COLOR} />
+        <Label class="ml-small">Cancel</Label>
+      </Button>
+    </div>
+  </Dialog>
+{/if}
 
 <style module>
   .entry-label {
