@@ -41,7 +41,7 @@
     const { profileId } = await createProfile({ profiles: selectedProfiles });
     exportProfileId = profileId;
     uploadedExportProfiles = exportProfiles(selectedProfiles, { keepStyles });
-    exportUrl = `${process.env.URL_BASE}/u/profile/${profileId}`;
+    exportUrl = `${process.env.URL_BASE}/profile/v2/${profileId}`;
   }
 
   $: {
