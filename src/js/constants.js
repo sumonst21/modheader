@@ -1,4 +1,4 @@
-export const DISABLED_COLOR = "rgba(0, 0, 0, 0.37)";
+export const DISABLED_COLOR = "rgba(128, 128, 128, .9)";
 export const PRIMARY_COLOR = "#1976d2";
 
 export const KNOWN_REQUEST_HEADERS = [
