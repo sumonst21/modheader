@@ -21,7 +21,9 @@ describe('message-handler', () => {
     await expect(onMessageReceived({ chromeLocal, request })).resolves.toEqual(true);
 
     expect(mockStorageLoader.setProfiles).toHaveBeenCalledTimes(1);
-    expect(mockStorageLoader.setProfiles).toHaveBeenCalledWith([{ title: 'Test' }]);
+    expect(mockStorageLoader.setProfiles).toHaveBeenCalledWith([
+      expect.objectContaining({ title: 'Test' })
+    ]);
   });
 
   test('onMessageReceived - SWITCH_TO_LATEST', async () => {

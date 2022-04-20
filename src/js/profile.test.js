@@ -22,7 +22,7 @@ const {
   removeProfile,
   cloneProfile,
   sortProfiles,
-  exportProfiles,
+  exportProfile,
   importProfiles,
   restoreToProfiles
 } = require('./profile.js');
@@ -481,68 +481,60 @@ describe('profile', () => {
   });
 
   test('Export profiles - Drop default fields', () => {
-    const profiles = [
-      {
-        version: PROFILE_VERSION,
-        title: 'Local Profile',
-        shortTitle: '1',
-        backgroundColor: '#000',
-        textColor: '#fff',
-        hideComment: true,
-        headers: [
-          { enabled: true, name: 'test name 1', value: 'test value 1', comment: 'test comment' },
-          { enabled: false, name: 'test name 2', value: 'test value 2', comment: '' }
-        ],
-        headersAutocomplete: {
-          autocompleteName: ['test1', 'test2'],
-          autocompleteValue: []
-        },
-        respHeaders: [],
-        respHeadersAutocomplete: {
-          autocompleteName: [],
-          autocompleteValue: []
-        }
+    const profile = {
+      version: PROFILE_VERSION,
+      title: 'Local Profile',
+      shortTitle: '1',
+      backgroundColor: '#000',
+      textColor: '#fff',
+      hideComment: true,
+      headers: [
+        { enabled: true, name: 'test name 1', value: 'test value 1', comment: 'test comment' },
+        { enabled: false, name: 'test name 2', value: 'test value 2', comment: '' }
+      ],
+      headersAutocomplete: {
+        autocompleteName: ['test1', 'test2'],
+        autocompleteValue: []
+      },
+      respHeaders: [],
+      respHeadersAutocomplete: {
+        autocompleteName: [],
+        autocompleteValue: []
       }
-    ];
-    const exportedProfiles = exportProfiles(profiles);
-    expect(JSON.parse(exportedProfiles)).toEqual([
-      {
-        version: PROFILE_VERSION,
-        title: 'Local Profile',
-        shortTitle: '1',
-        headers: [
-          { enabled: true, name: 'test name 1', value: 'test value 1', comment: 'test comment' },
-          { enabled: false, name: 'test name 2', value: 'test value 2' }
-        ],
-        headersAutocomplete: {
-          autocompleteName: ['test1', 'test2'],
-          autocompleteValue: []
-        }
+    };
+    const exportedProfile = exportProfile(profile);
+    expect(exportedProfile).toEqual({
+      version: PROFILE_VERSION,
+      title: 'Local Profile',
+      shortTitle: '1',
+      headers: [
+        { enabled: true, name: 'test name 1', value: 'test value 1', comment: 'test comment' },
+        { enabled: false, name: 'test name 2', value: 'test value 2' }
+      ],
+      headersAutocomplete: {
+        autocompleteName: ['test1', 'test2'],
+        autocompleteValue: []
       }
-    ]);
+    });
   });
 
   test('Export profiles - Retain styles', () => {
-    const profiles = [
-      {
-        version: PROFILE_VERSION,
-        title: 'Local Profile',
-        shortTitle: '1',
-        backgroundColor: '#000',
-        textColor: '#fff',
-        hideComment: true
-      }
-    ];
-    const exportedProfiles = exportProfiles(profiles, { keepStyles: true });
-    expect(JSON.parse(exportedProfiles)).toEqual([
-      {
-        version: PROFILE_VERSION,
-        title: 'Local Profile',
-        shortTitle: '1',
-        backgroundColor: '#000',
-        textColor: '#fff'
-      }
-    ]);
+    const profile = {
+      version: PROFILE_VERSION,
+      title: 'Local Profile',
+      shortTitle: '1',
+      backgroundColor: '#000',
+      textColor: '#fff',
+      hideComment: true
+    };
+    const exportedProfiles = exportProfile(profile, { keepStyles: true });
+    expect(exportedProfiles).toEqual({
+      version: PROFILE_VERSION,
+      title: 'Local Profile',
+      shortTitle: '1',
+      backgroundColor: '#000',
+      textColor: '#fff'
+    });
   });
 
   test('Restore to profiles', () => {

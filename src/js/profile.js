@@ -285,18 +285,18 @@ export function sortProfiles(sortOrder) {
 
 export function exportProfile(profile, { keepStyles } = {}) {
   const cloneProfile = lodashCloneDeep(profile);
-  if (profile.hideComment) {
-    delete profile.hideComment;
+  if (cloneProfile.hideComment) {
+    delete cloneProfile.hideComment;
   }
   if (!keepStyles) {
-    delete profile.backgroundColor;
-    delete profile.textColor;
+    delete cloneProfile.backgroundColor;
+    delete cloneProfile.textColor;
   }
   for (const arrayField of ARRAY_FIELDS) {
-    if (!profile[arrayField] || profile[arrayField].length === 0) {
-      delete profile[arrayField];
+    if (!cloneProfile[arrayField] || cloneProfile[arrayField].length === 0) {
+      delete cloneProfile[arrayField];
     } else {
-      for (const entry of profile[arrayField]) {
+      for (const entry of cloneProfile[arrayField]) {
         if (!entry.comment) {
           delete entry.comment;
         }
@@ -304,11 +304,11 @@ export function exportProfile(profile, { keepStyles } = {}) {
     }
     const autocompleteField = `${arrayField}Autocomplete`;
     if (
-      profile[autocompleteField] &&
-      profile[autocompleteField].autocompleteName.length === 0 &&
-      profile[autocompleteField].autocompleteValue.length === 0
+      cloneProfile[autocompleteField] &&
+      cloneProfile[autocompleteField].autocompleteName.length === 0 &&
+      cloneProfile[autocompleteField].autocompleteValue.length === 0
     ) {
-      delete profile[autocompleteField];
+      delete cloneProfile[autocompleteField];
     }
   }
   return cloneProfile;
