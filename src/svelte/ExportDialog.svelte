@@ -1,135 +1,141 @@
 <script>
   import { encode } from 'js-base64';
-  import Dialog, { Title, Content } from '@smui/dialog';
   import Button, { Label } from '@smui/button';
   import Tab, { Label as TabLabel } from '@smui/tab';
-  import FormField from '@smui/form-field';
   import TabBar from '@smui/tab-bar';
-  import IconButton from '@smui/icon-button';
-  import Checkbox from '@smui/checkbox';
-  import List, { Meta, Item, Label as ListLabel } from '@smui/list';
-  import { mdiSelectAll, mdiDownload, mdiContentCopy, mdiClose } from '@mdi/js';
+  import { mdiDownload, mdiContentCopy, mdiEye } from '@mdi/js';
   import MdiIcon from './MdiIcon.svelte';
+  import BaseDialog from './BaseDialog.svelte';
+  import VisibilityDialog from './VisibilityDialog.svelte';
   import ExportTextfield from './ExportTextfield.svelte';
-  import { DISABLED_COLOR, PRIMARY_COLOR } from '../js/constants.js';
-  import { profiles } from '../js/datasource.js';
+  import { PRIMARY_COLOR } from '../js/constants.js';
   import { showExportDialog } from '../js/dialog.js';
+  import { Visibility } from '../js/visibility.js';
   import { selectedProfile, exportProfiles } from '../js/profile.js';
+  import { onMount } from 'svelte';
+  import { createProfile, updateProfile } from '../js/api.js';
+  import { showMessage } from '../js/toast.js';
 
   const TABS = [
     { label: 'URL', value: 'url' },
     { label: 'JSON', value: 'json' }
   ];
+
   let activeTab = TABS[0];
   let exportTextfield;
-  let selectedProfiles = [];
-  let keepStyles = false;
+  let allowedEmails = [];
+  let visibility = Visibility.restricted.value;
+  let visibilityDialog;
+  const keepStyles = true;
 
-  showExportDialog.subscribe((show) => {
-    if (show) {
-      selectedProfiles = [$selectedProfile];
-    }
+  let exportUrl;
+  let exportProfileId;
+  let uploading;
+
+  onMount(async () => {
+    await createProfileUrl();
   });
+
+  async function createProfileUrl() {
+    exportUrl = 'Generating export URL';
+    uploading = true;
+    try {
+      const { profileId } = await createProfile({
+        profiles: exportProfiles([$selectedProfile], { keepStyles })
+      });
+      exportProfileId = profileId;
+      exportUrl = `${process.env.URL_BASE}/profile/${profileId}`;
+      uploading = false;
+    } catch (err) {
+      exportUrl = 'Failed to generate export URL';
+    }
+  }
+
+  async function updateExportProfile() {
+    if (exportProfileId) {
+      uploading = true;
+      try {
+        await updateProfile({
+          profileId: exportProfileId,
+          profiles: exportProfiles([$selectedProfile], { keepStyles }),
+          visibility: 'restricted',
+          allowedEmails
+        });
+      } catch (err) {
+        showMessage('Failed to update exported profiles');
+      } finally {
+        uploading = false;
+      }
+    }
+  }
 </script>
 
 {#if $showExportDialog}
-  <Dialog bind:open={$showExportDialog}>
-    <Title>
-      Export / share selected profile(s)
-      <IconButton
-        aria-label="Close"
-        class="dialog-close-button"
-        on:click={() => showExportDialog.set(false)}
-      >
-        <MdiIcon size="32" icon={mdiClose} color="#888" />
-      </IconButton>
-    </Title>
-    <Content>
-      <div class="export-dialog-content">
-        <List checklist>
-          {#each $profiles as profile}
-            <Item>
-              <Meta>
-                <Checkbox bind:group={selectedProfiles} value={profile} />
-              </Meta>
-              <ListLabel>{profile.title}</ListLabel>
-            </Item>
-          {/each}
-        </List>
+  <BaseDialog bind:open={$showExportDialog} title="Share with people">
+    <div class="export-dialog-content">
+      <TabBar tabs={TABS} let:tab bind:active={activeTab}>
+        <Tab {tab}>
+          <TabLabel>{tab.label}</TabLabel>
+        </Tab>
+      </TabBar>
 
-        <div class="grid-border" />
+      <ExportTextfield
+        {keepStyles}
+        selectedProfiles={[$selectedProfile]}
+        {allowedEmails}
+        mode={activeTab.value}
+        {exportUrl}
+        {uploading}
+      />
 
-        <div>
-          <TabBar tabs={TABS} let:tab bind:active={activeTab}>
-            <Tab {tab}>
-              <TabLabel>{tab.label}</TabLabel>
-            </Tab>
-          </TabBar>
-          <ExportTextfield {keepStyles} {selectedProfiles} mode={activeTab.value} />
-        </div>
-      </div>
+      <Button on:click={() => visibilityDialog.show(allowedEmails)}>
+        <MdiIcon size="24" icon={mdiEye} color={PRIMARY_COLOR} />
+        <Label class="ml-small">Visibility: {Visibility[visibility].label}</Label>
+      </Button>
       <div class="caption">
-        Be careful about sharing sensitive data, such as your auth token / cookies!
+        {#if visibility === Visibility.restricted.value}
+          {#if allowedEmails.length === 0}
+            Visible only to you
+          {:else if allowedEmails.length === 1}
+            Visible only to you and {allowedEmails[0]}
+          {:else if allowedEmails.length === 2}
+            Visible to you, {allowedEmails[0]}, and {allowedEmails[1]}
+          {:else}
+            Visible to you, {allowedEmails[0]}, and {allowedEmails.length - 1} other users.
+          {/if}
+        {:else}
+          {Visibility[visibility].description}
+        {/if}
       </div>
-    </Content>
-    <div class="mdc-dialog__actions">
-      <FormField>
-        <Checkbox bind:checked={keepStyles} color="secondary" />
-        <span slot="label" class="clickable">Export styles</span>
-      </FormField>
-      {#if $profiles.length > 1}
-        <Button on:click={() => (selectedProfiles = [...$profiles])}>
-          <MdiIcon size="24" icon={mdiSelectAll} color={PRIMARY_COLOR} />
-          <Label class="ml-small">Export all profiles</Label>
+    </div>
+    <div slot="footer">
+      {#if activeTab.value === 'json'}
+        <Button
+          href="data:application/json;base64,{encode(
+            exportProfiles([$selectedProfile], { keepStyles })
+          )}"
+          download="{$selectedProfile.title}.json"
+        >
+          <MdiIcon size="24" icon={mdiDownload} color={PRIMARY_COLOR} />
+          <Label class="ml-small">Download JSON</Label>
         </Button>
       {/if}
-      {#if activeTab.value === 'json'}
-        {#if selectedProfiles.length === 0}
-          <Button disabled>
-            <MdiIcon size="24" icon={mdiDownload} color={DISABLED_COLOR} />
-            <Label class="ml-small">Download JSON</Label>
-          </Button>
-        {:else}
-          <Button
-            href="data:application/json;base64,{encode(
-              exportProfiles(selectedProfiles, { keepStyles })
-            )}"
-            download="{selectedProfiles.map((p) => p.title).join('+')}.json"
-          >
-            <MdiIcon size="24" icon={mdiDownload} color={PRIMARY_COLOR} />
-            <Label class="ml-small">Download JSON</Label>
-          </Button>
-        {/if}
-      {/if}
       {#if activeTab.value === 'url'}
-        <Button disabled={selectedProfiles.length === 0} on:click={() => exportTextfield.focus()}>
-          <MdiIcon
-            size="24"
-            icon={mdiContentCopy}
-            color={selectedProfiles.length === 0 ? DISABLED_COLOR : PRIMARY_COLOR}
-          />
+        <Button on:click={() => exportTextfield.focus()}>
+          <MdiIcon size="24" icon={mdiContentCopy} color={PRIMARY_COLOR} />
           <Label class="ml-small">Copy URL</Label>
         </Button>
       {/if}
     </div>
-  </Dialog>
+  </BaseDialog>
 {/if}
 
-<style module>
-  .export-dialog-content {
-    display: grid;
-    grid-template-columns: auto 1px auto;
-  }
-
-  .export-dialog-content :global(.mdc-deprecated-list-item) {
-    padding-left: 0;
-  }
-
-  .export-dialog-content :global(.mdc-deprecated-list-item__meta) {
-    margin-left: 0;
-  }
-
-  .grid-border {
-    border-left: 1px solid #888;
-  }
-</style>
+<VisibilityDialog
+  bind:this={visibilityDialog}
+  {visibility}
+  on:save={async (event) => {
+    allowedEmails = event.detail.allowedEmails;
+    visibility = event.detail.visibility;
+    await updateExportProfile();
+  }}
+/>

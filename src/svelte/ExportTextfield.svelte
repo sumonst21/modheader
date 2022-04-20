@@ -3,18 +3,15 @@
   import Textfield from '@smui/textfield';
   import { showMessage } from '../js/toast.js';
   import { exportProfiles } from '../js/profile.js';
-  import { createProfile, updateProfile } from '../js/api.js';
 
   export let selectedProfiles;
   export let keepStyles;
   export let mode = 'url';
+  export let exportUrl = '';
+  export let uploading;
+
   let exportUrlTextbox;
   let exportJsonTextbox;
-  let uploadedExportProfiles;
-
-  let exportUrl = '';
-  let exportProfileId;
-  let uploading;
 
   export function focus() {
     if (mode === 'url') {
@@ -37,31 +34,6 @@
     showMessage('Copied to clipboard!');
   }
 
-  async function createProfileUrl() {
-    uploadedExportProfiles = exportProfiles(selectedProfiles, { keepStyles });
-    const { profileId } = await createProfile({ profiles: uploadedExportProfiles });
-    exportProfileId = profileId;
-    exportUrl = `${process.env.URL_BASE}/profile/${profileId}`;
-  }
-
-  $: {
-    const newUploadedExportProfiles = exportProfiles(selectedProfiles, { keepStyles });
-    if (exportProfileId && uploadedExportProfiles !== newUploadedExportProfiles) {
-      uploadedExportProfiles = newUploadedExportProfiles;
-      uploading = true;
-      updateProfile({
-        profileId: exportProfileId,
-        profiles: uploadedExportProfiles
-      })
-        .catch(() => {
-          showMessage('Failed to update exported profiles');
-        })
-        .finally(() => {
-          uploading = false;
-        });
-    }
-  }
-
   $: exportedText =
     selectedProfiles.length > 0
       ? exportProfiles(selectedProfiles, { keepStyles })
@@ -69,26 +41,20 @@
 </script>
 
 {#if mode === 'url'}
-  {#await createProfileUrl()}
-    <div>Generating export URL</div>
-  {:then done}
-    <Textfield
-      bind:this={exportUrlTextbox}
-      on:focus={() => copyExportText(exportUrlTextbox, exportUrl)}
-      class="export-text-field"
-      type="url"
-      input$rows="5"
-      textarea
-      readonly
-      disabled={selectedProfiles.length === 0}
-      value={exportUrl}
-    />
-    {#if uploading}
-      <LinearProgress indeterminate />
-    {/if}
-  {:catch err}
-    <div class="error-text">Failed to generate export URL</div>
-  {/await}
+  <Textfield
+    bind:this={exportUrlTextbox}
+    on:focus={() => copyExportText(exportUrlTextbox, exportUrl)}
+    class="export-text-field"
+    type="url"
+    input$rows="5"
+    textarea
+    readonly
+    disabled={selectedProfiles.length === 0 || uploading}
+    value={exportUrl}
+  />
+  {#if uploading}
+    <LinearProgress indeterminate />
+  {/if}
 {:else}
   <Textfield
     bind:this={exportJsonTextbox}
@@ -101,10 +67,3 @@
     value={exportedText}
   />
 {/if}
-
-<style module>
-  .export-text-field {
-    width: 380px;
-    font-size: 1rem;
-  }
-</style>
