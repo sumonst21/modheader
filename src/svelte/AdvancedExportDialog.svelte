@@ -13,7 +13,7 @@
   import { DISABLED_COLOR, PRIMARY_COLOR } from '../js/constants.js';
   import { profiles } from '../js/datasource.js';
   import { showExportDialog } from '../js/dialog.js';
-  import { selectedProfile, exportProfiles } from '../js/profile.js';
+  import { selectedProfile, exportProfile } from '../js/profile.js';
 
   const TABS = [
     { label: 'URL', value: 'url' },
@@ -78,7 +78,7 @@
         {:else}
           <Button
             href="data:application/json;base64,{encode(
-              exportProfiles(selectedProfiles, { keepStyles })
+              exportProfile(selectedProfiles, { keepStyles })
             )}"
             download="{selectedProfiles.map((p) => p.title).join('+')}.json"
           >

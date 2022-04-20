@@ -81,7 +81,7 @@
             showExportDialog.set(true);
           }
         }}
-        title="Export / share profile(s)"
+        title="Export / share profile"
       >
         <MdiIcon size="24" icon={mdiShare} color={$buttonColor} />
       </IconButton>

@@ -11,8 +11,7 @@
   import { PRIMARY_COLOR } from '../js/constants.js';
   import { showExportDialog } from '../js/dialog.js';
   import { Visibility } from '../js/visibility.js';
-  import { selectedProfile, exportProfiles } from '../js/profile.js';
-  import { onMount } from 'svelte';
+  import { selectedProfile, exportProfile } from '../js/profile.js';
   import { createProfile, updateProfile } from '../js/api.js';
   import { showMessage } from '../js/toast.js';
 
@@ -32,8 +31,10 @@
   let exportProfileId;
   let uploading;
 
-  onMount(async () => {
-    await createProfileUrl();
+  showExportDialog.subscribe(async (isShown) => {
+    if (isShown) {
+      await createProfileUrl();
+    }
   });
 
   async function createProfileUrl() {
@@ -41,31 +42,30 @@
     uploading = true;
     try {
       const { profileId } = await createProfile({
-        profiles: exportProfiles([$selectedProfile], { keepStyles })
+        profile: exportProfile($selectedProfile, { keepStyles })
       });
       exportProfileId = profileId;
       exportUrl = `${process.env.URL_BASE}/profile/${profileId}`;
-      uploading = false;
     } catch (err) {
       exportUrl = 'Failed to generate export URL';
+    } finally {
+      uploading = false;
     }
   }
 
   async function updateExportProfile() {
-    if (exportProfileId) {
-      uploading = true;
-      try {
-        await updateProfile({
-          profileId: exportProfileId,
-          profiles: exportProfiles([$selectedProfile], { keepStyles }),
-          visibility: 'restricted',
-          allowedEmails
-        });
-      } catch (err) {
-        showMessage('Failed to update exported profiles');
-      } finally {
-        uploading = false;
-      }
+    uploading = true;
+    try {
+      await updateProfile({
+        profileId: exportProfileId,
+        profile: exportProfile($selectedProfile, { keepStyles }),
+        visibility,
+        allowedEmails
+      });
+    } catch (err) {
+      showMessage('Failed to update exported profiles');
+    } finally {
+      uploading = false;
     }
   }
 </script>
@@ -81,8 +81,7 @@
 
       <ExportTextfield
         {keepStyles}
-        selectedProfiles={[$selectedProfile]}
-        {allowedEmails}
+        profile={$selectedProfile}
         mode={activeTab.value}
         {exportUrl}
         {uploading}
@@ -112,7 +111,7 @@
       {#if activeTab.value === 'json'}
         <Button
           href="data:application/json;base64,{encode(
-            exportProfiles([$selectedProfile], { keepStyles })
+            JSON.stringify(exportProfile($selectedProfile, { keepStyles }))
           )}"
           download="{$selectedProfile.title}.json"
         >
@@ -134,6 +133,7 @@
   bind:this={visibilityDialog}
   {visibility}
   on:save={async (event) => {
+    console.log('Updated visibility', event.detail);
     allowedEmails = event.detail.allowedEmails;
     visibility = event.detail.visibility;
     await updateExportProfile();

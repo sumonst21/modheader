@@ -4,7 +4,7 @@
   import { mdiClose } from '@mdi/js';
   import MdiIcon from './MdiIcon.svelte';
 
-  export let open;
+  export let open = false;
   export let showCloseButton = true;
   export let title;
   let dialog;

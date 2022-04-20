@@ -14,16 +14,16 @@ export function getUserDetails() {
   return makeRequest(`/api/u/user-details`);
 }
 
-export function createProfile({ profiles }) {
+export function createProfile({ profile }) {
   return makeRequest(`/api/u/profile`, {
     method: 'POST',
-    body: JSON.stringify({ profiles })
+    body: JSON.stringify({ profile })
   });
 }
 
-export function updateProfile({ profileId, profiles, visibility, allowedEmails }) {
+export function updateProfile({ profileId, profile, visibility, allowedEmails }) {
   return makeRequest(`/api/u/profile`, {
     method: 'PUT',
-    body: JSON.stringify({ profileId, profiles, visibility, allowedEmails })
+    body: JSON.stringify({ profileId, profile, visibility, allowedEmails })
   });
 }

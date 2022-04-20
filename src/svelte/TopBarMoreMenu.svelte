@@ -173,7 +173,7 @@
         }}
       >
         <MdiIcon class="more-menu-icon" size="24" icon={mdiShare} color="#666" />
-        Export / share profile(s)
+        Export / share profile
       </Item>
       <Item
         on:SMUI:action={() => {
@@ -183,7 +183,7 @@
         id="import-profile"
       >
         <MdiIcon class="more-menu-icon" size="24" icon={mdiFileImportOutline} color="#666" />
-        Import profile(s)
+        Import profile
       </Item>
       <Item
         on:SMUI:action={() => {

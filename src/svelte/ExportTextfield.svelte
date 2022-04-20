@@ -2,9 +2,9 @@
   import LinearProgress from '@smui/linear-progress';
   import Textfield from '@smui/textfield';
   import { showMessage } from '../js/toast.js';
-  import { exportProfiles } from '../js/profile.js';
+  import { exportProfile } from '../js/profile.js';
 
-  export let selectedProfiles;
+  export let profile;
   export let keepStyles;
   export let mode = 'url';
   export let exportUrl = '';
@@ -22,9 +22,6 @@
   }
 
   async function copyExportText(textbox, content) {
-    if (!selectedProfiles.length) {
-      return;
-    }
     textbox.getElement().querySelector('textarea').select();
     if (navigator.clipboard && navigator.clipboard.writeText) {
       await navigator.clipboard.writeText(content);
@@ -34,10 +31,7 @@
     showMessage('Copied to clipboard!');
   }
 
-  $: exportedText =
-    selectedProfiles.length > 0
-      ? exportProfiles(selectedProfiles, { keepStyles })
-      : 'Select a profile to export';
+  $: exportedText = profile ? JSON.stringify(exportProfile(profile, { keepStyles })) : '';
 </script>
 
 {#if mode === 'url'}
@@ -49,7 +43,7 @@
     input$rows="5"
     textarea
     readonly
-    disabled={selectedProfiles.length === 0 || uploading}
+    disabled={uploading}
     value={exportUrl}
   />
   {#if uploading}
@@ -63,7 +57,6 @@
     input$rows="5"
     textarea
     readonly
-    disabled={selectedProfiles.length === 0}
     value={exportedText}
   />
 {/if}

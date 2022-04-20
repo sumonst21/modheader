@@ -283,37 +283,35 @@ export function sortProfiles(sortOrder) {
   }
 }
 
-export function exportProfiles(profiles, { keepStyles } = {}) {
-  const cloneProfiles = lodashCloneDeep(profiles);
-  for (const profile of cloneProfiles) {
-    if (profile.hideComment) {
-      delete profile.hideComment;
-    }
-    if (!keepStyles) {
-      delete profile.backgroundColor;
-      delete profile.textColor;
-    }
-    for (const arrayField of ARRAY_FIELDS) {
-      if (!profile[arrayField] || profile[arrayField].length === 0) {
-        delete profile[arrayField];
-      } else {
-        for (const entry of profile[arrayField]) {
-          if (!entry.comment) {
-            delete entry.comment;
-          }
+export function exportProfile(profile, { keepStyles } = {}) {
+  const cloneProfile = lodashCloneDeep(profile);
+  if (profile.hideComment) {
+    delete profile.hideComment;
+  }
+  if (!keepStyles) {
+    delete profile.backgroundColor;
+    delete profile.textColor;
+  }
+  for (const arrayField of ARRAY_FIELDS) {
+    if (!profile[arrayField] || profile[arrayField].length === 0) {
+      delete profile[arrayField];
+    } else {
+      for (const entry of profile[arrayField]) {
+        if (!entry.comment) {
+          delete entry.comment;
         }
       }
-      const autocompleteField = `${arrayField}Autocomplete`;
-      if (
-        profile[autocompleteField] &&
-        profile[autocompleteField].autocompleteName.length === 0 &&
-        profile[autocompleteField].autocompleteValue.length === 0
-      ) {
-        delete profile[autocompleteField];
-      }
+    }
+    const autocompleteField = `${arrayField}Autocomplete`;
+    if (
+      profile[autocompleteField] &&
+      profile[autocompleteField].autocompleteName.length === 0 &&
+      profile[autocompleteField].autocompleteValue.length === 0
+    ) {
+      delete profile[autocompleteField];
     }
   }
-  return JSON.stringify(cloneProfiles);
+  return cloneProfile;
 }
 
 export function importProfiles(importProfiles) {
