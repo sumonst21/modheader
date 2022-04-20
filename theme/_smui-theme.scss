@@ -86,6 +86,12 @@ button::-moz-focus-inner {
   top: 4px;
 }
 
+.dialog-close-button {
+  --mdc-ripple-top: 12px !important;
+  --mdc-ripple-left: 12px !important;
+  --mdc-ripple-fg-size: 24px !important;
+}
+
 .data-table {
   padding-top: 4px;
   padding-bottom: 4px;
