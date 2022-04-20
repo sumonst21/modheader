@@ -1,13 +1,13 @@
 <script>
-  import Dialog, { Title, Content } from '@smui/dialog';
+  import Dialog, { Title, Content, Actions } from '@smui/dialog';
   import IconButton from '@smui/icon-button';
   import { mdiClose } from '@mdi/js';
   import MdiIcon from './MdiIcon.svelte';
 
   export let open;
-  export let showCloseButton;
+  export let showCloseButton = true;
   export let title;
-  export let dialog;
+  let dialog;
 </script>
 
 <Dialog bind:open bind:this={dialog}>
@@ -23,7 +23,7 @@
     <slot />
   </Content>
 
-  <div class="mdc-dialog__actions">
+  <Actions>
     <slot name="footer" />
-  </div>
+  </Actions>
 </Dialog>

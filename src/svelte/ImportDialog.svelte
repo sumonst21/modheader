@@ -1,12 +1,12 @@
 <script>
   import lodashIsEmpty from 'lodash/isEmpty.js';
   import lodashIsArray from 'lodash/isArray.js';
-  import Dialog, { Title, Content } from '@smui/dialog';
   import Button, { Label } from '@smui/button';
-  import IconButton from '@smui/icon-button';
-  import { mdiClose, mdiFileImport, mdiCheck } from '@mdi/js';
+  import { mdiFileImport, mdiCheck } from '@mdi/js';
+  import Textfield from '@smui/textfield';
   import lzString from 'lz-string';
   import MdiIcon from './MdiIcon.svelte';
+  import BaseDialog from './BaseDialog.svelte';
   import { DISABLED_COLOR, PRIMARY_COLOR } from '../js/constants.js';
   import { showMessage } from '../js/toast.js';
   import { getLocal } from '../js/storage.js';
@@ -16,8 +16,7 @@
 
   const SHARE_URL_PREFIX = 'https://modheader.com/p/';
   const OLD_SHARE_URL_PREFIX = 'https://bewisse.com/modheader/p/';
-  let importTextbox;
-  let importText;
+  let importText = '';
   let uploadFileInput;
 
   showImportDialog.subscribe(async (show) => {
@@ -84,27 +83,10 @@
 </script>
 
 {#if $showImportDialog}
-  <Dialog bind:open={$showImportDialog}>
-    <Title>
-      Import profile
-      <IconButton
-        aria-label="Close"
-        class="dialog-close-button"
-        on:click={() => showImportDialog.set(false)}
-      >
-        <MdiIcon size="32" icon={mdiClose} color="#888" />
-      </IconButton>
-    </Title>
-    <Content>
-      <div>Enter the URL / JSON encoded profile here to import.</div>
-      <textarea
-        bind:this={importTextbox}
-        class="extra-large-textarea"
-        rows="40"
-        bind:value={importText}
-      />
-    </Content>
-    <div class="mdc-dialog__actions">
+  <BaseDialog bind:open={$showImportDialog} title="Import profile">
+    <div>Enter the URL / JSON encoded profile here to import.</div>
+    <Textfield textarea class="extra-large-textarea" input$rows="40" bind:value={importText} />
+    <svelte:fragment slot="footer">
       {#if isChromiumBasedBrowser()}
         <!-- Opening the file would close the popup in Firefox, so we can't support it. -->
         <input
@@ -131,8 +113,8 @@
         />
         <Label class="ml-small">Import</Label>
       </Button>
-    </div>
-  </Dialog>
+    </svelte:fragment>
+  </BaseDialog>
 {/if}
 
 <style module>

@@ -1,12 +1,11 @@
 <script>
   import ColorPicker from './svelte-picker';
-  import Dialog, { Title, Content } from '@smui/dialog';
   import Tab, { Label as TabLabel } from '@smui/tab';
   import Button, { Label } from '@smui/button';
   import TabBar from '@smui/tab-bar';
-  import IconButton from '@smui/icon-button';
   import { mdiContentSave, mdiClose } from '@mdi/js';
   import MdiIcon from './MdiIcon.svelte';
+  import BaseDialog from './BaseDialog.svelte';
   import { PRIMARY_COLOR } from '../js/constants.js';
   import { selectedProfile, updateProfile } from '../js/profile.js';
 
@@ -31,62 +30,50 @@
 </script>
 
 {#if dialogVisible}
-  <Dialog bind:open={dialogVisible} class="profile-badge-dialog">
-    <Title id="dialog-title">
-      Profile badge
-      <IconButton
-        aria-label="Close"
-        class="dialog-close-button"
-        on:click={() => (dialogVisible = false)}
-      >
-        <MdiIcon size="32" icon={mdiClose} color="#888" />
-      </IconButton>
-    </Title>
-    <Content>
-      <div>
-        Change badge text:
-        <span class="profile-badge-preview" style="background: {backgroundColor}">
-          <input
-            class="profile-badge-preview-text"
-            bind:this={shortTitleTextfield}
-            bind:value={shortTitle}
-            style="color: {textColor}"
-            type="text"
-            maxlength="1"
-          />
-        </span>
-      </div>
+  <BaseDialog bind:open={dialogVisible} title="Profile badge">
+    <div>
+      Change badge text:
+      <span class="profile-badge-preview" style="background: {backgroundColor}">
+        <input
+          class="profile-badge-preview-text"
+          bind:this={shortTitleTextfield}
+          bind:value={shortTitle}
+          style="color: {textColor}"
+          type="text"
+          maxlength="1"
+        />
+      </span>
+    </div>
 
-      <TabBar tabs={TABS} let:tab bind:active={activeTab}>
-        <Tab {tab}>
-          <TabLabel>{tab.label}</TabLabel>
-        </Tab>
-      </TabBar>
-      <div class="color-picker-container">
-        {#if activeTab.value === 'backgroundColor'}
-          <ColorPicker
-            startColor={$selectedProfile.backgroundColor}
-            on:colorchange={(event) => {
-              const rgbString = event.detail.hex;
-              if (rgbString !== backgroundColor) {
-                backgroundColor = rgbString;
-              }
-            }}
-          />
-        {:else}
-          <ColorPicker
-            startColor={$selectedProfile.textColor}
-            on:colorchange={(event) => {
-              const rgbString = event.detail.hex;
-              if (rgbString !== textColor) {
-                textColor = rgbString;
-              }
-            }}
-          />
-        {/if}
-      </div>
-    </Content>
-    <div class="mdc-dialog__actions">
+    <TabBar tabs={TABS} let:tab bind:active={activeTab}>
+      <Tab {tab}>
+        <TabLabel>{tab.label}</TabLabel>
+      </Tab>
+    </TabBar>
+    <div class="color-picker-container">
+      {#if activeTab.value === 'backgroundColor'}
+        <ColorPicker
+          startColor={$selectedProfile.backgroundColor}
+          on:colorchange={(event) => {
+            const rgbString = event.detail.hex;
+            if (rgbString !== backgroundColor) {
+              backgroundColor = rgbString;
+            }
+          }}
+        />
+      {:else}
+        <ColorPicker
+          startColor={$selectedProfile.textColor}
+          on:colorchange={(event) => {
+            const rgbString = event.detail.hex;
+            if (rgbString !== textColor) {
+              textColor = rgbString;
+            }
+          }}
+        />
+      {/if}
+    </div>
+    <svelte:fragment slot="footer">
       <Button on:click={() => (dialogVisible = false)}>
         <MdiIcon size="24" icon={mdiClose} color={PRIMARY_COLOR} />
         <Label class="ml-small">Cancel</Label>
@@ -104,8 +91,8 @@
         <MdiIcon size="24" icon={mdiContentSave} color={PRIMARY_COLOR} />
         <Label class="ml-small">Save</Label>
       </Button>
-    </div>
-  </Dialog>
+    </svelte:fragment>
+  </BaseDialog>
 {/if}
 
 <style module>

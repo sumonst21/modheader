@@ -108,7 +108,7 @@
         {/if}
       </div>
     </div>
-    <div slot="footer">
+    <svelte:fragment slot="footer">
       {#if activeTab.value === 'json'}
         <Button
           href="data:application/json;base64,{encode(
@@ -126,7 +126,7 @@
           <Label class="ml-small">Copy URL</Label>
         </Button>
       {/if}
-    </div>
+    </svelte:fragment>
   </BaseDialog>
 {/if}
 

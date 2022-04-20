@@ -58,7 +58,7 @@
     </div>
     <div class="caption">Be careful about sharing sensitive data, e.g. auth token / cookies!</div>
 
-    <div slot="footer">
+    <svelte:fragment slot="footer">
       <FormField>
         <Checkbox bind:checked={keepStyles} color="secondary" />
         <span slot="label" class="clickable">Export styles</span>
@@ -97,7 +97,7 @@
           <Label class="ml-small">Copy URL</Label>
         </Button>
       {/if}
-    </div>
+    </svelte:fragment>
   </BaseDialog>
 {/if}
 

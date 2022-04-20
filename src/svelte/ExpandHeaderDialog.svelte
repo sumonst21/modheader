@@ -1,6 +1,7 @@
 <script>
   import Dialog, { Title, Content, Actions } from '@smui/dialog';
   import Button, { Label } from '@smui/button';
+  import BaseDialog from './BaseDialog.svelte';
   import Textfield from '@smui/textfield';
   import { createEventDispatcher } from 'svelte';
 
@@ -21,41 +22,38 @@
 </script>
 
 {#if dialogVisible}
-  <Dialog bind:open={dialogVisible} on:MDCDialog:closed={saveHeader}>
-    <Title>{title}</Title>
-    <Content>
-      <div class="expand-header-dialog-content">
-        {#if selectedHeader}
-          <Textfield
-            textarea
-            fullwidth
-            class="expand-header-dialog-textfield"
-            bind:value={selectedHeader.name}
-            label={nameLabel}
-          />
-          <Textfield
-            textarea
-            fullwidth
-            class="expand-header-dialog-textfield"
-            bind:value={selectedHeader.value}
-            label={valueLabel}
-          />
-          <Textfield
-            textarea
-            fullwidth
-            class="expand-header-dialog-textfield"
-            bind:value={selectedHeader.comment}
-            label="Comment"
-          />
-        {/if}
-      </div>
-    </Content>
-    <Actions>
+  <BaseDialog bind:open={dialogVisible} on:MDCDialog:closed={saveHeader} {title}>
+    <div class="expand-header-dialog-content">
+      {#if selectedHeader}
+        <Textfield
+          textarea
+          fullwidth
+          class="expand-header-dialog-textfield"
+          bind:value={selectedHeader.name}
+          label={nameLabel}
+        />
+        <Textfield
+          textarea
+          fullwidth
+          class="expand-header-dialog-textfield"
+          bind:value={selectedHeader.value}
+          label={valueLabel}
+        />
+        <Textfield
+          textarea
+          fullwidth
+          class="expand-header-dialog-textfield"
+          bind:value={selectedHeader.comment}
+          label="Comment"
+        />
+      {/if}
+    </div>
+    <svelte:fragment slot="footer">
       <Button>
         <Label>Done</Label>
       </Button>
-    </Actions>
-  </Dialog>
+    </svelte:fragment>
+  </BaseDialog>
 {/if}
 
 <style module>

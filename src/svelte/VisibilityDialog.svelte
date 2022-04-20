@@ -41,7 +41,7 @@
     label="List of additional allowed emails - one entry per line"
   />
 
-  <div slot="footer">
+  <svelte:fragment slot="footer">
     <Button on:click={() => (open = false)}>
       <Label class="ml-small">Cancel</Label>
     </Button>
@@ -62,5 +62,5 @@
       <MdiIcon size="24" icon={mdiContentSave} color={PRIMARY_COLOR} />
       <Label class="ml-small">Save</Label>
     </Button>
-  </div>
+  </svelte:fragment>
 </BaseDialog>

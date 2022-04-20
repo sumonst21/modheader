@@ -1,12 +1,10 @@
 <script>
   import { get } from 'svelte/store';
-  import Dialog, { Title, Content, Actions } from '@smui/dialog';
   import Button, { Label } from '@smui/button';
   import Textfield from '@smui/textfield';
-  import { createEventDispatcher } from 'svelte';
+  import BaseDialog from './BaseDialog.svelte';
   import { selectedProfile, updateProfile } from '../js/profile.js';
 
-  const dispatch = createEventDispatcher();
   export let modifierHandler;
   let dialogVisible;
   let autocompleteName = '';
@@ -45,36 +43,37 @@
 </script>
 
 {#if dialogVisible}
-  <Dialog bind:open={dialogVisible} on:MDCDialog:closed={saveConfiguration}>
-    <Title>Customize autocomplete</Title>
-    <Content>
-      <div class="autocomplete-dialog-content">
-        <div>
-          Enter the entries that you would like to show up in autocomplete. These autocomplete
-          entries will show up when you focus on an input and as you type.
-        </div>
-        <Textfield
-          textarea
-          fullwidth
-          class="dialog-textfield"
-          bind:value={autocompleteName}
-          label="{modifierHandler.nameLabel} - One entry per line"
-        />
-        <Textfield
-          textarea
-          fullwidth
-          class="dialog-textfield"
-          bind:value={autocompleteValue}
-          label="{modifierHandler.valueLabel} - One entry per line"
-        />
+  <BaseDialog
+    bind:open={dialogVisible}
+    title="Customize autocomplete"
+    on:MDCDialog:closed={saveConfiguration}
+  >
+    <div class="autocomplete-dialog-content">
+      <div>
+        Enter the entries that you would like to show up in autocomplete. These autocomplete entries
+        will show up when you focus on an input and as you type.
       </div>
-    </Content>
-    <Actions>
+      <Textfield
+        textarea
+        fullwidth
+        class="dialog-textfield"
+        bind:value={autocompleteName}
+        label="{modifierHandler.nameLabel} - One entry per line"
+      />
+      <Textfield
+        textarea
+        fullwidth
+        class="dialog-textfield"
+        bind:value={autocompleteValue}
+        label="{modifierHandler.valueLabel} - One entry per line"
+      />
+    </div>
+    <svelte:fragment slot="footer">
       <Button>
         <Label>Done</Label>
       </Button>
-    </Actions>
-  </Dialog>
+    </svelte:fragment>
+  </BaseDialog>
 {/if}
 
 <style module>

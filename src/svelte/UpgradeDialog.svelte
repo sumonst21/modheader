@@ -1,34 +1,21 @@
 <script>
-  import Dialog, { Title, Content } from '@smui/dialog';
   import Button, { Label } from '@smui/button';
-  import IconButton from '@smui/icon-button';
-  import { mdiClose, mdiArrowUpBold } from '@mdi/js';
+  import { mdiArrowUpBold } from '@mdi/js';
   import MdiIcon from './MdiIcon.svelte';
+  import BaseDialog from './BaseDialog.svelte';
   import { PRIMARY_COLOR } from '../js/constants';
   import { showUpgradeDialog } from '../js/dialog.js';
   import { upgrade } from '../js/identity.js';
 </script>
 
 {#if $showUpgradeDialog}
-  <Dialog bind:open={$showUpgradeDialog}>
-    <Title>
-      Upgrade required
-      <IconButton
-        aria-label="Close"
-        class="dialog-close-button"
-        on:click={() => showUpgradeDialog.set(false)}
-      >
-        <MdiIcon size="32" icon={mdiClose} color="#888" />
-      </IconButton>
-    </Title>
-    <Content>
-      <div>Upgrade to Pro to use this feature.</div>
-    </Content>
-    <div class="mdc-dialog__actions">
+  <BaseDialog bind:open={$showUpgradeDialog} title="Upgrade required">
+    <div>Upgrade to Pro to use this feature.</div>
+    <svelte:fragment slot="footer">
       <Button on:click={() => upgrade()}>
         <MdiIcon size="24" icon={mdiArrowUpBold} color={PRIMARY_COLOR} />
         <Label class="ml-small">Upgrade</Label>
       </Button>
-    </div>
-  </Dialog>
+    </svelte:fragment>
+  </BaseDialog>
 {/if}
