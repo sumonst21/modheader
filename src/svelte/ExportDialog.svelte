@@ -11,8 +11,11 @@
   import { PRIMARY_COLOR } from '../js/constants.js';
   import { showExportDialog } from '../js/dialog.js';
   import { Visibility } from '../js/visibility.js';
-  import { selectedProfile, exportProfile } from '../js/profile.js';
-  import { createProfile, updateProfile } from '../js/api.js';
+  import { selectedProfile, exportProfile, updateProfile } from '../js/profile.js';
+  import {
+    createProfile as createProfileApi,
+    updateProfile as updateProfileApi
+  } from '../js/api.js';
   import { showMessage } from '../js/toast.js';
 
   const TABS = [
@@ -28,7 +31,6 @@
   const keepStyles = true;
 
   let exportUrl;
-  let exportProfileId;
   let uploading;
 
   showExportDialog.subscribe(async (isShown) => {
@@ -38,14 +40,18 @@
   });
 
   async function createProfileUrl() {
+    if ($selectedProfile.profileId) {
+      exportUrl = `${process.env.URL_BASE}/profile/${$selectedProfile.profileId}`;
+      return;
+    }
     exportUrl = 'Generating export URL';
     uploading = true;
     try {
-      const { profileId } = await createProfile({
+      const { profileId } = await createProfileApi({
         profile: exportProfile($selectedProfile, { keepStyles })
       });
-      exportProfileId = profileId;
-      exportUrl = `${process.env.URL_BASE}/profile/${profileId}`;
+      updateProfile({ profileId });
+      exportUrl = `${process.env.URL_BASE}/profile/${$selectedProfile.profileId}`;
     } catch (err) {
       exportUrl = 'Failed to generate export URL';
     } finally {
@@ -56,8 +62,7 @@
   async function updateExportProfile() {
     uploading = true;
     try {
-      await updateProfile({
-        profileId: exportProfileId,
+      await updateProfileApi({
         profile: exportProfile($selectedProfile, { keepStyles }),
         visibility,
         allowedEmails
