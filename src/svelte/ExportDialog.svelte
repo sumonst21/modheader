@@ -63,6 +63,7 @@
     uploading = true;
     try {
       await updateProfileApi({
+        profileId: $selectedProfile.profileId,
         profile: exportProfile($selectedProfile, { keepStyles }),
         visibility,
         allowedEmails

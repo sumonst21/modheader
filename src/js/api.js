@@ -21,9 +21,9 @@ export function createProfile({ profile }) {
   });
 }
 
-export function updateProfile({ profile, visibility, allowedEmails }) {
+export function updateProfile({ profileId, profile, visibility, allowedEmails }) {
   return makeRequest(`/api/u/profile`, {
     method: 'PUT',
-    body: JSON.stringify({ profile, visibility, allowedEmails })
+    body: JSON.stringify({ profileId, profile, visibility, allowedEmails })
   });
 }
