@@ -4,51 +4,21 @@
   import Button, { Label } from '@smui/button';
   import { mdiFileImport, mdiCheck } from '@mdi/js';
   import Textfield from '@smui/textfield';
-  import lzString from 'lz-string';
   import MdiIcon from './MdiIcon.svelte';
   import BaseDialog from './BaseDialog.svelte';
   import { DISABLED_COLOR, PRIMARY_COLOR } from '../js/constants.js';
   import { showMessage } from '../js/toast.js';
-  import { getLocal } from '../js/storage.js';
+  import { parseProfile } from '../js/api.js';
   import { importProfiles } from '../js/profile.js';
   import { showImportDialog } from '../js/dialog.js';
   import { isChromiumBasedBrowser } from '../js/user-agent.js';
 
-  const SHARE_URL_PREFIX = 'https://modheader.com/p/';
-  const OLD_SHARE_URL_PREFIX = 'https://bewisse.com/modheader/p/';
   let importText = '';
   let uploadFileInput;
 
-  showImportDialog.subscribe(async (show) => {
-    if (show) {
-      const { currentTabUrl } = await getLocal('currentTabUrl');
-      if (
-        currentTabUrl &&
-        (currentTabUrl.startsWith(SHARE_URL_PREFIX) ||
-          currentTabUrl.startsWith(OLD_SHARE_URL_PREFIX))
-      ) {
-        importText = currentTabUrl;
-      } else {
-        importText = '';
-      }
-    }
-  });
-
-  function done() {
+  async function done() {
     try {
-      let importedProfiles;
-      if (importText.startsWith(SHARE_URL_PREFIX) || importText.startsWith(OLD_SHARE_URL_PREFIX)) {
-        const url = new URL(importText);
-        const encodedProfile = !lodashIsEmpty(url.hash)
-          ? url.hash.substring(1)
-          : url.pathname.substring(url.pathname.lastIndexOf('/') + 1);
-        importedProfiles = JSON.parse(lzString.decompressFromEncodedURIComponent(encodedProfile));
-      } else {
-        importedProfiles = JSON.parse(importText);
-        if (!lodashIsArray(importedProfiles)) {
-          importedProfiles = [importedProfiles];
-        }
-      }
+      const importedProfiles = await parseProfile({ data: importText });
       importProfiles(importedProfiles);
       showImportDialog.set(false);
     } catch (err) {

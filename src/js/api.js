@@ -20,6 +20,13 @@ export function getProfile({ profileId }) {
   return makeRequest(`/api/profile/${profileId}`);
 }
 
+export function parseProfile({ data }) {
+  return makeRequest(`/api/profile/parse`, {
+    method: 'POST',
+    body: JSON.stringify({ data })
+  });
+}
+
 export function createProfile({ profile }) {
   return makeRequest(`/api/u/profile`, {
     method: 'POST',
