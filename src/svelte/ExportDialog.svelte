@@ -1,36 +1,29 @@
 <script>
-  import { encode } from 'js-base64';
   import Button, { Label } from '@smui/button';
-  import Tab, { Label as TabLabel } from '@smui/tab';
-  import TabBar from '@smui/tab-bar';
-  import { mdiDownload, mdiContentCopy, mdiEye } from '@mdi/js';
+  import { mdiContentCopy, mdiEye } from '@mdi/js';
   import MdiIcon from './MdiIcon.svelte';
   import BaseDialog from './BaseDialog.svelte';
   import VisibilityDialog from './VisibilityDialog.svelte';
-  import ExportTextfield from './ExportTextfield.svelte';
+  import AutocopyTextfield from './AutocopyTextfield.svelte';
   import { PRIMARY_COLOR } from '../js/constants.js';
   import { showExportDialog } from '../js/dialog.js';
   import { Visibility } from '../js/visibility.js';
   import { selectedProfile, exportProfile, updateProfile } from '../js/profile.js';
   import {
+    getProfile as getProfileApi,
     createProfile as createProfileApi,
+    getProfileUrl,
     updateProfile as updateProfileApi
   } from '../js/api.js';
   import { showMessage } from '../js/toast.js';
 
-  const TABS = [
-    { label: 'URL', value: 'url' },
-    { label: 'JSON', value: 'json' }
-  ];
-
-  let activeTab = TABS[0];
   let exportTextfield;
   let allowedEmails = [];
   let visibility = Visibility.restricted.value;
   let visibilityDialog;
   const keepStyles = true;
 
-  let exportUrl;
+  let exportUrl = '';
   let uploading;
 
   showExportDialog.subscribe(async (isShown) => {
@@ -40,18 +33,28 @@
   });
 
   async function createProfileUrl() {
-    if ($selectedProfile.profileId) {
-      exportUrl = `${process.env.URL_BASE}/profile/${$selectedProfile.profileId}`;
-      return;
-    }
     exportUrl = 'Generating export URL';
     uploading = true;
+    if ($selectedProfile.profileId) {
+      try {
+        await getProfileApi({ profileId: $selectedProfile.profileId });
+        exportUrl = getProfileUrl({ profileId: $selectedProfile.profileId });
+        uploading = false;
+        return;
+      } catch (err) {
+        if (err.statusCode !== 404) {
+          exportUrl = 'Failed to retrieve profile from URL. Please try again later.';
+          uploading = false;
+          return;
+        }
+      }
+    }
     try {
       const { profileId } = await createProfileApi({
         profile: exportProfile($selectedProfile, { keepStyles })
       });
       updateProfile({ profileId });
-      exportUrl = `${process.env.URL_BASE}/profile/${$selectedProfile.profileId}`;
+      exportUrl = getProfileUrl({ profileId: $selectedProfile.profileId });
     } catch (err) {
       exportUrl = 'Failed to generate export URL';
     } finally {
@@ -79,19 +82,7 @@
 {#if $showExportDialog}
   <BaseDialog bind:open={$showExportDialog} title="Share with people">
     <div class="export-dialog-content">
-      <TabBar tabs={TABS} let:tab bind:active={activeTab}>
-        <Tab {tab}>
-          <TabLabel>{tab.label}</TabLabel>
-        </Tab>
-      </TabBar>
-
-      <ExportTextfield
-        {keepStyles}
-        profile={$selectedProfile}
-        mode={activeTab.value}
-        {exportUrl}
-        {uploading}
-      />
+      <AutocopyTextfield value={exportUrl} updating={uploading} />
 
       <Button on:click={() => visibilityDialog.show(allowedEmails)}>
         <MdiIcon size="24" icon={mdiEye} color={PRIMARY_COLOR} />
@@ -114,23 +105,10 @@
       </div>
     </div>
     <svelte:fragment slot="footer">
-      {#if activeTab.value === 'json'}
-        <Button
-          href="data:application/json;base64,{encode(
-            JSON.stringify(exportProfile($selectedProfile, { keepStyles }))
-          )}"
-          download="{$selectedProfile.title}.json"
-        >
-          <MdiIcon size="24" icon={mdiDownload} color={PRIMARY_COLOR} />
-          <Label class="ml-small">Download JSON</Label>
-        </Button>
-      {/if}
-      {#if activeTab.value === 'url'}
-        <Button on:click={() => exportTextfield.focus()}>
-          <MdiIcon size="24" icon={mdiContentCopy} color={PRIMARY_COLOR} />
-          <Label class="ml-small">Copy URL</Label>
-        </Button>
-      {/if}
+      <Button on:click={() => exportTextfield.focus()}>
+        <MdiIcon size="24" icon={mdiContentCopy} color={PRIMARY_COLOR} />
+        <Label class="ml-small">Copy URL</Label>
+      </Button>
     </svelte:fragment>
   </BaseDialog>
 {/if}

@@ -11,6 +11,14 @@ export const isProUser = derived(
   false
 );
 
+function openUrl({ path, query = {} }) {
+  const url = new URL(`${process.env.URL_BASE}${path}`);
+  for (const [key, value] of Object.entries(query)) {
+    url.searchParams.set(key, value);
+  }
+  chrome.tabs.create({ url: url.href });
+}
+
 export async function loadSignedInUser() {
   try {
     const user = await getUserDetails();
@@ -21,21 +29,27 @@ export async function loadSignedInUser() {
   }
 }
 
+export async function goToMyProfiles() {
+  openUrl({ path: `/u/myprofiles` });
+}
+
 export async function signIn() {
-  const url = new URL(`${process.env.URL_BASE}/login`);
-  url.searchParams.set('for', CURRENT_BROWSER);
-  url.searchParams.set('extension_id', chrome.runtime.id);
-  chrome.tabs.create({
-    url: url.href
+  openUrl({
+    path: '/login',
+    query: {
+      for: CURRENT_BROWSER,
+      extension_id: chrome.runtime.id
+    }
   });
 }
 
 export async function upgrade() {
-  const url = new URL(`${process.env.URL_BASE}/login`);
-  url.searchParams.set('for', CURRENT_BROWSER);
-  url.searchParams.set('extension_id', chrome.runtime.id);
-  chrome.tabs.create({
-    url: url.href
+  openUrl({
+    path: '/login',
+    query: {
+      for: CURRENT_BROWSER,
+      extension_id: chrome.runtime.id
+    }
   });
 }
 

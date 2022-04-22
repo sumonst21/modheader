@@ -1,11 +1,11 @@
 <script>
   import Menu from '@smui/menu';
-  import List, { Item } from '@smui/list';
+  import List, { Item, Text } from '@smui/list';
   import IconButton from '@smui/icon-button';
   import Button from '@smui/button';
   import ProfilePicture from './ProfilePicture.svelte';
   import { buttonColor } from '../js/profile.js';
-  import { signedInUser, signIn, signOut } from '../js/identity.js';
+  import { signedInUser, goToMyProfiles, signIn, signOut } from '../js/identity.js';
 
   let accountMenu;
 </script>
@@ -18,7 +18,8 @@
 
     <Menu bind:this={accountMenu} anchorCorner="TOP_LEFT">
       <List>
-        <Item on:SMUI:action={() => signOut()}>Log out</Item>
+        <Item on:SMUI:action={() => goToMyProfiles()}><Text>My exported profiles</Text></Item>
+        <Item on:SMUI:action={() => signOut()}><Text>Log out</Text></Item>
       </List>
     </Menu>
   </div>

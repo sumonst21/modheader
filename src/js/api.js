@@ -7,11 +7,17 @@ async function makeRequest(path, params = {}) {
   if (response.ok) {
     return await response.json();
   }
-  throw new Error('Failed to get signed in user');
+  const err = new Error('Failed to make the request');
+  err.statusCode = response.status;
+  throw err;
 }
 
 export function getUserDetails() {
   return makeRequest(`/api/u/user-details`);
+}
+
+export function getProfile({ profileId }) {
+  return makeRequest(`/api/profile/${profileId}`);
 }
 
 export function createProfile({ profile }) {
@@ -26,4 +32,8 @@ export function updateProfile({ profileId, profile, visibility, allowedEmails })
     method: 'PUT',
     body: JSON.stringify({ profileId, profile, visibility, allowedEmails })
   });
+}
+
+export function getProfileUrl({ profileId }) {
+  return `${process.env.URL_BASE}/profile/${profileId}`;
 }
