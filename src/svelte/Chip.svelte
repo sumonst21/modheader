@@ -1,5 +1,5 @@
 <script context="module">
-  import { mdiChevronDownCircle, mdiChevronRightCircle, mdiCloseCircle } from '@mdi/js';
+  import { mdiCached, mdiChevronDownCircle, mdiCloseCircle } from '@mdi/js';
 
   const TrailingAction = {
     TOGGLE: 'toggle',
@@ -9,7 +9,7 @@
 
   const TrailingActionConfigs = {
     [TrailingAction.TOGGLE]: {
-      icon: mdiChevronRightCircle,
+      icon: mdiCached,
       dispatchAction: 'click',
       tooltip: 'Click to change behavior'
     },

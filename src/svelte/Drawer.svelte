@@ -3,6 +3,7 @@
   import MenuSurface from '@smui/menu-surface';
   import List, { Item, Text, Separator } from '@smui/list';
   import {
+    mdiContentCopy,
     mdiCheckboxBlankOutline,
     mdiCheckboxMarked,
     mdiClose,
@@ -25,6 +26,7 @@
     addProfile,
     removeProfile,
     selectProfile,
+    cloneProfile,
     selectedProfile,
     updateProfile,
     sortProfiles
@@ -199,6 +201,24 @@
         color="#666"
       />
       <Text>Always stay on</Text>
+    </Item>
+    <Item
+      on:SMUI:action={() => {
+        addProfile();
+        contextMenu.setOpen(false);
+      }}
+    >
+      <MdiIcon class="more-menu-icon" size="24" icon={mdiFilePlus} color="#666" />
+      <Text>Add profile</Text>
+    </Item>
+    <Item
+      on:SMUI:action={() => {
+        cloneProfile($profiles[selectedProfileIndex]);
+        contextMenu.setOpen(false);
+      }}
+    >
+      <MdiIcon class="more-menu-icon" size="24" icon={mdiContentCopy} color="#666" />
+      <Text>Clone profile</Text>
     </Item>
     <Item
       on:SMUI:action={() => {

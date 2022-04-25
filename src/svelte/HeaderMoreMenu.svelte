@@ -2,9 +2,17 @@
   import IconButton from '@smui/icon-button';
   import Menu from '@smui/menu';
   import List, { Separator, Item, Label, Text } from '@smui/list';
-  import { mdiContentCopy, mdiArrowExpand, mdiDotsVertical, mdiClose } from '@mdi/js';
+  import {
+    mdiCommentCheckOutline,
+    mdiCommentRemoveOutline,
+    mdiContentCopy,
+    mdiArrowExpand,
+    mdiDotsVertical,
+    mdiClose
+  } from '@mdi/js';
   import lodashOmit from 'lodash/omit.js';
   import lodashClone from 'lodash/clone.js';
+  import { selectedProfile, updateProfile } from '../js/profile';
   import { createEventDispatcher } from 'svelte';
   import MdiIcon from './MdiIcon.svelte';
   import ExpandHeaderDialog from './ExpandHeaderDialog.svelte';
@@ -63,6 +71,21 @@
       <Item on:SMUI:action={() => dispatchUpdate({ ...selectedHeader, value: '' })}>
         <MdiIcon class="icon-with-text" color="#666" icon={mdiClose} size="24" />
         <Text>Clear value</Text>
+      </Item>
+      <Item
+        on:SMUI:action={() => {
+          updateProfile({
+            hideComment: !$selectedProfile.hideComment
+          });
+        }}
+      >
+        <MdiIcon
+          class="icon-with-text"
+          size="24"
+          icon={$selectedProfile.hideComment ? mdiCommentCheckOutline : mdiCommentRemoveOutline}
+          color="#666"
+        />
+        {$selectedProfile.hideComment ? 'Show comment' : 'Hide comment'}
       </Item>
       {#if modifierHandler.supportAppendMode}
         <Separator nav />
