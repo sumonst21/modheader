@@ -19,8 +19,8 @@ import {
 
 const ALL_URLS_FILTER = ['<all_urls>'];
 const LOGIN_URL_FILTER = [
-  `${process.env.URL_BASE}/u/extension-signed-in`,
-  `${process.env.URL_BASE}/u/extension-signed-in?*`
+  `${process.env.URL_BASE}/u/dashboard`,
+  `${process.env.URL_BASE}/u/dashboard*`
 ];
 
 let chromeLocal = {
