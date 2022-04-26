@@ -285,6 +285,7 @@ export function sortProfiles(sortOrder) {
 
 export function exportProfile(profile, { keepStyles } = {}) {
   const cloneProfile = lodashCloneDeep(profile);
+  delete cloneProfile.profileId;
   if (cloneProfile.hideComment) {
     delete cloneProfile.hideComment;
   }

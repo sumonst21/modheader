@@ -1,6 +1,8 @@
 <script>
   import Button, { Label } from '@smui/button';
   import { mdiContentCopy, mdiEye } from '@mdi/js';
+  import lodashOmit from 'lodash/omit';
+  import lodashIsEqual from 'lodash/isEqual';
   import MdiIcon from './MdiIcon.svelte';
   import BaseDialog from './BaseDialog.svelte';
   import VisibilityDialog from './VisibilityDialog.svelte';
@@ -21,6 +23,7 @@
   let allowedEmails = [];
   let visibility = Visibility.restricted.value;
   let visibilityDialog;
+  let showOverrideDialog;
   const keepStyles = true;
 
   let exportUrl = '';
@@ -28,18 +31,23 @@
 
   showExportDialog.subscribe(async (isShown) => {
     if (isShown) {
-      await createProfileUrl();
+      await onDialogShown();
     }
   });
 
-  async function createProfileUrl() {
+  async function onDialogShown() {
     exportUrl = 'Generating export URL';
     uploading = true;
     if ($selectedProfile.profileId) {
       try {
-        await getProfileApi({ profileId: $selectedProfile.profileId });
+        const profileResponse = await getProfileApi({ profileId: $selectedProfile.profileId });
         exportUrl = getProfileUrl({ profileId: $selectedProfile.profileId });
-        await updateExportProfile();
+        if (
+          !lodashIsEqual(profileResponse.profile, exportProfile($selectedProfile, { keepStyles }))
+        ) {
+          showOverrideDialog = true;
+        }
+        uploading = false;
         return;
       } catch (err) {
         if (err.statusCode !== 404) {
@@ -49,6 +57,21 @@
         }
       }
     }
+    try {
+      const { profileId } = await createProfileApi({
+        profile: exportProfile($selectedProfile, { keepStyles })
+      });
+      updateProfile({ profileId });
+      exportUrl = getProfileUrl({ profileId: $selectedProfile.profileId });
+    } catch (err) {
+      exportUrl = 'Failed to generate export URL';
+    } finally {
+      uploading = false;
+    }
+    await createProfileUrl();
+  }
+
+  async function createProfileUrl() {
     try {
       const { profileId } = await createProfileApi({
         profile: exportProfile($selectedProfile, { keepStyles })
@@ -111,13 +134,47 @@
       </Button>
     </svelte:fragment>
   </BaseDialog>
+
+  <BaseDialog bind:open={showOverrideDialog} title="Override existing profile?">
+    <div class="export-dialog-content">
+      <div>
+        This profile has already been exported to {exportUrl}. Would you like to create a new
+        shareable URL, or override the existing one?
+      </div>
+
+      <div>
+        <Button on:click={() => chrome.tabs.create({ url: exportUrl })}>
+          <Label class="ml-small">View existing profile</Label>
+        </Button>
+      </div>
+    </div>
+    <svelte:fragment slot="footer">
+      <Button
+        variant="raised"
+        on:click={async () => {
+          showOverrideDialog = false;
+          await createProfileUrl();
+        }}
+      >
+        <Label>Create new URL</Label>
+      </Button>
+      <Button
+        variant="raised"
+        on:click={async () => {
+          showOverrideDialog = false;
+          await updateExportProfile();
+        }}
+      >
+        <Label>Override profile</Label>
+      </Button>
+    </svelte:fragment>
+  </BaseDialog>
 {/if}
 
 <VisibilityDialog
   bind:this={visibilityDialog}
   {visibility}
   on:save={async (event) => {
-    console.log('Updated visibility', event.detail);
     allowedEmails = event.detail.allowedEmails;
     visibility = event.detail.visibility;
     await updateExportProfile();
