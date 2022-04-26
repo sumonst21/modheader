@@ -5,6 +5,7 @@
 
   export let value;
   export let updating;
+  export let numRows = 5;
 
   let textfield;
 
@@ -28,7 +29,7 @@
   on:focus={() => copyExportText(value)}
   class="export-text-field"
   type="url"
-  input$rows="5"
+  input$rows={numRows}
   textarea
   readonly
   disabled={updating}

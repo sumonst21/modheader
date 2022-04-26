@@ -62,6 +62,18 @@ async function refreshTabInfo() {
   }
 }
 
+export function openUrl({ url, params = {} }) {
+  if (Object.keys(params).length > 0) {
+    const parsedUrl = new URL(url);
+    for (const [key, value] of Object.entries(params)) {
+      parsedUrl.searchParams.set(key, value);
+    }
+    chrome.tabs.create({ url: parsedUrl.href });
+  } else {
+    chrome.tabs.create({ url });
+  }
+}
+
 export async function setupTabUpdatedListener() {
   chrome.tabs.onAttached.addListener(refreshTabInfo);
   chrome.tabs.onUpdated.addListener(refreshTabInfo);

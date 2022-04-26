@@ -1,14 +1,13 @@
 <script>
   import Button, { Label } from '@smui/button';
-  import { mdiContentCopy, mdiEye } from '@mdi/js';
-  import lodashOmit from 'lodash/omit';
+  import { mdiContentCopy, mdiLock } from '@mdi/js';
   import lodashIsEqual from 'lodash/isEqual';
   import MdiIcon from './MdiIcon.svelte';
   import BaseDialog from './BaseDialog.svelte';
-  import VisibilityDialog from './VisibilityDialog.svelte';
   import AutocopyTextfield from './AutocopyTextfield.svelte';
   import { PRIMARY_COLOR } from '../js/constants.js';
   import { showExportDialog } from '../js/dialog.js';
+  import { openUrl } from '../js/tabs.js';
   import { Visibility } from '../js/visibility.js';
   import { selectedProfile, exportProfile, updateProfile } from '../js/profile.js';
   import {
@@ -22,7 +21,6 @@
   let exportTextfield;
   let allowedEmails = [];
   let visibility = Visibility.restricted.value;
-  let visibilityDialog;
   let showOverrideDialog;
   const keepStyles = true;
 
@@ -105,12 +103,8 @@
 {#if $showExportDialog}
   <BaseDialog bind:open={$showExportDialog} title="Share with people">
     <div class="export-dialog-content">
-      <AutocopyTextfield value={exportUrl} updating={uploading} />
+      <AutocopyTextfield value={exportUrl} updating={uploading} numRows={2} />
 
-      <Button on:click={() => visibilityDialog.show(allowedEmails)}>
-        <MdiIcon size="24" icon={mdiEye} color={PRIMARY_COLOR} />
-        <Label class="ml-small">Visibility: {Visibility[visibility].label}</Label>
-      </Button>
       <div class="caption">
         {#if visibility === Visibility.restricted.value}
           {#if allowedEmails.length === 0}
@@ -128,6 +122,10 @@
       </div>
     </div>
     <svelte:fragment slot="footer">
+      <Button on:click={() => openUrl({ url: exportUrl, params: { action: 'share' } })}>
+        <MdiIcon size="24" icon={mdiLock} color={PRIMARY_COLOR} />
+        <Label class="ml-small">Change visibility</Label>
+      </Button>
       <Button on:click={() => exportTextfield.focus()}>
         <MdiIcon size="24" icon={mdiContentCopy} color={PRIMARY_COLOR} />
         <Label class="ml-small">Copy URL</Label>
@@ -143,7 +141,7 @@
       </div>
 
       <div>
-        <Button on:click={() => chrome.tabs.create({ url: exportUrl })}>
+        <Button on:click={() => openUrl({ url: exportUrl })}>
           <Label class="ml-small">View existing profile</Label>
         </Button>
       </div>
@@ -170,13 +168,3 @@
     </svelte:fragment>
   </BaseDialog>
 {/if}
-
-<VisibilityDialog
-  bind:this={visibilityDialog}
-  {visibility}
-  on:save={async (event) => {
-    allowedEmails = event.detail.allowedEmails;
-    visibility = event.detail.visibility;
-    await updateExportProfile();
-  }}
-/>
