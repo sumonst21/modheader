@@ -26,15 +26,15 @@
       profileFieldName: 'tabFilters'
     },
     [FilterType.URLS]: {
-      label: 'URL patterns',
+      label: 'URL filters',
       profileFieldName: 'urlFilters'
     },
     [FilterType.EXCLUDE_URLS]: {
-      label: 'Exclude URL patterns',
+      label: 'Exclude URL filters',
       profileFieldName: 'excludeUrlFilters'
     },
     [FilterType.RESOURCE_TYPES]: {
-      label: 'Resource types',
+      label: 'Resource filters',
       profileFieldName: 'resourceFilters'
     }
   };

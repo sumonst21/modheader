@@ -39,7 +39,7 @@
       try {
         await getProfileApi({ profileId: $selectedProfile.profileId });
         exportUrl = getProfileUrl({ profileId: $selectedProfile.profileId });
-        uploading = false;
+        await updateExportProfile();
         return;
       } catch (err) {
         if (err.statusCode !== 404) {

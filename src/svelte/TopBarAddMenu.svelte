@@ -73,7 +73,7 @@
               urlReplacements: await addUrlRedirect($selectedProfile.urlReplacements)
             })}
         >
-          URL redirect
+          Redirect URL
         </Item>
       </List>
       <div class="grid-border" />
@@ -83,28 +83,28 @@
           on:SMUI:action={async () =>
             updateProfileAndClose({
               tabFilters: await addTabFilter($selectedProfile.tabFilters)
-            })}>Tab Filter</Item
+            })}>Tab filter</Item
         >
         <Item
           id="add-url-filter"
           on:SMUI:action={async () =>
             updateProfileAndClose({
               urlFilters: await addUrlFilter($selectedProfile.urlFilters)
-            })}>URL Filter</Item
+            })}>URL filter</Item
         >
         <Item
           id="add-exclude-url-filter"
           on:SMUI:action={async () =>
             updateProfileAndClose({
               excludeUrlFilters: await addUrlFilter($selectedProfile.excludeUrlFilters)
-            })}>Exclude URL Filter</Item
+            })}>Exclude URL filter</Item
         >
         <Item
           id="add-resource-filter"
           on:SMUI:action={async () =>
             updateProfileAndClose({
               resourceFilters: await addResourceFilter($selectedProfile.resourceFilters)
-            })}>Resource Filter</Item
+            })}>Resource filter</Item
         >
       </List>
     </div>
