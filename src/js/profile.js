@@ -181,15 +181,18 @@ function upgradeFromProfileVersion1({ profile, index }) {
     }
     switch (type) {
       case FilterType.URLS:
+        delete filter.resourceType;
         profile.urlFilters.push(filter);
         break;
       case FilterType.EXCLUDE_URLS:
+        delete filter.resourceType;
         profile.excludeUrlFilters.push(filter);
         break;
       case FilterType.RESOURCE_TYPES:
         if (!filter.resourceType) {
           filter.resourceType = [];
         }
+        delete filter.urlRegex;
         profile.resourceFilters.push(filter);
         break;
     }
