@@ -35,7 +35,7 @@
   import { requireSignIn } from '../js/identity.js';
 
   const COLOR_SCHEME_LABEL = {
-    [ColorSchemes.SYSTEM_DEFAULT]: 'System default',
+    [ColorSchemes.SYSTEM_DEFAULT]: 'Default',
     [ColorSchemes.LIGHT]: 'Light',
     [ColorSchemes.DARK]: 'Dark'
   };
@@ -76,7 +76,7 @@
         return ColorSchemes.LIGHT;
       case ColorSchemes.LIGHT:
         return ColorSchemes.DARK;
-      case ColorSchemes.DARK:
+      default:
         return ColorSchemes.SYSTEM_DEFAULT;
     }
   }

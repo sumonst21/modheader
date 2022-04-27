@@ -122,12 +122,15 @@
       </div>
     </div>
     <svelte:fragment slot="footer">
-      <Button on:click={() => openUrl({ url: exportUrl, params: { action: 'share' } })}>
-        <MdiIcon size="24" icon={mdiLock} color={PRIMARY_COLOR} />
+      <Button
+        on:click={() => openUrl({ url: exportUrl, params: { action: 'share' } })}
+        variant="raised"
+      >
+        <MdiIcon size="24" icon={mdiLock} color='#fff' />
         <Label class="ml-small">Change visibility</Label>
       </Button>
-      <Button on:click={() => exportTextfield.focus()}>
-        <MdiIcon size="24" icon={mdiContentCopy} color={PRIMARY_COLOR} />
+      <Button on:click={() => exportTextfield.focus()} variant="raised">
+        <MdiIcon size="24" icon={mdiContentCopy} color='#fff' />
         <Label class="ml-small">Copy URL</Label>
       </Button>
     </svelte:fragment>
