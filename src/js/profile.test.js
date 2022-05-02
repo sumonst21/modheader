@@ -52,6 +52,8 @@ describe('profile', () => {
         excludeUrlFilters: [],
         resourceFilters: [],
         tabFilters: [],
+        tabGroupFilters: [],
+        windowFilters: [],
         headers: [
           {
             comment: '',
@@ -82,6 +84,8 @@ describe('profile', () => {
         excludeUrlFilters: [],
         resourceFilters: [],
         tabFilters: [],
+        tabGroupFilters: [],
+        windowFilters: [],
         headers: [
           {
             comment: '',
@@ -110,6 +114,8 @@ describe('profile', () => {
         excludeUrlFilters: [],
         resourceFilters: [],
         tabFilters: [],
+        tabGroupFilters: [],
+        windowFilters: [],
         headers: [
           {
             comment: '',
@@ -143,6 +149,8 @@ describe('profile', () => {
         excludeUrlFilters: [],
         resourceFilters: [],
         tabFilters: [],
+        tabGroupFilters: [],
+        windowFilters: [],
         headers: [
           {
             comment: '',
@@ -266,6 +274,8 @@ describe('profile', () => {
         setCookieHeaders: [],
         urlReplacements: [],
         tabFilters: [],
+        tabGroupFilters: [],
+        windowFilters: [],
         urlFilters: [],
         excludeUrlFilters: [],
         resourceFilters: []

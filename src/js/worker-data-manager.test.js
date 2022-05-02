@@ -34,7 +34,9 @@ const EMPTY_PROFILE = {
   urlFilters: [],
   excludeUrlFilters: [],
   resourceFilters: [],
-  tabFilters: []
+  tabFilters: [],
+  tabGroupFilters: [],
+  windowFilters: []
 };
 
 describe('worker-data-manager', () => {

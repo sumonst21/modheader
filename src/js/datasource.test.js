@@ -1,8 +1,15 @@
 import { jest } from '@jest/globals';
-import { get } from 'svelte/store';
+import { get, writable } from 'svelte/store';
 import flushPromises from 'flush-promises';
-import { signedInUser } from './identity.js';
 import { __testing__ as changeStackTesting } from './change-stack.js';
+
+const signedInUser = writable();
+
+const mockIdentity = {
+  signedInUser,
+  loadSignedInUser: jest.fn()
+};
+jest.doMock('./identity.js', () => mockIdentity);
 
 const mockStorage = {
   getLocal: jest.fn()

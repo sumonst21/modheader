@@ -8,6 +8,11 @@ const mockStorage = {
 };
 jest.doMock('./storage.js', () => mockStorage);
 
+const mockTabs = {
+  openUrl: jest.fn()
+};
+jest.doMock('./tabs.js', () => mockTabs);
+
 const { loadSignedInUser, signedInUser, signOut } = require('./identity.js');
 
 describe('identity', () => {

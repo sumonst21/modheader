@@ -17,6 +17,14 @@ const {
 
 describe('filter', () => {
   const TEST_TAB_ID = 2;
+  const STUBBED_PROFILE = {
+    urlFilters: [],
+    excludeUrlFilters: [],
+    resourceFilters: [],
+    tabFilters: [],
+    tabGroupFilters: [],
+    windowFilters: []
+  };
 
   beforeEach(() => {
     mockTabs.lookupTabInfo.mockReturnValue(undefined);
@@ -186,10 +194,8 @@ describe('filter', () => {
         type: 'main_frame',
         tabId: TEST_TAB_ID,
         profile: {
-          urlFilters: filters,
-          excludeUrlFilters: [],
-          resourceFilters: [],
-          tabFilters: []
+          ...STUBBED_PROFILE,
+          urlFilters: filters
         }
       })
     ).toEqual(true);
@@ -199,10 +205,8 @@ describe('filter', () => {
         type: 'main_frame',
         tabId: TEST_TAB_ID,
         profile: {
-          urlFilters: filters,
-          excludeUrlFilters: [],
-          resourceFilters: [],
-          tabFilters: []
+          ...STUBBED_PROFILE,
+          urlFilters: filters
         }
       })
     ).toEqual(false);
@@ -216,10 +220,8 @@ describe('filter', () => {
         type: 'main_frame',
         tabId: TEST_TAB_ID,
         profile: {
-          urlFilters: [],
-          excludeUrlFilters: filters,
-          resourceFilters: [],
-          tabFilters: []
+          ...STUBBED_PROFILE,
+          excludeUrlFilters: filters
         }
       })
     ).toEqual(false);
@@ -229,10 +231,8 @@ describe('filter', () => {
         type: 'main_frame',
         tabId: TEST_TAB_ID,
         profile: {
-          urlFilters: [],
-          excludeUrlFilters: filters,
-          resourceFilters: [],
-          tabFilters: []
+          ...STUBBED_PROFILE,
+          excludeUrlFilters: filters
         }
       })
     ).toEqual(true);
@@ -245,10 +245,9 @@ describe('filter', () => {
         type: 'main_frame',
         tabId: TEST_TAB_ID,
         profile: {
+          ...STUBBED_PROFILE,
           urlFilters: optimizeUrlFilters([{ enabled: true, urlRegex: '.*.google.com.*' }]),
-          excludeUrlFilters: optimizeUrlFilters([{ enabled: true, urlRegex: '.*.google.com.*' }]),
-          resourceFilters: [],
-          tabFilters: []
+          excludeUrlFilters: optimizeUrlFilters([{ enabled: true, urlRegex: '.*.google.com.*' }])
         }
       })
     ).toEqual(false);
@@ -262,10 +261,8 @@ describe('filter', () => {
         type: 'main_frame',
         tabId: TEST_TAB_ID,
         profile: {
-          urlFilters: [],
-          excludeUrlFilters: [],
-          resourceFilters: filters,
-          tabFilters: []
+          ...STUBBED_PROFILE,
+          resourceFilters: filters
         }
       })
     ).toEqual(true);
@@ -275,10 +272,8 @@ describe('filter', () => {
         type: 'sub_frame',
         tabId: TEST_TAB_ID,
         profile: {
-          urlFilters: [],
-          excludeUrlFilters: [],
-          resourceFilters: filters,
-          tabFilters: []
+          ...STUBBED_PROFILE,
+          resourceFilters: filters
         }
       })
     ).toEqual(false);
