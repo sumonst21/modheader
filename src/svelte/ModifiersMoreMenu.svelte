@@ -12,9 +12,12 @@
   } from '@mdi/js';
   import lodashOrderBy from 'lodash/orderBy.js';
   import { selectedProfile } from '../js/profile.js';
+  import { isProUser } from '../js/identity.js';
   import CustomizeAutocompleteDialog from './CustomizeAutocompleteDialog.svelte';
+  import LockIcon from './LockIcon.svelte';
   import MdiIcon from './MdiIcon.svelte';
   import { createEventDispatcher } from 'svelte';
+  import { showUpgradeDialog } from '../js/dialog.js';
 
   const dispatch = createEventDispatcher();
 
@@ -60,12 +63,16 @@
     </Item>
     <Item
       on:SMUI:action={() => {
-        customizeAutocompleteDialog.open();
-        dispatchRefresh();
+        if ($isProUser) {
+          customizeAutocompleteDialog.open();
+          dispatchRefresh();
+        } else {
+          showUpgradeDialog.set(true);
+        }
       }}
     >
       <MdiIcon class="more-menu-icon" size="24" icon={mdiFormatListBulleted} color="#666" />
-      <Text>Customize autocomplete</Text>
+      <Text>Customize autocomplete <LockIcon /></Text>
     </Item>
     <Separator nav />
     <Item on:SMUI:action={() => sort('name', 'asc')}>

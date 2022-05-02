@@ -2,13 +2,13 @@
   import MenuSurface from '@smui/menu-surface';
   import List, { Item } from '@smui/list';
   import IconButton from '@smui/icon-button';
-  import { mdiPlus, mdiLock } from '@mdi/js';
+  import { mdiPlus } from '@mdi/js';
   import MdiIcon from './MdiIcon.svelte';
+  import LockIcon from './LockIcon.svelte';
   import { selectedProfile, updateProfile, buttonColor } from '../js/profile.js';
   import { isProUser } from '../js/identity.js';
   import { showUpgradeDialog } from '../js/dialog.js';
   import { addHeader } from '../js/header.js';
-  import { LOCK_COLOR } from '../js/color.js';
   import { addUrlRedirect } from '../js/url-redirect.js';
   import {
     addUrlFilter,
@@ -70,9 +70,7 @@
           }}
         >
           Cookie request
-          {#if !$isProUser}
-            <MdiIcon class="ml-small" icon={mdiLock} size="12" color={LOCK_COLOR} />
-          {/if}
+          <LockIcon />
         </Item>
         <Item
           id="add-set-cookie-modifier"
@@ -87,9 +85,7 @@
           }}
         >
           Set-Cookie response
-          {#if !$isProUser}
-            <MdiIcon class="ml-small" icon={mdiLock} size="12" color={LOCK_COLOR} />
-          {/if}
+          <LockIcon />
         </Item>
         <Item
           id="add-url-replacement"
@@ -123,9 +119,7 @@
           }}
         >
           Tab group filter
-          {#if !$isProUser}
-            <MdiIcon class="ml-small" icon={mdiLock} size="12" color={LOCK_COLOR} />
-          {/if}
+          <LockIcon />
         </Item>
 
         <Item
@@ -141,9 +135,7 @@
           }}
         >
           Window filter
-          {#if !$isProUser}
-            <MdiIcon class="ml-small" icon={mdiLock} size="12" color={LOCK_COLOR} />
-          {/if}
+          <LockIcon />
         </Item>
         <Item
           id="add-url-filter"
