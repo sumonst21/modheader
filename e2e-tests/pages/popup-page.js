@@ -25,6 +25,12 @@ export const FilterType = {
   TAB_FILTER: {
     id: 'tab-filter'
   },
+  TAB_GROUP_FILTER: {
+    id: 'tab-group-filter'
+  },
+  WINDOW_FILTER: {
+    id: 'window-filter'
+  },
   URL_FILTER: {
     id: 'url-filter'
   },
@@ -111,15 +117,6 @@ export class PopupPage {
         await delay(100);
       }
     }
-  }
-
-  async toggleTabFilter() {
-    const filtersContainer = await this.testUtils.findBy(By.id(FilterType.TAB_FILTER.id));
-    const singleTabChip = await filtersContainer.findElement(
-      By.xpath(`//*[@data-field-name="single-tab"]`)
-    );
-    await singleTabChip.click();
-    await delay(100);
   }
 
   async addFilter(filterType) {

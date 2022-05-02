@@ -471,8 +471,7 @@ describe('e2e test', () => {
         name: 'response',
         value: 'test-response-header'
       });
-      await popupPage.addFilter(FilterType.TAB_FILTER);
-      await popupPage.toggleTabFilter();
+      await popupPage.addFilter(FilterType.WINDOW_FILTER);
 
       await compareScreenshot('request-headers-with-window-filter-matched');
 

@@ -3,13 +3,29 @@ import _ from 'lodash';
 import { TestUtils } from './test-utils.js';
 import { By, until } from 'selenium-webdriver';
 
-const PORT = 3009;
+const PORT = 3005;
 let app;
 
 export function startServer() {
   app = polka()
+    .get('/api/u/user-details', (req, res) => {
+      res.end(
+        JSON.stringify({
+          emailVerified: true,
+          user: {
+            email: 'test@modheader.com'
+          },
+          subscription: {
+            plan: 'pro'
+          }
+        })
+      );
+    })
     .get('/api/headers', (req, res) => {
-      res.setHeader('set-cookie', ['test=foobar; Path=/api; Secure', 'test2=foobar2; Path=/; HttpOnly']);
+      res.setHeader('set-cookie', [
+        'test=foobar; Path=/api; Secure',
+        'test2=foobar2; Path=/; HttpOnly'
+      ]);
       res.end(JSON.stringify(req.headers));
     })
     .get('/headers', (req, res) => {
