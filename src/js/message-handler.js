@@ -4,7 +4,8 @@ import { PROFILE_VERSION, fixProfiles } from './profile.js';
 export const MessageType = {
   EXISTS: 'EXISTS',
   IMPORT: 'IMPORT',
-  SWITCH_TO_LATEST: 'SWITCH_TO_LATEST'
+  SWITCH_TO_LATEST: 'SWITCH_TO_LATEST',
+  PROFILES: 'PROFILES'
 };
 
 export async function onMessageReceived({ chromeLocal, request }) {
@@ -27,6 +28,12 @@ export async function onMessageReceived({ chromeLocal, request }) {
     case MessageType.SWITCH_TO_LATEST:
       await setSelectedProfileIndex(chromeLocal.profiles.length - 1);
       return { success: true };
+    case MessageType.PROFILES:
+      return {
+        success: true,
+        profiles: chromeLocal.profiles,
+        selectedProfileIndex: chromeLocal.selectedProfile
+      };
     default:
       return false;
   }
