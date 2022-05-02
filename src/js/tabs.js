@@ -62,16 +62,22 @@ async function refreshTabInfo() {
   }
 }
 
-export function openUrl({ url, params = {} }) {
+export function openUrl({ url, path, params = {} }) {
+  if (url && path) {
+    throw new Error('Only one of url or path should be set.');
+  }
+  let parsedUrl;
+  if (path) {
+    parsedUrl = new URL(`${process.env.URL_BASE}${path}`);
+  } else {
+    parsedUrl = new URL(url);
+  }
   if (Object.keys(params).length > 0) {
-    const parsedUrl = new URL(url);
     for (const [key, value] of Object.entries(params)) {
       parsedUrl.searchParams.set(key, value);
     }
-    chrome.tabs.create({ url: parsedUrl.href });
-  } else {
-    chrome.tabs.create({ url });
   }
+  chrome.tabs.create({ url: parsedUrl.href });
 }
 
 export async function setupTabUpdatedListener() {
