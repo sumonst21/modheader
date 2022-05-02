@@ -73,16 +73,28 @@ async function initialize() {
   });
 }
 
-chrome.runtime.onMessageExternal.addListener(async function (request, sender, sendResponse) {
-  if (!sender.origin.startsWith(process.env.URL_BASE)) {
+async function messageHandler(request, sender, sendResponse) {
+  if (sender.origin && !sender.origin.startsWith(process.env.URL_BASE)) {
     sendResponse({ error: 'Unsupported origin' });
-    return;
+    return true;
   }
   const response = await onMessageReceived({ chromeLocal, request });
   if (response) {
     sendResponse(response);
   }
-});
+}
+
+if (process.env.BROWSER === 'firefox') {
+  // Firefox does not allow web pages to directly communicate with background page, so we need to
+  // expose a function via content script that can post internal message to background page.
+  // See https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Sharing_objects_with_page_scripts
+  chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    messageHandler(request, sender, sendResponse);
+    return true;
+  });
+} else {
+  chrome.runtime.onMessageExternal.addListener(messageHandler);
+}
 
 chrome.commands.onCommand.addListener(async (command) => {
   await onCommandReceived(chromeLocal, command);

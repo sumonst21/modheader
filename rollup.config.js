@@ -29,6 +29,12 @@ export default {
           manifest.externally_connectable.matches.push('*://localhost/*');
         }
         if (process.env.BROWSER === 'firefox') {
+          manifest.content_scripts = [
+            {
+              matches: [production ? 'https://modheader.com/*' : 'http://localhost/*'],
+              js: ['js/native-messaging.js']
+            }
+          ];
           manifest.browser_specific_settings = {
             gecko: {
               id: '{ed630365-1261-4ba9-a676-99963d2b4f54}',
