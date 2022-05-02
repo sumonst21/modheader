@@ -18,12 +18,22 @@
   import AutoComplete from './Autocomplete.svelte';
   import MdiIcon from './MdiIcon.svelte';
   import TabFilter from './TabFilter.svelte';
+  import TabGroupFilter from './TabGroupFilter.svelte';
+  import WindowFilter from './WindowFilter.svelte';
   import ResourceTypeMenu from './ResourceTypeMenu.svelte';
 
   const FILTER_TYPES = {
     [FilterType.TABS]: {
       label: 'Tab filters',
       profileFieldName: 'tabFilters'
+    },
+    [FilterType.TAB_GROUPS]: {
+      label: 'Tab group filters',
+      profileFieldName: 'tabGroupFilters'
+    },
+    [FilterType.WINDOWS]: {
+      label: 'Window filters',
+      profileFieldName: 'windowFilters'
     },
     [FilterType.URLS]: {
       label: 'URL filters',
@@ -209,6 +219,24 @@
           <ResourceTypeMenu bind:resourceType={filter.resourceType} />
         {:else if filterType === FilterType.TABS}
           <TabFilter
+            {filter}
+            on:change={refreshFilters}
+            on:remove={() =>
+              updateProfile({
+                [FILTER_TYPES[filterType].profileFieldName]: removeFilter(filters, filterIndex)
+              })}
+          />
+        {:else if filterType === FilterType.TAB_GROUPS}
+          <TabGroupFilter
+            {filter}
+            on:change={refreshFilters}
+            on:remove={() =>
+              updateProfile({
+                [FILTER_TYPES[filterType].profileFieldName]: removeFilter(filters, filterIndex)
+              })}
+          />
+        {:else if filterType === FilterType.WINDOWS}
+          <WindowFilter
             {filter}
             on:change={refreshFilters}
             on:remove={() =>

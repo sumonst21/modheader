@@ -23,7 +23,9 @@ const ARRAY_FIELDS = [
   'urlFilters',
   'excludeUrlFilters',
   'resourceFilters',
-  'tabFilters'
+  'tabFilters',
+  'tabGroupFilters',
+  'windowFilters',
 ];
 let latestProfiles = [];
 let latestSelectedProfileIndex = 0;
@@ -173,6 +175,8 @@ function upgradeFromProfileVersion1({ profile, index }) {
   profile.excludeUrlFilters = [];
   profile.resourceFilters = [];
   profile.tabFilters = [];
+  profile.tabGroupFilters = [];
+  profile.windowFilters = [];
   for (const filter of profile.filters || []) {
     const type = filter.type;
     delete filter.type;
@@ -225,6 +229,8 @@ export function createProfile() {
     excludeUrlFilters: [],
     resourceFilters: [],
     tabFilters: [],
+    tabGroupFilters: [],
+    windowFilters: [],
     backgroundColor: generateBackgroundColor(),
     textColor: generateTextColor(),
     shortTitle: takeRight(index)

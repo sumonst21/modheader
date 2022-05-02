@@ -1,5 +1,7 @@
 import lodashIsString from 'lodash/isString.js';
 
+export const LOCK_COLOR = '#e6a900';
+
 function hue2rgb(p, q, t) {
   if (t < 0) t += 1;
   if (t > 1) t -= 1;

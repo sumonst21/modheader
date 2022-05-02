@@ -5,6 +5,7 @@ import lodashCloneDeep from 'lodash/cloneDeep.js';
 export const FilterType = {
   TABS: 'tabs',
   TAB_GROUPS: 'tabGroups',
+  WINDOWS: 'windows',
   URLS: 'urls',
   EXCLUDE_URLS: 'excludeUrls',
   RESOURCE_TYPES: 'types'
@@ -48,6 +49,30 @@ export async function addTabFilter(filters) {
       enabled: true,
       comment: '',
       tabId: tab.id || ''
+    }
+  ];
+}
+
+export async function addTabGroupFilter(filters) {
+  const tab = await getActiveTab();
+  return [
+    ...filters,
+    {
+      enabled: true,
+      comment: '',
+      groupId: tab.groupId || ''
+    }
+  ];
+}
+
+export async function addWindowFilter(filters) {
+  const tab = await getActiveTab();
+  return [
+    ...filters,
+    {
+      enabled: true,
+      comment: '',
+      windowId: tab.windowId || ''
     }
   ];
 }
@@ -96,6 +121,8 @@ export function passFilters({ url, type, tabId, profile }) {
   let allowUrls = undefined;
   let allowTypes = false;
   let allowTabs = false;
+  let allowTabGroups = false;
+  let allowWindows = false;
   for (const filter of profile.urlFilters) {
     if (allowUrls === undefined) {
       allowUrls = false;
@@ -129,21 +156,19 @@ export function passFilters({ url, type, tabId, profile }) {
     }
   }
   const tabInfo = lookupTabInfo(tabId) || {};
-  for (const filter of profile.tabFilters) {
-    if (filter.tabId) {
-      allowTabs = filter.tabId === tabId;
-      break;
-    } else if (filter.windowId) {
-      allowTabs = filter.windowId === tabInfo.windowId;
-      break;
-    } else if (filter.groupId) {
-      allowTabs = filter.groupId === tabInfo.groupId;
-      break;
-    }
-  }
+  allowTabs =
+    profile.tabFilters.length === 0 || profile.tabFilters.some((filter) => filter.tabId === tabId);
+  allowTabGroups =
+    profile.tabGroupFilters.length === 0 ||
+    profile.tabGroupFilters.some((filter) => filter.groupId === tabInfo.groupId);
+  allowWindows =
+    profile.windowFilters.length === 0 ||
+    profile.windowFilters.some((filter) => filter.windowId === tabInfo.windowId);
   return (
     ((profile.urlFilters.length === 0 && profile.excludeUrlFilters.length === 0) || allowUrls) &&
     (profile.resourceFilters.length === 0 || allowTypes) &&
-    (profile.tabFilters.length === 0 || allowTabs)
+    allowTabs &&
+    allowTabGroups &&
+    allowWindows
   );
 }

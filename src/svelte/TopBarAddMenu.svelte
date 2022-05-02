@@ -2,12 +2,21 @@
   import MenuSurface from '@smui/menu-surface';
   import List, { Item } from '@smui/list';
   import IconButton from '@smui/icon-button';
-  import { mdiPlus } from '@mdi/js';
+  import { mdiPlus, mdiLock } from '@mdi/js';
   import MdiIcon from './MdiIcon.svelte';
   import { selectedProfile, updateProfile, buttonColor } from '../js/profile.js';
+  import { isProUser } from '../js/identity.js';
+  import { showUpgradeDialog } from '../js/dialog.js';
   import { addHeader } from '../js/header.js';
+  import { LOCK_COLOR } from '../js/color.js';
   import { addUrlRedirect } from '../js/url-redirect.js';
-  import { addUrlFilter, addResourceFilter, addTabFilter } from '../js/filter.js';
+  import {
+    addUrlFilter,
+    addResourceFilter,
+    addTabFilter,
+    addTabGroupFilter,
+    addWindowFilter
+  } from '../js/filter.js';
 
   async function updateProfileAndClose(profile) {
     await updateProfile(profile);
@@ -50,21 +59,37 @@
         </Item>
         <Item
           id="add-cookie-modifier"
-          on:SMUI:action={() =>
-            updateProfileAndClose({
-              cookieHeaders: addHeader($selectedProfile.cookieHeaders)
-            })}
+          on:SMUI:action={() => {
+            if ($isProUser) {
+              updateProfileAndClose({
+                cookieHeaders: addHeader($selectedProfile.cookieHeaders)
+              });
+            } else {
+              showUpgradeDialog.set(true);
+            }
+          }}
         >
           Cookie request
+          {#if !$isProUser}
+            <MdiIcon class="ml-small" icon={mdiLock} size="12" color={LOCK_COLOR} />
+          {/if}
         </Item>
         <Item
           id="add-set-cookie-modifier"
-          on:SMUI:action={() =>
-            updateProfileAndClose({
-              setCookieHeaders: addHeader($selectedProfile.setCookieHeaders)
-            })}
+          on:SMUI:action={() => {
+            if ($isProUser) {
+              updateProfileAndClose({
+                setCookieHeaders: addHeader($selectedProfile.setCookieHeaders)
+              });
+            } else {
+              showUpgradeDialog.set(true);
+            }
+          }}
         >
           Set-Cookie response
+          {#if !$isProUser}
+            <MdiIcon class="ml-small" icon={mdiLock} size="12" color={LOCK_COLOR} />
+          {/if}
         </Item>
         <Item
           id="add-url-replacement"
@@ -85,6 +110,41 @@
               tabFilters: await addTabFilter($selectedProfile.tabFilters)
             })}>Tab filter</Item
         >
+        <Item
+          id="add-tab-group-filter"
+          on:SMUI:action={async () => {
+            if ($isProUser) {
+              await updateProfileAndClose({
+                tabGroupFilters: await addTabGroupFilter($selectedProfile.tabGroupFilters)
+              });
+            } else {
+              showUpgradeDialog.set(true);
+            }
+          }}
+        >
+          Tab group filter
+          {#if !$isProUser}
+            <MdiIcon class="ml-small" icon={mdiLock} size="12" color={LOCK_COLOR} />
+          {/if}
+        </Item>
+
+        <Item
+          id="add-window-filter"
+          on:SMUI:action={async () => {
+            if ($isProUser) {
+              await updateProfileAndClose({
+                windowFilters: await addWindowFilter($selectedProfile.windowFilters)
+              });
+            } else {
+              showUpgradeDialog.set(true);
+            }
+          }}
+        >
+          Window filter
+          {#if !$isProUser}
+            <MdiIcon class="ml-small" icon={mdiLock} size="12" color={LOCK_COLOR} />
+          {/if}
+        </Item>
         <Item
           id="add-url-filter"
           on:SMUI:action={async () =>

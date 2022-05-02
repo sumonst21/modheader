@@ -64,6 +64,8 @@ function reloadActiveProfiles(chromeLocal) {
       profile.excludeUrlFilters = optimizeUrlFilters(profile.excludeUrlFilters);
       profile.resourceFilters = optimizeResourceFilters(profile.resourceFilters);
       profile.tabFilters = optimizeTabFilters(profile.tabFilters);
+      profile.tabGroupFilters = optimizeTabFilters(profile.tabGroupFilters);
+      profile.windowFilters = optimizeTabFilters(profile.windowFilters);
       if (i === chromeLocal.selectedProfile) {
         selectedActiveProfile = profile;
       }

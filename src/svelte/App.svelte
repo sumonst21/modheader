@@ -81,12 +81,24 @@
           modifiers={lodashCloneDeep($selectedProfile.urlReplacements)}
         />
       {/if}
-      {#if $selectedProfile.tabFilters.length || $selectedProfile.urlFilters.length || $selectedProfile.excludeUrlFilters.length || $selectedProfile.resourceFilters.length}
+      {#if $selectedProfile.tabFilters.length || $selectedProfile.tabGroupFilters.length || $selectedProfile.windowFilters.length || $selectedProfile.urlFilters.length || $selectedProfile.excludeUrlFilters.length || $selectedProfile.resourceFilters.length}
         <div class="filter-background">
           <Filters
             id="tab-filter"
             filters={lodashCloneDeep($selectedProfile.tabFilters)}
             filterType={FilterType.TABS}
+            class="extra-gap"
+          />
+          <Filters
+            id="tab-group-filter"
+            filters={lodashCloneDeep($selectedProfile.tabGroupFilters)}
+            filterType={FilterType.TAB_GROUPS}
+            class="extra-gap"
+          />
+          <Filters
+            id="window-filter"
+            filters={lodashCloneDeep($selectedProfile.windowFilters)}
+            filterType={FilterType.WINDOWS}
             class="extra-gap"
           />
           <Filters
