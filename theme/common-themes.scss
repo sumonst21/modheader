@@ -1,5 +1,6 @@
 @use '@material/button/index' as mdc-button;
 
+@use '@smui-extra/badge/_style.scss' as badge;
 @use '@smui/button/_style.scss' as button;
 @use '@smui/checkbox/_style.scss' as checkbox;
 @use '@smui/chips/_style.scss' as chips;
@@ -67,6 +68,11 @@ button::-moz-focus-inner {
   margin: 0;
 }
 
+.mdc-icon-button .smui-badge svg {
+  width: 20px;
+  height: 20px;
+}
+
 .hidden {
   display: none !important;
 }
@@ -78,6 +84,10 @@ button::-moz-focus-inner {
 
 .ml-small {
   margin-left: 5px;
+}
+
+.bg-white {
+  background-color: #fff;
 }
 
 .dialog-close-button {

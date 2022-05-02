@@ -63,7 +63,7 @@ export async function save() {
   } catch (err) {
     // Firefox's private session cannot access background page, so just set
     // directly to the browser storage.
-    await browser.storage.local.set({
+    await chrome.storage.local.set({
       profiles: latestProfiles,
       selectedProfile: latestSelectedProfileIndex
     });

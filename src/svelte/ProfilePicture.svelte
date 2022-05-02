@@ -1,5 +1,6 @@
 <script>
   import MdiIcon from './MdiIcon.svelte';
+  import { buttonColor } from '../js/profile.js';
   import { mdiAccountCircle } from '@mdi/js';
 
   export let picture;
@@ -12,8 +13,8 @@
     style="border-radius: 50%"
     width={size}
     height={size}
-    alt=""
+    alt=''
   />
 {:else}
-  <MdiIcon icon={mdiAccountCircle} {size} color="white" />
+  <MdiIcon icon={mdiAccountCircle} {size} color={$buttonColor} />
 {/if}

@@ -5,7 +5,7 @@ import lodashIsUndefined from 'lodash/isUndefined.js';
 import { hideMessage } from './toast.js';
 import { getLocal } from './storage.js';
 import { setPaused } from './storage-writer.js';
-import { signedInUser } from './identity.js';
+import { loadSignedInUser, signedInUser } from './identity.js';
 import {
   undoChange,
   commit,
@@ -94,6 +94,7 @@ export async function init() {
   isInitialized.set(false);
   const chromeLocal = await getLocal(['profiles', 'selectedProfile', 'signedInUser', 'isPaused']);
   signedInUser.set(chromeLocal.signedInUser);
+  loadSignedInUser();
   commitData({
     newProfiles: chromeLocal.profiles,
     newIndex: chromeLocal.selectedProfile,

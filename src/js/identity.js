@@ -7,7 +7,7 @@ import { getUserDetails } from './api.js';
 export const signedInUser = writable(undefined);
 export const isProUser = derived(
   [signedInUser],
-  ([$signedInUser]) => $signedInUser && $signedInUser.license === 'pro',
+  ([$signedInUser]) => $signedInUser && $signedInUser.subscription?.plan === 'pro',
   false
 );
 
@@ -29,6 +29,14 @@ export async function loadSignedInUser() {
   }
 }
 
+export async function goToMyAccount() {
+  openUrl({ path: `/u/myaccount` });
+}
+
+export async function goToMySubscription() {
+  openUrl({ path: `/u/mysubscription` });
+}
+
 export async function goToMyProfiles() {
   openUrl({ path: `/u/myprofiles` });
 }
@@ -45,7 +53,7 @@ export async function signIn() {
 
 export async function upgrade() {
   openUrl({
-    path: '/login',
+    path: '/pricing',
     query: {
       for: CURRENT_BROWSER,
       extension_id: chrome.runtime.id
@@ -56,6 +64,7 @@ export async function upgrade() {
 export async function signOut() {
   await removeLocal(['signedInUser']);
   signedInUser.set(undefined);
+  openUrl({ path: `/logout` });
 }
 
 export function getSignedInUser() {
