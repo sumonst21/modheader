@@ -78,8 +78,9 @@ chrome.runtime.onMessageExternal.addListener(async function (request, sender, se
     sendResponse({ error: 'Unsupported origin' });
     return;
   }
-  if (await onMessageReceived({ chromeLocal, request })) {
-    sendResponse({ success: true });
+  const response = await onMessageReceived({ chromeLocal, request });
+  if (response) {
+    sendResponse(response);
   }
 });
 
