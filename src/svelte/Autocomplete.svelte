@@ -25,7 +25,7 @@
 </script>
 
 <label
-  class="mdc-text-field smui-text-field--standard mdc-text-field--no-label mdc-text-field--focused mdc-text-field--label-floating data-table-cell flex-grow autocomplete-input"
+  class="mdc-text-field smui-text-field--standard mdc-text-field--no-label data-table-cell flex-grow autocomplete-input"
 >
   <input
     class="mdc-text-field__input"
