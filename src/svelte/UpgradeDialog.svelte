@@ -10,7 +10,7 @@
 
 {#if $showUpgradeDialog}
   <BaseDialog bind:open={$showUpgradeDialog} title="Upgrade required">
-    <div>Upgrade to Pro to use this feature.</div>
+    <div>Upgrade to Pro to unlock this feature.</div>
     <svelte:fragment slot="footer">
       <Button on:click={() => upgrade()}>
         <MdiIcon size="24" icon={mdiArrowUpBold} color={PRIMARY_COLOR} />

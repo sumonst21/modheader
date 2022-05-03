@@ -1,7 +1,7 @@
 import { get, derived, writable } from 'svelte/store';
 import { removeLocal, setLocal } from './storage.js';
 import { CURRENT_BROWSER } from './user-agent.js';
-import { requireSignInDialog, requireSignInDialogContent } from './dialog.js';
+import { requireSignInForExportDialog } from './dialog.js';
 import { getUserDetails } from './api.js';
 import { openUrl } from './tabs.js';
 
@@ -64,10 +64,9 @@ export function getSignedInUser() {
   return get(signedInUser);
 }
 
-export function requireSignIn({ requireSignInContent }) {
+export function requireSignInForExport() {
   if (!getSignedInUser()) {
-    requireSignInDialogContent.set(requireSignInContent);
-    requireSignInDialog.set(true);
+    requireSignInForExportDialog.set(true);
     return false;
   }
   return true;

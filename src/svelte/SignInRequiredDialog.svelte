@@ -1,20 +1,28 @@
 <script>
   import Button, { Label } from '@smui/button';
-  import { mdiArrowUpBold } from '@mdi/js';
-  import MdiIcon from './MdiIcon.svelte';
   import BaseDialog from './BaseDialog.svelte';
-  import { PRIMARY_COLOR } from '../js/constants';
-  import { requireSignInDialog, requireSignInDialogContent } from '../js/dialog.js';
+  import { requireSignInForExportDialog, showExportJsonDialog } from '../js/dialog.js';
   import { signIn } from '../js/identity.js';
 </script>
 
-{#if $requireSignInDialog}
-  <BaseDialog bind:open={$requireSignInDialog} title="Sign in required">
-    <div>{$requireSignInDialogContent}</div>
+{#if $requireSignInForExportDialog}
+  <BaseDialog bind:open={$requireSignInForExportDialog} title="Sign in required">
+    <p>
+      Sign in to export / share profile URLs. This allows you to have better control over who can
+      access your shared profile URLs.
+    </p>
+    <p>Alternatively, you can also export your profiles as JSON.</p>
 
     <svelte:fragment slot="footer">
-      <Button on:click={() => signIn()}>
-        <MdiIcon size="24" icon={mdiArrowUpBold} color={PRIMARY_COLOR} />
+      <Button
+        on:click={() => {
+          requireSignInForExportDialog.set(false);
+          showExportJsonDialog.set(true);
+        }}
+      >
+        <Label class="ml-small">Export JSON</Label>
+      </Button>
+      <Button on:click={() => signIn()} variant="raised">
         <Label class="ml-small">SignIn</Label>
       </Button>
     </svelte:fragment>

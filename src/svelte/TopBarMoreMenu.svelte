@@ -32,7 +32,7 @@
     getPreferredColorScheme,
     setPreferredColorScheme
   } from '../js/color-scheme.js';
-  import { requireSignIn } from '../js/identity.js';
+  import { requireSignInForExport } from '../js/identity.js';
 
   const COLOR_SCHEME_LABEL = {
     [ColorSchemes.SYSTEM_DEFAULT]: 'Default',
@@ -162,11 +162,7 @@
       </Item>
       <Item
         on:SMUI:action={() => {
-          if (
-            requireSignIn({
-              requireSignInContent: 'Sign in to export / share profiles with your account'
-            })
-          ) {
+          if (requireSignInForExport()) {
             showExportDialog.set(true);
             menu.setOpen(false);
           }

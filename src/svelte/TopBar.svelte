@@ -12,7 +12,7 @@
   import MdiIcon from './MdiIcon.svelte';
   import { isPaused, undo } from '../js/datasource.js';
   import { selectedProfile, updateProfile, buttonColor } from '../js/profile.js';
-  import { requireSignIn } from '../js/identity.js';
+  import { requireSignInForExport } from '../js/identity.js';
   import { canUndoChange } from '../js/change-stack.js';
   import { showExportDialog } from '../js/dialog.js';
 
@@ -73,11 +73,7 @@
       <IconButton
         dense
         on:click={() => {
-          if (
-            requireSignIn({
-              requireSignInContent: 'Sign in to export / share profiles with your account'
-            })
-          ) {
+          if (requireSignInForExport()) {
             showExportDialog.set(true);
           }
         }}
