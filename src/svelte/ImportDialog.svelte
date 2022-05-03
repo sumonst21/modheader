@@ -39,17 +39,6 @@
     };
     reader.readAsText(file, 'utf8');
   }
-
-  function openImportFilePage() {
-    chrome.tabs.create(
-      {
-        url: chrome.runtime.getURL('/importfile.html')
-      },
-      () => {
-        window.close();
-      }
-    );
-  }
 </script>
 
 {#if $showImportDialog}
@@ -66,11 +55,6 @@
           on:change={(e) => loadFile(e.target.files[0])}
         />
         <Button on:click={() => uploadFileInput.click()}>
-          <MdiIcon size="24" icon={mdiFileImport} color={PRIMARY_COLOR} />
-          <Label class="ml-small">Load from file</Label>
-        </Button>
-      {:else}
-        <Button on:click={() => openImportFilePage()}>
           <MdiIcon size="24" icon={mdiFileImport} color={PRIMARY_COLOR} />
           <Label class="ml-small">Load from file</Label>
         </Button>
