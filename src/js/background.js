@@ -67,11 +67,7 @@ async function initialize() {
   });
 }
 
-async function messageHandler(request, sender, sendResponse) {
-  if (sender.origin && !sender.origin.startsWith(process.env.URL_BASE)) {
-    sendResponse({ error: 'Unsupported origin' });
-    return true;
-  }
+async function messageHandler(request, sendResponse) {
   const response = await onMessageReceived({ chromeLocal, request });
   if (response) {
     sendResponse(response);
@@ -83,11 +79,17 @@ if (process.env.BROWSER === 'firefox') {
   // expose a function via content script that can post internal message to background page.
   // See https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Sharing_objects_with_page_scripts
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    messageHandler(request, sender, sendResponse);
+    messageHandler(request, sendResponse);
     return true;
   });
 } else {
-  chrome.runtime.onMessageExternal.addListener(messageHandler);
+  chrome.runtime.onMessageExternal.addListener(async (request, sender, sendResponse) => {
+    if (sender.origin && !sender.origin.startsWith(process.env.URL_BASE)) {
+      sendResponse({ error: 'Unsupported origin' });
+      return;
+    }
+    await messageHandler(request, sendResponse);
+  });
 }
 
 chrome.commands.onCommand.addListener(async (command) => {
