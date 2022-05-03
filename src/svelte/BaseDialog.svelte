@@ -23,7 +23,7 @@
     <slot />
   </Content>
 
-  <Actions>
+  <div class="mdc-dialog__actions">
     <slot name="footer" />
-  </Actions>
+  </div>
 </Dialog>

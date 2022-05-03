@@ -4,7 +4,7 @@
   import { showMessage } from '../js/toast.js';
 
   export let value;
-  export let updating;
+  export let updating = false;
   export let numRows = 5;
 
   let textfield;

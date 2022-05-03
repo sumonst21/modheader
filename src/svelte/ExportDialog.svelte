@@ -1,12 +1,10 @@
 <script>
   import Button, { Label } from '@smui/button';
-  import { mdiContentCopy, mdiLock } from '@mdi/js';
   import lodashIsEqual from 'lodash/isEqual';
-  import MdiIcon from './MdiIcon.svelte';
   import BaseDialog from './BaseDialog.svelte';
+  import ExportJsonDialog from './ExportJsonDialog.svelte';
   import AutocopyTextfield from './AutocopyTextfield.svelte';
-  import { PRIMARY_COLOR } from '../js/constants.js';
-  import { showExportDialog } from '../js/dialog.js';
+  import { showExportDialog, showExportJsonDialog } from '../js/dialog.js';
   import { openUrl } from '../js/tabs.js';
   import { Visibility } from '../js/visibility.js';
   import { selectedProfile, exportProfile, updateProfile } from '../js/profile.js';
@@ -103,7 +101,12 @@
 {#if $showExportDialog}
   <BaseDialog bind:open={$showExportDialog} title="Share with people">
     <div class="export-dialog-content">
-      <AutocopyTextfield value={exportUrl} updating={uploading} numRows={2} />
+      <AutocopyTextfield
+        bind:this={exportTextfield}
+        value={exportUrl}
+        updating={uploading}
+        numRows={2}
+      />
 
       <div class="caption">
         {#if visibility === Visibility.restricted.value}
@@ -120,14 +123,21 @@
           {Visibility[visibility].description}
         {/if}
       </div>
-    </div>
-    <svelte:fragment slot="footer">
-      <Button on:click={() => openUrl({ url: exportUrl })} variant="raised">
-        <MdiIcon size="24" icon={mdiLock} color="#fff" />
+
+      <Button on:click={() => openUrl({ url: exportUrl })}>
         <Label class="ml-small">Change visibility</Label>
       </Button>
+    </div>
+    <svelte:fragment slot="footer">
+      <Button
+        on:click={() => {
+          showExportDialog.set(false);
+          showExportJsonDialog.set(true);
+        }}
+      >
+        <Label class="ml-small">Export JSON</Label>
+      </Button>
       <Button on:click={() => exportTextfield.focus()} variant="raised">
-        <MdiIcon size="24" icon={mdiContentCopy} color="#fff" />
         <Label class="ml-small">Copy URL</Label>
       </Button>
     </svelte:fragment>
@@ -168,3 +178,5 @@
     </svelte:fragment>
   </BaseDialog>
 {/if}
+
+<ExportJsonDialog />
