@@ -11,17 +11,12 @@ import {
   addBeforeRequestListener,
   addBeforeSendHeadersListener,
   addHeadersReceivedListener,
-  addSendHeadersListener,
   removeBeforeRequestListener,
   removeBeforeSendHeadersListener,
   removeHeadersReceivedListener
 } from './web-request.js';
 
 const ALL_URLS_FILTER = ['<all_urls>'];
-const LOGIN_URL_FILTER = [
-  `${process.env.URL_BASE}/u/dashboard`,
-  `${process.env.URL_BASE}/u/dashboard*`
-];
 
 let chromeLocal = {
   isPaused: true
@@ -62,7 +57,6 @@ function setupHeaderModListener() {
 async function initialize() {
   await setupTabUpdatedListener();
   await initContextMenu();
-  addSendHeadersListener(loadSignedInUser, LOGIN_URL_FILTER);
   await loadProfilesFromStorage(async (params) => {
     chromeLocal = params.chromeLocal;
     activeProfiles = params.activeProfiles;

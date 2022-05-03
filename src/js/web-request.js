@@ -63,14 +63,3 @@ export function addHeadersReceivedListener(callback, urls) {
 export function removeHeadersReceivedListener(callback) {
   removeListener('onHeadersReceived', callback);
 }
-
-export function addSendHeadersListener(callback, urls) {
-  addListener('onSendHeaders', {
-    callback,
-    filter: { urls },
-  });
-}
-
-export function onSendHeaders(callback) {
-  removeListener('onSendHeaders', callback);
-}
