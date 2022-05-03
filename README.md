@@ -37,7 +37,7 @@ If you find ModHeader useful, please consider making a donation. If you use it f
 ## Features
 
 - Add/modify/remove request headers and response headers
-- Modify individual cookies in Set-Cookie header 
+- Modify individual cookies in Cookie request header / Set-Cookie response header 
 - Enable header modification based on URL/resource type
 - Add comments to header
 - Multiple different profiles
