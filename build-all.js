@@ -1,20 +1,20 @@
-const fs = require("fs-extra");
-const child_process = require("child_process");
-const archiver = require("archiver");
+import fs from 'fs-extra';
+import child_process from 'child_process';
+import archiver from 'archiver';
 
-const PLATFORMS = ["chrome", "firefox", "edge", "opera"];
-const GIT_URL = "https://github.com/bewisse/modheader.git";
+const PLATFORMS = ['chrome', 'firefox', 'edge', 'opera'];
+const GIT_URL = 'https://github.com/bewisse/modheader.git';
 
 function zipDirectory(source, destFile) {
   const output = fs.createWriteStream(destFile);
-  const archive = archiver("zip");
+  const archive = archiver('zip');
 
-  output.on("close", () => {
-    console.log(archive.pointer() + " total bytes");
+  output.on('close', () => {
+    console.log(archive.pointer() + ' total bytes');
     console.log(`Finished creating ${destFile}`);
   });
 
-  archive.on("error", (err) => {
+  archive.on('error', (err) => {
     throw err;
   });
   archive.pipe(output);
@@ -22,15 +22,14 @@ function zipDirectory(source, destFile) {
   archive.finalize();
 }
 
-fs.ensureDirSync("dist");
-fs.emptyDirSync("dist");
+fs.ensureDirSync('releases');
+fs.emptyDirSync('releases');
 for (const platform of PLATFORMS) {
-  fs.emptyDirSync("build");
   child_process.execSync(`npm run build-${platform}`);
-  fs.copySync("build", `dist/${platform}/`);
-  zipDirectory(`dist/${platform}/`, `dist/${platform}.zip`);
+  fs.copySync('dist', `releases/${platform}/`);
+  zipDirectory(`releases/${platform}`, `releases/${platform}.zip`);
 }
 
-child_process.execSync(`git clone ${GIT_URL} dist/master`);
-fs.emptyDirSync("dist/master/.git");
-zipDirectory("dist/master", "dist/master.zip");
+child_process.execSync(`git clone ${GIT_URL} releases/master`);
+fs.emptyDirSync('releases/master/.git');
+zipDirectory('releases/master', 'releases/master.zip');
