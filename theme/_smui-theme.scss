@@ -1,2 +1,14 @@
-$mdc-theme-primary: #1976d2;
-$mdc-theme--on-primary: #fff;
+@use '@material/theme/index' as theme with (
+  $primary: #1976d2,
+);
+
+@use './common-themes';
+
+:root {
+  --disabled-background: #eee;
+  --filter-background: #f0f8ff;
+}
+
+.mdc-deprecated-list-item--disabled {
+  color: #888;
+}

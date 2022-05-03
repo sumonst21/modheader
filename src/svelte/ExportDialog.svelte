@@ -1,137 +1,182 @@
 <script>
-  import { encode } from "js-base64";
-  import Dialog, { Title, Content, Actions } from "@smui/dialog";
-  import Button, { Label } from "@smui/button";
-  import Tab, { Icon, Label as TabLabel } from "@smui/tab";
-  import TabBar from "@smui/tab-bar";
-  import Snackbar, { Label as SnackbarLabel } from "@smui/snackbar";
-  import IconButton from "@smui/icon-button";
-  import Checkbox from "@smui/checkbox";
-  import List, { Item, Separator, Text } from "@smui/list";
-  import lzString from "lz-string";
-  import { mdiDownload, mdiSelectAll, mdiContentCopy, mdiClose } from "@mdi/js";
-  import MdiIcon from "./MdiIcon.svelte";
-  import { DISABLED_COLOR, PRIMARY_COLOR } from "../js/constants";
-  import { showMessage } from "../js/toast";
-  import { profiles, selectedProfile, commitChange } from "../js/datasource";
+  import Button, { Label } from '@smui/button';
+  import lodashIsEqual from 'lodash/isEqual';
+  import BaseDialog from './BaseDialog.svelte';
+  import ExportJsonDialog from './ExportJsonDialog.svelte';
+  import AutocopyTextfield from './AutocopyTextfield.svelte';
+  import { showExportDialog, showExportJsonDialog } from '../js/dialog.js';
+  import { openUrl } from '../js/tabs.js';
+  import { Visibility } from '../js/visibility.js';
+  import { selectedProfile, exportProfile, updateProfile } from '../js/profile.js';
+  import {
+    getProfile as getProfileApi,
+    createProfile as createProfileApi,
+    getProfileUrl,
+    updateProfile as updateProfileApi
+  } from '../js/api.js';
+  import { showMessage } from '../js/toast.js';
 
-  const TABS = [
-    { label: "URL", value: "url" },
-    { label: "JSON", value: "json" }
-  ];
-  let activeTab = TABS[0];
-  let exportUrlTextbox;
-  let exportJsonTextbox;
-  let dialog;
-  let selectedProfiles = [];
+  let exportTextfield;
+  let allowedEmails = [];
+  let visibility = Visibility.restricted.value;
+  let showOverrideDialog;
+  const keepStyles = true;
 
-  export function show() {
-    selectedProfiles = [$selectedProfile];
-    dialog.open();
-  }
+  let exportUrl = '';
+  let uploading;
 
-  async function copyExportText(textbox) {
-    textbox.select();
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      await navigator.clipboard.writeText(exportedUrl);
-    } else {
-      document.execCommand("copy");
+  showExportDialog.subscribe(async (isShown) => {
+    if (isShown) {
+      await onDialogShown();
     }
-    showMessage("Copied to clipboard!");
+  });
+
+  async function onDialogShown() {
+    exportUrl = 'Generating export URL';
+    uploading = true;
+    if ($selectedProfile.profileId) {
+      try {
+        const profileResponse = await getProfileApi({ profileId: $selectedProfile.profileId });
+        exportUrl = getProfileUrl({ profileId: $selectedProfile.profileId });
+        if (
+          !lodashIsEqual(profileResponse.profile, exportProfile($selectedProfile, { keepStyles }))
+        ) {
+          showOverrideDialog = true;
+        }
+        uploading = false;
+        return;
+      } catch (err) {
+        if (err.statusCode !== 404) {
+          exportUrl = 'Failed to retrieve profile from URL. Please try again later.';
+          uploading = false;
+          return;
+        }
+      }
+    }
+    try {
+      const { profileId } = await createProfileApi({
+        profile: exportProfile($selectedProfile, { keepStyles })
+      });
+      updateProfile({ profileId });
+      exportUrl = getProfileUrl({ profileId: $selectedProfile.profileId });
+    } catch (err) {
+      exportUrl = 'Failed to generate export URL';
+    } finally {
+      uploading = false;
+    }
+    await createProfileUrl();
   }
 
-  $: exportedText = JSON.stringify(selectedProfiles);
-  $: exportedUrl = `https://modheader.com/p/${lzString.compressToEncodedURIComponent(
-    exportedText
-  )}`;
+  async function createProfileUrl() {
+    try {
+      const { profileId } = await createProfileApi({
+        profile: exportProfile($selectedProfile, { keepStyles })
+      });
+      updateProfile({ profileId });
+      exportUrl = getProfileUrl({ profileId: $selectedProfile.profileId });
+    } catch (err) {
+      exportUrl = 'Failed to generate export URL';
+    } finally {
+      uploading = false;
+    }
+  }
+
+  async function updateExportProfile() {
+    uploading = true;
+    try {
+      await updateProfileApi({
+        profileId: $selectedProfile.profileId,
+        profile: exportProfile($selectedProfile, { keepStyles }),
+        visibility,
+        allowedEmails
+      });
+    } catch (err) {
+      showMessage('Failed to update exported profiles');
+    } finally {
+      uploading = false;
+    }
+  }
 </script>
 
-<style scoped>
-  .export-text-field {
-    width: 100%;
-    font-size: 1.4em;
-  }
-</style>
+{#if $showExportDialog}
+  <BaseDialog bind:open={$showExportDialog} title="Share with people">
+    <div class="export-dialog-content">
+      <AutocopyTextfield
+        bind:this={exportTextfield}
+        value={exportUrl}
+        updating={uploading}
+        numRows={2}
+      />
 
-<Dialog
-  bind:this={dialog}
-  aria-labelledby="dialog-title"
-  aria-describedby="dialog-content">
-  <Title id="dialog-title">
-    Export / share profile(s)
-    <IconButton
-      aria-label="Close"
-      class="dialog-close-button"
-      on:click={() => dialog.close()}>
-      <MdiIcon size="32" icon={mdiClose} color="#888" />
-    </IconButton>
-  </Title>
-  <Content id="dialog-content">
-    Select 1 or more profiles to share / export.
-    <br />
-    Be careful about sharing sensitive data!
-    <List checklist>
-      {#each $profiles as profile}
-        <Item>
-          <Checkbox bind:group={selectedProfiles} value={profile} />
-          {profile.title}
-        </Item>
-      {/each}
-    </List>
+      <div class="caption">
+        {#if visibility === Visibility.restricted.value}
+          {#if allowedEmails.length === 0}
+            Visible only to you
+          {:else if allowedEmails.length === 1}
+            Visible only to you and {allowedEmails[0]}
+          {:else if allowedEmails.length === 2}
+            Visible to you, {allowedEmails[0]}, and {allowedEmails[1]}
+          {:else}
+            Visible to you, {allowedEmails[0]}, and {allowedEmails.length - 1} other users.
+          {/if}
+        {:else}
+          {Visibility[visibility].description}
+        {/if}
+      </div>
 
-    <TabBar tabs={TABS} let:tab bind:active={activeTab}>
-      <Tab {tab}>
-        <TabLabel>{tab.label}</TabLabel>
-      </Tab>
-    </TabBar>
-    {#if activeTab.value === 'url'}
-      <input
-        bind:this={exportUrlTextbox}
-        on:focus={() => copyExportText(exportUrlTextbox)}
-        class="export-text-field"
-        type="url"
-        readonly
-        value={exportedUrl} />
-    {:else}
-      <input
-        bind:this={exportJsonTextbox}
-        on:focus={() => copyExportText(exportJsonTextbox)}
-        class="export-text-field"
-        type="text"
-        readonly
-        value={exportedText} />
-    {/if}
-  </Content>
-  <div class="mdc-dialog__actions">
-    <Button on:click={() => (selectedProfiles = [...$profiles])}>
-      <MdiIcon size="24" icon={mdiSelectAll} color={PRIMARY_COLOR} />
-      <Label class="ml-small">Select All</Label>
-    </Button>
-    {#if activeTab.value === 'json'}
-      {#if selectedProfiles.length === 0}
-        <Button disabled>
-          <MdiIcon size="24" icon={mdiDownload} color={DISABLED_COLOR} />
-          <Label class="ml-small">Download JSON</Label>
-        </Button>
-      {:else}
-        <Button
-          href="data:application/json;base64,{encode(exportedText)}"
-          download="{selectedProfiles.map(p => p.title).join('+')}.json">
-          <MdiIcon size="24" icon={mdiDownload} color={PRIMARY_COLOR} />
-          <Label class="ml-small">Download JSON</Label>
-        </Button>
-      {/if}
-    {/if}
-    {#if activeTab.value === 'url'}
+      <Button on:click={() => openUrl({ url: exportUrl })}>
+        <Label class="ml-small">Change visibility</Label>
+      </Button>
+    </div>
+    <svelte:fragment slot="footer">
       <Button
-        disabled={selectedProfiles.length === 0}
-        on:click={() => exportUrlTextbox.focus()}>
-        <MdiIcon
-          size="24"
-          icon={mdiContentCopy}
-          color={selectedProfiles.length === 0 ? DISABLED_COLOR : PRIMARY_COLOR} />
+        on:click={() => {
+          showExportDialog.set(false);
+          showExportJsonDialog.set(true);
+        }}
+      >
+        <Label class="ml-small">Export JSON</Label>
+      </Button>
+      <Button on:click={() => exportTextfield.focus()} variant="raised">
         <Label class="ml-small">Copy URL</Label>
       </Button>
-    {/if}
-  </div>
-</Dialog>
+    </svelte:fragment>
+  </BaseDialog>
+
+  <BaseDialog bind:open={showOverrideDialog} title="Override existing profile?">
+    <div class="export-dialog-content">
+      <div>
+        This profile has already been exported to {exportUrl}. Would you like to create a new
+        shareable URL, or override the existing one?
+      </div>
+
+      <div>
+        <Button on:click={() => openUrl({ url: exportUrl })}>
+          <Label class="ml-small">View existing profile</Label>
+        </Button>
+      </div>
+    </div>
+    <svelte:fragment slot="footer">
+      <Button
+        variant="raised"
+        on:click={async () => {
+          showOverrideDialog = false;
+          await createProfileUrl();
+        }}
+      >
+        <Label>Create new URL</Label>
+      </Button>
+      <Button
+        variant="raised"
+        on:click={async () => {
+          showOverrideDialog = false;
+          await updateExportProfile();
+        }}
+      >
+        <Label>Override profile</Label>
+      </Button>
+    </svelte:fragment>
+  </BaseDialog>
+{/if}
+
+<ExportJsonDialog />

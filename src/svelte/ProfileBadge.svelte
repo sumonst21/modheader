@@ -1,14 +1,26 @@
 <script>
-  import { mdiCheckboxMarkedCircle, mdiCheckboxBlankCircle } from "@mdi/js";
-  import MdiIcon from "./MdiIcon.svelte";
-  import { selectedProfile } from "../js/datasource";
+  import { mdiCheckboxMarkedCircle, mdiCheckboxBlankCircle } from '@mdi/js';
+  import MdiIcon from './MdiIcon.svelte';
+  import { selectedProfile } from '../js/profile.js';
 
   export let profile;
 
   $: isActive = profile.alwaysOn || profile === $selectedProfile;
 </script>
 
-<style scoped>
+<span class="profile-badge-icon-container" style="background: {profile.backgroundColor}">
+  <span class="profile-badge-icon-text" style="color: {profile.textColor}">
+    {profile.shortTitle}
+  </span>
+  <MdiIcon
+    class="profile-badge-status"
+    size="12"
+    icon={isActive ? mdiCheckboxMarkedCircle : mdiCheckboxBlankCircle}
+    color={isActive ? 'green' : 'red'}
+  />
+</span>
+
+<style module>
   .profile-badge-icon-container {
     color: white;
     font-size: 16px;
@@ -28,22 +40,10 @@
   }
 
   .profile-badge-status {
+    background-color: white;
+    border-radius: 50%;
     position: absolute;
     right: 0;
     bottom: 0;
   }
 </style>
-
-<span
-  class="profile-badge-icon-container"
-  style="background: {profile.backgroundColor}">
-  <span class="profile-badge-icon-text" style="color: {profile.textColor}">
-    {profile.shortTitle}
-  </span>
-  <span class="profile-badge-status">
-    <MdiIcon
-      size="12"
-      icon={isActive ? mdiCheckboxMarkedCircle : mdiCheckboxBlankCircle}
-      color={isActive ? 'green' : 'red'} />
-  </span>
-</span>
