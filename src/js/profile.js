@@ -117,7 +117,7 @@ export function fixProfiles(profiles) {
         isMutated = true;
       } else {
         for (const entry of profile[arrayField]) {
-          if (entry.comment === undefined) {
+          if (!entry.comment) {
             entry.comment = '';
             isMutated = true;
           }

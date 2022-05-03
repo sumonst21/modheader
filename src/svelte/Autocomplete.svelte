@@ -1,11 +1,15 @@
 <script>
-  import Textfield from '@smui/textfield';
   import { createEventDispatcher } from 'svelte';
 
   function selectText() {
+    isFocused = true;
     if (selectAllOnFocus) {
-      textField.getElement().querySelector('input').select();
+      textField.select();
     }
+  }
+
+  function unfocus() {
+    isFocused = false;
   }
 
   const dispatch = createEventDispatcher();
@@ -16,33 +20,38 @@
   export let placeholder = undefined;
   export let value;
   export let selectAllOnFocus = false;
+  let isFocused = false;
   let textField;
 </script>
 
-<Textfield
-  class="data-table-cell flex-grow autocomplete-input"
-  bind:this={textField}
-  {name}
-  type="text"
-  input$placeholder={placeholder}
-  input$list={list}
-  input$autocomplete="on"
-  bind:value
-  on:input={() => dispatch('input')}
-  on:change={() => dispatch('change')}
-  on:focus={selectText}
-/>
+<label
+  class="mdc-text-field smui-text-field--standard mdc-text-field--no-label mdc-text-field--focused mdc-text-field--label-floating data-table-cell flex-grow autocomplete-input"
+>
+  <input
+    class="mdc-text-field__input"
+    bind:this={textField}
+    bind:value
+    {name}
+    type="text"
+    {placeholder}
+    {list}
+    autocomplete="on"
+    on:input={() => dispatch('input')}
+    on:change={() => dispatch('change')}
+    on:focus={selectText}
+    on:blur={unfocus}
+  />
+  <div
+    class="mdc-line-ripple"
+    class:mdc-line-ripple--active={isFocused}
+    style="transform-origin: 50px center;"
+  />
+</label>
 
 <style module>
   .autocomplete-input {
     border: none;
     height: 30px;
     width: 100%;
-    top: -4px;
-  }
-
-  .autocomplete-input :global(.mdc-text-field__input) {
-    border-bottom-color: rgba(0.5, 0.5, 0.5, 0.1) !important;
-    padding-bottom: 10px !important;
   }
 </style>

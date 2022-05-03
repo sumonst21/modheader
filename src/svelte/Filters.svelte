@@ -14,7 +14,15 @@
   import lodashOrderBy from 'lodash/orderBy.js';
   import lodashDebounce from 'lodash/debounce.js';
   import { selectedProfile, updateProfile } from '../js/profile.js';
-  import { FilterType, addUrlFilter, addResourceFilter, removeFilter } from '../js/filter.js';
+  import {
+    FilterType,
+    addUrlFilter,
+    addResourceFilter,
+    removeFilter,
+    addTabFilter,
+    addTabGroupFilter,
+    addWindowFilter
+  } from '../js/filter.js';
   import AutoComplete from './Autocomplete.svelte';
   import MdiIcon from './MdiIcon.svelte';
   import TabFilter from './TabFilter.svelte';
@@ -25,27 +33,33 @@
   const FILTER_TYPES = {
     [FilterType.TABS]: {
       label: 'Tab filters',
-      profileFieldName: 'tabFilters'
+      profileFieldName: 'tabFilters',
+      addHandler: addTabFilter
     },
     [FilterType.TAB_GROUPS]: {
       label: 'Tab group filters',
-      profileFieldName: 'tabGroupFilters'
+      profileFieldName: 'tabGroupFilters',
+      addHandler: addTabGroupFilter
     },
     [FilterType.WINDOWS]: {
       label: 'Window filters',
-      profileFieldName: 'windowFilters'
+      profileFieldName: 'windowFilters',
+      addHandler: addWindowFilter
     },
     [FilterType.URLS]: {
       label: 'URL filters',
-      profileFieldName: 'urlFilters'
+      profileFieldName: 'urlFilters',
+      addHandler: addUrlFilter
     },
     [FilterType.EXCLUDE_URLS]: {
       label: 'Exclude URL filters',
-      profileFieldName: 'excludeUrlFilters'
+      profileFieldName: 'excludeUrlFilters',
+      addHandler: addUrlFilter
     },
     [FilterType.RESOURCE_TYPES]: {
       label: 'Resource filters',
-      profileFieldName: 'resourceFilters'
+      profileFieldName: 'resourceFilters',
+      addHandler: addResourceFilter
     }
   };
 
@@ -65,11 +79,7 @@
   }
 
   function add(filters) {
-    if (filterType === FilterType.URLS || filterType === FilterType.EXCLUDE_URLS) {
-      return addUrlFilter(filters);
-    } else {
-      return addResourceFilter(filters);
-    }
+    return FILTER_TYPES[filterType].addHandler(filters);
   }
 
   function toggleAll() {
