@@ -25,7 +25,7 @@
   "commands": {
     "_execute_browser_action": {
       "suggested_key": {
-        "default": "Alt+Shift+H"
+        "default": "Ctrl+Shift+H"
       }
     },
     "toggle_pause": {
