@@ -6,5 +6,5 @@
 </script>
 
 {#if !$isProUser}
-  <MdiIcon class="ml-small" icon={mdiLock} size="12" color={LOCK_COLOR} />
+  <MdiIcon class="ml-small" icon={mdiLock} size="16" color={LOCK_COLOR} />
 {/if}

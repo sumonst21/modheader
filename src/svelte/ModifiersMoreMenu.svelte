@@ -17,7 +17,7 @@
   import LockIcon from './LockIcon.svelte';
   import MdiIcon from './MdiIcon.svelte';
   import { createEventDispatcher } from 'svelte';
-  import { showUpgradeDialog } from '../js/dialog.js';
+  import { showUpgradeRequired } from '../js/dialog.js';
 
   const dispatch = createEventDispatcher();
 
@@ -67,7 +67,7 @@
           customizeAutocompleteDialog.open();
           dispatchRefresh();
         } else {
-          showUpgradeDialog.set(true);
+          showUpgradeRequired('Upgrade to Pro to add custom autocomplete entries and more!');
         }
       }}
     >

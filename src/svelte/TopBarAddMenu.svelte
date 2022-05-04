@@ -7,7 +7,7 @@
   import LockIcon from './LockIcon.svelte';
   import { selectedProfile, updateProfile, buttonColor } from '../js/profile.js';
   import { isProUser } from '../js/identity.js';
-  import { showUpgradeDialog } from '../js/dialog.js';
+  import { showUpgradeRequired } from '../js/dialog.js';
   import { addHeader } from '../js/header.js';
   import { addUrlRedirect } from '../js/url-redirect.js';
   import {
@@ -65,7 +65,9 @@
                 cookieHeaders: addHeader($selectedProfile.cookieHeaders)
               });
             } else {
-              showUpgradeDialog.set(true);
+              showUpgradeRequired(
+                'Upgrade to Pro to modify individual cookies in the request and response'
+              );
             }
           }}
         >
@@ -80,7 +82,9 @@
                 setCookieHeaders: addHeader($selectedProfile.setCookieHeaders)
               });
             } else {
-              showUpgradeDialog.set(true);
+              showUpgradeRequired(
+                'Upgrade to Pro to modify individual cookies in the request and response'
+              );
             }
           }}
         >
@@ -116,7 +120,9 @@
                 tabGroupFilters: await addTabGroupFilter($selectedProfile.tabGroupFilters)
               });
             } else {
-              showUpgradeDialog.set(true);
+              showUpgradeRequired(
+                'Upgrade to Pro to enable filtering by tab group, by window, and more!'
+              );
             }
           }}
         >
@@ -132,7 +138,9 @@
                 windowFilters: await addWindowFilter($selectedProfile.windowFilters)
               });
             } else {
-              showUpgradeDialog.set(true);
+              showUpgradeRequired(
+                'Upgrade to Pro to enable filtering by window, by tab group, and more!'
+              );
             }
           }}
         >

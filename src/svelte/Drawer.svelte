@@ -17,10 +17,11 @@
   } from '@mdi/js';
   import { fade } from 'svelte/transition';
   import MdiIcon from './MdiIcon.svelte';
+  import LockIcon from './LockIcon.svelte';
   import ProfileBadge from './ProfileBadge.svelte';
-  import ProFeature from './ProFeature.svelte';
   import { showMessage } from '../js/toast.js';
   import { profiles } from '../js/datasource.js';
+  import { showUpgradeRequired } from '../js/dialog.js';
   import { CURRENT_BROWSER } from '../js/user-agent.js';
   import {
     addProfile,
@@ -30,8 +31,9 @@
     selectedProfile,
     updateProfile,
     sortProfiles
-  } from '../js/profile';
-  import { PRIMARY_COLOR } from '../js/constants';
+  } from '../js/profile.js';
+  import { PRIMARY_COLOR } from '../js/constants.js';
+  import { isProUser } from '../js/identity.js';
 
   let drawer;
   let drawerOpen = true;
@@ -101,26 +103,30 @@
             <Text class="main-drawer-item-text">{profile.title}</Text>
           </Item>
         {/each}
-        <ProFeature requirePro={$profiles.length >= 3} let:upgradeRequired>
-          <Item
-            class="main-drawer-item"
-            title={upgradeRequired ? 'Upgrade to Pro to add more profiles' : 'Add profile'}
-            on:click={() => {
+        <Item
+          class="main-drawer-item"
+          title={$profiles.length >= 3 && !$isProUser
+            ? 'Upgrade to Pro to add more profiles'
+            : 'Add profile'}
+          on:click={() => {
+            if ($profiles.length >= 3 && !$isProUser) {
+              showUpgradeRequired('Upgrade to Pro to add more than 3 profiles!');
+            } else {
               addProfile();
               expand = false;
-            }}
-          >
-            <span class="main-drawer-icon-container">
-              <MdiIcon
-                size="24"
-                class="main-drawer-icon"
-                icon={mdiFilePlus}
-                color={PRIMARY_COLOR}
-              />
+            }
+          }}
+        >
+          <span class="main-drawer-icon-container">
+            <MdiIcon size="24" class="main-drawer-icon" icon={mdiFilePlus} color={PRIMARY_COLOR} />
+          </span>
+          <Text class="main-drawer-item-text">Add profile</Text>
+          {#if $profiles.length >= 3}
+            <span class="pro-feature-lock">
+              <LockIcon />
             </span>
-            <Text class="main-drawer-item-text">Add profile</Text>
-          </Item>
-        </ProFeature>
+          {/if}
+        </Item>
         <Item
           class="main-drawer-item"
           title="Sort profiles"
@@ -298,5 +304,11 @@
     width: 100%;
     height: 100%;
     z-index: 5;
+  }
+
+  .pro-feature-lock {
+    position: absolute;
+    top: 20px;
+    left: 16px;
   }
 </style>

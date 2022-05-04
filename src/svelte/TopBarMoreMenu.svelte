@@ -17,7 +17,8 @@
     mdiThemeLightDark
   } from '@mdi/js';
   import MdiIcon from './MdiIcon.svelte';
-  import { selectedProfileIndex } from '../js/datasource.js';
+  import LockIcon from './LockIcon.svelte';
+  import { profiles, selectedProfileIndex } from '../js/datasource.js';
   import {
     removeProfile,
     cloneProfile,
@@ -26,13 +27,18 @@
     buttonColor
   } from '../js/profile.js';
   import { showMessage } from '../js/toast.js';
-  import { showExportDialog, showImportDialog, showCloudBackupDialog } from '../js/dialog.js';
+  import {
+    showExportDialog,
+    showUpgradeRequired,
+    showImportDialog,
+    showCloudBackupDialog
+  } from '../js/dialog.js';
   import {
     ColorSchemes,
     getPreferredColorScheme,
     setPreferredColorScheme
   } from '../js/color-scheme.js';
-  import { requireSignInForExport } from '../js/identity.js';
+  import { isProUser, requireSignInForExport } from '../js/identity.js';
 
   const COLOR_SCHEME_LABEL = {
     [ColorSchemes.SYSTEM_DEFAULT]: 'Default',
@@ -173,13 +179,20 @@
       </Item>
       <Item
         on:SMUI:action={() => {
-          showImportDialog.set(true);
+          if ($profiles.length < 3 || $isProUser) {
+            showImportDialog.set(true);
+          } else {
+            showUpgradeRequired('Upgrade to Pro to import more than 3 profiles!');
+          }
           menu.setOpen(false);
         }}
         id="import-profile"
       >
         <MdiIcon class="more-menu-icon" size="24" icon={mdiFileImportOutline} color="#666" />
         Import profile
+        {#if $profiles.length >= 3}
+          <LockIcon />
+        {/if}
       </Item>
       <Item
         on:SMUI:action={() => {
