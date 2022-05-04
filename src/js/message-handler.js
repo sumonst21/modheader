@@ -1,4 +1,4 @@
-import { setProfiles, setSelectedProfileIndex } from './storage-writer.js';
+import { setProfiles, setProfilesAndIndex, setSelectedProfileIndex } from './storage-writer.js';
 import { PROFILE_VERSION, fixProfiles } from './profile.js';
 
 export const MessageType = {
@@ -9,6 +9,7 @@ export const MessageType = {
 };
 
 export async function onMessageReceived({ chromeLocal, request }) {
+  console.log('Received message', request);
   switch (request.type) {
     case MessageType.EXISTS: {
       const manifest = chrome.runtime.getManifest();
@@ -21,8 +22,8 @@ export async function onMessageReceived({ chromeLocal, request }) {
     case MessageType.IMPORT: {
       const importedProfiles = [JSON.parse(request.profile)];
       fixProfiles(importedProfiles);
-      chromeLocal.profiles.push(...importedProfiles);
-      await setProfiles(chromeLocal.profiles);
+      const newProfiles = [...chromeLocal.profiles, ...importedProfiles];
+      await setProfilesAndIndex(newProfiles, newProfiles.length - 1);
       return { success: true };
     }
     case MessageType.SWITCH_TO_LATEST:

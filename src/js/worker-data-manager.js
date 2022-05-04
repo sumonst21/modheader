@@ -17,9 +17,7 @@ export async function loadProfilesFromStorage(dataChangeCallback) {
   await dataChangeCallback(reloadResponse);
 
   addStorageChangeListener(async (changes) => {
-    const profilesUpdated =
-      !lodashIsUndefined(changes.profiles) &&
-      !lodashIsEqual(chromeLocal.profiles, changes.profiles.newValue);
+    const profilesUpdated = !lodashIsUndefined(changes.profiles);
     if (profilesUpdated) {
       // Profiles need to be upgraded. Convert and resave to localStorage. The change will trigger the storage change
       // listener to get invoked again.

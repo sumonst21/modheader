@@ -1,6 +1,5 @@
 import { setLocal } from './storage.js';
 import { resetBrowserActions } from './browser-action-manager.js';
-import { loadSignedInUser } from './identity.js';
 import { modifyRequestUrls, modifyRequestHeaders, modifyResponseHeaders } from './modifier.js';
 import { loadProfilesFromStorage } from './worker-data-manager.js';
 import { onMessageReceived } from './message-handler.js';

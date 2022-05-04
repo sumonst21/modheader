@@ -1,5 +1,9 @@
 import { setLocal, removeLocal } from './storage.js';
 
+export async function setProfilesAndIndex(profiles, index) {
+  await setLocal({ profiles, selectedProfile: index });
+}
+
 export async function setProfiles(profiles) {
   await setLocal({ profiles });
 }

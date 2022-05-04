@@ -25,7 +25,7 @@ const ARRAY_FIELDS = [
   'resourceFilters',
   'tabFilters',
   'tabGroupFilters',
-  'windowFilters',
+  'windowFilters'
 ];
 let latestProfiles = [];
 let latestSelectedProfileIndex = 0;
@@ -112,12 +112,12 @@ export function fixProfiles(profiles) {
       isMutated = true;
     }
     for (const arrayField of ARRAY_FIELDS) {
-      if (!profile[arrayField]) {
+      if (profile[arrayField] === undefined) {
         profile[arrayField] = [];
         isMutated = true;
       } else {
         for (const entry of profile[arrayField]) {
-          if (!entry.comment) {
+          if (entry.comment === undefined) {
             entry.comment = '';
             isMutated = true;
           }
