@@ -6,7 +6,6 @@
   import AutocopyTextfield from './AutocopyTextfield.svelte';
   import { showExportDialog, showExportJsonDialog } from '../js/dialog.js';
   import { openUrl } from '../js/tabs.js';
-  import { Visibility } from '../js/visibility.js';
   import { selectedProfile, exportProfile, updateProfile } from '../js/profile.js';
   import {
     getProfile as getProfileApi,
@@ -17,8 +16,7 @@
   import { showMessage } from '../js/toast.js';
 
   let exportTextfield;
-  let allowedEmails = [];
-  let visibility = Visibility.restricted.value;
+  let visibilitySummary;
   let showOverrideDialog;
   const keepStyles = true;
 
@@ -37,6 +35,7 @@
     if ($selectedProfile.profileId) {
       try {
         const profileResponse = await getProfileApi({ profileId: $selectedProfile.profileId });
+        visibilitySummary = profileResponse.visibilitySummary;
         exportUrl = getProfileUrl({ profileId: $selectedProfile.profileId });
         if (
           !lodashIsEqual(profileResponse.profile, exportProfile($selectedProfile, { keepStyles }))
@@ -75,9 +74,7 @@
     try {
       await updateProfileApi({
         profileId: $selectedProfile.profileId,
-        profile: exportProfile($selectedProfile, { keepStyles }),
-        visibility,
-        allowedEmails
+        profile: exportProfile($selectedProfile, { keepStyles })
       });
     } catch (err) {
       showMessage('Failed to update exported profiles');
@@ -97,21 +94,7 @@
         numRows={2}
       />
 
-      <div class="caption">
-        {#if visibility === Visibility.restricted.value}
-          {#if allowedEmails.length === 0}
-            Visible only to you
-          {:else if allowedEmails.length === 1}
-            Visible only to you and {allowedEmails[0]}
-          {:else if allowedEmails.length === 2}
-            Visible to you, {allowedEmails[0]}, and {allowedEmails[1]}
-          {:else}
-            Visible to you, {allowedEmails[0]}, and {allowedEmails.length - 1} other users.
-          {/if}
-        {:else}
-          {Visibility[visibility].description}
-        {/if}
-      </div>
+      <div class="caption">{visibilitySummary}</div>
 
       <Button on:click={() => openUrl({ url: exportUrl })}>
         <Label class="ml-small">Change visibility</Label>
@@ -147,7 +130,6 @@
     </div>
     <svelte:fragment slot="footer">
       <Button
-        variant="raised"
         on:click={async () => {
           showOverrideDialog = false;
           await createProfileUrl();
