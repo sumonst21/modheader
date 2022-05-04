@@ -53,17 +53,6 @@
         }
       }
     }
-    try {
-      const { profileId } = await createProfileApi({
-        profile: exportProfile($selectedProfile, { keepStyles })
-      });
-      updateProfile({ profileId });
-      exportUrl = getProfileUrl({ profileId: $selectedProfile.profileId });
-    } catch (err) {
-      exportUrl = 'Failed to generate export URL';
-    } finally {
-      uploading = false;
-    }
     await createProfileUrl();
   }
 
