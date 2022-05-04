@@ -3,6 +3,7 @@
   import List, { Item, Separator } from '@smui/list';
   import IconButton from '@smui/icon-button';
   import {
+    mdiTestTube,
     mdiCheckboxBlankOutline,
     mdiCheckboxMarked,
     mdiFullscreen,
@@ -38,6 +39,7 @@
     getPreferredColorScheme,
     setPreferredColorScheme
   } from '../js/color-scheme.js';
+  import { openUrl } from '../js/tabs.js';
   import { isProUser, requireSignInForExport } from '../js/identity.js';
 
   const COLOR_SCHEME_LABEL = {
@@ -48,17 +50,6 @@
 
   let menu;
   let selectedColorScheme = getPreferredColorScheme();
-
-  function openInTab() {
-    chrome.tabs.create(
-      {
-        url: chrome.runtime.getURL('app.html')
-      },
-      () => {
-        window.close();
-      }
-    );
-  }
 
   function toggleComment() {
     updateProfile({
@@ -91,8 +82,6 @@
     selectedColorScheme = getNextColorScheme(selectedColorScheme);
     setPreferredColorScheme(selectedColorScheme);
   }
-
-  $: appendMode = ($selectedProfile.appendMode || false).toString();
 </script>
 
 <div>
@@ -108,7 +97,12 @@
   </IconButton>
   <MenuSurface bind:this={menu} class="more-menu">
     <List>
-      <Item on:SMUI:action={() => openInTab()}>
+      <Item
+        on:SMUI:action={() =>
+          openUrl({
+            url: chrome.runtime.getURL('app.html')
+          })}
+      >
         <MdiIcon class="more-menu-icon" size="24" icon={mdiFullscreen} color="#666" />
         Open in tab
       </Item>
@@ -126,6 +120,15 @@
         />
         {$selectedProfile.hideComment ? 'Show comment' : 'Hide comment'}
       </Item>
+      <Item on:SMUI:action={() => toggleColorScheme()}>
+        <MdiIcon class="more-menu-icon" size="24" icon={mdiThemeLightDark} color="#666" />
+        Dark mode: {COLOR_SCHEME_LABEL[selectedColorScheme]}
+      </Item>
+      <Item on:SMUI:action={() => openUrl({ path: '/headers' })}>
+        <MdiIcon class="more-menu-icon" size="24" icon={mdiTestTube} color="#666" />
+        Test my headers
+      </Item>
+      <Separator nav />
       <Item
         on:SMUI:action={() => {
           toggleAlwaysOn();
@@ -143,11 +146,6 @@
         />
         Always stay enabled
       </Item>
-      <Item on:SMUI:action={() => toggleColorScheme()} title={`Dark mode`}>
-        <MdiIcon class="more-menu-icon" size="24" icon={mdiThemeLightDark} color="#666" />
-        Dark mode: {COLOR_SCHEME_LABEL[selectedColorScheme]}
-      </Item>
-      <Separator nav />
       <Item
         on:SMUI:action={() => {
           removeProfile($selectedProfileIndex);
