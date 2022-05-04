@@ -14,6 +14,7 @@ import {
   removeBeforeSendHeadersListener,
   removeHeadersReceivedListener
 } from './web-request.js';
+import { isChromiumBasedBrowser } from './user-agent.js';
 
 const ALL_URLS_FILTER = ['<all_urls>'];
 
@@ -73,7 +74,7 @@ async function messageHandler(request, sendResponse) {
   }
 }
 
-if (process.env.BROWSER === 'firefox') {
+if (!isChromiumBasedBrowser()) {
   // Firefox does not allow web pages to directly communicate with background page, so we need to
   // expose a function via content script that can post internal message to background page.
   // See https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Sharing_objects_with_page_scripts

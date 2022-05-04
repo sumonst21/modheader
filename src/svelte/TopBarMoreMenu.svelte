@@ -41,6 +41,7 @@
   } from '../js/color-scheme.js';
   import { openUrl } from '../js/tabs.js';
   import { isProUser, requireSignInForExport } from '../js/identity.js';
+  import { isChromiumBasedBrowser } from '../js/user-agent.js';
 
   const COLOR_SCHEME_LABEL = {
     [ColorSchemes.SYSTEM_DEFAULT]: 'Default',
@@ -128,6 +129,12 @@
         <MdiIcon class="more-menu-icon" size="24" icon={mdiTestTube} color="#666" />
         Test my headers
       </Item>
+      {#if isChromiumBasedBrowser()}
+        <Item on:SMUI:action={() => openUrl({ url: 'chrome://extensions/shortcuts' })}>
+          <MdiIcon class="more-menu-icon" size="24" icon={mdiTestTube} color="#666" />
+          Keyboard shortcut
+        </Item>
+      {/if}
       <Separator nav />
       <Item
         on:SMUI:action={() => {
