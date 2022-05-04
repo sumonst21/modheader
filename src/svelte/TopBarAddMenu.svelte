@@ -112,8 +112,10 @@
         >
         <Item
           id="add-tab-group-filter"
-          disabled={process.env.BROWSER === 'firefox'}
-          title={process.env.BROWSER === 'firefox' ? 'Tab group is not supported in Firefox' : ''}
+          disabled={['firefox', 'opera'].includes(process.env.BROWSER)}
+          title={['firefox', 'opera'].includes(process.env.BROWSER)
+            ? 'Tab group is not yet supported in this browser'
+            : ''}
           on:SMUI:action={async () => {
             if ($isProUser) {
               await updateProfileAndClose({

@@ -77,7 +77,9 @@ export function openUrl({ url, path, params = {} }) {
       parsedUrl.searchParams.set(key, value);
     }
   }
-  chrome.tabs.create({ url: parsedUrl.href });
+  chrome.tabs.create({ url: parsedUrl.href }, () => {
+    window.close();
+  });
 }
 
 export async function setupTabUpdatedListener() {
