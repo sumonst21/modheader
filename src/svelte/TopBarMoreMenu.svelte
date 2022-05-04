@@ -182,7 +182,9 @@
           if ($profiles.length < 3 || $isProUser) {
             showImportDialog.set(true);
           } else {
-            showUpgradeRequired('Upgrade to Pro to import more than 3 profiles!');
+            showUpgradeRequired(
+              `You already have ${$profiles.length} profiles. Upgrade to Pro to import more profiles!`
+            );
           }
           menu.setOpen(false);
         }}

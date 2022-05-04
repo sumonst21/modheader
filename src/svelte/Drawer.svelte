@@ -110,7 +110,9 @@
             : 'Add profile'}
           on:click={() => {
             if ($profiles.length >= 3 && !$isProUser) {
-              showUpgradeRequired('Upgrade to Pro to add more than 3 profiles!');
+              showUpgradeRequired(
+                `You already have ${$profiles.length} profiles. Upgrade to Pro to add more profiles!`
+              );
             } else {
               addProfile();
               expand = false;
