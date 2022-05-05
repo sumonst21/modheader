@@ -9,7 +9,7 @@ import { optimizeUrlRedirects } from './url-redirect.js';
 import { initStorage } from './storage-loader.js';
 import { setProfiles } from './storage-writer.js';
 
-const MAX_PROFILES_IN_CLOUD = 50;
+const MAX_PROFILES_IN_CLOUD = 20;
 
 export async function loadProfilesFromStorage(dataChangeCallback) {
   let chromeLocal = await initStorage();
@@ -77,12 +77,12 @@ async function saveStorageToCloud(chromeLocal) {
   const items = await getSync();
   const keys = items ? Object.keys(items) : [];
   keys.sort();
+  if (keys.length >= MAX_PROFILES_IN_CLOUD) {
+    await removeSync(keys.slice(0, keys.length - MAX_PROFILES_IN_CLOUD));
+  }
   if (keys.length === 0 || !lodashIsEqual(items[keys[keys.length - 1]], chromeLocal.profiles)) {
     const data = {};
     data[Date.now()] = chromeLocal.profiles;
     await setSync(data);
-  }
-  if (keys.length >= MAX_PROFILES_IN_CLOUD) {
-    await removeSync(keys.slice(0, keys.length - MAX_PROFILES_IN_CLOUD));
   }
 }

@@ -1,5 +1,5 @@
 <script>
-  import Dialog, { Title, Content, Actions } from '@smui/dialog';
+  import Dialog, { Title, Content } from '@smui/dialog';
   import IconButton from '@smui/icon-button';
   import { mdiClose } from '@mdi/js';
   import MdiIcon from './MdiIcon.svelte';

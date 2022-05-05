@@ -1,5 +1,4 @@
 <script>
-  import Dialog, { Title, Content, Actions } from '@smui/dialog';
   import Button, { Label } from '@smui/button';
   import BaseDialog from './BaseDialog.svelte';
   import Textfield from '@smui/textfield';
@@ -19,10 +18,12 @@
   function saveHeader() {
     dispatch('save', selectedHeader);
   }
+
+  $: !dialogVisible && saveHeader();
 </script>
 
 {#if dialogVisible}
-  <BaseDialog bind:open={dialogVisible} on:MDCDialog:closed={saveHeader} {title}>
+  <BaseDialog bind:open={dialogVisible} {title}>
     <div class="expand-header-dialog-content">
       {#if selectedHeader}
         <Textfield
@@ -49,7 +50,7 @@
       {/if}
     </div>
     <svelte:fragment slot="footer">
-      <Button>
+      <Button on:click={() => (dialogVisible = false)}>
         <Label>Done</Label>
       </Button>
     </svelte:fragment>

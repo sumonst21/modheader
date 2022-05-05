@@ -9,9 +9,9 @@
   let dialogVisible;
   let autocompleteName = '';
   let autocompleteValue = '';
+  let needSaving = false;
 
   export function open() {
-    dialogVisible = true;
     const profile = get(selectedProfile);
     const autocompleteConfig = profile[modifierHandler.customAutocompleteFieldName];
     if (autocompleteConfig) {
@@ -24,9 +24,14 @@
     if (!autocompleteValue) {
       autocompleteValue = '';
     }
+    dialogVisible = true;
+    needSaving = true;
   }
 
   function saveConfiguration() {
+    if (!needSaving) {
+      return;
+    }
     updateProfile({
       [modifierHandler.customAutocompleteFieldName]: {
         autocompleteName: autocompleteName
@@ -39,15 +44,14 @@
           .filter((l) => l.length > 0)
       }
     });
+    needSaving = false;
   }
+
+  $: !dialogVisible && saveConfiguration();
 </script>
 
 {#if dialogVisible}
-  <BaseDialog
-    bind:open={dialogVisible}
-    title="Customize autocomplete"
-    on:MDCDialog:closed={saveConfiguration}
-  >
+  <BaseDialog bind:open={dialogVisible} title="Customize autocomplete">
     <div class="autocomplete-dialog-content">
       <div>
         Enter the entries that you would like to show up in autocomplete. These autocomplete entries
@@ -69,7 +73,7 @@
       />
     </div>
     <svelte:fragment slot="footer">
-      <Button>
+      <Button on:click={() => (dialogVisible = false)}>
         <Label>Done</Label>
       </Button>
     </svelte:fragment>
