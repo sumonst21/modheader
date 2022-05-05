@@ -18,7 +18,7 @@ export async function loadSignedInUser() {
     await setLocal({ signedInUser: user });
     signedInUser.set(user);
   } catch (err) {
-    console.error('Failed to fetch signed in user details', err);
+    console.log('User not logged in to ModHeader');
   }
 }
 
