@@ -36,6 +36,6 @@ export async function onMessageReceived({ chromeLocal, request }) {
         selectedProfileIndex: chromeLocal.selectedProfile
       };
     default:
-      return false;
+      return undefined;
   }
 }
