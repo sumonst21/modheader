@@ -104,7 +104,6 @@ button::-moz-focus-inner {
 .data-table {
   padding-top: 4px;
   padding-bottom: 4px;
-  width: calc(100% - 10px);
 }
 
 .data-table:not(:last-child) {
@@ -117,7 +116,7 @@ button::-moz-focus-inner {
   margin: 6px 0;
   font-size: 1rem;
   font-style: italic;
-  font-weight: 500;
+  font-weight: bold;
 }
 
 .data-table-row-unchecked {
@@ -127,6 +126,7 @@ button::-moz-focus-inner {
 .data-table-row {
   display: flex;
   justify-content: start;
+  align-items: center;
 }
 
 .data-table-cell {
@@ -135,11 +135,6 @@ button::-moz-focus-inner {
 
 .data-table .mdc-checkbox {
   padding: 2px;
-  margin-top: 4px;
-}
-
-.data-table-title-row .mdc-checkbox {
-  margin-top: 7px;
 }
 
 .data-table .mdc-checkbox .mdc-checkbox__background {

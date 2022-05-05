@@ -86,8 +86,8 @@ ModHeader has two sets of tests: unit tests and e2e tests.
   - This will run all the unit tests (`*.test.js` files) in src/js/.
 
 - E2E tests:
+  - Before running this, before to build ModHeader using `npm run start-local-be`
   - Run using `npm run test-e2e` command.
   - This will run all the e2e-tests (`*.test.e2e.js` files) in e2e-tests/.
   - This will bring up Chrome WebDriver and load the ModHeader extension in a browser to make
     sure all features are still working correctly.
-  - Before running this, before to build ModHeader using `npm run start` or `npm run build`
