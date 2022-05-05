@@ -10,6 +10,7 @@
     mdiTrashCan,
     mdiContentCopy,
     mdiFileImportOutline,
+    mdiKeyboard,
     mdiDotsVertical,
     mdiShare,
     mdiCloudDownloadOutline,
@@ -131,8 +132,8 @@
       </Item>
       {#if isChromiumBasedBrowser()}
         <Item on:SMUI:action={() => openUrl({ url: 'chrome://extensions/shortcuts' })}>
-          <MdiIcon class="more-menu-icon" size="24" icon={mdiTestTube} color="#666" />
-          Keyboard shortcut
+          <MdiIcon class="more-menu-icon" size="24" icon={mdiKeyboard} color="#666" />
+          Keyboard shortcuts
         </Item>
       {/if}
       <Separator nav />
@@ -173,17 +174,6 @@
       </Item>
       <Item
         on:SMUI:action={() => {
-          if (requireSignInForExport()) {
-            showExportDialog.set(true);
-            menu.setOpen(false);
-          }
-        }}
-      >
-        <MdiIcon class="more-menu-icon" size="24" icon={mdiShare} color="#666" />
-        Export / share profile
-      </Item>
-      <Item
-        on:SMUI:action={() => {
           if ($profiles.length < 3 || $isProUser) {
             showImportDialog.set(true);
           } else {
@@ -200,6 +190,17 @@
         {#if $profiles.length >= 3}
           <LockIcon />
         {/if}
+      </Item>
+      <Item
+        on:SMUI:action={() => {
+          if (requireSignInForExport()) {
+            showExportDialog.set(true);
+            menu.setOpen(false);
+          }
+        }}
+      >
+        <MdiIcon class="more-menu-icon" size="24" icon={mdiShare} color="#666" />
+        Export / share profile
       </Item>
       <Item
         on:SMUI:action={() => {

@@ -17,7 +17,7 @@
   import UpgradeDialog from './UpgradeDialog.svelte';
   import { isPaused, undo, init } from '../js/datasource.js';
   import { FilterType } from '../js/filter.js';
-  import { selectedProfile, save } from '../js/profile.js';
+  import { selectedProfile, save, buttonColor } from '../js/profile.js';
   import MdiIcon from './MdiIcon.svelte';
   import { toastMessage, undoable } from '../js/toast.js';
   import { ModifierType } from '../js/modifier-type.js';
@@ -138,7 +138,7 @@
         <Button on:click={() => undo()}>Undo</Button>
       {/if}
       <IconButton dense on:click={() => snackbar.close()} title="Dismiss">
-        <MdiIcon size="24" icon={mdiClose} color="white" />
+        <MdiIcon size="24" icon={mdiClose} color={$buttonColor} />
       </IconButton>
     </Actions>
   </Snackbar>
