@@ -168,7 +168,7 @@
       <Item
         class="main-drawer-item"
         title="Help"
-        on:click={() => openLink('https://modheader.com/guide/')}
+        on:click={() => openLink('https://modheader.com/faq')}
       >
         <span class="main-drawer-icon-container">
           <MdiIcon

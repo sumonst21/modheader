@@ -49,7 +49,7 @@
       </FormField>
       {#if $profiles.length > 1}
         <Button on:click={() => (selectedProfiles = [...$profiles])}>
-          <Label class="ml-small">Export all profiles</Label>
+          <Label class="ml-small">Select all</Label>
         </Button>
       {/if}
       {#if selectedProfiles.length === 0}
