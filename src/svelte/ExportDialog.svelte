@@ -94,7 +94,9 @@
         numRows={2}
       />
 
-      <div class="caption">{visibilitySummary}</div>
+      {#if visibilitySummary}
+        <div class="caption">{visibilitySummary}</div>
+      {/if}
 
       <Button on:click={() => openUrl({ url: exportUrl })}>
         <Label class="ml-small">Change visibility</Label>
