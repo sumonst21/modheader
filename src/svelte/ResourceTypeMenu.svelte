@@ -26,7 +26,7 @@
   export let resourceType;
 </script>
 
-<div class="resource-type-menu-cell data-table-cell flex-grow">
+<div class="resource-type-menu-cell data-table-cell flex-grow inline-filter-row">
   {#each resourceType as value}
     <Chip
       fieldName={resourceType}
@@ -68,6 +68,7 @@
 
 <style module>
   .resource-type-menu-cell {
-    flex-basis: 500px;
+    min-width: 300px;
+    flex-wrap: wrap;
   }
 </style>

@@ -22,14 +22,12 @@
   }
 </script>
 
-<div class="data-table-cell flex-grow">
+<div class="data-table-cell flex-grow inline-filter-row">
   {#await queryTabs({ windowId: filter.windowId }) then tabs}
-    <div>
-      <Chip fieldName="window" tooltip="Filter by current window." on:click={useCurrentWindow}
-        >Use current window</Chip
-      >
-      <TabsList {tabs} />
-    </div>
+    <Chip fieldName="window" tooltip="Filter by current window." on:click={useCurrentWindow}
+      >Use current window</Chip
+    >
+    <TabsList {tabs} />
   {:catch error}
     <Chip on:click={dispatchRemove} on:close={dispatchRemove} trailingAction="close">
       Window no longer exists. Removed?

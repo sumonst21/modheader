@@ -3,9 +3,10 @@
   import { getTab, getActiveTab } from '../js/tabs.js';
   import MdiIcon from './MdiIcon.svelte';
   import Chip from './Chip.svelte';
+  import { selectedProfile } from '../js/profile.js';
   import { createEventDispatcher } from 'svelte';
 
-  const MAX_TITLE_LENGTH = 35;
+  const MAX_TITLE_LENGTH = 30;
   const dispatch = createEventDispatcher();
   export let filter;
 
@@ -31,25 +32,25 @@
   }
 </script>
 
-<div class="data-table-cell flex-grow">
+<div class="data-table-cell flex-grow inline-filter-row">
   {#await getTab(filter.tabId) then tab}
-    <div>
-      <Chip fieldName="single-tab" tooltip="Filter by current tab" on:click={() => useCurrentTab()}>
-        Use current tab
-      </Chip>
-      {#if tab.favIconUrl}
-        <img
-          src={tab.favIconUrl}
-          class="vertical-align-text-bottom mx-1"
-          width="18"
-          height="18"
-          alt={tab.title}
-        />
-      {:else}
-        <MdiIcon class="vertical-align-text-bottom" icon={mdiFileQuestion} size="18" color="#888" />
-      {/if}
-      {shortTitle(tab.title || tab.url || 'Unknown tab')}
-    </div>
+    <Chip fieldName="single-tab" tooltip="Filter by current tab" on:click={() => useCurrentTab()}>
+      Use current tab
+    </Chip>
+    {#if tab.favIconUrl}
+      <img
+        src={tab.favIconUrl}
+        class="vertical-align-text-bottom mx-1"
+        width="18"
+        height="18"
+        alt={tab.title}
+      />
+    {:else}
+      <MdiIcon class="vertical-align-text-bottom" icon={mdiFileQuestion} size="18" color="#888" />
+    {/if}
+    {#if $selectedProfile.hideComment}
+      <span>{shortTitle(tab.title || tab.url || 'Unknown tab')}</span>
+    {/if}
   {:catch error}
     <Chip on:click={dispatchRemove} on:close={dispatchRemove} trailingAction="close">
       Tab no longer exists. Removed?

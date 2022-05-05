@@ -29,6 +29,8 @@
   import TabGroupFilter from './TabGroupFilter.svelte';
   import WindowFilter from './WindowFilter.svelte';
   import ResourceTypeMenu from './ResourceTypeMenu.svelte';
+  import FilterMoreMenu from './FilterMoreMenu.svelte';
+  import lodashClone from 'lodash/clone.js';
 
   const FILTER_TYPES = {
     [FilterType.TABS]: {
@@ -80,6 +82,11 @@
 
   function add(filters) {
     return FILTER_TYPES[filterType].addHandler(filters);
+  }
+
+  function copy(index) {
+    filters = [...filters.slice(0, index), lodashClone(filters[index]), ...filters.slice(index)];
+    refreshFilters();
   }
 
   function toggleAll() {
@@ -269,6 +276,7 @@
         >
           <MdiIcon size="24" icon={mdiClose} color="red" />
         </IconButton>
+        <FilterMoreMenu selecteFilterIndex={filterIndex} on:copy={(e) => copy(e.detail)} />
       </div>
     {/each}
   </div>

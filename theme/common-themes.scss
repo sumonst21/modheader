@@ -57,6 +57,10 @@ button::-moz-focus-inner {
   margin-right: 0.25rem;
 }
 
+.me-1 {
+  margin-right: 0.25rem;
+}
+
 .mt-2 {
   margin-top: 0.5rem;
 }
@@ -112,8 +116,8 @@ button::-moz-focus-inner {
 .data-table-title {
   margin: 6px 0;
   font-size: 1rem;
-  text-decoration: underline;
   font-style: italic;
+  font-weight: 500;
 }
 
 .data-table-row-unchecked {
@@ -132,6 +136,10 @@ button::-moz-focus-inner {
 .data-table .mdc-checkbox {
   padding: 2px;
   margin-top: 4px;
+}
+
+.data-table-title-row .mdc-checkbox {
+  margin-top: 7px;
 }
 
 .data-table .mdc-checkbox .mdc-checkbox__background {
@@ -173,6 +181,11 @@ button::-moz-focus-inner {
   min-width: 400px;
   width: 100%;
   font-size: 1rem;
+}
+
+.inline-filter-row {
+  display: inline-flex;
+  align-items: center;
 }
 
 .mdc-deprecated-list-item {

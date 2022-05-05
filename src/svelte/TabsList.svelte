@@ -1,17 +1,18 @@
 <script>
   import { mdiFileQuestion } from '@mdi/js';
   import MdiIcon from './MdiIcon.svelte';
-
-  const MAX_TABS = 8;
+  import { selectedProfile } from '../js/profile.js';
 
   export let tabs;
+
+  $: maxTabs = $selectedProfile.hideComment ? 6 : 3;
 </script>
 
-{#each tabs.slice(0, MAX_TABS) as tab}
+{#each tabs.slice(0, maxTabs) as tab}
   {#if tab.favIconUrl}
     <img
       src={tab.favIconUrl}
-      class="vertical-align-text-bottom mx-1"
+      class="vertical-align-text-bottom me-1"
       width="18"
       height="18"
       alt={tab.title}
@@ -26,6 +27,12 @@
     />
   {/if}
 {/each}
-{#if tabs.length > MAX_TABS}
-  <span>and {tabs.length - MAX_TABS} more...</span>
+{#if tabs.length > maxTabs}
+  <span>
+    {#if $selectedProfile.hideComment}
+      and {tabs.length - maxTabs} more...
+    {:else}
+      +{tabs.length - maxTabs}...
+    {/if}
+  </span>
 {/if}

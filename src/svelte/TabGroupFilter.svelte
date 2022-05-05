@@ -22,16 +22,12 @@
   }
 </script>
 
-<div class="data-table-cell flex-grow">
+<div class="data-table-cell flex-grow inline-filter-row">
   {#await queryTabs({ groupId: filter.groupId }) then tabs}
-    <div>
-      <Chip
-        fieldName="tab-group"
-        tooltip="Filter by current tab group"
-        on:click={useCurrentTabGroup}>Use current tab group</Chip
-      >
-      <TabsList {tabs} />
-    </div>
+    <Chip fieldName="tab-group" tooltip="Filter by current tab group" on:click={useCurrentTabGroup}
+      >Use current tab group</Chip
+    >
+    <TabsList {tabs} />
   {:catch error}
     <Chip on:click={dispatchRemove} on:close={dispatchRemove} trailingAction="close">
       Tab group no longer exists. Removed?
