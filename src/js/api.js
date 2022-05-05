@@ -2,6 +2,7 @@ async function makeRequest(path, params = {}) {
   const response = await fetch(`${process.env.URL_BASE}${path}`, {
     mode: 'cors',
     credentials: 'include',
+    redirect: 'manual',
     ...params
   });
   if (response.ok) {
