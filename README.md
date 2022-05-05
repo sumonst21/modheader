@@ -28,27 +28,34 @@
 
 <a href="https://chrome-stats.com/d/idgpnmonknjnojddfkpgkljpfnnfcklj">ModHeader stats</a>
 
-## Donation
+## What can ModHeader do?
+- Add/modify/remove request headers and response headers (you can use this to set X-Forwarded-For, Authorization, Access-Control-Allow-Origin: *)
+- Modify individual cookies in Cookie request header / Set-Cookie response header
+- Redirect URL with another
+- Conditionally enable header modification based on URL and/or resource type
+- Advanced filtering by tab, tab group, or window
 
-If you find ModHeader useful, please consider making a donation. If you use it for your company project, please ask your company to make a monthly donation!
+## Why ModHeader
+- ModHeader is fast, efficient, and light-weight. You can quickly enable/disable header modification with just 1-2 clicks.
+- ModHeader provides you with many convenient features that will help you increase your development velocity with the least amount of frictions. Check out the big list the features below!
+- ModHeader is free to use, with a paid option to unlock even more features.
+- ModHeader works on Chrome, Firefox, Edge, and Opera.
+- ModHeader is used by over 550,000+ users on Chrome Web Store!
 
-[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif)](https://www.paypal.com/pools/c/84aPpFIA0Z)
-
-## Features
-
-- Add/modify/remove request headers and response headers
-- Modify individual cookies in Cookie request header / Set-Cookie response header 
-- Enable header modification based on URL/resource type
+## ModHeader features
 - Add comments to header
-- Multiple different profiles
-- Sorting headers by name, value, or comments
+- One-click "undo" if you made a mistake
+- Support having multiple profiles with quick switching between profiles
+- Export and import profile
+- Easily share your profiles with others
+- Customize autocomplete names and values
+- Dark mode support
+- Sorting headers and name, value, or comments
 - Append value to existing request or response header
-- Export and import header
+- Customizable profile badge
 - Clone profile
 - Cloud backup
-- Customize autocomplete names and values
-- Advanced filtering by tab, tab group, or window
-- Dark mode support
+  ...and more!!!
 
 ## Screenshots
 
