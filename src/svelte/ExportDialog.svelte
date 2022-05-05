@@ -10,7 +10,6 @@
   import {
     getProfile as getProfileApi,
     createProfile as createProfileApi,
-    getProfileUrl,
     updateProfile as updateProfileApi
   } from '../js/api.js';
   import { showMessage } from '../js/toast.js';
@@ -36,7 +35,7 @@
       try {
         const profileResponse = await getProfileApi({ profileId: $selectedProfile.profileId });
         visibilitySummary = profileResponse.visibilitySummary;
-        exportUrl = getProfileUrl({ profileId: $selectedProfile.profileId });
+        exportUrl = profileResponse.profileUrl;
         if (
           !lodashIsEqual(profileResponse.profile, exportProfile($selectedProfile, { keepStyles }))
         ) {
@@ -57,11 +56,12 @@
 
   async function createProfileUrl() {
     try {
-      const { profileId } = await createProfileApi({
+      const profileResponse = await createProfileApi({
         profile: exportProfile($selectedProfile, { keepStyles })
       });
-      updateProfile({ profileId });
-      exportUrl = getProfileUrl({ profileId: $selectedProfile.profileId });
+      updateProfile({ profileId: profileResponse.profileId });
+      visibilitySummary = profileResponse.visibilitySummary;
+      exportUrl = profileResponse.profileUrl;
     } catch (err) {
       exportUrl = 'Failed to generate export URL';
     } finally {
@@ -72,10 +72,12 @@
   async function updateExportProfile() {
     uploading = true;
     try {
-      await updateProfileApi({
+      const profileResponse = await updateProfileApi({
         profileId: $selectedProfile.profileId,
         profile: exportProfile($selectedProfile, { keepStyles })
       });
+      visibilitySummary = profileResponse.visibilitySummary;
+      exportUrl = profileResponse.profileUrl;
     } catch (err) {
       showMessage('Failed to update exported profiles');
     } finally {

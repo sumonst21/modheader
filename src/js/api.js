@@ -40,7 +40,3 @@ export function updateProfile({ profileId, profile, visibility, allowedEmails })
     body: JSON.stringify({ profileId, profile, visibility, allowedEmails })
   });
 }
-
-export function getProfileUrl({ profileId }) {
-  return `${process.env.URL_BASE}/profile/${profileId}`;
-}
