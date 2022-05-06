@@ -191,7 +191,8 @@
       on:SMUI:action={() => {
         const profile = $profiles[selectedProfileIndex];
         const alwaysOn = !profile.alwaysOn;
-        updateProfile({ alwaysOn }, selectedProfileIndex);
+        selectProfile(selectedProfileIndex);
+        updateProfile({ alwaysOn });
         contextMenu.setOpen(false);
         if (alwaysOn) {
           showMessage(`${profile.title} will stay active even when it is not selected`);
