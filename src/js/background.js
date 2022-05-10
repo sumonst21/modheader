@@ -100,4 +100,4 @@ window.saveToStorage = function (items) {
   return setLocal(items);
 };
 
-await initialize();
+initialize();
