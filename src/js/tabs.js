@@ -26,10 +26,8 @@ export async function queryTabs(queryParams) {
     chrome.tabs.query(queryParams, (tabs) => {
       if (chrome.runtime.lastError) {
         reject(chrome.runtime.lastError);
-      } else if (tabs && tabs.length > 0) {
-        resolve(tabs);
       } else {
-        reject(`Query found no tabs`);
+        resolve(tabs || []);
       }
     });
   });
