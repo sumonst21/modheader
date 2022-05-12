@@ -35,7 +35,7 @@
     class="add-menu"
     quickOpen={true}
     anchor={true}
-    anchorMargin={{ top: 48, right: 0, bottom: 0, left: -220 }}
+    anchorMargin={{ top: 48, right: 0, bottom: 0, left: -223 }}
   >
     <div class="add-menu-container">
       <List>
