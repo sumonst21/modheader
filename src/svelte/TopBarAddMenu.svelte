@@ -8,7 +8,6 @@
   import { selectedProfile, updateProfile, buttonColor } from '../js/profile.js';
   import { isProUser } from '../js/identity.js';
   import { showUpgradeRequired } from '../js/dialog.js';
-  import { appMode } from '../js/app-mode.js';
   import { addHeader } from '../js/header.js';
   import { addUrlRedirect } from '../js/url-redirect.js';
   import {
@@ -24,24 +23,11 @@
     addMenu.setOpen(false);
   }
 
-  function hideTooltip() {
-    showTooltip = false;
-  }
-
   let addMenu;
-  let showTooltip = !localStorage.hideAddButtonTooltip && $appMode === 'popup';
 </script>
 
 <div>
-  <IconButton
-    dense
-    on:click={() => {
-      addMenu.setOpen(true);
-      localStorage.hideAddButtonTooltip = true;
-    }}
-    title="Add"
-    id="add-button"
-  >
+  <IconButton dense on:click={() => addMenu.setOpen(true)} title="Add" id="add-button">
     <MdiIcon size="24" icon={mdiPlus} color={$buttonColor} />
   </IconButton>
   <MenuSurface
@@ -189,17 +175,6 @@
   </MenuSurface>
 </div>
 
-{#if showTooltip}
-  <div class="tooltip-menu">
-    <p class="triangle-isosceles">
-      Click here to add header,<br />
-      tab filter, URL filter, etc.
-    </p>
-  </div>
-{/if}
-
-<svelte:window on:click={hideTooltip} />
-
 <style module>
   .add-menu {
     width: 450px;
@@ -212,40 +187,5 @@
 
   .grid-border {
     border-left: 1px solid #888;
-  }
-
-  .tooltip-menu {
-    display: flex;
-    pointer-events: none;
-    font-size: 0.8rem;
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 160px;
-  }
-
-  .triangle-isosceles {
-    position: relative;
-    padding: 0.5em;
-    height: 28px;
-    color: var(--tooltip-color);
-    background: var(--tooltip-background);
-    border-radius: 10px;
-    margin: 4px 10px;
-  }
-
-  .triangle-isosceles:after {
-    content: '';
-    position: absolute;
-    top: 10px;
-    right: -9px;
-    bottom: auto;
-    left: auto;
-    border-width: 10px 0 10px 10px;
-    border-style: solid;
-    border-color: transparent var(--tooltip-background);
-    display: block;
-    width: 0;
   }
 </style>
