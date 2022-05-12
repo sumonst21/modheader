@@ -8,6 +8,7 @@
   import { selectedProfile, updateProfile, buttonColor } from '../js/profile.js';
   import { isProUser } from '../js/identity.js';
   import { showUpgradeRequired } from '../js/dialog.js';
+  import { appMode } from '../js/app-mode.js';
   import { addHeader } from '../js/header.js';
   import { addUrlRedirect } from '../js/url-redirect.js';
   import {
@@ -28,7 +29,7 @@
   }
 
   let addMenu;
-  let showTooltip = !localStorage.hideAddButtonTooltip;
+  let showTooltip = !localStorage.hideAddButtonTooltip && $appMode === 'popup';
 </script>
 
 <div>
@@ -47,8 +48,8 @@
     bind:this={addMenu}
     class="add-menu"
     quickOpen={true}
-    anchor={false}
-    anchorMargin={{ top: 48, right: 0, bottom: 0, left: 100 }}
+    anchor={true}
+    anchorMargin={{ top: 48, right: 0, bottom: 0, left: -220 }}
   >
     <div class="add-menu-container">
       <List>
@@ -186,16 +187,16 @@
       </List>
     </div>
   </MenuSurface>
-
-  {#if showTooltip}
-    <div class="tooltip-menu">
-      <p class="triangle-isosceles">
-        Click here to add header,<br />
-        tab filter, URL filter, etc.
-      </p>
-    </div>
-  {/if}
 </div>
+
+{#if showTooltip}
+  <div class="tooltip-menu">
+    <p class="triangle-isosceles">
+      Click here to add header,<br />
+      tab filter, URL filter, etc.
+    </p>
+  </div>
+{/if}
 
 <svelte:window on:click={hideTooltip} />
 
@@ -221,7 +222,7 @@
     top: 0;
     right: 0;
     bottom: 0;
-    left: 170px;
+    left: 160px;
   }
 
   .triangle-isosceles {

@@ -48,6 +48,7 @@ describe('e2e test', () => {
     // Setup an initial profile
     await driver.get(`${baseUrl}/images/icon.png`);
     await driver.executeScript(`chrome.storage.local.set(${JSON.stringify(INIT_PROFILE)});`);
+    await driver.executeScript(`localStorage.hideAddButtonTooltip = true;`);
     await delay(100);
   });
 
