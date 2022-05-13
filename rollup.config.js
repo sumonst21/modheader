@@ -40,7 +40,7 @@ export default {
           manifest.browser_specific_settings = {
             gecko: {
               id: '{ed630365-1261-4ba9-a676-99963d2b4f54}',
-              strict_min_version: '68.0'
+              strict_min_version: '75.0'
             }
           };
         }
