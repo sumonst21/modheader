@@ -26,6 +26,10 @@ export async function goToMyAccount() {
   openUrl({ path: `/u/myaccount` });
 }
 
+export async function goToCreateLoginUrl() {
+  openUrl({ path: `/u/login-url` });
+}
+
 export async function goToMySubscription() {
   openUrl({ path: `/u/mysubscription` });
 }

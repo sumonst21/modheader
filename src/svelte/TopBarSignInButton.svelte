@@ -12,6 +12,7 @@
     signedInUser,
     isProUser,
     goToMyProfiles,
+    goToCreateLoginUrl,
     goToMySubscription,
     goToMyAccount,
     signIn,
@@ -35,6 +36,7 @@
     <Menu bind:this={accountMenu} anchorCorner="TOP_LEFT">
       <List>
         <Item on:SMUI:action={() => goToMyAccount()}><Text>My account</Text></Item>
+        <Item on:SMUI:action={() => goToCreateLoginUrl()}><Text>Create login URL</Text></Item>
         <Item on:SMUI:action={() => goToMySubscription()}><Text>My subscription</Text></Item>
         <Item on:SMUI:action={() => goToMyProfiles()}><Text>My exported profiles</Text></Item>
         <Item on:SMUI:action={() => signOut()}><Text>Log out</Text></Item>
