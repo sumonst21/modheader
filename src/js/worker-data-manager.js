@@ -33,7 +33,7 @@ export async function loadProfilesFromStorage(dataChangeCallback) {
     for (const [key, value] of Object.entries(changes)) {
       chromeLocal[key] = value.newValue;
     }
-    if (profilesUpdated || changes.selectedProfile?.newValue) {
+    if (profilesUpdated || changes.selectedProfile) {
       reloadResponse = reloadActiveProfiles(chromeLocal);
     }
     await dataChangeCallback(reloadResponse);
