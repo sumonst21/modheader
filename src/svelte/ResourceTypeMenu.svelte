@@ -2,7 +2,7 @@
   import Button from '@smui/button';
   import MenuSurface from '@smui/menu-surface';
   import { createEventDispatcher } from 'svelte';
-  import Chip from './Chip.svelte';
+  import { Chip } from '@modheader/core';
   import lodashWithout from 'lodash/without.js';
 
   const KNOWN_RESOURCE_TYPES = {

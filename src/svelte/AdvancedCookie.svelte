@@ -1,7 +1,7 @@
 <script>
   import Button from '@smui/button';
   import MenuSurface from '@smui/menu-surface';
-  import Chip from './Chip.svelte';
+  import { Chip } from '@modheader/core';
   import CookieAttributeTextField from './CookieAttributeTextField.svelte';
   import { createEventDispatcher } from 'svelte';
 

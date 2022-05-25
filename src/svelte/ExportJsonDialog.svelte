@@ -4,8 +4,7 @@
   import FormField from '@smui/form-field';
   import Checkbox from '@smui/checkbox';
   import List, { Meta, Item, Label as ListLabel } from '@smui/list';
-  import AutocopyTextfield from './AutocopyTextfield.svelte';
-  import { datasource, dialog, BaseDialog } from '@modheader/core';
+  import { datasource, dialog, AutocopyTextfield, BaseDialog } from '@modheader/core';
   import { selectedProfile, exportProfile } from '../js/profile.js';
 
   const { profiles } = datasource;

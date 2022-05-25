@@ -1,6 +1,5 @@
 <script>
-  import { tabs } from '@modheader/core';
-  import Chip from './Chip.svelte';
+  import { tabs, Chip } from '@modheader/core';
   import TabsList from './TabsList.svelte';
   import { createEventDispatcher } from 'svelte';
 

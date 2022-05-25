@@ -1,7 +1,6 @@
 <script>
-  import Chip from './Chip.svelte';
   import { AppendMode } from '../js/append-mode.js';
-  import { toast } from '@modheader/core';
+  import { toast, Chip } from '@modheader/core';
   import { createEventDispatcher } from 'svelte';
 
   const dispatch = createEventDispatcher();

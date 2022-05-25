@@ -1,7 +1,6 @@
 <script>
   import { mdiFileQuestion } from '@mdi/js';
-  import { tabs, MdiIcon } from '@modheader/core';
-  import Chip from './Chip.svelte';
+  import { tabs, Chip, MdiIcon } from '@modheader/core';
   import { selectedProfile } from '../js/profile.js';
   import { createEventDispatcher } from 'svelte';
 
