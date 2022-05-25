@@ -7,7 +7,7 @@ import lodashDebounce from 'lodash/debounce.js';
 import { swap, takeRight } from './utils.js';
 import { createHeader } from './header.js';
 import { FilterType } from './filter.js';
-import { lightOrDark, generateBackgroundColor, generateTextColor } from './color.js';
+import { color } from '@modheader/core';
 import { profiles, commitData, selectedProfileIndex, isInitialized } from './datasource.js';
 import { showMessage } from './toast.js';
 import lodashClone from 'lodash/clone.js';
@@ -49,7 +49,7 @@ export const selectedProfile = derived(
 export const buttonColor = derived(
   [selectedProfile],
   ([$selectedProfile]) =>
-    lightOrDark($selectedProfile.backgroundColor) === 'light' ? 'black' : 'white',
+    color.lightOrDark($selectedProfile.backgroundColor) === 'light' ? 'black' : 'white',
   'white'
 );
 
@@ -100,11 +100,11 @@ export function fixProfiles(profiles) {
       isMutated = true;
     }
     if (!profile.backgroundColor) {
-      profile.backgroundColor = generateBackgroundColor();
+      profile.backgroundColor = color.generateBackgroundColor();
       isMutated = true;
     }
     if (!profile.textColor) {
-      profile.textColor = generateTextColor();
+      profile.textColor = color.generateTextColor();
       isMutated = true;
     }
     if (!profile.shortTitle) {
@@ -204,10 +204,10 @@ function upgradeFromProfileVersion1({ profile, index }) {
   delete profile.filters;
 
   if (!profile.backgroundColor) {
-    profile.backgroundColor = generateBackgroundColor();
+    profile.backgroundColor = color.generateBackgroundColor();
   }
   if (!profile.textColor) {
-    profile.textColor = generateTextColor();
+    profile.textColor = color.generateTextColor();
   }
 }
 
@@ -231,8 +231,8 @@ export function createProfile() {
     tabFilters: [],
     tabGroupFilters: [],
     windowFilters: [],
-    backgroundColor: generateBackgroundColor(),
-    textColor: generateTextColor(),
+    backgroundColor: color.generateBackgroundColor(),
+    textColor: color.generateTextColor(),
     shortTitle: takeRight(index)
   };
   return profile;

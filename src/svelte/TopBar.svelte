@@ -13,7 +13,7 @@
   import { isPaused, undo } from '../js/datasource.js';
   import { selectedProfile, updateProfile, buttonColor } from '../js/profile.js';
   import { requireSignInForExport } from '../js/identity.js';
-  import { canUndoChange } from '../js/change-stack.js';
+  import { changeStack } from '@modheader/core';
   import { showExportDialog } from '../js/dialog.js';
 
   let pauseSnackbar;
@@ -63,7 +63,7 @@
       />
     </Section>
     <Section align="end">
-      {#if $canUndoChange}
+      {#if changeStack.$canUndoChange}
         <IconButton dense on:click={() => undo()} title="Undo">
           <MdiIcon size="24" icon={mdiUndo} color={$buttonColor} />
         </IconButton>

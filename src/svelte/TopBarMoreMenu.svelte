@@ -35,23 +35,19 @@
     showImportDialog,
     showCloudBackupDialog
   } from '../js/dialog.js';
-  import {
-    ColorSchemes,
-    getPreferredColorScheme,
-    setPreferredColorScheme
-  } from '../js/color-scheme.js';
+  import { colorScheme } from '@modheader/core';
   import { openUrl } from '../js/tabs.js';
   import { isProUser, requireSignInForExport } from '../js/identity.js';
   import { isChromiumBasedBrowser } from '../js/user-agent.js';
 
   const COLOR_SCHEME_LABEL = {
-    [ColorSchemes.SYSTEM_DEFAULT]: 'Default',
-    [ColorSchemes.LIGHT]: 'Light',
-    [ColorSchemes.DARK]: 'Dark'
+    [colorScheme.ColorSchemes.SYSTEM_DEFAULT]: 'Default',
+    [colorScheme.ColorSchemes.LIGHT]: 'Light',
+    [colorScheme.ColorSchemes.DARK]: 'Dark'
   };
 
   let menu;
-  let selectedColorScheme = getPreferredColorScheme();
+  let selectedColorScheme = colorScheme.getPreferredColorScheme();
 
   function toggleComment() {
     updateProfile({
@@ -71,18 +67,18 @@
 
   function getNextColorScheme(colorScheme) {
     switch (colorScheme) {
-      case ColorSchemes.SYSTEM_DEFAULT:
-        return ColorSchemes.LIGHT;
-      case ColorSchemes.LIGHT:
-        return ColorSchemes.DARK;
+      case colorScheme.ColorSchemes.SYSTEM_DEFAULT:
+        return colorScheme.ColorSchemes.LIGHT;
+      case colorScheme.ColorSchemes.LIGHT:
+        return colorScheme.ColorSchemes.DARK;
       default:
-        return ColorSchemes.SYSTEM_DEFAULT;
+        return colorScheme.ColorSchemes.SYSTEM_DEFAULT;
     }
   }
 
   function toggleColorScheme() {
     selectedColorScheme = getNextColorScheme(selectedColorScheme);
-    setPreferredColorScheme(selectedColorScheme);
+    colorScheme.setPreferredColorScheme(selectedColorScheme);
   }
 </script>
 

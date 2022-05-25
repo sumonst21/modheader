@@ -3,7 +3,7 @@
   import { isProUser } from '../js/identity.js';
   import { mdiLock } from '@mdi/js';
   import { showUpgradeDialog } from '../js/dialog.js';
-  import { LOCK_COLOR } from '../js/color.js';
+  import { color } from '@modheader/core';
 
   export let requirePro = true;
 
@@ -19,7 +19,7 @@
 {:else}
   <div class="pro-feature-container" on:click|capture|preventDefault|stopPropagation={showUpgrade}>
     <slot upgradeRequired={true} />
-    <MdiIcon class="pro-feature-lock" icon={mdiLock} size="12" color={LOCK_COLOR} />
+    <MdiIcon class="pro-feature-lock" icon={mdiLock} size="12" color={color.LOCK_COLOR} />
   </div>
 {/if}
 

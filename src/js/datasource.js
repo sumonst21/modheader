@@ -6,13 +6,7 @@ import { hideMessage } from './toast.js';
 import { getLocal } from './storage.js';
 import { setPaused } from './storage-writer.js';
 import { loadSignedInUser, signedInUser } from './identity.js';
-import {
-  undoChange,
-  commit,
-  setChangeField,
-  stopIgnoringChange,
-  startIgnoringChange
-} from './change-stack.js';
+import { changeStack } from '@modheader/core';
 
 export const profiles = writable([]);
 export const selectedProfileIndex = writable(0);
@@ -20,27 +14,27 @@ export const isPaused = writable(false);
 export const isInitialized = writable(false);
 
 profiles.subscribe(($profiles) => {
-  setChangeField('profiles', $profiles);
+  changeStack.setChangeField('profiles', $profiles);
 });
 selectedProfileIndex.subscribe(($selectedProfileIndex) => {
-  setChangeField('selectedProfileIndex', $selectedProfileIndex);
+  changeStack.setChangeField('selectedProfileIndex', $selectedProfileIndex);
 });
 isPaused.subscribe(async ($isPaused) => {
-  setChangeField('isPaused', $isPaused);
+  changeStack.setChangeField('isPaused', $isPaused);
   if (get(isInitialized)) {
     await setPaused($isPaused);
   }
 });
 isInitialized.subscribe(($isInitialized) => {
   if ($isInitialized) {
-    stopIgnoringChange();
+    changeStack.stopIgnoringChange();
   } else {
-    startIgnoringChange();
+    changeStack.startIgnoringChange();
   }
 });
 
 export function undo() {
-  let lastChange = undoChange();
+  let lastChange = changeStack.undoChange();
   if (!lastChange) {
     return;
   }
@@ -63,7 +57,7 @@ export function undo() {
     if (!lodashIsUndefined(lastChange.isPaused) && lastChange.isPaused !== currentIsPaused) {
       break;
     }
-    lastChange = undoChange();
+    lastChange = changeStack.undoChange();
   }
   commitData({
     newProfiles: lastChange.profiles || currentProfiles,
@@ -74,7 +68,7 @@ export function undo() {
 }
 
 export function commitData({ newProfiles = [], newIndex = 0, newIsPaused } = {}) {
-  commit(() => {
+  changeStack.commit(() => {
     newIndex = Math.max(0, Math.min(newProfiles.length - 1, newIndex));
     if (lodashIsUndefined(newIsPaused)) {
       newIsPaused = get(isPaused);

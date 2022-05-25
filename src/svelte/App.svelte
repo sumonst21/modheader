@@ -21,7 +21,7 @@
   import MdiIcon from './MdiIcon.svelte';
   import { toastMessage, undoable } from '../js/toast.js';
   import { ModifierType } from '../js/modifier-type.js';
-  import { reloadColorScheme } from '../js/color-scheme.js';
+  import { colorScheme } from '@modheader/core';
 
   let snackbar;
   let snackbarMessage;
@@ -40,7 +40,7 @@
   });
 
   onMount(() => {
-    reloadColorScheme();
+    colorScheme.reloadColorScheme();
   });
 
   onDestroy(unsubscribeToastMessage);

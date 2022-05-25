@@ -1,8 +1,9 @@
 import { jest } from '@jest/globals';
 import { get, writable } from 'svelte/store';
 import flushPromises from 'flush-promises';
-import { __testing__ as changeStackTesting } from './change-stack.js';
+import { changeStack } from '@modheader/core';
 
+const changeStackTesting = changeStack.__testing__;
 const signedInUser = writable();
 
 const mockIdentity = {
