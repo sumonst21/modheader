@@ -2,8 +2,7 @@
   import IconButton from '@smui/icon-button';
   import { mdiPlay, mdiPause } from '@mdi/js';
   import { buttonColor } from '../js/profile.js';
-  import MdiIcon from './MdiIcon.svelte';
-  import { datasource } from '@modheader/core';
+  import { datasource, MdiIcon } from '@modheader/core';
 
   const { isPaused } = datasource;
 </script>

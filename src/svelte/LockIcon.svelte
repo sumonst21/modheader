@@ -1,7 +1,6 @@
 <script>
-  import MdiIcon from './MdiIcon.svelte';
   import { mdiLock } from '@mdi/js';
-  import { color, identity } from '@modheader/core';
+  import { color, identity, MdiIcon } from '@modheader/core';
 
   const { isProUser } = identity;
 </script>

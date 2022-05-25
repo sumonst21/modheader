@@ -2,7 +2,7 @@
   import Dialog, { Title, Content } from '@smui/dialog';
   import IconButton from '@smui/icon-button';
   import { mdiClose } from '@mdi/js';
-  import MdiIcon from './MdiIcon.svelte';
+  import { MdiIcon } from '@modheader/core';
 
   export let open = false;
   export let showCloseButton = true;

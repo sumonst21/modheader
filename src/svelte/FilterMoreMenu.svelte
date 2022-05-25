@@ -12,7 +12,7 @@
   } from '@mdi/js';
   import { selectedProfile, updateProfile } from '../js/profile';
   import { createEventDispatcher } from 'svelte';
-  import MdiIcon from './MdiIcon.svelte';
+  import { MdiIcon } from '@modheader/core';
 
   const dispatch = createEventDispatcher();
 

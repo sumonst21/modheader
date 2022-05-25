@@ -1,5 +1,5 @@
 <script>
-  import MdiIcon from './MdiIcon.svelte';
+  import { MdiIcon } from '@modheader/core';
   import { buttonColor } from '../js/profile.js';
   import { mdiAccountCircle } from '@mdi/js';
 

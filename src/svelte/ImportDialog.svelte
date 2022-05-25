@@ -4,10 +4,9 @@
   import Button, { Label } from '@smui/button';
   import { mdiFileImport, mdiCheck } from '@mdi/js';
   import Textfield from '@smui/textfield';
-  import MdiIcon from './MdiIcon.svelte';
   import BaseDialog from './BaseDialog.svelte';
   import { DISABLED_COLOR, PRIMARY_COLOR } from '../js/constants.js';
-  import { api, dialog, toast, userAgent } from '@modheader/core';
+  import { api, dialog, toast, userAgent, MdiIcon } from '@modheader/core';
   import { importProfiles } from '../js/profile.js';
 
   const { showImportDialog } = dialog;

@@ -24,7 +24,7 @@
     addWindowFilter
   } from '../js/filter.js';
   import AutoComplete from './Autocomplete.svelte';
-  import MdiIcon from './MdiIcon.svelte';
+  import { MdiIcon } from '@modheader/core';
   import TabFilter from './TabFilter.svelte';
   import TabGroupFilter from './TabGroupFilter.svelte';
   import WindowFilter from './WindowFilter.svelte';

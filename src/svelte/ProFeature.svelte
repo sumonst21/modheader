@@ -1,7 +1,6 @@
 <script>
-  import MdiIcon from './MdiIcon.svelte';
   import { mdiLock } from '@mdi/js';
-  import { color, dialog, identity } from '@modheader/core';
+  import { color, dialog, identity, MdiIcon } from '@modheader/core';
 
   const { isProUser } = identity;
   const { showUpgradeDialog } = dialog;

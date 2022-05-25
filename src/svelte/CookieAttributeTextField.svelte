@@ -3,7 +3,7 @@
   import IconButton from '@smui/icon-button';
   import MenuSurface from '@smui/menu-surface';
   import { mdiCheckCircle } from '@mdi/js';
-  import MdiIcon from './MdiIcon.svelte';
+  import { MdiIcon } from '@modheader/core';
   import { createEventDispatcher } from 'svelte';
 
   const dispatch = createEventDispatcher();

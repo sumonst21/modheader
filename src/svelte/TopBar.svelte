@@ -9,9 +9,8 @@
   import TopBarMoreMenu from './TopBarMoreMenu.svelte';
   import TopBarSignInButton from './TopBarSignInButton.svelte';
   import ProfileBadgeDialog from './ProfileBadgeDialog.svelte';
-  import MdiIcon from './MdiIcon.svelte';
   import { selectedProfile, updateProfile, buttonColor } from '../js/profile.js';
-  import { changeStack, datasource, dialog, identity } from '@modheader/core';
+  import { changeStack, datasource, dialog, identity, MdiIcon } from '@modheader/core';
 
   const { canUndoChange } = changeStack;
   const { isPaused } = datasource;

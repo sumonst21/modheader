@@ -3,8 +3,6 @@
   import MenuSurface from '@smui/menu-surface';
   import { createEventDispatcher } from 'svelte';
   import Chip from './Chip.svelte';
-  import MdiIcon from './MdiIcon.svelte';
-  import { mdiChevronDown } from '@mdi/js';
   import lodashWithout from 'lodash/without.js';
 
   const KNOWN_RESOURCE_TYPES = {

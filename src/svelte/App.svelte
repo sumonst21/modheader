@@ -17,9 +17,8 @@
   import UpgradeDialog from './UpgradeDialog.svelte';
   import { FilterType } from '../js/filter.js';
   import { selectedProfile, save } from '../js/profile.js';
-  import MdiIcon from './MdiIcon.svelte';
   import { ModifierType } from '../js/modifier-type.js';
-  import { colorScheme, datasource, toast } from '@modheader/core';
+  import { colorScheme, datasource, toast, MdiIcon } from '@modheader/core';
 
   const { isPaused, undo, init } = datasource;
   const undoable = toast.undoable;

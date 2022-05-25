@@ -2,9 +2,7 @@
   import Button from '@smui/button';
   import MenuSurface from '@smui/menu-surface';
   import Chip from './Chip.svelte';
-  import MdiIcon from './MdiIcon.svelte';
   import CookieAttributeTextField from './CookieAttributeTextField.svelte';
-  import { mdiChevronDownCircle } from '@mdi/js';
   import { createEventDispatcher } from 'svelte';
 
   const dispatch = createEventDispatcher();

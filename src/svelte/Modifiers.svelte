@@ -8,7 +8,7 @@
   import { selectedProfile } from '../js/profile.js';
   import AutoComplete from './Autocomplete.svelte';
   import ModifiersMoreMenu from './ModifiersMoreMenu.svelte';
-  import MdiIcon from './MdiIcon.svelte';
+  import { MdiIcon } from '@modheader/core';
   import HeaderMoreMenu from './HeaderMoreMenu.svelte';
   import { MODIFIER_TYPES } from '../js/modifier-handler.js';
   import { swap } from '../js/utils.js';

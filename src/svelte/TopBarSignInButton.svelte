@@ -2,13 +2,12 @@
   import Menu from '@smui/menu';
   import List, { Item, Text } from '@smui/list';
   import Badge from '@smui-extra/badge';
-  import MdiIcon from './MdiIcon.svelte';
   import { mdiCrown } from '@mdi/js';
   import IconButton from '@smui/icon-button';
   import Button from '@smui/button';
   import ProfilePicture from './ProfilePicture.svelte';
   import { buttonColor } from '../js/profile.js';
-  import { identity } from '@modheader/core';
+  import { identity, MdiIcon } from '@modheader/core';
 
   const {
     signedInUser,

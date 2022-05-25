@@ -18,7 +18,6 @@
     mdiCommentRemoveOutline,
     mdiThemeLightDark
   } from '@mdi/js';
-  import MdiIcon from './MdiIcon.svelte';
   import LockIcon from './LockIcon.svelte';
   import {
     removeProfile,
@@ -34,7 +33,8 @@
     identity,
     userAgent,
     tabs,
-    toast
+    toast,
+    MdiIcon
   } from '@modheader/core';
 
   const { showExportDialog, showUpgradeRequired, showImportDialog, showCloudBackupDialog } = dialog;

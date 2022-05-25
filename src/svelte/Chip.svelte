@@ -28,7 +28,7 @@
 
 <script>
   import Ripple from '@smui/ripple';
-  import MdiIcon from './MdiIcon.svelte';
+  import { MdiIcon } from '@modheader/core';
   import { createEventDispatcher } from 'svelte';
 
   export let fieldName;
