@@ -2,9 +2,9 @@
   import { get } from 'svelte/store';
   import Button, { Label } from '@smui/button';
   import Textfield from '@smui/textfield';
-  import { BaseDialog } from '@modheader/core';
-  import { selectedProfile, updateProfile } from '../js/profile.js';
+  import { BaseDialog, profile } from '@modheader/core';
 
+  const { selectedProfile, updateProfile } = profile;
   export let modifierHandler;
   let dialogVisible;
   let autocompleteName = '';

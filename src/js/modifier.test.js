@@ -1,10 +1,10 @@
 import { FilterType } from './filter.js';
 import { modifyRequestUrls, modifyRequestHeaders, modifyResponseHeaders } from './modifier.js';
 import { AppendMode } from './append-mode.js';
-import { PROFILE_VERSION } from './profile.js';
+import { profile } from '@modheader/core';
 
 const EMPTY_PROFILE = {
-  version: PROFILE_VERSION,
+  version: profile.PROFILE_VERSION,
   title: 'Test profile',
   headers: [],
   respHeaders: [],

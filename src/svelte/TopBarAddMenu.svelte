@@ -3,8 +3,7 @@
   import List, { Item } from '@smui/list';
   import IconButton from '@smui/icon-button';
   import { mdiPlus } from '@mdi/js';
-  import { selectedProfile, updateProfile, buttonColor } from '../js/profile.js';
-  import { dialog, identity, LockIcon, MdiIcon } from '@modheader/core';
+  import { dialog, identity, profile, LockIcon, MdiIcon } from '@modheader/core';
   import { addHeader } from '../js/header.js';
   import { addUrlRedirect } from '../js/url-redirect.js';
   import {
@@ -15,6 +14,7 @@
     addWindowFilter
   } from '../js/filter.js';
 
+  const { selectedProfile, updateProfile, buttonColor } = profile;
   const { isProUser } = identity;
   const { showUpgradeRequired } = dialog;
 

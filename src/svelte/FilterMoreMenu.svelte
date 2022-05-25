@@ -10,10 +10,10 @@
     mdiArrowUp,
     mdiArrowDown
   } from '@mdi/js';
-  import { selectedProfile, updateProfile } from '../js/profile';
   import { createEventDispatcher } from 'svelte';
-  import { MdiIcon } from '@modheader/core';
+  import { MdiIcon, profile } from '@modheader/core';
 
+  const { selectedProfile, updateProfile } = profile;
   const dispatch = createEventDispatcher();
 
   function dispatchSwap({ index1, index2 }) {

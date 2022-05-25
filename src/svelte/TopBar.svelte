@@ -5,13 +5,20 @@
   import Button from '@smui/button';
   import { mdiShare, mdiUndo } from '@mdi/js';
   import TopBarAddMenu from './TopBarAddMenu.svelte';
-  import TopBarPauseButton from './TopBarPauseButton.svelte';
   import TopBarMoreMenu from './TopBarMoreMenu.svelte';
-  import TopBarSignInButton from './TopBarSignInButton.svelte';
-  import ProfileBadgeDialog from './ProfileBadgeDialog.svelte';
-  import { selectedProfile, updateProfile, buttonColor } from '../js/profile.js';
-  import { changeStack, datasource, dialog, identity, MdiIcon } from '@modheader/core';
+  import {
+    changeStack,
+    datasource,
+    dialog,
+    identity,
+    profile,
+    MdiIcon,
+    ProfileBadgeDialog,
+    TopBarPauseButton,
+    TopBarSignInButton
+  } from '@modheader/core';
 
+  const { selectedProfile, updateProfile, buttonColor } = profile;
   const { canUndoChange } = changeStack;
   const { isPaused } = datasource;
   let pauseSnackbar;

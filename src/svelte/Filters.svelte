@@ -13,7 +13,6 @@
   } from '@mdi/js';
   import lodashOrderBy from 'lodash/orderBy.js';
   import lodashDebounce from 'lodash/debounce.js';
-  import { selectedProfile, updateProfile } from '../js/profile.js';
   import {
     FilterType,
     addUrlFilter,
@@ -23,13 +22,15 @@
     addTabGroupFilter,
     addWindowFilter
   } from '../js/filter.js';
-  import { Autocomplete, MdiIcon, utils } from '@modheader/core';
+  import { Autocomplete, MdiIcon, profile, utils } from '@modheader/core';
   import TabFilter from './TabFilter.svelte';
   import TabGroupFilter from './TabGroupFilter.svelte';
   import WindowFilter from './WindowFilter.svelte';
   import ResourceTypeMenu from './ResourceTypeMenu.svelte';
   import FilterMoreMenu from './FilterMoreMenu.svelte';
   import lodashClone from 'lodash/clone.js';
+
+  const { selectedProfile, updateProfile } = profile;
 
   const FILTER_TYPES = {
     [FilterType.TABS]: {

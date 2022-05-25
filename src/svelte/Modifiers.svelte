@@ -5,12 +5,12 @@
   import lodashClone from 'lodash/clone.js';
   import lodashDebounce from 'lodash/debounce.js';
   import { fly } from 'svelte/transition';
-  import { selectedProfile } from '../js/profile.js';
   import ModifiersMoreMenu from './ModifiersMoreMenu.svelte';
-  import { utils, Autocomplete, MdiIcon } from '@modheader/core';
+  import { profile, utils, Autocomplete, MdiIcon } from '@modheader/core';
   import HeaderMoreMenu from './HeaderMoreMenu.svelte';
   import { MODIFIER_TYPES } from '../js/modifier-handler.js';
 
+  const { selectedProfile } = profile;
   export let modifierType;
   export let modifiers;
   let allChecked;

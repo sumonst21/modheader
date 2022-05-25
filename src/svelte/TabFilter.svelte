@@ -1,9 +1,9 @@
 <script>
   import { mdiFileQuestion } from '@mdi/js';
-  import { tabs, Chip, MdiIcon } from '@modheader/core';
-  import { selectedProfile } from '../js/profile.js';
+  import { profile, tabs, Chip, MdiIcon } from '@modheader/core';
   import { createEventDispatcher } from 'svelte';
 
+  const { selectedProfile } = profile;
   const MAX_TITLE_LENGTH = 30;
   const dispatch = createEventDispatcher();
   export let filter;

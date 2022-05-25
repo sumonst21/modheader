@@ -14,12 +14,12 @@
   } from '@mdi/js';
   import lodashOmit from 'lodash/omit.js';
   import lodashClone from 'lodash/clone.js';
-  import { selectedProfile, updateProfile } from '../js/profile';
   import { createEventDispatcher } from 'svelte';
-  import { MdiIcon } from '@modheader/core';
+  import { profile, MdiIcon } from '@modheader/core';
   import ExpandHeaderDialog from './ExpandHeaderDialog.svelte';
   import { AppendMode } from '../js/append-mode.js';
 
+  const { selectedProfile } = profile;
   const dispatch = createEventDispatcher();
 
   function expandEditor() {
@@ -82,7 +82,7 @@
       </Item>
       <Item
         on:SMUI:action={() => {
-          updateProfile({
+          profile.updateProfile({
             hideComment: !$selectedProfile.hideComment
           });
         }}

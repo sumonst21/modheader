@@ -6,8 +6,7 @@
   import lodashIsNumber from 'lodash/isNumber.js';
   import lodashIsNaN from 'lodash/isNaN.js';
   import { mdiTrashCanOutline, mdiCancel } from '@mdi/js';
-  import { restoreToProfiles } from '../js/profile.js';
-  import { constants, dialog, storage, BaseDialog, MdiIcon } from '@modheader/core';
+  import { constants, dialog, profile, storage, BaseDialog, MdiIcon } from '@modheader/core';
 
   const { showCloudBackupDialog } = dialog;
 
@@ -58,7 +57,7 @@
   }
 
   function restoreEntry(entry) {
-    restoreToProfiles(entry.profiles);
+    profile.restoreToProfiles(entry.profiles);
     done();
   }
 

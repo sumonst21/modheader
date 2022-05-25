@@ -10,21 +10,22 @@
   import Drawer from './Drawer.svelte';
   import Filters from './Filters.svelte';
   import Modifiers from './Modifiers.svelte';
-  import ExportDialog from './ExportDialog.svelte';
-  import ImportDialog from './ImportDialog.svelte';
   import CloudBackupDialog from './CloudBackupDialog.svelte';
   import { FilterType } from '../js/filter.js';
-  import { selectedProfile, save } from '../js/profile.js';
   import { ModifierType } from '../js/modifier-type.js';
   import {
     colorScheme,
     datasource,
+    profile,
     toast,
+    ExportDialog,
+    ImportDialog,
     MdiIcon,
     SignInRequiredDialog,
     UpgradeDialog
   } from '@modheader/core';
 
+  const { selectedProfile, save } = profile;
   const { isPaused, undo, init } = datasource;
   const undoable = toast.undoable;
   let snackbar;

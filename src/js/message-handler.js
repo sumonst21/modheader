@@ -1,5 +1,4 @@
-import { storageWriter } from '@modheader/core';
-import { PROFILE_VERSION, fixProfiles } from './profile.js';
+import { storageWriter, profile } from '@modheader/core';
 
 export const MessageType = {
   EXISTS: 'EXISTS',
@@ -15,13 +14,13 @@ export async function onMessageReceived({ chromeLocal, request }) {
       const manifest = chrome.runtime.getManifest();
       return {
         success: true,
-        maxSupportedProfileVersion: PROFILE_VERSION,
+        maxSupportedProfileVersion: profile.PROFILE_VERSION,
         modHeaderVersion: manifest.version
       };
     }
     case MessageType.IMPORT: {
       const importedProfiles = [JSON.parse(request.profile)];
-      fixProfiles(importedProfiles);
+      profile.fixProfiles(importedProfiles);
       const newProfiles = [...chromeLocal.profiles, ...importedProfiles];
       await storageWriter.setProfilesAndIndex(newProfiles, newProfiles.length - 1);
       return { success: true };

@@ -1,16 +1,14 @@
 import lodashCloneDeep from 'lodash/cloneDeep.js';
 import lodashIsUndefined from 'lodash/isUndefined.js';
 import lodashIsEqual from 'lodash/isEqual.js';
-import { storage, storageWriter, utils } from '@modheader/core';
-import { fixProfiles } from './profile.js';
+import { profile, storage, storageLoader, storageWriter, utils } from '@modheader/core';
 import { optimizeResourceFilters, optimizeTabFilters, optimizeUrlFilters } from './filter.js';
 import { optimizeUrlRedirects } from './url-redirect.js';
-import { initStorage } from './storage-loader.js';
 
 const MAX_PROFILES_IN_CLOUD = 20;
 
 export async function loadProfilesFromStorage(dataChangeCallback) {
-  let chromeLocal = await initStorage();
+  let chromeLocal = await storageLoader.initStorage();
   let reloadResponse = reloadActiveProfiles(chromeLocal);
   await dataChangeCallback(reloadResponse);
 
@@ -23,7 +21,7 @@ export async function loadProfilesFromStorage(dataChangeCallback) {
       if (lodashIsUndefined(newProfiles)) {
         newProfiles = [];
       }
-      if (fixProfiles(newProfiles)) {
+      if (profile.fixProfiles(newProfiles)) {
         await storageWriter.setProfiles(newProfiles);
         return;
       }

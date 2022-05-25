@@ -18,9 +18,20 @@
     mdiArrowDown
   } from '@mdi/js';
   import { fade } from 'svelte/transition';
-  import ProfileBadge from './ProfileBadge.svelte';
-  import { constants, datasource, dialog, identity, userAgent, toast, LockIcon, MdiIcon } from '@modheader/core';
   import {
+    constants,
+    datasource,
+    dialog,
+    identity,
+    profile,
+    userAgent,
+    toast,
+    LockIcon,
+    MdiIcon,
+    ProfileBadge
+  } from '@modheader/core';
+
+  const {
     addProfile,
     removeProfile,
     selectProfile,
@@ -29,8 +40,7 @@
     updateProfile,
     sortProfiles,
     swapProfile
-  } from '../js/profile.js';
-
+  } = profile;
   const { profiles } = datasource;
   const { showUpgradeRequired } = dialog;
   const { isProUser } = identity;
@@ -120,7 +130,12 @@
           }}
         >
           <span class="main-drawer-icon-container">
-            <MdiIcon size="24" class="main-drawer-icon" icon={mdiFilePlus} color={constants.PRIMARY_COLOR} />
+            <MdiIcon
+              size="24"
+              class="main-drawer-icon"
+              icon={mdiFilePlus}
+              color={constants.PRIMARY_COLOR}
+            />
           </span>
           <Text class="main-drawer-item-text">Add profile</Text>
           {#if $profiles.length >= 3}

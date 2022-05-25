@@ -1,8 +1,8 @@
 <script>
   import { mdiFileQuestion } from '@mdi/js';
-  import { MdiIcon } from '@modheader/core';
-  import { selectedProfile } from '../js/profile.js';
+  import { profile, MdiIcon } from '@modheader/core';
 
+  const { selectedProfile } = profile;
   export let tabs;
 
   $: maxTabs = $selectedProfile.hideComment ? 6 : 3;

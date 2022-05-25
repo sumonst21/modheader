@@ -19,13 +19,6 @@
     mdiThemeLightDark
   } from '@mdi/js';
   import {
-    removeProfile,
-    cloneProfile,
-    selectedProfile,
-    updateProfile,
-    buttonColor
-  } from '../js/profile.js';
-  import {
     colorScheme,
     datasource,
     dialog,
@@ -34,9 +27,11 @@
     tabs,
     toast,
     LockIcon,
-    MdiIcon
+    MdiIcon,
+    profile
   } from '@modheader/core';
 
+  const { removeProfile, cloneProfile, selectedProfile, updateProfile, buttonColor } = profile;
   const { showExportDialog, showUpgradeRequired, showImportDialog, showCloudBackupDialog } = dialog;
   const { isProUser, requireSignInForExport } = identity;
   const { profiles, selectedProfileIndex } = datasource;

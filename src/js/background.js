@@ -11,7 +11,9 @@ import {
   removeBeforeSendHeadersListener,
   removeHeadersReceivedListener
 } from './web-request.js';
+import { initProfileHooks } from './profile-hook.js';
 
+initProfileHooks();
 const ALL_URLS_FILTER = ['<all_urls>'];
 
 let chromeLocal = {
