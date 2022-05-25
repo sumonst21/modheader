@@ -11,6 +11,7 @@
   import MdiIcon from './MdiIcon.svelte';
   import HeaderMoreMenu from './HeaderMoreMenu.svelte';
   import { MODIFIER_TYPES } from '../js/modifier-handler.js';
+  import { swap } from '../js/utils.js';
 
   export let modifierType;
   export let modifiers;
@@ -155,6 +156,12 @@
         {modifierHandler}
         selectedHeaderIndex={modifierIndex}
         selectedHeader={modifier}
+        {modifiers}
+        on:swap={(e) => {
+          const { index1, index2 } = e.detail;
+          modifiers = swap(modifiers, index1, index2);
+          refreshModifiers();
+        }}
         on:copy={(e) => copy(e.detail)}
         on:update={(e) => {
           modifiers[e.detail.headerIndex] = e.detail.header;

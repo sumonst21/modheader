@@ -1,12 +1,14 @@
 <script>
   import IconButton from '@smui/icon-button';
   import Menu from '@smui/menu';
-  import List, { Item, Text } from '@smui/list';
+  import List, { Item, Text, Separator } from '@smui/list';
   import {
     mdiCommentCheckOutline,
     mdiCommentRemoveOutline,
     mdiContentCopy,
-    mdiDotsVertical
+    mdiDotsVertical,
+    mdiArrowUp,
+    mdiArrowDown
   } from '@mdi/js';
   import { selectedProfile, updateProfile } from '../js/profile';
   import { createEventDispatcher } from 'svelte';
@@ -14,7 +16,13 @@
 
   const dispatch = createEventDispatcher();
 
+  function dispatchSwap({ index1, index2 }) {
+    dispatch('swap', { index1, index2 });
+    moreMenu.setOpen(false);
+  }
+
   export let selecteFilterIndex;
+  export let filters;
   let moreMenu;
 </script>
 
@@ -50,6 +58,23 @@
           color="#666"
         />
         {$selectedProfile.hideComment ? 'Show comment' : 'Hide comment'}
+      </Item>
+      <Separator nav />
+      <Item
+        on:SMUI:action={() =>
+          dispatchSwap({ index1: selecteFilterIndex, index2: selecteFilterIndex + 1 })}
+        disabled={filters.length === 0 || selecteFilterIndex >= filters.length - 1}
+      >
+        <MdiIcon class="icon-with-text" color="#666" icon={mdiArrowDown} size="24" />
+        <Text>Move down</Text>
+      </Item>
+      <Item
+        on:SMUI:action={() =>
+          dispatchSwap({ index1: selecteFilterIndex, index2: selecteFilterIndex - 1 })}
+        disabled={filters.length === 0 || selecteFilterIndex === 0}
+      >
+        <MdiIcon class="icon-with-text" color="#666" icon={mdiArrowUp} size="24" />
+        <Text>Move up</Text>
       </Item>
     </List>
   </Menu>

@@ -13,7 +13,9 @@
     mdiSortDescending,
     mdiChevronLeft,
     mdiMenu,
-    mdiFilePlus
+    mdiFilePlus,
+    mdiArrowUp,
+    mdiArrowDown
   } from '@mdi/js';
   import { fade } from 'svelte/transition';
   import MdiIcon from './MdiIcon.svelte';
@@ -30,7 +32,8 @@
     cloneProfile,
     selectedProfile,
     updateProfile,
-    sortProfiles
+    sortProfiles,
+    swapProfile
   } from '../js/profile.js';
   import { PRIMARY_COLOR } from '../js/constants.js';
   import { isProUser } from '../js/identity.js';
@@ -237,6 +240,28 @@
     >
       <MdiIcon class="more-menu-icon" size="24" icon={mdiClose} color="red" />
       <Text>Delete profile</Text>
+    </Item>
+
+    <Separator nav />
+    <Item
+      on:SMUI:action={() => {
+        swapProfile(selectedProfileIndex, selectedProfileIndex + 1);
+        contextMenu.setOpen(false);
+      }}
+      disabled={$profiles.length === 0 || selectedProfileIndex >= $profiles.length - 1}
+    >
+      <MdiIcon class="more-menu-icon" color="#666" icon={mdiArrowDown} size="24" />
+      <Text>Move down</Text>
+    </Item>
+    <Item
+      on:SMUI:action={() => {
+        swapProfile(selectedProfileIndex, selectedProfileIndex - 1);
+        contextMenu.setOpen(false);
+      }}
+      disabled={$profiles.length === 0 || selectedProfileIndex === 0}
+    >
+      <MdiIcon class="more-menu-icon" color="#666" icon={mdiArrowUp} size="24" />
+      <Text>Move up</Text>
     </Item>
   </List>
 </MenuSurface>

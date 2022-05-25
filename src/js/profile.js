@@ -4,7 +4,7 @@ import lodashOrderBy from 'lodash/orderBy.js';
 import lodashIsEqual from 'lodash/isEqual.js';
 import lodashIsArray from 'lodash/isArray.js';
 import lodashDebounce from 'lodash/debounce.js';
-import { takeRight } from './utils.js';
+import { swap, takeRight } from './utils.js';
 import { createHeader } from './header.js';
 import { FilterType } from './filter.js';
 import { lightOrDark, generateBackgroundColor, generateTextColor } from './color.js';
@@ -341,4 +341,11 @@ export function restoreToProfiles(profilesToRestore) {
 
 export function selectProfile(profileIndex) {
   selectedProfileIndex.set(profileIndex);
+}
+
+export function swapProfile(profileIndex1, profileIndex2) {
+  commitData({
+    newProfiles: swap(latestProfiles, profileIndex1, profileIndex2),
+    newIndex: profileIndex2
+  });
 }

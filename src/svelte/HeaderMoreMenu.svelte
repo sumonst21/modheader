@@ -8,7 +8,9 @@
     mdiContentCopy,
     mdiArrowExpand,
     mdiDotsVertical,
-    mdiClose
+    mdiClose,
+    mdiArrowUp,
+    mdiArrowDown
   } from '@mdi/js';
   import lodashOmit from 'lodash/omit.js';
   import lodashClone from 'lodash/clone.js';
@@ -30,9 +32,15 @@
     moreHeaderMenu.setOpen(false);
   }
 
+  function dispatchSwap({ index1, index2 }) {
+    dispatch('swap', { index1, index2 });
+    moreHeaderMenu.setOpen(false);
+  }
+
   export let modifierHandler;
   export let selectedHeaderIndex;
   export let selectedHeader;
+  export let modifiers;
   let dialog;
   let moreHeaderMenu;
 </script>
@@ -86,6 +94,24 @@
           color="#666"
         />
         {$selectedProfile.hideComment ? 'Show comment' : 'Hide comment'}
+      </Item>
+
+      <Separator nav />
+      <Item
+        on:SMUI:action={() =>
+          dispatchSwap({ index1: selectedHeaderIndex, index2: selectedHeaderIndex + 1 })}
+        disabled={modifiers.length === 0 || selectedHeaderIndex >= modifiers.length - 1}
+      >
+        <MdiIcon class="icon-with-text" color="#666" icon={mdiArrowDown} size="24" />
+        <Text>Move down</Text>
+      </Item>
+      <Item
+        on:SMUI:action={() =>
+          dispatchSwap({ index1: selectedHeaderIndex, index2: selectedHeaderIndex - 1 })}
+        disabled={modifiers.length === 0 || selectedHeaderIndex === 0}
+      >
+        <MdiIcon class="icon-with-text" color="#666" icon={mdiArrowUp} size="24" />
+        <Text>Move up</Text>
       </Item>
       {#if modifierHandler.supportAppendMode}
         <Separator nav />

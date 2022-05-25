@@ -3,6 +3,14 @@ export function takeRight(v) {
   return s.length > 0 ? s[s.length - 1] : '0';
 }
 
+export function swap(arr, index1, index2) {
+  const newArr = [...arr];
+  const temp = newArr[index1];
+  newArr[index1] = newArr[index2];
+  newArr[index2] = temp;
+  return newArr;
+}
+
 export function filterEnabledMods(rows) {
   let output = [];
   if (rows) {

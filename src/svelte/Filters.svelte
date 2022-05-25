@@ -31,6 +31,7 @@
   import ResourceTypeMenu from './ResourceTypeMenu.svelte';
   import FilterMoreMenu from './FilterMoreMenu.svelte';
   import lodashClone from 'lodash/clone.js';
+  import { swap } from '../js/utils.js';
 
   const FILTER_TYPES = {
     [FilterType.TABS]: {
@@ -276,7 +277,16 @@
         >
           <MdiIcon size="24" icon={mdiClose} color="red" />
         </IconButton>
-        <FilterMoreMenu selecteFilterIndex={filterIndex} on:copy={(e) => copy(e.detail)} />
+        <FilterMoreMenu
+          selecteFilterIndex={filterIndex}
+          {filters}
+          on:copy={(e) => copy(e.detail)}
+          on:swap={(e) => {
+            const { index1, index2 } = e.detail;
+            filters = swap(filters, index1, index2);
+            refreshFilters();
+          }}
+        />
       </div>
     {/each}
   </div>
