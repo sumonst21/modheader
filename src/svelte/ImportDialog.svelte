@@ -4,8 +4,7 @@
   import Button, { Label } from '@smui/button';
   import { mdiFileImport, mdiCheck } from '@mdi/js';
   import Textfield from '@smui/textfield';
-  import { DISABLED_COLOR, PRIMARY_COLOR } from '../js/constants.js';
-  import { api, dialog, toast, userAgent, BaseDialog, MdiIcon } from '@modheader/core';
+  import { api, constants, dialog, toast, userAgent, BaseDialog, MdiIcon } from '@modheader/core';
   import { importProfiles } from '../js/profile.js';
 
   const { showImportDialog } = dialog;
@@ -52,7 +51,7 @@
           on:change={(e) => loadFile(e.target.files[0])}
         />
         <Button on:click={() => uploadFileInput.click()}>
-          <MdiIcon size="24" icon={mdiFileImport} color={PRIMARY_COLOR} />
+          <MdiIcon size="24" icon={mdiFileImport} color={constants.PRIMARY_COLOR} />
           <Label class="ml-small">Load from file</Label>
         </Button>
       {/if}
@@ -60,7 +59,7 @@
         <MdiIcon
           size="24"
           icon={mdiCheck}
-          color={lodashIsEmpty(importText) ? DISABLED_COLOR : PRIMARY_COLOR}
+          color={lodashIsEmpty(importText) ? constants.DISABLED_COLOR : constants.PRIMARY_COLOR}
         />
         <Label class="ml-small">Import</Label>
       </Button>

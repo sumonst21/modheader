@@ -1,10 +1,9 @@
 <script>
-  import { BaseDialog, ColorPicker, MdiIcon } from '@modheader/core';
+  import { constants, BaseDialog, ColorPicker, MdiIcon } from '@modheader/core';
   import Tab, { Label as TabLabel } from '@smui/tab';
   import Button, { Label } from '@smui/button';
   import TabBar from '@smui/tab-bar';
   import { mdiContentSave, mdiClose } from '@mdi/js';
-  import { PRIMARY_COLOR } from '../js/constants.js';
   import { selectedProfile, updateProfile } from '../js/profile.js';
 
   const TABS = [
@@ -73,7 +72,7 @@
     </div>
     <svelte:fragment slot="footer">
       <Button on:click={() => (dialogVisible = false)}>
-        <MdiIcon size="24" icon={mdiClose} color={PRIMARY_COLOR} />
+        <MdiIcon size="24" icon={mdiClose} color={constants.PRIMARY_COLOR} />
         <Label class="ml-small">Cancel</Label>
       </Button>
       <Button
@@ -86,7 +85,7 @@
           dialogVisible = false;
         }}
       >
-        <MdiIcon size="24" icon={mdiContentSave} color={PRIMARY_COLOR} />
+        <MdiIcon size="24" icon={mdiContentSave} color={constants.PRIMARY_COLOR} />
         <Label class="ml-small">Save</Label>
       </Button>
     </svelte:fragment>

@@ -6,9 +6,8 @@
   import lodashIsNumber from 'lodash/isNumber.js';
   import lodashIsNaN from 'lodash/isNaN.js';
   import { mdiTrashCanOutline, mdiCancel } from '@mdi/js';
-  import { DISABLED_COLOR, PRIMARY_COLOR } from '../js/constants.js';
   import { restoreToProfiles } from '../js/profile.js';
-  import { dialog, storage, BaseDialog, MdiIcon } from '@modheader/core';
+  import { constants, dialog, storage, BaseDialog, MdiIcon } from '@modheader/core';
 
   const { showCloudBackupDialog } = dialog;
 
@@ -105,12 +104,12 @@
         <MdiIcon
           size="24"
           icon={mdiTrashCanOutline}
-          color={cloudBackupList.length === 0 ? DISABLED_COLOR : 'red'}
+          color={cloudBackupList.length === 0 ? constants.DISABLED_COLOR : 'red'}
         />
         <Label class="ml-small">Delete all backup</Label>
       </Button>
       <Button on:click={() => done()}>
-        <MdiIcon size="24" icon={mdiCancel} color={PRIMARY_COLOR} />
+        <MdiIcon size="24" icon={mdiCancel} color={constants.PRIMARY_COLOR} />
         <Label class="ml-small">Cancel</Label>
       </Button>
     </svelte:fragment>

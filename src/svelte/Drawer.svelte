@@ -19,7 +19,7 @@
   } from '@mdi/js';
   import { fade } from 'svelte/transition';
   import ProfileBadge from './ProfileBadge.svelte';
-  import { datasource, dialog, identity, userAgent, toast, LockIcon, MdiIcon } from '@modheader/core';
+  import { constants, datasource, dialog, identity, userAgent, toast, LockIcon, MdiIcon } from '@modheader/core';
   import {
     addProfile,
     removeProfile,
@@ -30,7 +30,6 @@
     sortProfiles,
     swapProfile
   } from '../js/profile.js';
-  import { PRIMARY_COLOR } from '../js/constants.js';
 
   const { profiles } = datasource;
   const { showUpgradeRequired } = dialog;
@@ -80,7 +79,7 @@
             size="24"
             class="main-drawer-icon"
             icon={expand ? mdiChevronLeft : mdiMenu}
-            color={PRIMARY_COLOR}
+            color={constants.PRIMARY_COLOR}
           />
         </span>
       </Item>
@@ -121,7 +120,7 @@
           }}
         >
           <span class="main-drawer-icon-container">
-            <MdiIcon size="24" class="main-drawer-icon" icon={mdiFilePlus} color={PRIMARY_COLOR} />
+            <MdiIcon size="24" class="main-drawer-icon" icon={mdiFilePlus} color={constants.PRIMARY_COLOR} />
           </span>
           <Text class="main-drawer-item-text">Add profile</Text>
           {#if $profiles.length >= 3}
@@ -143,7 +142,7 @@
               size="24"
               class="main-drawer-icon"
               icon={sortOrder === 'asc' ? mdiSortAscending : mdiSortDescending}
-              color={PRIMARY_COLOR}
+              color={constants.PRIMARY_COLOR}
             />
           </span>
           <Text class="main-drawer-item-text">Sort profiles</Text>
@@ -162,7 +161,7 @@
             size="24"
             class="main-drawer-icon"
             icon={mdiThumbUpOutline}
-            color={PRIMARY_COLOR}
+            color={constants.PRIMARY_COLOR}
           />
         </span>
         <Text class="main-drawer-item-text">Rate us</Text>
@@ -177,7 +176,7 @@
             size="24"
             class="main-drawer-icon"
             icon={mdiHelpCircleOutline}
-            color={PRIMARY_COLOR}
+            color={constants.PRIMARY_COLOR}
           />
         </span>
 
