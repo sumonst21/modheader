@@ -1,7 +1,7 @@
 import { getActiveTab } from './tabs.js';
 import lodashIsEmpty from 'lodash/isEmpty.js';
 import lodashCloneDeep from 'lodash/cloneDeep.js';
-import { evaluateValue, filterEnabledMods } from './utils.js';
+import { evaluateValue, filterEnabled } from './utils.js';
 
 export async function addUrlRedirect(urlRedirects) {
   let name = '';
@@ -35,7 +35,7 @@ export function removeUrlRedirect(urlRedirects, replacementIndex) {
 }
 
 export function optimizeUrlRedirects(urlRedirects) {
-  return filterEnabledMods(urlRedirects).map((redirect) => ({
+  return filterEnabled(urlRedirects).map((redirect) => ({
     ...redirect,
     name: new RegExp(redirect.name)
   }));

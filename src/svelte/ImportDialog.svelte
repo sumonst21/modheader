@@ -8,7 +8,7 @@
   import BaseDialog from './BaseDialog.svelte';
   import { DISABLED_COLOR, PRIMARY_COLOR } from '../js/constants.js';
   import { showMessage } from '../js/toast.js';
-  import { parseProfile } from '../js/api.js';
+  import { api } from '@modheader/core';
   import { importProfiles } from '../js/profile.js';
   import { showImportDialog } from '../js/dialog.js';
   import { isChromiumBasedBrowser } from '../js/user-agent.js';
@@ -18,7 +18,7 @@
 
   async function done() {
     try {
-      const importedProfiles = await parseProfile({ data: importText });
+      const importedProfiles = await api.parseProfile({ data: importText });
       importProfiles(importedProfiles);
       showImportDialog.set(false);
     } catch (err) {

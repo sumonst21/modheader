@@ -2,7 +2,7 @@ import { get, derived, writable } from 'svelte/store';
 import { removeLocal, setLocal } from './storage.js';
 import { CURRENT_BROWSER } from './user-agent.js';
 import { requireSignInForExportDialog } from './dialog.js';
-import { getUserDetails } from './api.js';
+import { api } from '@modheader/core';
 import { openUrl } from './tabs.js';
 
 export const signedInUser = writable(undefined);
@@ -14,7 +14,7 @@ export const isProUser = derived(
 
 export async function loadSignedInUser() {
   try {
-    const user = await getUserDetails();
+    const user = await api.getUserDetails();
     await setLocal({ signedInUser: user });
     signedInUser.set(user);
   } catch (err) {

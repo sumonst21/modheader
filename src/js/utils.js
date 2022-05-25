@@ -11,7 +11,7 @@ export function swap(arr, index1, index2) {
   return newArr;
 }
 
-export function filterEnabledMods(rows) {
+export function filterEnabled(rows) {
   let output = [];
   if (rows) {
     for (const row of rows) {

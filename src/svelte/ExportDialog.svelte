@@ -7,11 +7,7 @@
   import { showExportDialog, showExportJsonDialog } from '../js/dialog.js';
   import { openUrl } from '../js/tabs.js';
   import { selectedProfile, exportProfile, updateProfile } from '../js/profile.js';
-  import {
-    getProfile as getProfileApi,
-    createProfile as createProfileApi,
-    updateProfile as updateProfileApi
-  } from '../js/api.js';
+  import { api } from '@modheader/core';
   import { showMessage } from '../js/toast.js';
 
   let exportTextfield;
@@ -33,7 +29,7 @@
     uploading = true;
     if ($selectedProfile.profileId) {
       try {
-        const profileResponse = await getProfileApi({ profileId: $selectedProfile.profileId });
+        const profileResponse = await api.getProfile({ profileId: $selectedProfile.profileId });
         visibilitySummary = profileResponse.visibilitySummary;
         exportUrl = profileResponse.profileUrl;
         if (
@@ -56,7 +52,7 @@
 
   async function createProfileUrl() {
     try {
-      const profileResponse = await createProfileApi({
+      const profileResponse = await api.createProfile({
         profile: exportProfile($selectedProfile, { keepStyles })
       });
       updateProfile({ profileId: profileResponse.profileId });
@@ -72,7 +68,7 @@
   async function updateExportProfile() {
     uploading = true;
     try {
-      const profileResponse = await updateProfileApi({
+      const profileResponse = await api.updateProfile({
         profileId: $selectedProfile.profileId,
         profile: exportProfile($selectedProfile, { keepStyles })
       });

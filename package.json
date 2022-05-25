@@ -20,6 +20,7 @@
     "build": "cross-env BROWSER=chrome rollup -c"
   },
   "devDependencies": {
+    "@modheader/core": "1.0.0",
     "@babel/core": "^7.17.8",
     "@babel/preset-env": "^7.16.11",
     "@mdi/js": "^6.5.95",
@@ -75,5 +76,8 @@
     "set-cookie-parser": "^2.4.8",
     "svelte-preprocess-cssmodules": "^2.2.0",
     "svelte": "^3.46.4"
-  }
+  },
+  "main": "build-all.js",
+  "author": "",
+  "license": "ISC"
 }
