@@ -1,9 +1,10 @@
 import lodashIsArray from 'lodash/isArray.js';
-import { color, profile, storage, utils } from '@modheader/core';
+import { color, profile as profileUtils, storage, utils } from '@modheader/core';
 import { createHeader } from './header.js';
 import { AppendMode } from './append-mode.js';
 import { FilterType } from './filter.js';
 
+const PROFILE_VERSION = profileUtils.PROFILE_VERSION;
 const ARRAY_FIELDS = [
   'headers',
   'respHeaders',
@@ -58,7 +59,7 @@ function fixProfileHook({ profile, index }) {
 }
 
 function upgradeFromProfileVersion1({ profile, index }) {
-  profile.version = profile.PROFILE_VERSION;
+  profile.version = PROFILE_VERSION;
   if (profile.hideComment === undefined) {
     profile.hideComment = true;
   }
@@ -142,7 +143,7 @@ function upgradeFromProfileVersion1({ profile, index }) {
 
 function createProfileHook({ index }) {
   return {
-    version: profile.PROFILE_VERSION,
+    version: PROFILE_VERSION,
     title: 'Profile ' + index,
     hideComment: true,
     headers: [createHeader()],
@@ -211,7 +212,7 @@ async function saveProfileHook({ profiles, selectedProfileIndex }) {
 }
 
 export function initProfileHooks() {
-  profile.init({
+  profileUtils.init({
     fixProfileHook,
     createProfileHook,
     exportProfileHook,

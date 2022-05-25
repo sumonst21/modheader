@@ -22,6 +22,7 @@ export default {
   plugins: [
     replace({
       preventAssignment: true,
+      'process.env.PRODUCT_NAME': JSON.stringify('ModHeader'),
       'process.env.BROWSER': JSON.stringify(process.env.BROWSER),
       'process.env.URL_BASE': JSON.stringify(URL_BASE)
     }),

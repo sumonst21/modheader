@@ -7,7 +7,6 @@
   import { onDestroy, onMount } from 'svelte';
   import lodashCloneDeep from 'lodash/cloneDeep';
   import TopBar from './TopBar.svelte';
-  import Drawer from './Drawer.svelte';
   import Filters from './Filters.svelte';
   import Modifiers from './Modifiers.svelte';
   import CloudBackupDialog from './CloudBackupDialog.svelte';
@@ -18,6 +17,7 @@
     datasource,
     profile,
     toast,
+    Drawer,
     ExportDialog,
     ImportDialog,
     MdiIcon,
