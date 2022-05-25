@@ -1,13 +1,12 @@
 import lodashCloneDeep from 'lodash/cloneDeep.js';
 import lodashIsUndefined from 'lodash/isUndefined.js';
 import lodashIsEqual from 'lodash/isEqual.js';
-import { addStorageChangeListener, getSync, removeSync, setSync } from './storage.js';
+import { storage, storageWriter } from '@modheader/core';
 import { filterEnabled } from './utils.js';
 import { fixProfiles } from './profile.js';
 import { optimizeResourceFilters, optimizeTabFilters, optimizeUrlFilters } from './filter.js';
 import { optimizeUrlRedirects } from './url-redirect.js';
 import { initStorage } from './storage-loader.js';
-import { setProfiles } from './storage-writer.js';
 
 const MAX_PROFILES_IN_CLOUD = 20;
 
@@ -16,7 +15,7 @@ export async function loadProfilesFromStorage(dataChangeCallback) {
   let reloadResponse = reloadActiveProfiles(chromeLocal);
   await dataChangeCallback(reloadResponse);
 
-  addStorageChangeListener(async (changes) => {
+  storage.addStorageChangeListener(async (changes) => {
     const profilesUpdated = !lodashIsUndefined(changes.profiles);
     if (profilesUpdated) {
       // Profiles need to be upgraded. Convert and resave to localStorage. The change will trigger the storage change
@@ -26,7 +25,7 @@ export async function loadProfilesFromStorage(dataChangeCallback) {
         newProfiles = [];
       }
       if (fixProfiles(newProfiles)) {
-        await setProfiles(newProfiles);
+        await storageWriter.setProfiles(newProfiles);
         return;
       }
     }
@@ -74,15 +73,15 @@ function reloadActiveProfiles(chromeLocal) {
 }
 
 async function saveStorageToCloud(chromeLocal) {
-  const items = await getSync();
+  const items = await storage.getSync();
   const keys = items ? Object.keys(items) : [];
   keys.sort();
   if (keys.length >= MAX_PROFILES_IN_CLOUD) {
-    await removeSync(keys.slice(0, keys.length - MAX_PROFILES_IN_CLOUD));
+    await storage.removeSync(keys.slice(0, keys.length - MAX_PROFILES_IN_CLOUD));
   }
   if (keys.length === 0 || !lodashIsEqual(items[keys[keys.length - 1]], chromeLocal.profiles)) {
     const data = {};
     data[Date.now()] = chromeLocal.profiles;
-    await setSync(data);
+    await storage.setSync(data);
   }
 }

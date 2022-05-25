@@ -65,8 +65,8 @@
     }
   }
 
-  function getNextColorScheme(colorScheme) {
-    switch (colorScheme) {
+  function getNextColorScheme(selectedColorScheme) {
+    switch (selectedColorScheme) {
       case colorScheme.ColorSchemes.SYSTEM_DEFAULT:
         return colorScheme.ColorSchemes.LIGHT;
       case colorScheme.ColorSchemes.LIGHT:

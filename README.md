@@ -29,13 +29,15 @@
 <a href="https://chrome-stats.com/d/idgpnmonknjnojddfkpgkljpfnnfcklj">ModHeader stats</a>
 
 ## What can ModHeader do?
-- Add/modify/remove request headers and response headers (you can use this to set X-Forwarded-For, Authorization, Access-Control-Allow-Origin: *)
+
+- Add/modify/remove request headers and response headers (you can use this to set X-Forwarded-For, Authorization, Access-Control-Allow-Origin: \*)
 - Modify individual cookies in Cookie request header / Set-Cookie response header
 - Redirect URL with another
 - Conditionally enable header modification based on URL and/or resource type
 - Advanced filtering by tab, tab group, or window
 
 ## Why ModHeader
+
 - ModHeader is fast, efficient, and light-weight. You can quickly enable/disable header modification with just 1-2 clicks.
 - ModHeader provides you with many convenient features that will help you increase your development velocity with the least amount of frictions. Check out the big list the features below!
 - ModHeader is free to use, with a paid option to unlock even more features.
@@ -43,6 +45,7 @@
 - ModHeader is used by over 550,000+ users on Chrome Web Store!
 
 ## ModHeader features
+
 - Add comments to header
 - One-click "undo" if you made a mistake
 - Support having multiple profiles with quick switching between profiles
@@ -77,7 +80,15 @@ questions, please reach out to us at support@modheader.com.
 
 ## Installation
 
-Run `npm install` first, then run `npm run start` to start development. The built packages will be in the dist/ directory.
+Checkout https://github.com/modheader/modheader and https://github.com/modheader/modheader-core to the same directory,
+structured as:
+
+- root
+  - modheader
+  - modheader-core
+
+Run `npm install` in both directories, then run `npm run start` in modheader/ to start development.
+The built packages will be in the dist/ directory.
 
 ## Selenium usage
 

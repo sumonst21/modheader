@@ -3,10 +3,8 @@ import lodashCloneDeep from 'lodash/cloneDeep.js';
 import lodashIsEqual from 'lodash/isEqual.js';
 import lodashIsUndefined from 'lodash/isUndefined.js';
 import { hideMessage } from './toast.js';
-import { getLocal } from './storage.js';
-import { setPaused } from './storage-writer.js';
 import { loadSignedInUser, signedInUser } from './identity.js';
-import { changeStack } from '@modheader/core';
+import { changeStack, storage, storageWriter } from '@modheader/core';
 
 export const profiles = writable([]);
 export const selectedProfileIndex = writable(0);
@@ -22,7 +20,7 @@ selectedProfileIndex.subscribe(($selectedProfileIndex) => {
 isPaused.subscribe(async ($isPaused) => {
   changeStack.setChangeField('isPaused', $isPaused);
   if (get(isInitialized)) {
-    await setPaused($isPaused);
+    await storageWriter.setPaused($isPaused);
   }
 });
 isInitialized.subscribe(($isInitialized) => {
@@ -86,7 +84,7 @@ export function commitData({ newProfiles = [], newIndex = 0, newIsPaused } = {})
 
 export async function init() {
   isInitialized.set(false);
-  const chromeLocal = await getLocal(['profiles', 'selectedProfile', 'signedInUser', 'isPaused']);
+  const chromeLocal = await storage.getLocal(['profiles', 'selectedProfile', 'signedInUser', 'isPaused']);
   signedInUser.set(chromeLocal.signedInUser);
   loadSignedInUser();
   commitData({

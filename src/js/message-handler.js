@@ -1,4 +1,4 @@
-import { setProfiles, setProfilesAndIndex, setSelectedProfileIndex } from './storage-writer.js';
+import { storageWriter } from '@modheader/core';
 import { PROFILE_VERSION, fixProfiles } from './profile.js';
 
 export const MessageType = {
@@ -23,11 +23,11 @@ export async function onMessageReceived({ chromeLocal, request }) {
       const importedProfiles = [JSON.parse(request.profile)];
       fixProfiles(importedProfiles);
       const newProfiles = [...chromeLocal.profiles, ...importedProfiles];
-      await setProfilesAndIndex(newProfiles, newProfiles.length - 1);
+      await storageWriter.setProfilesAndIndex(newProfiles, newProfiles.length - 1);
       return { success: true };
     }
     case MessageType.SWITCH_TO_LATEST:
-      await setSelectedProfileIndex(chromeLocal.profiles.length - 1);
+      await storageWriter.setSelectedProfileIndex(chromeLocal.profiles.length - 1);
       return { success: true };
     case MessageType.PROFILES:
       return {

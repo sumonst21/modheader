@@ -1,11 +1,9 @@
-import { setLocal } from './storage.js';
 import { resetBrowserActions } from './browser-action-manager.js';
 import { modifyRequestUrls, modifyRequestHeaders, modifyResponseHeaders } from './modifier.js';
 import { loadProfilesFromStorage } from './worker-data-manager.js';
 import { onMessageReceived } from './message-handler.js';
-import { onCommandReceived } from './command-handler.js';
 import { setupTabUpdatedListener } from './tabs.js';
-import { initContextMenu, resetContextMenu } from './context-menu-manager.js';
+import { commandHandler, contextMenuManager, storage } from '@modheader/core';
 import {
   addBeforeRequestListener,
   addBeforeSendHeadersListener,
@@ -56,14 +54,14 @@ function setupHeaderModListener() {
 
 async function initialize() {
   await setupTabUpdatedListener();
-  await initContextMenu();
+  await contextMenuManager.initContextMenu();
   await loadProfilesFromStorage(async (params) => {
     chromeLocal = params.chromeLocal;
     activeProfiles = params.activeProfiles;
     selectedActiveProfile = params.selectedActiveProfile;
     setupHeaderModListener();
     await resetBrowserActions({ chromeLocal, activeProfiles, selectedActiveProfile });
-    await resetContextMenu(chromeLocal);
+    await contextMenuManager.resetContextMenu(chromeLocal);
   });
 }
 
@@ -93,11 +91,11 @@ if (!isChromiumBasedBrowser()) {
 }
 
 chrome.commands.onCommand.addListener(async (command) => {
-  await onCommandReceived(chromeLocal, command);
+  await commandHandler.onCommandReceived(chromeLocal, command);
 });
 
 window.saveToStorage = function (items) {
-  return setLocal(items);
+  return storage.setLocal(items);
 };
 
 initialize();

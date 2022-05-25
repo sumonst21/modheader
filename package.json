@@ -20,22 +20,22 @@
     "build": "cross-env BROWSER=chrome rollup -c"
   },
   "devDependencies": {
-    "@modheader/core": "1.0.0",
     "@babel/core": "^7.17.8",
     "@babel/preset-env": "^7.16.11",
     "@mdi/js": "^6.5.95",
+    "@modheader/core": "1.0.0",
     "@rollup/plugin-commonjs": "^19.0.2",
     "@rollup/plugin-node-resolve": "^13.1.3",
     "@rollup/plugin-replace": "^4.0.0",
     "@smui-extra/badge": "^6.0.0-beta.16",
     "@smui/button": "^6.0.0-beta.16",
-    "@smui/chips": "^6.0.0-beta.16",
     "@smui/checkbox": "^6.0.0-beta.16",
-    "@smui/linear-progress": "^6.0.0-beta.16",
+    "@smui/chips": "^6.0.0-beta.16",
     "@smui/dialog": "^6.0.0-beta.16",
     "@smui/drawer": "^6.0.0-beta.16",
     "@smui/form-field": "^6.0.0-beta.16",
     "@smui/icon-button": "^6.0.0-beta.16",
+    "@smui/linear-progress": "^6.0.0-beta.16",
     "@smui/list": "^6.0.0-beta.16",
     "@smui/menu": "^6.0.0-beta.16",
     "@smui/menu-surface": "^6.0.0-beta.16",
@@ -74,9 +74,12 @@
     "sass": "^1.49.9",
     "selenium-webdriver": "^4.1.1",
     "set-cookie-parser": "^2.4.8",
-    "svelte-preprocess-cssmodules": "^2.2.0",
-    "svelte": "^3.46.4"
+    "svelte": "^3.46.4",
+    "svelte-preprocess-cssmodules": "^2.2.0"
   },
+  "workspaces": [
+    "../modheader-core"
+  ],
   "main": "build-all.js",
   "author": "",
   "license": "ISC"
