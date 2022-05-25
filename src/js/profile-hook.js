@@ -162,7 +162,7 @@ function createProfileHook({ index }) {
   };
 }
 
-async function exportProfileHook(cloneProfile, { keepStyles } = {}) {
+function exportProfileHook(cloneProfile, { keepStyles } = {}) {
   delete cloneProfile.profileId;
   if (cloneProfile.hideComment) {
     delete cloneProfile.hideComment;
@@ -193,7 +193,7 @@ async function exportProfileHook(cloneProfile, { keepStyles } = {}) {
   return cloneProfile;
 }
 
-export async function saveProfileHook({ profiles, selectedProfileIndex }) {
+async function saveProfileHook({ profiles, selectedProfileIndex }) {
   try {
     const background = chrome.extension.getBackgroundPage();
     await background.saveToStorage({
