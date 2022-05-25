@@ -1,8 +1,7 @@
 import lodashCloneDeep from 'lodash/cloneDeep.js';
 import lodashIsUndefined from 'lodash/isUndefined.js';
 import lodashIsEqual from 'lodash/isEqual.js';
-import { storage, storageWriter } from '@modheader/core';
-import { filterEnabled } from './utils.js';
+import { storage, storageWriter, utils } from '@modheader/core';
 import { fixProfiles } from './profile.js';
 import { optimizeResourceFilters, optimizeTabFilters, optimizeUrlFilters } from './filter.js';
 import { optimizeUrlRedirects } from './url-redirect.js';
@@ -52,10 +51,10 @@ function reloadActiveProfiles(chromeLocal) {
         continue;
       }
       const profile = lodashCloneDeep(value);
-      profile.headers = filterEnabled(profile.headers);
-      profile.respHeaders = filterEnabled(profile.respHeaders);
-      profile.cookieHeaders = filterEnabled(profile.cookieHeaders);
-      profile.setCookieHeaders = filterEnabled(profile.setCookieHeaders);
+      profile.headers = utils.filterEnabled(profile.headers);
+      profile.respHeaders = utils.filterEnabled(profile.respHeaders);
+      profile.cookieHeaders = utils.filterEnabled(profile.cookieHeaders);
+      profile.setCookieHeaders = utils.filterEnabled(profile.setCookieHeaders);
       profile.urlReplacements = optimizeUrlRedirects(profile.urlReplacements);
       profile.urlFilters = optimizeUrlFilters(profile.urlFilters);
       profile.excludeUrlFilters = optimizeUrlFilters(profile.excludeUrlFilters);

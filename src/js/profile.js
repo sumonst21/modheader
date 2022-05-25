@@ -4,10 +4,9 @@ import lodashOrderBy from 'lodash/orderBy.js';
 import lodashIsEqual from 'lodash/isEqual.js';
 import lodashIsArray from 'lodash/isArray.js';
 import lodashDebounce from 'lodash/debounce.js';
-import { swap, takeRight } from './utils.js';
 import { createHeader } from './header.js';
 import { FilterType } from './filter.js';
-import { color, datasource, toast } from '@modheader/core';
+import { color, datasource, toast, utils } from '@modheader/core';
 import lodashClone from 'lodash/clone.js';
 import { AppendMode } from './append-mode.js';
 
@@ -107,7 +106,7 @@ export function fixProfiles(profiles) {
       isMutated = true;
     }
     if (!profile.shortTitle) {
-      profile.shortTitle = takeRight(profile.title);
+      profile.shortTitle = utils.takeRight(profile.title);
       isMutated = true;
     }
     for (const arrayField of ARRAY_FIELDS) {
@@ -136,7 +135,7 @@ function upgradeFromProfileVersion1({ profile, index }) {
     profile.title = 'Profile ' + (index + 1);
   }
   if (!profile.shortTitle) {
-    profile.shortTitle = takeRight(index + 1);
+    profile.shortTitle = utils.takeRight(index + 1);
   }
   if (!profile.headers || !lodashIsArray(profile.headers)) {
     profile.headers = [createHeader()];
@@ -232,7 +231,7 @@ export function createProfile() {
     windowFilters: [],
     backgroundColor: color.generateBackgroundColor(),
     textColor: color.generateTextColor(),
-    shortTitle: takeRight(index)
+    shortTitle: utils.takeRight(index)
   };
   return profile;
 }
@@ -344,7 +343,7 @@ export function selectProfile(profileIndex) {
 
 export function swapProfile(profileIndex1, profileIndex2) {
   commitData({
-    newProfiles: swap(latestProfiles, profileIndex1, profileIndex2),
+    newProfiles: utils.swap(latestProfiles, profileIndex1, profileIndex2),
     newIndex: profileIndex2
   });
 }

@@ -1,7 +1,7 @@
-import { tabs } from '@modheader/core';
+import { tabs, utils } from '@modheader/core';
 import lodashIsEmpty from 'lodash/isEmpty.js';
 import lodashCloneDeep from 'lodash/cloneDeep.js';
-import { evaluateValue, filterEnabled } from './utils.js';
+import { evaluateValue } from './utils.js';
 
 export async function addUrlRedirect(urlRedirects) {
   let name = '';
@@ -35,7 +35,7 @@ export function removeUrlRedirect(urlRedirects, replacementIndex) {
 }
 
 export function optimizeUrlRedirects(urlRedirects) {
-  return filterEnabled(urlRedirects).map((redirect) => ({
+  return utils.filterEnabled(urlRedirects).map((redirect) => ({
     ...redirect,
     name: new RegExp(redirect.name)
   }));

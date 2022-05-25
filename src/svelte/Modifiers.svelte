@@ -7,10 +7,9 @@
   import { fly } from 'svelte/transition';
   import { selectedProfile } from '../js/profile.js';
   import ModifiersMoreMenu from './ModifiersMoreMenu.svelte';
-  import { Autocomplete, MdiIcon } from '@modheader/core';
+  import { utils, Autocomplete, MdiIcon } from '@modheader/core';
   import HeaderMoreMenu from './HeaderMoreMenu.svelte';
   import { MODIFIER_TYPES } from '../js/modifier-handler.js';
-  import { swap } from '../js/utils.js';
 
   export let modifierType;
   export let modifiers;
@@ -158,7 +157,7 @@
         {modifiers}
         on:swap={(e) => {
           const { index1, index2 } = e.detail;
-          modifiers = swap(modifiers, index1, index2);
+          modifiers = utils.swap(modifiers, index1, index2);
           refreshModifiers();
         }}
         on:copy={(e) => copy(e.detail)}

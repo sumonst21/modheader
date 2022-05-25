@@ -23,14 +23,13 @@
     addTabGroupFilter,
     addWindowFilter
   } from '../js/filter.js';
-  import { Autocomplete, MdiIcon } from '@modheader/core';
+  import { Autocomplete, MdiIcon, utils } from '@modheader/core';
   import TabFilter from './TabFilter.svelte';
   import TabGroupFilter from './TabGroupFilter.svelte';
   import WindowFilter from './WindowFilter.svelte';
   import ResourceTypeMenu from './ResourceTypeMenu.svelte';
   import FilterMoreMenu from './FilterMoreMenu.svelte';
   import lodashClone from 'lodash/clone.js';
-  import { swap } from '../js/utils.js';
 
   const FILTER_TYPES = {
     [FilterType.TABS]: {
@@ -282,7 +281,7 @@
           on:copy={(e) => copy(e.detail)}
           on:swap={(e) => {
             const { index1, index2 } = e.detail;
-            filters = swap(filters, index1, index2);
+            filters = utils.swap(filters, index1, index2);
             refreshFilters();
           }}
         />
