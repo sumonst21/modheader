@@ -190,6 +190,7 @@ async function exportProfileHook(cloneProfile, { keepStyles } = {}) {
       delete cloneProfile[autocompleteField];
     }
   }
+  return cloneProfile;
 }
 
 export async function saveProfileHook({ profiles, selectedProfileIndex }) {
