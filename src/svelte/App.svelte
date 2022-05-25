@@ -13,12 +13,17 @@
   import ExportDialog from './ExportDialog.svelte';
   import ImportDialog from './ImportDialog.svelte';
   import CloudBackupDialog from './CloudBackupDialog.svelte';
-  import SignInRequiredDialog from './SignInRequiredDialog.svelte';
-  import UpgradeDialog from './UpgradeDialog.svelte';
   import { FilterType } from '../js/filter.js';
   import { selectedProfile, save } from '../js/profile.js';
   import { ModifierType } from '../js/modifier-type.js';
-  import { colorScheme, datasource, toast, MdiIcon } from '@modheader/core';
+  import {
+    colorScheme,
+    datasource,
+    toast,
+    MdiIcon,
+    SignInRequiredDialog,
+    UpgradeDialog
+  } from '@modheader/core';
 
   const { isPaused, undo, init } = datasource;
   const undoable = toast.undoable;

@@ -3,9 +3,8 @@
   import List, { Item } from '@smui/list';
   import IconButton from '@smui/icon-button';
   import { mdiPlus } from '@mdi/js';
-  import LockIcon from './LockIcon.svelte';
   import { selectedProfile, updateProfile, buttonColor } from '../js/profile.js';
-  import { dialog, identity, MdiIcon } from '@modheader/core';
+  import { dialog, identity, LockIcon, MdiIcon } from '@modheader/core';
   import { addHeader } from '../js/header.js';
   import { addUrlRedirect } from '../js/url-redirect.js';
   import {

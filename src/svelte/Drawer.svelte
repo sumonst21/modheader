@@ -18,9 +18,8 @@
     mdiArrowDown
   } from '@mdi/js';
   import { fade } from 'svelte/transition';
-  import LockIcon from './LockIcon.svelte';
   import ProfileBadge from './ProfileBadge.svelte';
-  import { datasource, dialog, identity, userAgent, toast, MdiIcon } from '@modheader/core';
+  import { datasource, dialog, identity, userAgent, toast, LockIcon, MdiIcon } from '@modheader/core';
   import {
     addProfile,
     removeProfile,

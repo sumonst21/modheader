@@ -23,8 +23,7 @@
     addTabGroupFilter,
     addWindowFilter
   } from '../js/filter.js';
-  import AutoComplete from './Autocomplete.svelte';
-  import { MdiIcon } from '@modheader/core';
+  import { Autocomplete, MdiIcon } from '@modheader/core';
   import TabFilter from './TabFilter.svelte';
   import TabGroupFilter from './TabGroupFilter.svelte';
   import WindowFilter from './WindowFilter.svelte';
@@ -228,7 +227,7 @@
           class="data-table-cell flex-fixed-icon"
         />
         {#if filterType === FilterType.URLS || filterType === FilterType.EXCLUDE_URLS}
-          <AutoComplete
+          <Autocomplete
             name="url-regex"
             bind:value={filter.urlRegex}
             placeholder=".*://.*.google.com/.*"
@@ -264,7 +263,7 @@
           />
         {/if}
         {#if !$selectedProfile.hideComment}
-          <AutoComplete bind:value={filter.comment} placeholder="Comment" />
+          <Autocomplete bind:value={filter.comment} placeholder="Comment" />
         {/if}
         <IconButton
           dense

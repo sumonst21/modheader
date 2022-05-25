@@ -1,10 +1,9 @@
 <script>
-  import { ColorPicker, MdiIcon } from '@modheader/core';
+  import { BaseDialog, ColorPicker, MdiIcon } from '@modheader/core';
   import Tab, { Label as TabLabel } from '@smui/tab';
   import Button, { Label } from '@smui/button';
   import TabBar from '@smui/tab-bar';
   import { mdiContentSave, mdiClose } from '@mdi/js';
-  import BaseDialog from './BaseDialog.svelte';
   import { PRIMARY_COLOR } from '../js/constants.js';
   import { selectedProfile, updateProfile } from '../js/profile.js';
 

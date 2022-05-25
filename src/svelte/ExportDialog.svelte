@@ -1,11 +1,10 @@
 <script>
   import Button, { Label } from '@smui/button';
   import lodashIsEqual from 'lodash/isEqual';
-  import BaseDialog from './BaseDialog.svelte';
   import ExportJsonDialog from './ExportJsonDialog.svelte';
   import AutocopyTextfield from './AutocopyTextfield.svelte';
   import { selectedProfile, exportProfile, updateProfile } from '../js/profile.js';
-  import { api, dialog, tabs, toast } from '@modheader/core';
+  import { api, dialog, tabs, toast, BaseDialog } from '@modheader/core';
 
   const { showExportDialog, showExportJsonDialog } = dialog;
 

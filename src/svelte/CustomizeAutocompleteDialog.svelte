@@ -2,7 +2,7 @@
   import { get } from 'svelte/store';
   import Button, { Label } from '@smui/button';
   import Textfield from '@smui/textfield';
-  import BaseDialog from './BaseDialog.svelte';
+  import { BaseDialog } from '@modheader/core';
   import { selectedProfile, updateProfile } from '../js/profile.js';
 
   export let modifierHandler;

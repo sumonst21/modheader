@@ -6,9 +6,8 @@
   import lodashDebounce from 'lodash/debounce.js';
   import { fly } from 'svelte/transition';
   import { selectedProfile } from '../js/profile.js';
-  import AutoComplete from './Autocomplete.svelte';
   import ModifiersMoreMenu from './ModifiersMoreMenu.svelte';
-  import { MdiIcon } from '@modheader/core';
+  import { Autocomplete, MdiIcon } from '@modheader/core';
   import HeaderMoreMenu from './HeaderMoreMenu.svelte';
   import { MODIFIER_TYPES } from '../js/modifier-handler.js';
   import { swap } from '../js/utils.js';
@@ -117,7 +116,7 @@
         on:change={refreshModifiers}
         indeterminate={false}
       />
-      <AutoComplete
+      <Autocomplete
         name="header-name"
         list={modifier.name
           ? modifierHandler.autocompleteListId
@@ -127,7 +126,7 @@
         selectAllOnFocus={true}
         placeholder={modifierHandler.nameLabel}
       />
-      <AutoComplete
+      <Autocomplete
         name="header-value"
         list={`${modifierHandler.customAutocompleteFieldName}-value`}
         bind:value={modifier.value}
@@ -136,7 +135,7 @@
         placeholder={modifierHandler.valueLabel}
       />
       {#if !$selectedProfile.hideComment}
-        <AutoComplete
+        <Autocomplete
           name="header-comment"
           bind:value={modifier.comment}
           on:change={refreshModifiers}

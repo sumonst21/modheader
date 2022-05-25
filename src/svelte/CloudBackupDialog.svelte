@@ -6,10 +6,9 @@
   import lodashIsNumber from 'lodash/isNumber.js';
   import lodashIsNaN from 'lodash/isNaN.js';
   import { mdiTrashCanOutline, mdiCancel } from '@mdi/js';
-  import BaseDialog from './BaseDialog.svelte';
   import { DISABLED_COLOR, PRIMARY_COLOR } from '../js/constants.js';
   import { restoreToProfiles } from '../js/profile.js';
-  import { dialog, storage, MdiIcon } from '@modheader/core';
+  import { dialog, storage, BaseDialog, MdiIcon } from '@modheader/core';
 
   const { showCloudBackupDialog } = dialog;
 

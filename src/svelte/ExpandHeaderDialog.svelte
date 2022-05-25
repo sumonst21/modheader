@@ -1,6 +1,6 @@
 <script>
   import Button, { Label } from '@smui/button';
-  import BaseDialog from './BaseDialog.svelte';
+  import { BaseDialog } from '@modheader/core';
   import Textfield from '@smui/textfield';
   import { createEventDispatcher } from 'svelte';
 

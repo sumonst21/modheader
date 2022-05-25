@@ -18,7 +18,6 @@
     mdiCommentRemoveOutline,
     mdiThemeLightDark
   } from '@mdi/js';
-  import LockIcon from './LockIcon.svelte';
   import {
     removeProfile,
     cloneProfile,
@@ -34,6 +33,7 @@
     userAgent,
     tabs,
     toast,
+    LockIcon,
     MdiIcon
   } from '@modheader/core';
 
