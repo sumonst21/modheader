@@ -21,10 +21,7 @@
   import MdiIcon from './MdiIcon.svelte';
   import LockIcon from './LockIcon.svelte';
   import ProfileBadge from './ProfileBadge.svelte';
-  import { showMessage } from '../js/toast.js';
-  import { profiles } from '../js/datasource.js';
-  import { showUpgradeRequired } from '../js/dialog.js';
-  import { CURRENT_BROWSER } from '../js/user-agent.js';
+  import { datasource, dialog, identity, userAgent, toast } from '@modheader/core';
   import {
     addProfile,
     removeProfile,
@@ -36,7 +33,10 @@
     swapProfile
   } from '../js/profile.js';
   import { PRIMARY_COLOR } from '../js/constants.js';
-  import { isProUser } from '../js/identity.js';
+
+  const { profiles } = datasource;
+  const { showUpgradeRequired } = dialog;
+  const { isProUser } = identity;
 
   let drawer;
   let drawerOpen = true;
@@ -156,7 +156,8 @@
       <Item
         class="main-drawer-item"
         title="Rate us"
-        on:click={() => openLink('https://modheader.com/review?browser=' + CURRENT_BROWSER)}
+        on:click={() =>
+          openLink('https://modheader.com/review?browser=' + userAgent.CURRENT_BROWSER)}
       >
         <span class="main-drawer-icon-container">
           <MdiIcon
@@ -198,9 +199,9 @@
         updateProfile({ alwaysOn });
         contextMenu.setOpen(false);
         if (alwaysOn) {
-          showMessage(`${profile.title} will stay active even when it is not selected`);
+          toast.showMessage(`${profile.title} will stay active even when it is not selected`);
         } else {
-          showMessage(`${profile.title} will only be active when selected.`);
+          toast.showMessage(`${profile.title} will only be active when selected.`);
         }
       }}
     >

@@ -1,7 +1,9 @@
 import lodashIsUndefined from 'lodash/isUndefined.js';
 import lodashIsEmpty from 'lodash/isEmpty.js';
 import { fixProfiles } from './profile.js';
-import { getLocal, setLocal, getSync } from './storage.js';
+import { storage } from '@modheader/core';
+
+const { getLocal, setLocal, getSync } = storage;
 
 export async function initStorage() {
   let chromeLocal = await getLocal();

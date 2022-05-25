@@ -12,12 +12,14 @@
   } from '@mdi/js';
   import lodashOrderBy from 'lodash/orderBy.js';
   import { selectedProfile } from '../js/profile.js';
-  import { isProUser } from '../js/identity.js';
+  import { dialog, identity } from '@modheader/core';
   import CustomizeAutocompleteDialog from './CustomizeAutocompleteDialog.svelte';
   import LockIcon from './LockIcon.svelte';
   import MdiIcon from './MdiIcon.svelte';
   import { createEventDispatcher } from 'svelte';
-  import { showUpgradeRequired } from '../js/dialog.js';
+
+  const { isProUser } = identity;
+  const { showUpgradeRequired } = dialog;
 
   const dispatch = createEventDispatcher();
 

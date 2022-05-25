@@ -9,14 +9,15 @@
   import MdiIcon from './MdiIcon.svelte';
   import BaseDialog from './BaseDialog.svelte';
   import { DISABLED_COLOR, PRIMARY_COLOR } from '../js/constants.js';
-  import { getSync } from '../js/storage.js';
   import { restoreToProfiles } from '../js/profile.js';
-  import { showCloudBackupDialog } from '../js/dialog.js';
+  import { dialog, storage } from '@modheader/core';
+
+  const { showCloudBackupDialog } = dialog;
 
   let cloudBackupList = [];
 
   async function show() {
-    const items = (await getSync()) || {};
+    const items = (await storage.getSync()) || {};
     let savedData = [];
     for (const key in items) {
       try {

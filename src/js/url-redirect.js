@@ -1,4 +1,4 @@
-import { getActiveTab } from './tabs.js';
+import { tabs } from '@modheader/core';
 import lodashIsEmpty from 'lodash/isEmpty.js';
 import lodashCloneDeep from 'lodash/cloneDeep.js';
 import { evaluateValue, filterEnabled } from './utils.js';
@@ -6,7 +6,7 @@ import { evaluateValue, filterEnabled } from './utils.js';
 export async function addUrlRedirect(urlRedirects) {
   let name = '';
   let value = '';
-  const tab = await getActiveTab();
+  const tab = await tabs.getActiveTab();
   if (tab && !lodashIsEmpty(tab.url)) {
     const url = new URL(tab.url);
     const { host, origin } = url;

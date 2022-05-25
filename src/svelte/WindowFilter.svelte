@@ -1,5 +1,5 @@
 <script>
-  import { queryTabs, getActiveTab } from '../js/tabs.js';
+  import { tabs } from '@modheader/core';
   import Chip from './Chip.svelte';
   import TabsList from './TabsList.svelte';
   import { createEventDispatcher } from 'svelte';
@@ -8,7 +8,7 @@
   export let filter;
 
   async function useCurrentWindow() {
-    const tab = await getActiveTab();
+    const tab = await tabs.getActiveTab();
     filter.windowId = tab.windowId;
     dispatchChange();
   }
@@ -23,7 +23,7 @@
 </script>
 
 <div class="data-table-cell flex-grow inline-filter-row">
-  {#await queryTabs({ windowId: filter.windowId }) then tabs}
+  {#await tabs.queryTabs({ windowId: filter.windowId }) then tabs}
     <Chip fieldName="window" tooltip="Filter by current window." on:click={useCurrentWindow}
       >Use current window</Chip
     >

@@ -6,9 +6,11 @@
   import List, { Meta, Item, Label as ListLabel } from '@smui/list';
   import BaseDialog from './BaseDialog.svelte';
   import AutocopyTextfield from './AutocopyTextfield.svelte';
-  import { profiles } from '../js/datasource.js';
-  import { showExportJsonDialog } from '../js/dialog.js';
+  import { datasource, dialog } from '@modheader/core';
   import { selectedProfile, exportProfile } from '../js/profile.js';
+
+  const { profiles } = datasource;
+  const { showExportJsonDialog } = dialog;
 
   let selectedProfiles = [];
   let keepStyles = false;
@@ -20,7 +22,7 @@
   });
 
   $: exportedText = JSON.stringify(
-    selectedProfiles.map((profile) => exportProfile(profile, { keepStyles }))
+          selectedProfiles.map((profile) => exportProfile(profile, { keepStyles }))
   );
 </script>
 
@@ -58,8 +60,8 @@
         </Button>
       {:else}
         <Button
-          href="data:application/json;base64,{encode(exportedText)}"
-          download="{selectedProfiles.map((p) => p.title).join('+')}.json"
+                href="data:application/json;base64,{encode(exportedText)}"
+                download="{selectedProfiles.map((p) => p.title).join('+')}.json"
         >
           <Label class="ml-small">Download JSON</Label>
         </Button>

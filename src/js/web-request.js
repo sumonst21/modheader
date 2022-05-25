@@ -1,4 +1,4 @@
-import { isChromiumBasedBrowser } from './user-agent.js';
+import { userAgent } from '@modheader/core';
 
 const cache = {};
 
@@ -26,7 +26,7 @@ export function addBeforeSendHeadersListener(callback, urls) {
     filter: { urls },
     // Chrome 72+ requires 'extraHeaders' to be added for some headers to be modifiable.
     // Firefox will break with it.
-    extraInfoSpec: isChromiumBasedBrowser()
+    extraInfoSpec: userAgent.isChromiumBasedBrowser()
       ? ['requestHeaders', 'blocking', 'extraHeaders']
       : ['requestHeaders', 'blocking']
   });
@@ -54,7 +54,7 @@ export function addHeadersReceivedListener(callback, urls) {
     filter: { urls },
     // Chrome 72+ requires 'extraHeaders' to be added for some headers to be modifiable.
     // Firefox will break with it.
-    extraInfoSpec: isChromiumBasedBrowser()
+    extraInfoSpec: userAgent.isChromiumBasedBrowser()
       ? ['responseHeaders', 'blocking', 'extraHeaders']
       : ['responseHeaders', 'blocking']
   });

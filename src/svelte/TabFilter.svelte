@@ -1,6 +1,6 @@
 <script>
   import { mdiFileQuestion } from '@mdi/js';
-  import { getTab, getActiveTab } from '../js/tabs.js';
+  import { tabs } from '@modheader/core';
   import MdiIcon from './MdiIcon.svelte';
   import Chip from './Chip.svelte';
   import { selectedProfile } from '../js/profile.js';
@@ -11,7 +11,7 @@
   export let filter;
 
   async function useCurrentTab() {
-    const tab = await getActiveTab();
+    const tab = await tabs.getActiveTab();
     filter.tabId = tab.id;
     dispatchChange();
   }
@@ -33,7 +33,7 @@
 </script>
 
 <div class="data-table-cell flex-grow inline-filter-row">
-  {#await getTab(filter.tabId) then tab}
+  {#await tabs.getTab(filter.tabId) then tab}
     <Chip fieldName="single-tab" tooltip="Filter by current tab" on:click={() => useCurrentTab()}>
       Use current tab
     </Chip>

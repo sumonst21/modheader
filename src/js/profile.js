@@ -7,13 +7,12 @@ import lodashDebounce from 'lodash/debounce.js';
 import { swap, takeRight } from './utils.js';
 import { createHeader } from './header.js';
 import { FilterType } from './filter.js';
-import { color } from '@modheader/core';
-import { profiles, commitData, selectedProfileIndex, isInitialized } from './datasource.js';
-import { showMessage } from './toast.js';
+import { color, datasource, toast } from '@modheader/core';
 import lodashClone from 'lodash/clone.js';
 import { AppendMode } from './append-mode.js';
 
 export const PROFILE_VERSION = 2;
+const { profiles, commitData, selectedProfileIndex, isInitialized } = datasource;
 const ARRAY_FIELDS = [
   'headers',
   'respHeaders',
@@ -272,7 +271,7 @@ export function removeProfile(profileIndex) {
     latestProfiles = [createProfile()];
   }
   commitData({ newProfiles: latestProfiles, newIndex: latestProfiles.length - 1 });
-  showMessage('Profile deleted', { canUndo: true });
+  toast.showMessage('Profile deleted', { canUndo: true });
 }
 
 export function cloneProfile(profile) {
@@ -280,15 +279,15 @@ export function cloneProfile(profile) {
   newProfile.title = 'Copy of ' + newProfile.title;
   latestProfiles.push(newProfile);
   commitData({ newProfiles: latestProfiles, newIndex: latestProfiles.length - 1 });
-  showMessage('Profile cloned', { canUndo: true });
+  toast.showMessage('Profile cloned', { canUndo: true });
 }
 
 export function sortProfiles(sortOrder) {
   profiles.set(lodashOrderBy(latestProfiles, ['title'], [sortOrder]));
   if (sortOrder === 'asc') {
-    showMessage('Profiles sorted in ascending order', { canUndo: true });
+    toast.showMessage('Profiles sorted in ascending order', { canUndo: true });
   } else {
-    showMessage('Profiles sorted in descending order', { canUndo: true });
+    toast.showMessage('Profiles sorted in descending order', { canUndo: true });
   }
 }
 
@@ -328,7 +327,7 @@ export function importProfiles(importProfiles) {
   fixProfiles(importProfiles);
   const innerProfiles = latestProfiles.concat(importProfiles);
   commitData({ newProfiles: innerProfiles, newIndex: innerProfiles.length - 1 });
-  showMessage(`Imported profiles: ${importProfiles.map((p) => p.title).join(', ')}`, {
+  toast.showMessage(`Imported profiles: ${importProfiles.map((p) => p.title).join(', ')}`, {
     canUndo: true
   });
 }
@@ -336,7 +335,7 @@ export function importProfiles(importProfiles) {
 export function restoreToProfiles(profilesToRestore) {
   fixProfiles(profilesToRestore);
   commitData({ newProfiles: profilesToRestore, newIndex: 0 });
-  showMessage('Profiles restored', { canUndo: true });
+  toast.showMessage('Profiles restored', { canUndo: true });
 }
 
 export function selectProfile(profileIndex) {

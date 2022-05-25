@@ -1,5 +1,5 @@
 <script>
-  import { queryTabs, getActiveTab } from '../js/tabs.js';
+  import { tabs } from '@modheader/core';
   import Chip from './Chip.svelte';
   import TabsList from './TabsList.svelte';
   import { createEventDispatcher } from 'svelte';
@@ -8,7 +8,7 @@
   export let filter;
 
   async function useCurrentTabGroup() {
-    const tab = await getActiveTab();
+    const tab = await tabs.getActiveTab();
     filter.groupId = tab.groupId;
     dispatchChange();
   }
@@ -23,7 +23,7 @@
 </script>
 
 <div class="data-table-cell flex-grow inline-filter-row">
-  {#await queryTabs({ groupId: filter.groupId }) then tabs}
+  {#await tabs.queryTabs({ groupId: filter.groupId }) then tabs}
     <Chip fieldName="tab-group" tooltip="Filter by current tab group" on:click={useCurrentTabGroup}
       >Use current tab group</Chip
     >

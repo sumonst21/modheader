@@ -3,7 +3,9 @@
   import { mdiPlay, mdiPause } from '@mdi/js';
   import { buttonColor } from '../js/profile.js';
   import MdiIcon from './MdiIcon.svelte';
-  import { isPaused } from '../js/datasource.js';
+  import { datasource } from '@modheader/core';
+
+  const { isPaused } = datasource;
 </script>
 
 <IconButton

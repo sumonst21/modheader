@@ -10,12 +10,11 @@
   import TopBarSignInButton from './TopBarSignInButton.svelte';
   import ProfileBadgeDialog from './ProfileBadgeDialog.svelte';
   import MdiIcon from './MdiIcon.svelte';
-  import { isPaused, undo } from '../js/datasource.js';
   import { selectedProfile, updateProfile, buttonColor } from '../js/profile.js';
-  import { requireSignInForExport } from '../js/identity.js';
-  import { changeStack } from '@modheader/core';
-  import { showExportDialog } from '../js/dialog.js';
+  import { changeStack, datasource, dialog, identity } from '@modheader/core';
 
+  const { canUndoChange } = changeStack;
+  const { isPaused } = datasource;
   let pauseSnackbar;
   let profileBadgeDialog;
 
@@ -63,8 +62,8 @@
       />
     </Section>
     <Section align="end">
-      {#if changeStack.$canUndoChange}
-        <IconButton dense on:click={() => undo()} title="Undo">
+      {#if $canUndoChange}
+        <IconButton dense on:click={() => datasource.undo()} title="Undo">
           <MdiIcon size="24" icon={mdiUndo} color={$buttonColor} />
         </IconButton>
       {/if}
@@ -73,8 +72,8 @@
       <IconButton
         dense
         on:click={() => {
-          if (requireSignInForExport()) {
-            showExportDialog.set(true);
+          if (identity.requireSignInForExport()) {
+            dialog.showExportDialog.set(true);
           }
         }}
         title="Export / share profile"

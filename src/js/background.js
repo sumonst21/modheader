@@ -2,8 +2,7 @@ import { resetBrowserActions } from './browser-action-manager.js';
 import { modifyRequestUrls, modifyRequestHeaders, modifyResponseHeaders } from './modifier.js';
 import { loadProfilesFromStorage } from './worker-data-manager.js';
 import { onMessageReceived } from './message-handler.js';
-import { setupTabUpdatedListener } from './tabs.js';
-import { commandHandler, contextMenuManager, storage } from '@modheader/core';
+import { commandHandler, contextMenuManager, storage, tabs, userAgent } from '@modheader/core';
 import {
   addBeforeRequestListener,
   addBeforeSendHeadersListener,
@@ -12,7 +11,6 @@ import {
   removeBeforeSendHeadersListener,
   removeHeadersReceivedListener
 } from './web-request.js';
-import { isChromiumBasedBrowser } from './user-agent.js';
 
 const ALL_URLS_FILTER = ['<all_urls>'];
 
@@ -53,7 +51,7 @@ function setupHeaderModListener() {
 }
 
 async function initialize() {
-  await setupTabUpdatedListener();
+  await tabs.setupTabUpdatedListener();
   await contextMenuManager.initContextMenu();
   await loadProfilesFromStorage(async (params) => {
     chromeLocal = params.chromeLocal;
@@ -72,7 +70,7 @@ async function messageHandler(request, sendResponse) {
   }
 }
 
-if (!isChromiumBasedBrowser()) {
+if (!userAgent.isChromiumBasedBrowser()) {
   // Firefox does not allow web pages to directly communicate with background page, so we need to
   // expose a function via content script that can post internal message to background page.
   // See https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Sharing_objects_with_page_scripts

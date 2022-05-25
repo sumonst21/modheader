@@ -4,11 +4,10 @@
   import BaseDialog from './BaseDialog.svelte';
   import ExportJsonDialog from './ExportJsonDialog.svelte';
   import AutocopyTextfield from './AutocopyTextfield.svelte';
-  import { showExportDialog, showExportJsonDialog } from '../js/dialog.js';
-  import { openUrl } from '../js/tabs.js';
   import { selectedProfile, exportProfile, updateProfile } from '../js/profile.js';
-  import { api } from '@modheader/core';
-  import { showMessage } from '../js/toast.js';
+  import { api, dialog, tabs, toast } from '@modheader/core';
+
+  const { showExportDialog, showExportJsonDialog } = dialog;
 
   let exportTextfield;
   let visibilitySummary;
@@ -75,7 +74,7 @@
       visibilitySummary = profileResponse.visibilitySummary;
       exportUrl = profileResponse.profileUrl;
     } catch (err) {
-      showMessage('Failed to update exported profiles');
+      toast.showMessage('Failed to update exported profiles');
     } finally {
       uploading = false;
     }
@@ -96,7 +95,7 @@
         <div class="caption">{visibilitySummary}</div>
       {/if}
 
-      <Button on:click={() => openUrl({ url: exportUrl })}>
+      <Button on:click={() => tabs.openUrl({ url: exportUrl })}>
         <Label class="ml-small">Change visibility</Label>
       </Button>
     </div>
@@ -123,7 +122,7 @@
       </div>
 
       <div>
-        <Button on:click={() => openUrl({ url: exportUrl })}>
+        <Button on:click={() => tabs.openUrl({ url: exportUrl })}>
           <Label class="ml-small">View existing profile</Label>
         </Button>
       </div>

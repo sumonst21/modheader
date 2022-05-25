@@ -1,7 +1,7 @@
 <script>
   import LinearProgress from '@smui/linear-progress';
   import Textfield from '@smui/textfield';
-  import { showMessage } from '../js/toast.js';
+  import { toast } from '@modheader/core';
   import { exportProfile } from '../js/profile.js';
 
   export let profile;
@@ -28,7 +28,7 @@
     } else {
       document.execCommand('copy');
     }
-    showMessage('Copied to clipboard!');
+    toast.showMessage('Copied to clipboard!');
   }
 
   $: exportedText = profile ? JSON.stringify(exportProfile(profile, { keepStyles })) : '';

@@ -1,8 +1,9 @@
 <script>
-  import { isProUser } from '../js/identity.js';
   import MdiIcon from './MdiIcon.svelte';
   import { mdiLock } from '@mdi/js';
-  import { color } from '@modheader/core';
+  import { color, identity } from '@modheader/core';
+
+  const { isProUser } = identity;
 </script>
 
 {#if !$isProUser}

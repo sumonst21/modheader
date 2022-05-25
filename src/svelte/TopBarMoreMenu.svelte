@@ -20,7 +20,6 @@
   } from '@mdi/js';
   import MdiIcon from './MdiIcon.svelte';
   import LockIcon from './LockIcon.svelte';
-  import { profiles, selectedProfileIndex } from '../js/datasource.js';
   import {
     removeProfile,
     cloneProfile,
@@ -28,17 +27,19 @@
     updateProfile,
     buttonColor
   } from '../js/profile.js';
-  import { showMessage } from '../js/toast.js';
   import {
-    showExportDialog,
-    showUpgradeRequired,
-    showImportDialog,
-    showCloudBackupDialog
-  } from '../js/dialog.js';
-  import { colorScheme } from '@modheader/core';
-  import { openUrl } from '../js/tabs.js';
-  import { isProUser, requireSignInForExport } from '../js/identity.js';
-  import { isChromiumBasedBrowser } from '../js/user-agent.js';
+    colorScheme,
+    datasource,
+    dialog,
+    identity,
+    userAgent,
+    tabs,
+    toast
+  } from '@modheader/core';
+
+  const { showExportDialog, showUpgradeRequired, showImportDialog, showCloudBackupDialog } = dialog;
+  const { isProUser, requireSignInForExport } = identity;
+  const { profiles, selectedProfileIndex } = datasource;
 
   const COLOR_SCHEME_LABEL = {
     [colorScheme.ColorSchemes.SYSTEM_DEFAULT]: 'Default',
@@ -59,9 +60,9 @@
     const alwaysOn = !$selectedProfile.alwaysOn;
     updateProfile({ alwaysOn });
     if (alwaysOn) {
-      showMessage('This profile will stay active even when it is not selected');
+      toast.showMessage('This profile will stay active even when it is not selected');
     } else {
-      showMessage('This profile will only be active when selected.');
+      toast.showMessage('This profile will only be active when selected.');
     }
   }
 
@@ -97,7 +98,7 @@
     <List>
       <Item
         on:SMUI:action={() =>
-          openUrl({
+          tabs.openUrl({
             url: chrome.runtime.getURL('app.html')
           })}
       >
@@ -122,12 +123,12 @@
         <MdiIcon class="more-menu-icon" size="24" icon={mdiThemeLightDark} color="#666" />
         Dark mode: {COLOR_SCHEME_LABEL[selectedColorScheme]}
       </Item>
-      <Item on:SMUI:action={() => openUrl({ path: '/headers' })}>
+      <Item on:SMUI:action={() => tabs.openUrl({ path: '/headers' })}>
         <MdiIcon class="more-menu-icon" size="24" icon={mdiTestTube} color="#666" />
         Test my headers
       </Item>
-      {#if isChromiumBasedBrowser()}
-        <Item on:SMUI:action={() => openUrl({ url: 'chrome://extensions/shortcuts' })}>
+      {#if userAgent.isChromiumBasedBrowser()}
+        <Item on:SMUI:action={() => tabs.openUrl({ url: 'chrome://extensions/shortcuts' })}>
           <MdiIcon class="more-menu-icon" size="24" icon={mdiKeyboard} color="#666" />
           Keyboard shortcuts
         </Item>

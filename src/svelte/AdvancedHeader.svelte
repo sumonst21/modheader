@@ -1,7 +1,7 @@
 <script>
   import Chip from './Chip.svelte';
   import { AppendMode } from '../js/append-mode.js';
-  import { showMessage } from '../js/toast.js';
+  import { toast } from '@modheader/core';
   import { createEventDispatcher } from 'svelte';
 
   const dispatch = createEventDispatcher();
@@ -23,7 +23,7 @@
           : 'Header will be removed if found. Enter a value to override header value. Click to change behavior'}
         on:click={() => {
           modifier.sendEmptyHeader = !modifier.sendEmptyHeader;
-          showMessage(
+          toast.showMessage(
             modifier.sendEmptyHeader
               ? `"${modifier.name}" header will be sent as empty value`
               : `"${modifier.name}" header will be removed if found`

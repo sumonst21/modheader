@@ -1,8 +1,10 @@
 <script>
   import Button, { Label } from '@smui/button';
   import BaseDialog from './BaseDialog.svelte';
-  import { requireSignInForExportDialog, showExportJsonDialog } from '../js/dialog.js';
-  import { signIn } from '../js/identity.js';
+  import { dialog, identity } from '@modheader/core';
+
+  const { signIn } = identity;
+  const { requireSignInForExportDialog, showExportJsonDialog } = dialog;
 </script>
 
 {#if $requireSignInForExportDialog}

@@ -1,4 +1,4 @@
-import { getActiveTab, lookupTabInfo } from './tabs.js';
+import { tabs } from '@modheader/core';
 import lodashIsEmpty from 'lodash/isEmpty.js';
 import lodashCloneDeep from 'lodash/cloneDeep.js';
 
@@ -13,7 +13,7 @@ export const FilterType = {
 
 export async function addUrlFilter(filters) {
   let urlRegex = '';
-  const tab = await getActiveTab();
+  const tab = await tabs.getActiveTab();
   if (tab && !lodashIsEmpty(tab.url)) {
     const host = new URL(tab.url).host;
     if (!lodashIsEmpty(host) && host !== 'null') {
@@ -42,7 +42,7 @@ export async function addResourceFilter(filters) {
 }
 
 export async function addTabFilter(filters) {
-  const tab = await getActiveTab();
+  const tab = await tabs.getActiveTab();
   return [
     ...filters,
     {
@@ -54,7 +54,7 @@ export async function addTabFilter(filters) {
 }
 
 export async function addTabGroupFilter(filters) {
-  const tab = await getActiveTab();
+  const tab = await tabs.getActiveTab();
   return [
     ...filters,
     {
@@ -66,7 +66,7 @@ export async function addTabGroupFilter(filters) {
 }
 
 export async function addWindowFilter(filters) {
-  const tab = await getActiveTab();
+  const tab = await tabs.getActiveTab();
   return [
     ...filters,
     {
@@ -155,7 +155,7 @@ export function passFilters({ url, type, tabId, profile }) {
       break;
     }
   }
-  const tabInfo = lookupTabInfo(tabId) || {};
+  const tabInfo = tabs.lookupTabInfo(tabId) || {};
   allowTabs =
     profile.tabFilters.length === 0 || profile.tabFilters.some((filter) => filter.tabId === tabId);
   allowTabGroups =

@@ -15,20 +15,20 @@
   import CloudBackupDialog from './CloudBackupDialog.svelte';
   import SignInRequiredDialog from './SignInRequiredDialog.svelte';
   import UpgradeDialog from './UpgradeDialog.svelte';
-  import { isPaused, undo, init } from '../js/datasource.js';
   import { FilterType } from '../js/filter.js';
   import { selectedProfile, save } from '../js/profile.js';
   import MdiIcon from './MdiIcon.svelte';
-  import { toastMessage, undoable } from '../js/toast.js';
   import { ModifierType } from '../js/modifier-type.js';
-  import { colorScheme } from '@modheader/core';
+  import { colorScheme, datasource, toast } from '@modheader/core';
 
+  const { isPaused, undo, init } = datasource;
+  const undoable = toast.undoable;
   let snackbar;
   let snackbarMessage;
 
   window.addEventListener('unload', save);
 
-  const unsubscribeToastMessage = toastMessage.subscribe((message) => {
+  const unsubscribeToastMessage = toast.toastMessage.subscribe((message) => {
     if (snackbar) {
       snackbarMessage = message;
       if (message.length > 0) {

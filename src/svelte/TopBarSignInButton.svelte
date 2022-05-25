@@ -8,7 +8,9 @@
   import Button from '@smui/button';
   import ProfilePicture from './ProfilePicture.svelte';
   import { buttonColor } from '../js/profile.js';
-  import {
+  import { identity } from '@modheader/core';
+
+  const {
     signedInUser,
     isProUser,
     goToMyProfiles,
@@ -17,7 +19,7 @@
     goToMyAccount,
     signIn,
     signOut
-  } from '../js/identity.js';
+  } = identity;
 
   let accountMenu;
 </script>

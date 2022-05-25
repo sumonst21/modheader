@@ -7,11 +7,10 @@
   import MdiIcon from './MdiIcon.svelte';
   import BaseDialog from './BaseDialog.svelte';
   import { DISABLED_COLOR, PRIMARY_COLOR } from '../js/constants.js';
-  import { showMessage } from '../js/toast.js';
-  import { api } from '@modheader/core';
+  import { api, dialog, toast, userAgent } from '@modheader/core';
   import { importProfiles } from '../js/profile.js';
-  import { showImportDialog } from '../js/dialog.js';
-  import { isChromiumBasedBrowser } from '../js/user-agent.js';
+
+  const { showImportDialog } = dialog;
 
   let importText = '';
   let uploadFileInput;
@@ -22,7 +21,7 @@
       importProfiles(importedProfiles);
       showImportDialog.set(false);
     } catch (err) {
-      showMessage('Failed to import profiles. Please double check your exported profile.');
+      toast.showMessage('Failed to import profiles. Please double check your exported profile.');
     }
   }
 
@@ -46,7 +45,7 @@
     <div>Enter the URL / JSON encoded profile here to import.</div>
     <Textfield textarea class="extra-large-textarea" input$rows="40" bind:value={importText} />
     <svelte:fragment slot="footer">
-      {#if isChromiumBasedBrowser()}
+      {#if userAgent.isChromiumBasedBrowser()}
         <!-- Opening the file would close the popup in Firefox, so we can't support it. -->
         <input
           bind:this={uploadFileInput}

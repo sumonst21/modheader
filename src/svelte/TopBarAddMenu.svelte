@@ -6,8 +6,7 @@
   import MdiIcon from './MdiIcon.svelte';
   import LockIcon from './LockIcon.svelte';
   import { selectedProfile, updateProfile, buttonColor } from '../js/profile.js';
-  import { isProUser } from '../js/identity.js';
-  import { showUpgradeRequired } from '../js/dialog.js';
+  import { dialog, identity } from '@modheader/core';
   import { addHeader } from '../js/header.js';
   import { addUrlRedirect } from '../js/url-redirect.js';
   import {
@@ -17,6 +16,9 @@
     addTabGroupFilter,
     addWindowFilter
   } from '../js/filter.js';
+
+  const { isProUser } = identity;
+  const { showUpgradeRequired } = dialog;
 
   async function updateProfileAndClose(profile) {
     await updateProfile(profile);

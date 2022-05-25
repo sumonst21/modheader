@@ -1,8 +1,10 @@
 <script>
   import Button, { Label } from '@smui/button';
   import BaseDialog from './BaseDialog.svelte';
-  import { showUpgradeDialog, upgradeDialogString } from '../js/dialog.js';
-  import { upgrade } from '../js/identity.js';
+  import { dialog, identity } from '@modheader/core';
+
+  const { upgrade } = identity;
+  const { showUpgradeDialog, upgradeDialogString } = dialog;
 </script>
 
 {#if $showUpgradeDialog}

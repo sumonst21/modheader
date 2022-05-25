@@ -1,10 +1,10 @@
 <script>
   import MdiIcon from './MdiIcon.svelte';
-  import { isProUser } from '../js/identity.js';
   import { mdiLock } from '@mdi/js';
-  import { showUpgradeDialog } from '../js/dialog.js';
-  import { color } from '@modheader/core';
+  import { color, dialog, identity } from '@modheader/core';
 
+  const { isProUser } = identity;
+  const { showUpgradeDialog } = dialog;
   export let requirePro = true;
 
   function showUpgrade() {
