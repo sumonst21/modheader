@@ -1,10 +1,20 @@
-import { FilterType } from './filter.js';
-import { modifyRequestUrls, modifyRequestHeaders, modifyResponseHeaders } from './modifier.js';
+import { jest } from '@jest/globals';
 import { AppendMode } from './append-mode.js';
-import { profile } from '@modheader/core';
+
+const mockTabs = {
+  lookupTabInfo: jest.fn()
+};
+jest.doMock('@modheader/core', () => ({
+  tabs: mockTabs
+}));
+
+const { FilterType } = require('./filter.js');
+const { modifyRequestUrls, modifyRequestHeaders, modifyResponseHeaders } = require('./modifier.js');
+
+const PROFILE_VERSION = 2;
 
 const EMPTY_PROFILE = {
-  version: profile.PROFILE_VERSION,
+  version: PROFILE_VERSION,
   title: 'Test profile',
   headers: [],
   respHeaders: [],

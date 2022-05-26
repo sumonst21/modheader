@@ -1,5 +1,5 @@
 import { until } from 'selenium-webdriver';
-import delay from "delay";
+import Bluebird from 'bluebird';
 
 export class TestUtils {
   constructor(driver) {
@@ -9,7 +9,7 @@ export class TestUtils {
   async clickBy(by) {
     const element = await this.findBy(by);
     await element.click();
-    await delay(100);
+    await Bluebird.delay(100);
   }
 
   async findBy(by) {

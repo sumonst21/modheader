@@ -1,4 +1,5 @@
 import { storageWriter, profile } from '@modheader/core';
+import { PROFILE_VERSION } from './profile-hook.js';
 
 export const MessageType = {
   EXISTS: 'EXISTS',
@@ -14,7 +15,7 @@ export async function onMessageReceived({ chromeLocal, request }) {
       const manifest = chrome.runtime.getManifest();
       return {
         success: true,
-        maxSupportedProfileVersion: profile.PROFILE_VERSION,
+        maxSupportedProfileVersion: PROFILE_VERSION,
         modHeaderVersion: manifest.version
       };
     }

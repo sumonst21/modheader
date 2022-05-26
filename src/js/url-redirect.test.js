@@ -1,13 +1,22 @@
 import { jest } from '@jest/globals';
 
+const utils = {
+  filterEnabled: (v) => v || []
+};
 const mockTabs = {
   getActiveTab: jest.fn()
 };
-jest.doMock('./tabs.js', () => mockTabs);
+jest.doMock('@modheader/core', () => ({
+  tabs: mockTabs,
+  utils
+}));
 
-const { addUrlRedirect, removeUrlRedirect, optimizeUrlRedirects, redirectUrl } = require(
-  './url-redirect.js'
-);
+const {
+  addUrlRedirect,
+  removeUrlRedirect,
+  optimizeUrlRedirects,
+  redirectUrl
+} = require('./url-redirect.js');
 
 describe('url-redirect', () => {
   afterEach(() => {
@@ -112,12 +121,6 @@ describe('url-redirect', () => {
         name: 'bewisse.com',
         value: 'modheader.com'
       },
-      {
-        comment: 'Removed',
-        enabled: false,
-        name: 'bewisse.com',
-        value: 'modheader.com'
-      }
     ]);
     expect(urlRedirects).toEqual([
       {

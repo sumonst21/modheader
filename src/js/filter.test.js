@@ -4,7 +4,9 @@ const mockTabs = {
   getActiveTab: jest.fn(),
   lookupTabInfo: jest.fn()
 };
-jest.doMock('./tabs.js', () => mockTabs);
+jest.doMock('@modheader/core', () => ({
+  tabs: mockTabs
+}));
 
 const {
   addUrlFilter,

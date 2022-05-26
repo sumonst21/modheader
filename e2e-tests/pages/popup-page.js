@@ -1,5 +1,5 @@
 import { By, until } from 'selenium-webdriver';
-import delay from 'delay';
+import Bluebird from 'bluebird';
 import 'chromedriver';
 import { TestUtils } from '../utils/test-utils.js';
 
@@ -73,12 +73,12 @@ export class PopupPage {
       By.xpath(`//*[@data-field-name="cookie-attribute"]`)
     );
     await cookieAttributesButton.click();
-    await delay(100);
+    await Bluebird.delay(100);
     const attributeButton = await modifiersContainer.findElement(
       By.xpath(`//*[@data-field="${attributeName}"]`)
     );
     await attributeButton.click();
-    await delay(100);
+    await Bluebird.delay(100);
   }
 
   async setCookieAttribute({ attributeName, value }) {
@@ -89,7 +89,7 @@ export class PopupPage {
       By.xpath(`//*[@data-field-name="${attributeName}"]`)
     );
     await attributeChip.click();
-    await delay(100);
+    await Bluebird.delay(100);
     const input = await modifiersContainer.findElement(
       By.xpath(`//*[@data-field-name='${attributeName}']//input`)
     );
@@ -97,7 +97,7 @@ export class PopupPage {
     await input.clear();
     await input.sendKeys(value);
     await input.submit();
-    await delay(100);
+    await Bluebird.delay(100);
   }
 
   async setFilter({ filterType, index = 0, urlRegex, resourceTypes }) {
@@ -112,9 +112,9 @@ export class PopupPage {
           By.xpath(`//*[@data-field-name="resource-type"]`)
         );
         await resourceTypeButtons[index].click();
-        await delay(100);
+        await Bluebird.delay(100);
         await this.testUtils.clickBy(By.xpath(`//*[@data-resource-type="${type}"]`));
-        await delay(100);
+        await Bluebird.delay(100);
       }
     }
   }

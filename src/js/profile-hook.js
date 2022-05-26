@@ -4,7 +4,7 @@ import { createHeader } from './header.js';
 import { AppendMode } from './append-mode.js';
 import { FilterType } from './filter.js';
 
-const PROFILE_VERSION = profileUtils.PROFILE_VERSION;
+export const PROFILE_VERSION = 2;
 const ARRAY_FIELDS = [
   'headers',
   'respHeaders',
@@ -19,7 +19,7 @@ const ARRAY_FIELDS = [
   'windowFilters'
 ];
 
-function fixProfileHook({ profile, index }) {
+export function fixProfileHook({ profile, index }) {
   let isMutated = false;
 
   if (!profile.version) {
@@ -141,10 +141,10 @@ function upgradeFromProfileVersion1({ profile, index }) {
   }
 }
 
-function createProfileHook({ index }) {
+function createProfileHook({ profileNum }) {
   return {
     version: PROFILE_VERSION,
-    title: 'Profile ' + index,
+    title: 'Profile ' + profileNum,
     hideComment: true,
     headers: [createHeader()],
     respHeaders: [],
@@ -159,11 +159,11 @@ function createProfileHook({ index }) {
     windowFilters: [],
     backgroundColor: color.generateBackgroundColor(),
     textColor: color.generateTextColor(),
-    shortTitle: utils.takeRight(index)
+    shortTitle: utils.takeRight(profileNum)
   };
 }
 
-function exportProfileHook(cloneProfile, { keepStyles } = {}) {
+export function exportProfileHook(cloneProfile, { keepStyles } = {}) {
   delete cloneProfile.profileId;
   if (cloneProfile.hideComment) {
     delete cloneProfile.hideComment;

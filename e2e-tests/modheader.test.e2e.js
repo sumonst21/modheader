@@ -2,7 +2,7 @@ import chrome from 'selenium-webdriver/chrome';
 import { Builder, Key } from 'selenium-webdriver';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
 import cookie from 'cookie';
-import delay from 'delay';
+import Bluebird from 'bluebird';
 import 'chromedriver';
 import { startServer, stopServer, getHeaders, getTestServerOrigin } from './utils/test-server.js';
 import { packageExtension } from './utils/package-selenium.js';
@@ -49,7 +49,7 @@ describe('e2e test', () => {
     await driver.get(`${baseUrl}/images/icon.png`);
     await driver.executeScript(`chrome.storage.local.set(${JSON.stringify(INIT_PROFILE)});`);
     await driver.executeScript(`localStorage.hideAddButtonTooltip = true;`);
-    await delay(100);
+    await Bluebird.delay(100);
   });
 
   afterAll(async () => {
@@ -62,7 +62,7 @@ describe('e2e test', () => {
   async function compareScreenshot(customSnapshotIdentifier) {
     await driver.actions().sendKeys(Key.ESCAPE);
     await driver.executeScript(`document.activeElement.blur()`);
-    await delay(200);
+    await Bluebird.delay(200);
     expect(await driver.takeScreenshot()).toMatchImageSnapshot({
       customSnapshotIdentifier,
       comparisonMethod: 'ssim',

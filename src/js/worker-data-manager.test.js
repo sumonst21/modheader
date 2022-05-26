@@ -8,18 +8,22 @@ const mockStorage = {
   setSync: jest.fn(),
   addStorageChangeListener: jest.fn()
 };
-jest.doMock('./storage.js', () => mockStorage);
-
 const mockStorageLoader = {
   initStorage: jest.fn()
 };
-jest.doMock('./storage-loader.js', () => mockStorageLoader);
-
 const mockProfile = {
   fixProfiles: jest.fn(),
   setProfiles: jest.fn()
 };
-jest.doMock('./profile.js', () => mockProfile);
+const utils = {
+  filterEnabled: (v) => v || []
+};
+jest.doMock('@modheader/core', () => ({
+  storage: mockStorage,
+  storageLoader: mockStorageLoader,
+  profile: mockProfile,
+  utils
+}));
 
 const { loadProfilesFromStorage } = require('./worker-data-manager.js');
 
