@@ -16,8 +16,7 @@
     "build-edge": "cross-env NODE_ENV=production BROWSER=edge rollup -c",
     "build-all": "node build-all.js",
     "start": "cross-env NODE_ENV=development BROWSER=chrome rollup -c -w",
-    "start-firefox": "cross-env NODE_ENV=development BROWSER=firefox rollup -c -w",
-    "build": "cross-env BROWSER=chrome rollup -c"
+    "start-firefox": "cross-env NODE_ENV=development BROWSER=firefox rollup -c -w"
   },
   "devDependencies": {
     "@babel/core": "^7.17.8",
@@ -44,7 +43,6 @@
     "@smui/tab-bar": "^6.0.0-beta.16",
     "@smui/textfield": "^6.0.0-beta.16",
     "@smui/top-app-bar": "^6.0.0-beta.16",
-    "archiver": "^4.0.1",
     "babel-jest": "^27.5.1",
     "bluebird": "^3.7.2",
     "chromedriver": "^100.0.0",
@@ -53,7 +51,6 @@
     "crx": "^5.0.1",
     "delay": "^5.0.0",
     "flush-promises": "^1.0.2",
-    "fs-extra": "^7.0.1",
     "jest": "^27.5.1",
     "jest-image-snapshot": "^4.5.1",
     "jest-transform-stub": "^2.0.0",
