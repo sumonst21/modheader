@@ -1,4 +1,5 @@
 import lodashIsArray from 'lodash/isArray.js';
+import lodashCloneDeep from 'lodash/cloneDeep.js';
 import { color, profile as profileUtils, storage, utils } from '@modheader/core';
 import { createHeader } from './header.js';
 import { AppendMode } from './append-mode.js';
@@ -163,6 +164,14 @@ function createProfileHook({ profileNum }) {
   };
 }
 
+function cloneProfileHook(profile) {
+  return lodashCloneDeep(profile);
+}
+
+function removeProfileHook() {
+  // Nothing extra to clean up.
+}
+
 export function exportProfileHook(cloneProfile, { keepStyles } = {}) {
   delete cloneProfile.profileId;
   if (cloneProfile.hideComment) {
@@ -214,6 +223,8 @@ async function saveProfileHook({ profiles, selectedProfileIndex }) {
 export function initProfileHooks() {
   profileUtils.init({
     fixProfileHook,
+    cloneProfileHook,
+    removeProfileHook,
     createProfileHook,
     exportProfileHook,
     saveProfileHook

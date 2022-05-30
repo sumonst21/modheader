@@ -147,8 +147,8 @@
         Always stay enabled
       </Item>
       <Item
-        on:SMUI:action={() => {
-          removeProfile($selectedProfileIndex);
+        on:SMUI:action={async () => {
+          await removeProfile($selectedProfileIndex);
           menu.setOpen(false);
         }}
       >
