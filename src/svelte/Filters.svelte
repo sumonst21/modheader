@@ -22,10 +22,15 @@
     addTabGroupFilter,
     addWindowFilter
   } from '../js/filter.js';
-  import { Autocomplete, MdiIcon, profile, utils } from '@modheader/core';
-  import TabFilter from './TabFilter.svelte';
-  import TabGroupFilter from './TabGroupFilter.svelte';
-  import WindowFilter from './WindowFilter.svelte';
+  import {
+    Autocomplete,
+    MdiIcon,
+    TabFilter,
+    TabGroupFilter,
+    WindowFilter,
+    profile,
+    utils
+  } from '@modheader/core';
   import ResourceTypeMenu from './ResourceTypeMenu.svelte';
   import FilterMoreMenu from './FilterMoreMenu.svelte';
   import lodashClone from 'lodash/clone.js';
