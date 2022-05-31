@@ -156,8 +156,8 @@
         Delete profile
       </Item>
       <Item
-        on:SMUI:action={() => {
-          cloneProfile($selectedProfile);
+        on:SMUI:action={async () => {
+          await cloneProfile($selectedProfile);
           menu.setOpen(false);
         }}
       >

@@ -172,6 +172,10 @@ function removeProfileHook() {
   // Nothing extra to clean up.
 }
 
+function importProfileHook() {
+  // Nothing special to import
+}
+
 export function exportProfileHook(cloneProfile, { keepStyles } = {}) {
   delete cloneProfile.profileId;
   if (cloneProfile.hideComment) {
@@ -227,6 +231,7 @@ export function initProfileHooks() {
     removeProfileHook,
     createProfileHook,
     exportProfileHook,
+    importProfileHook,
     saveProfileHook
   });
 }
