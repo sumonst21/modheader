@@ -7,7 +7,17 @@
   import { ModifierType } from '../js/modifier-type.js';
   import TopBarAddMenu from './TopBarAddMenu.svelte';
   import TopBarMoreMenu from './TopBarMoreMenu.svelte';
-  import { datasource, profile, AppLayout, Drawer, TopBar } from '@modheader/core';
+  import {
+    datasource,
+    profile,
+    AppLayout,
+    ExportDialog,
+    ImportDialog,
+    SignInRequiredDialog,
+    UpgradeDialog,
+    Drawer,
+    TopBar
+  } from '@modheader/core';
 
   const { selectedProfile } = profile;
   const { isPaused, init } = datasource;
@@ -96,6 +106,15 @@
     </TopBar>
   </AppLayout>
   <CloudBackupDialog />
+  <ExportDialog />
+  <ImportDialog />
+  <UpgradeDialog>
+    <p>
+      With ModHeader Pro, you can have >3 profiles, modify individual cookies, add tab group /
+      window filters, and create customize autocomplete entries.
+    </p>
+  </UpgradeDialog>
+  <SignInRequiredDialog />
 {/await}
 
 <style module>
