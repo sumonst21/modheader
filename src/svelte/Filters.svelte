@@ -268,7 +268,7 @@
           />
         {/if}
         {#if !$selectedProfile.hideComment}
-          <Autocomplete bind:value={filter.comment} placeholder="Comment" />
+          <Autocomplete name="comment" bind:value={filter.comment} placeholder="Comment" />
         {/if}
         <IconButton
           dense
