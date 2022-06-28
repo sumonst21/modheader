@@ -12,6 +12,7 @@
   }
 
   :root {
+    --drawer-width: 36px;
     --app-content-width: 580px;
     --top-bar-width: 585px;
     --profiles-list-min-height: 360px;

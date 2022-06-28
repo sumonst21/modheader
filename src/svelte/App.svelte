@@ -15,18 +15,17 @@
     ImportDialog,
     SignInRequiredDialog,
     UpgradeDialog,
-    Drawer,
     TopBar
   } from '@modheader/core';
 
   const { selectedProfile } = profile;
   const { isPaused, init } = datasource;
+
+  export let isFullscreen;
 </script>
 
 {#await init() then initResult}
-  <Drawer />
-
-  <AppLayout>
+  <AppLayout {isFullscreen}>
     <div class:disabled={$isPaused} class="main-content">
       {#if $selectedProfile.headers.length > 0}
         <Modifiers

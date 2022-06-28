@@ -2,7 +2,7 @@
   import App from './App.svelte';
 </script>
 
-<App />
+<App isFullscreen={true} />
 
 <style module>
   body {
@@ -11,8 +11,9 @@
   }
 
   :root {
-    --app-content-width: calc(100% - 40px);
-    --top-bar-width: calc(100% - 35px);
+    --drawer-width: 256px;
+    --app-content-width: calc(100% - 260px);
+    --top-bar-width: calc(100% - 255px);
     --profiles-list-min-height: inherit;
   }
 </style>
