@@ -76,6 +76,12 @@
     selectedColorScheme = getNextColorScheme(selectedColorScheme);
     colorScheme.setPreferredColorScheme(selectedColorScheme);
   }
+
+  function openFullscreen() {
+    tabs.openUrl({
+      url: chrome.runtime.getURL('app.html')
+    });
+  }
 </script>
 
 <div>
@@ -91,12 +97,7 @@
   </IconButton>
   <MenuSurface bind:this={menu} class="more-menu">
     <List>
-      <Item
-        on:SMUI:action={() =>
-          tabs.openUrl({
-            url: chrome.runtime.getURL('app.html')
-          })}
-      >
+      <Item on:SMUI:action={() => openFullscreen()}>
         <MdiIcon class="more-menu-icon" size="24" icon={mdiFullscreen} color="#666" />
         Open in tab
       </Item>
