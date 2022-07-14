@@ -47,6 +47,5 @@
       "description": "Switch to 4th profile"
     }
   },
-  "web_accessible_resources": ["images/icon_bw.png", "app.html"],
-  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
+  "web_accessible_resources": ["images/icon_bw.png", "app.html"]
 }

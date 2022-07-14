@@ -45,6 +45,9 @@ export default {
               strict_min_version: '75.0'
             }
           };
+          manifest.content_security_policy = "script-src 'self'; object-src 'self'";
+        } else {
+          manifest.content_security_policy = "script-src 'self' 'unsafe-eval'; object-src 'self'";
         }
         return manifest;
       }
