@@ -2,7 +2,14 @@ import { resetBrowserActions } from './browser-action-manager.js';
 import { modifyRequestUrls, modifyRequestHeaders, modifyResponseHeaders } from './modifier.js';
 import { loadProfilesFromStorage } from './worker-data-manager.js';
 import { onMessageReceived } from './message-handler.js';
-import { commandHandler, contextMenuManager, storage, tabs, userAgent } from '@modheader/core';
+import {
+  commandHandler,
+  contextMenuManager,
+  profileSync,
+  storage,
+  tabs,
+  userAgent
+} from '@modheader/core';
 import {
   addBeforeRequestListener,
   addBeforeSendHeadersListener,
@@ -15,6 +22,8 @@ import { initProfileHooks } from './profile-hook.js';
 
 initProfileHooks();
 const ALL_URLS_FILTER = ['<all_urls>'];
+
+const CHECK_LIVE_PROFILE_ALARM = 'checkLiveProfileAlarm';
 
 let chromeLocal = {
   isPaused: true
@@ -53,6 +62,9 @@ function setupHeaderModListener() {
 }
 
 async function initialize() {
+  chrome.alarms.create(CHECK_LIVE_PROFILE_ALARM, {
+    periodInMinutes: 30
+  });
   await tabs.setupTabUpdatedListener();
   await contextMenuManager.initContextMenu();
   await loadProfilesFromStorage(async (params) => {
@@ -92,6 +104,12 @@ if (!userAgent.isChromiumBasedBrowser()) {
 
 chrome.commands.onCommand.addListener(async (command) => {
   await commandHandler.onCommandReceived(chromeLocal, command);
+});
+
+chrome.alarms.onAlarm.addListener(async (alarm) => {
+  if (alarm.name === CHECK_LIVE_PROFILE_ALARM && !chromeLocal.isPaused && chromeLocal.profiles) {
+    await profileSync.reloadAllLiveProfile(chromeLocal.profiles);
+  }
 });
 
 window.saveToStorage = function (items) {

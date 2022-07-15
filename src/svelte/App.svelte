@@ -13,6 +13,8 @@
     AppLayout,
     ExportDialog,
     ImportDialog,
+    LiveProfileUrl,
+    LiveProfileUrlDialog,
     SignInRequiredDialog,
     UpgradeDialog,
     TopBar
@@ -27,6 +29,7 @@
 {#await init() then initResult}
   <AppLayout {isFullscreen}>
     <div class:disabled={$isPaused} class="main-content">
+      <LiveProfileUrl profile={$selectedProfile} />
       {#if $selectedProfile.headers.length > 0}
         <Modifiers
           modifierType={ModifierType.REQUEST_HEADER}
@@ -107,10 +110,11 @@
   <CloudBackupDialog />
   <ExportDialog />
   <ImportDialog />
+  <LiveProfileUrlDialog />
   <UpgradeDialog>
     <p>
-      With ModHeader Pro, you can have >3 profiles, modify individual cookies, add tab group /
-      window filters, and create customize autocomplete entries.
+      With ModHeader Pro, you can have >3 profiles, import live profile, modify individual cookies,
+      add tab group / window filters, and create customize autocomplete entries.
     </p>
   </UpgradeDialog>
   <SignInRequiredDialog />

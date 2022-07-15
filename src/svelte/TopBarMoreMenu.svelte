@@ -9,6 +9,7 @@
     mdiFullscreen,
     mdiTrashCan,
     mdiContentCopy,
+    mdiSync,
     mdiFileImportOutline,
     mdiKeyboard,
     mdiDotsVertical,
@@ -32,7 +33,13 @@
   } from '@modheader/core';
 
   const { removeProfile, cloneProfile, selectedProfile, updateProfile, buttonColor } = profile;
-  const { showExportDialog, showUpgradeRequired, showImportDialog, showCloudBackupDialog } = dialog;
+  const {
+    showExportDialog,
+    showUpgradeRequired,
+    showImportDialog,
+    showCloudBackupDialog,
+    setupLiveProfileUrlDialog
+  } = dialog;
   const { isProUser, requireSignInForExport } = identity;
   const { profiles, selectedProfileIndex } = datasource;
 
@@ -183,6 +190,17 @@
         {#if $profiles.length >= 3}
           <LockIcon />
         {/if}
+      </Item>
+
+      <Item
+        on:SMUI:action={() => {
+          setupLiveProfileUrlDialog.set(true);
+          menu.setOpen(false);
+        }}
+        id="setup-auto-sync-profile"
+      >
+        <MdiIcon class="more-menu-icon" size="24" icon={mdiSync} color="#666" />
+        Setup auto-sync profile
       </Item>
       <Item
         on:SMUI:action={() => {

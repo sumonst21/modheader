@@ -178,6 +178,9 @@ function importProfileHook() {
 
 export function exportProfileHook(cloneProfile, { keepStyles } = {}) {
   delete cloneProfile.profileId;
+  delete cloneProfile.liveProfileUrl;
+  delete cloneProfile.liveProfileStatus;
+  delete cloneProfile.liveProfileLastSyncTimestamp;
   if (cloneProfile.hideComment) {
     delete cloneProfile.hideComment;
   }
