@@ -62,9 +62,6 @@ function setupHeaderModListener() {
 }
 
 async function initialize() {
-  chrome.alarms.create(CHECK_LIVE_PROFILE_ALARM, {
-    periodInMinutes: 30
-  });
   await tabs.setupTabUpdatedListener();
   await contextMenuManager.initContextMenu();
   await loadProfilesFromStorage(async (params) => {
@@ -74,6 +71,10 @@ async function initialize() {
     setupHeaderModListener();
     await resetBrowserActions({ chromeLocal, activeProfiles, selectedActiveProfile });
     await contextMenuManager.resetContextMenu(chromeLocal);
+  });
+  chrome.alarms.create(CHECK_LIVE_PROFILE_ALARM, {
+    periodInMinutes: 30,
+    when: 1
   });
 }
 
