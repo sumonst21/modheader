@@ -1,9 +1,10 @@
-import { storageWriter, profile } from '@modheader/core';
+import { storageWriter, profile, profileSync } from '@modheader/core';
 import { PROFILE_VERSION } from './profile-hook.js';
 
 export const MessageType = {
   EXISTS: 'EXISTS',
   IMPORT: 'IMPORT',
+  IMPORT_AUTO_SYNC: 'IMPORT_AUTO_SYNC',
   SWITCH_TO_LATEST: 'SWITCH_TO_LATEST',
   PROFILES: 'PROFILES'
 };
@@ -16,6 +17,7 @@ export async function onMessageReceived({ chromeLocal, request }) {
       return {
         success: true,
         maxSupportedProfileVersion: PROFILE_VERSION,
+        canImportWithAutoSync: true,
         modHeaderVersion: manifest.version
       };
     }
@@ -23,6 +25,14 @@ export async function onMessageReceived({ chromeLocal, request }) {
       const importedProfiles = [JSON.parse(request.profile)];
       profile.fixProfiles(importedProfiles);
       const newProfiles = [...chromeLocal.profiles, ...importedProfiles];
+      await storageWriter.setProfilesAndIndex(newProfiles, newProfiles.length - 1);
+      return { success: true };
+    }
+    case MessageType.IMPORT_AUTO_SYNC: {
+      const newProfile = await profileSync.reloadLiveProfile({
+        liveProfileUrl: request.profileUrl
+      });
+      const newProfiles = [...chromeLocal.profiles, newProfile];
       await storageWriter.setProfilesAndIndex(newProfiles, newProfiles.length - 1);
       return { success: true };
     }
