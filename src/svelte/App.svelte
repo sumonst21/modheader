@@ -113,8 +113,8 @@
   <LiveProfileUrlDialog />
   <UpgradeDialog>
     <p>
-      With ModHeader Pro, you can have >3 profiles, import live profile, modify individual cookies,
-      add tab group / window filters, and create customize autocomplete entries.
+      With ModHeader Pro, you can have >3 profiles, import auto-sync profile, modify individual
+      cookies, add tab group / window filters, and create customize autocomplete entries.
     </p>
   </UpgradeDialog>
   <SignInRequiredDialog />
