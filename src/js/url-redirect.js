@@ -1,7 +1,6 @@
 import { tabs, utils } from '@modheader/core';
 import lodashIsEmpty from 'lodash/isEmpty.js';
 import lodashCloneDeep from 'lodash/cloneDeep.js';
-import { evaluateValue } from './utils.js';
 
 export async function addUrlRedirect(urlRedirects) {
   let name = '';
@@ -45,7 +44,7 @@ export function redirectUrl({ urlRedirects, url }) {
   if (urlRedirects) {
     for (const replacement of urlRedirects) {
       // Avoid infinite replacement
-      const replacementValue = evaluateValue({ value: replacement.value, url, oldValue: url });
+      const replacementValue = replacement.value;
       if (!url.includes(replacementValue)) {
         url = url.replace(replacement.name, replacementValue);
       }
