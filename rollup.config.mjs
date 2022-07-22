@@ -5,6 +5,7 @@ import svelte from 'rollup-plugin-svelte';
 import replace from '@rollup/plugin-replace';
 import { terser } from 'rollup-plugin-terser';
 import cssModules from 'svelte-preprocess-cssmodules';
+import copy from 'rollup-plugin-copy';
 import { chromeExtension, simpleReloader } from 'rollup-plugin-chrome-extension';
 import { emptyDir } from 'rollup-plugin-empty-dir';
 
@@ -25,7 +26,12 @@ export default {
       'process.env.PROFILE_TYPE': JSON.stringify('ModHeader'),
       'process.env.PRODUCT_NAME': JSON.stringify('ModHeader'),
       'process.env.BROWSER': JSON.stringify(process.env.BROWSER),
+      'process.env.WEB_DRIVER': JSON.stringify(process.env.WEB_DRIVER),
       'process.env.URL_BASE': JSON.stringify(URL_BASE)
+    }),
+    copy({
+      targets: [{ src: 'src/images/icon_bw.png', dest: 'dist/images' }],
+      hook: 'writeBundle'
     }),
     chromeExtension({
       extendManifest: (manifest) => {
@@ -45,6 +51,19 @@ export default {
               strict_min_version: '75.0'
             }
           };
+        }
+        if (process.env.WEB_DRIVER) {
+          manifest.web_accessible_resources.push('add.html');
+          manifest.web_accessible_resources.push('clear.html');
+          manifest.web_accessible_resources.push('load.html');
+          if (process.env.BROWSER === 'firefox') {
+            manifest.browser_specific_settings = {
+              gecko: {
+                id: '{a0690929-84ee-447c-b22d-8d7a4451ce5d}',
+                strict_min_version: '75.0'
+              }
+            };
+          }
         }
         return manifest;
       }

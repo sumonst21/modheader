@@ -15,6 +15,9 @@
     "build-opera": "cross-env NODE_ENV=production BROWSER=opera rollup -c",
     "build-edge": "cross-env NODE_ENV=production BROWSER=edge rollup -c",
     "build-all": "node build-all.js",
+    "build-webdriver-chrome": "cross-env NODE_ENV=production WEB_DRIVER=true BROWSER=chrome rollup -c",
+    "build-webdriver-firefox": "cross-env NODE_ENV=production WEB_DRIVER=true BROWSER=firefox rollup -c",
+    "start-webdriver": "cross-env NODE_ENV=development WEB_DRIVER=true BROWSER=chrome rollup -c",
     "start": "cross-env NODE_ENV=development BROWSER=chrome rollup -c -w",
     "start-firefox": "cross-env NODE_ENV=development BROWSER=firefox rollup -c -w"
   },
@@ -57,6 +60,7 @@
     "polka": "^0.5.2",
     "rollup": "^2.68.0",
     "rollup-plugin-chrome-extension": "^3.6.9",
+    "rollup-plugin-copy": "^3.4.0",
     "rollup-plugin-css-only": "^3.1.0",
     "rollup-plugin-empty-dir": "^1.0.5",
     "rollup-plugin-svelte": "^7.1.0",

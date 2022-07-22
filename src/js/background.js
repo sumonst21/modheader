@@ -43,6 +43,28 @@ function modifyResponseHeaderHandler_(details) {
   return modifyResponseHeaders({ chromeLocal, activeProfiles, details });
 }
 
+function webdriverOnBeforeRequestHandler_(details) {
+  if (
+    details.url.includes('//webdriver.modheader.com/') ||
+    details.url.includes('//webdriver.bewisse.com/') ||
+    details.url.includes('//bewisse.com/')
+  ) {
+    const parsedUrl = new URL(details.url);
+    if (
+      parsedUrl.pathname === '/add' ||
+      parsedUrl.pathname === '/clear' ||
+      parsedUrl.pathname === '/load'
+    ) {
+      chrome.tabs.update(null, {
+        url: chrome.runtime.getURL(parsedUrl.pathname + '.html' + parsedUrl.search)
+      });
+      return {
+        cancel: true
+      };
+    }
+  }
+}
+
 function setupHeaderModListener() {
   if (activeProfiles.find((p) => p.urlReplacements.length > 0)) {
     addBeforeRequestListener(modifyRequestHandler_, ALL_URLS_FILTER);
@@ -76,6 +98,13 @@ async function initialize() {
     periodInMinutes: 30,
     when: 1
   });
+  if (process.env.WEB_DRIVER) {
+    chrome.webRequest.onBeforeRequest.addListener(
+        webdriverOnBeforeRequestHandler_,
+        { urls: ['<all_urls>'] },
+        ['blocking']
+    );
+  }
 }
 
 async function messageHandler(request, sendResponse) {
