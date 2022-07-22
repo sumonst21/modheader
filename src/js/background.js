@@ -94,10 +94,6 @@ async function initialize() {
     await resetBrowserActions({ chromeLocal, activeProfiles, selectedActiveProfile });
     await contextMenuManager.resetContextMenu(chromeLocal);
   });
-  chrome.alarms.create(CHECK_LIVE_PROFILE_ALARM, {
-    periodInMinutes: 30,
-    when: 1
-  });
   if (process.env.WEB_DRIVER) {
     chrome.webRequest.onBeforeRequest.addListener(
         webdriverOnBeforeRequestHandler_,
@@ -105,6 +101,10 @@ async function initialize() {
         ['blocking']
     );
   }
+  chrome.alarms.create(CHECK_LIVE_PROFILE_ALARM, {
+    periodInMinutes: 30,
+    when: 1
+  });
 }
 
 async function messageHandler(request, sendResponse) {
