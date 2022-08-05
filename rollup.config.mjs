@@ -30,7 +30,10 @@ export default {
       'process.env.URL_BASE': JSON.stringify(URL_BASE)
     }),
     copy({
-      targets: [{ src: 'src/images/icon_bw.png', dest: 'dist/images' }],
+      targets: [
+        { src: 'src/images/icon_bw.png', dest: 'dist/images' },
+        { src: 'src/images/modresponse.png', dest: 'dist/images' }
+      ],
       hook: 'writeBundle'
     }),
     chromeExtension({

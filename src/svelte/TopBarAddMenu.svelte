@@ -104,7 +104,9 @@
         </Item>
         <Separator />
         <div class="caption fst-italic mx-1 mt-2">Want more modifications?</div>
-        <Item on:SMUI:action={() => tabs.openUrl({ path: '/modresponse' })}>Try ModResponse</Item>
+        <Item on:SMUI:action={() => tabs.openUrl({ path: '/modresponse' })}
+          ><img src="images/modresponse.png" alt="" class="me-1" width="24" height="24" /> Try ModResponse</Item
+        >
       </List>
       <div class="grid-border" />
       <List>
