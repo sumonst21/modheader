@@ -20,7 +20,8 @@
     removeFilter,
     addTabFilter,
     addTabGroupFilter,
-    addWindowFilter
+    addWindowFilter,
+    addTimeFilter
   } from '../js/filter.js';
   import {
     Autocomplete,
@@ -28,6 +29,7 @@
     TabFilter,
     TabGroupFilter,
     WindowFilter,
+    TimeFilter,
     profile,
     utils
   } from '@modheader/core';
@@ -67,6 +69,12 @@
       label: 'Resource filters',
       profileFieldName: 'resourceFilters',
       addHandler: addResourceFilter
+    },
+    [FilterType.TIME]: {
+      label: 'Time filters',
+      profileFieldName: 'timeFilters',
+      addHandler: addTimeFilter,
+      description: 'Use time filters to automatically turn off modifications after a certain time.'
     }
   };
 
@@ -178,8 +186,7 @@
                 />
                 <Text>Type - descending</Text>
               </Item>
-            {/if}
-            {#if filterType === FilterType.URLS || filterType === FilterType.EXCLUDE_URLS}
+            {:else if filterType === FilterType.URLS || filterType === FilterType.EXCLUDE_URLS}
               <Item on:SMUI:action={() => sort('urlRegex', 'asc')}>
                 <MdiIcon
                   class="more-menu-icon"
@@ -223,6 +230,11 @@
         </Menu>
       </div>
     </div>
+    {#if FILTER_TYPES[filterType].description}
+      <div class="mx-1 fst-italic mb-1">
+        {FILTER_TYPES[filterType].description}
+      </div>
+    {/if}
     {#each filters as filter, filterIndex}
       <div class="data-table-row {filter.enabled ? '' : 'data-table-row-unchecked'}">
         <Checkbox
@@ -239,6 +251,8 @@
           />
         {:else if filterType === FilterType.RESOURCE_TYPES}
           <ResourceTypeMenu bind:resourceType={filter.resourceType} />
+        {:else if filterType === FilterType.TIME}
+          <TimeFilter bind:expirationTimeMs={filter.expirationTimeMs} />
         {:else if filterType === FilterType.TABS}
           <TabFilter
             {filter}

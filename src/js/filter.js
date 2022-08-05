@@ -8,7 +8,8 @@ export const FilterType = {
   WINDOWS: 'windows',
   URLS: 'urls',
   EXCLUDE_URLS: 'excludeUrls',
-  RESOURCE_TYPES: 'types'
+  RESOURCE_TYPES: 'types',
+  TIME: 'time'
 };
 
 export async function addUrlFilter(filters) {
@@ -77,6 +78,17 @@ export async function addWindowFilter(filters) {
   ];
 }
 
+export function addTimeFilter(filters) {
+  return [
+    ...filters,
+    {
+      enabled: true,
+      comment: '',
+      expirationTimeMs: Date.now() + 1000 * 60 * 60
+    }
+  ];
+}
+
 export function removeFilter(filters, filterIndex) {
   filters = lodashCloneDeep(filters);
   filters.splice(filterIndex, 1);
@@ -107,7 +119,7 @@ export function optimizeResourceFilters(filters) {
     }));
 }
 
-export function optimizeTabFilters(filters) {
+export function optimizeFilters(filters) {
   if (!filters) {
     return [];
   }
@@ -120,9 +132,6 @@ export function optimizeTabFilters(filters) {
 export function passFilters({ url, type, tabId, profile }) {
   let allowUrls = undefined;
   let allowTypes = false;
-  let allowTabs = false;
-  let allowTabGroups = false;
-  let allowWindows = false;
   for (const filter of profile.urlFilters) {
     if (allowUrls === undefined) {
       allowUrls = false;
@@ -156,19 +165,23 @@ export function passFilters({ url, type, tabId, profile }) {
     }
   }
   const tabInfo = tabs.lookupTabInfo(tabId) || {};
-  allowTabs =
+  const allowTabs =
     profile.tabFilters.length === 0 || profile.tabFilters.some((filter) => filter.tabId === tabId);
-  allowTabGroups =
+  const allowTabGroups =
     profile.tabGroupFilters.length === 0 ||
     profile.tabGroupFilters.some((filter) => filter.groupId === tabInfo.groupId);
-  allowWindows =
+  const allowWindows =
     profile.windowFilters.length === 0 ||
     profile.windowFilters.some((filter) => filter.windowId === tabInfo.windowId);
+  const allowTime =
+    profile.timeFilters.length === 0 ||
+    profile.timeFilters.every((filter) => filter.expirationTimeMs > Date.now());
   return (
     ((profile.urlFilters.length === 0 && profile.excludeUrlFilters.length === 0) || allowUrls) &&
     (profile.resourceFilters.length === 0 || allowTypes) &&
     allowTabs &&
     allowTabGroups &&
-    allowWindows
+    allowWindows &&
+    allowTime
   );
 }

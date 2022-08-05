@@ -2,7 +2,7 @@ import lodashCloneDeep from 'lodash/cloneDeep.js';
 import lodashIsUndefined from 'lodash/isUndefined.js';
 import lodashIsEqual from 'lodash/isEqual.js';
 import { profile, storage, storageLoader, storageWriter, utils } from '@modheader/core';
-import { optimizeResourceFilters, optimizeTabFilters, optimizeUrlFilters } from './filter.js';
+import { optimizeResourceFilters, optimizeFilters, optimizeUrlFilters} from './filter.js';
 import { optimizeUrlRedirects } from './url-redirect.js';
 
 const MAX_PROFILES_IN_CLOUD = 20;
@@ -57,9 +57,10 @@ function reloadActiveProfiles(chromeLocal) {
       profile.urlFilters = optimizeUrlFilters(profile.urlFilters);
       profile.excludeUrlFilters = optimizeUrlFilters(profile.excludeUrlFilters);
       profile.resourceFilters = optimizeResourceFilters(profile.resourceFilters);
-      profile.tabFilters = optimizeTabFilters(profile.tabFilters);
-      profile.tabGroupFilters = optimizeTabFilters(profile.tabGroupFilters);
-      profile.windowFilters = optimizeTabFilters(profile.windowFilters);
+      profile.tabFilters = optimizeFilters(profile.tabFilters);
+      profile.tabGroupFilters = optimizeFilters(profile.tabGroupFilters);
+      profile.windowFilters = optimizeFilters(profile.windowFilters);
+      profile.timeFilters = optimizeFilters(profile.timeFilters);
       if (i === chromeLocal.selectedProfile) {
         selectedActiveProfile = profile;
       }

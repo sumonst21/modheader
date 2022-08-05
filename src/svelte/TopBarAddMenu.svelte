@@ -11,7 +11,8 @@
     addResourceFilter,
     addTabFilter,
     addTabGroupFilter,
-    addWindowFilter
+    addWindowFilter,
+    addTimeFilter
   } from '../js/filter.js';
 
   const { selectedProfile, updateProfile, buttonColor } = profile;
@@ -123,7 +124,7 @@
               });
             } else {
               showUpgradeRequired(
-                'Upgrade to Pro to enable filtering by tab group, by window, and more!'
+                'Upgrade to Pro to enable filtering by tab group, by window, by time, and more!'
               );
             }
           }}
@@ -141,7 +142,7 @@
               });
             } else {
               showUpgradeRequired(
-                'Upgrade to Pro to enable filtering by window, by tab group, and more!'
+                'Upgrade to Pro to enable filtering by window, by tab group, by time, and more!'
               );
             }
           }}
@@ -170,6 +171,24 @@
               resourceFilters: await addResourceFilter($selectedProfile.resourceFilters)
             })}>Resource filter</Item
         >
+
+        <Item
+          id="add-time-filter"
+          on:SMUI:action={async () => {
+            if ($isProUser) {
+              await updateProfileAndClose({
+                timeFilters: addTimeFilter($selectedProfile.timeFilters)
+              });
+            } else {
+              showUpgradeRequired(
+                'Upgrade to Pro to enable filtering by window, by tab group, by time, and more!'
+              );
+            }
+          }}
+        >
+          Time filter
+          <LockIcon />
+        </Item>
       </List>
     </div>
   </MenuSurface>

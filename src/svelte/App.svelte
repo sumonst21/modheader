@@ -60,7 +60,7 @@
           modifiers={lodashCloneDeep($selectedProfile.urlReplacements)}
         />
       {/if}
-      {#if $selectedProfile.tabFilters.length || $selectedProfile.tabGroupFilters.length || $selectedProfile.windowFilters.length || $selectedProfile.urlFilters.length || $selectedProfile.excludeUrlFilters.length || $selectedProfile.resourceFilters.length}
+      {#if $selectedProfile.tabFilters.length || $selectedProfile.tabGroupFilters.length || $selectedProfile.windowFilters.length || $selectedProfile.urlFilters.length || $selectedProfile.excludeUrlFilters.length || $selectedProfile.resourceFilters.length || $selectedProfile.timeFilters.length}
         <div class="filter-background">
           <Filters
             id="tab-filter"
@@ -98,6 +98,12 @@
             filterType={FilterType.RESOURCE_TYPES}
             class="extra-gap"
           />
+          <Filters
+            id="time-filter"
+            filters={lodashCloneDeep($selectedProfile.timeFilters)}
+            filterType={FilterType.TIME}
+            class="extra-gap"
+          />
         </div>
       {/if}
     </div>
@@ -114,7 +120,7 @@
   <UpgradeDialog>
     <p>
       With ModHeader Pro, you can have >3 profiles, import auto-sync profile, modify individual
-      cookies, add tab group / window filters, and create customize autocomplete entries.
+      cookies, create customize autocomplete entries, add tab group, window, and time filters.
     </p>
   </UpgradeDialog>
   <SignInRequiredDialog />

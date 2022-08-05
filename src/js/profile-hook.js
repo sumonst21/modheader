@@ -17,7 +17,8 @@ const ARRAY_FIELDS = [
   'resourceFilters',
   'tabFilters',
   'tabGroupFilters',
-  'windowFilters'
+  'windowFilters',
+  'timeFilters'
 ];
 
 export function fixProfileHook({ profile, index }) {
@@ -44,7 +45,7 @@ export function fixProfileHook({ profile, index }) {
     isMutated = true;
   }
   for (const arrayField of ARRAY_FIELDS) {
-    if (profile[arrayField] === undefined) {
+    if (profile[arrayField] === undefined || !lodashIsArray(profile[arrayField])) {
       profile[arrayField] = [];
       isMutated = true;
     } else {
@@ -108,6 +109,7 @@ function upgradeFromProfileVersion1({ profile, index }) {
   profile.tabFilters = [];
   profile.tabGroupFilters = [];
   profile.windowFilters = [];
+  profile.timeFilters = [];
   for (const filter of profile.filters || []) {
     const type = filter.type;
     delete filter.type;
@@ -158,6 +160,7 @@ function createProfileHook({ profileNum }) {
     tabFilters: [],
     tabGroupFilters: [],
     windowFilters: [],
+    timeFilters: [],
     backgroundColor: color.generateBackgroundColor(),
     textColor: color.generateTextColor(),
     shortTitle: utils.takeRight(profileNum)
