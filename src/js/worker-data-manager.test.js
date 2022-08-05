@@ -40,7 +40,8 @@ const EMPTY_PROFILE = {
   resourceFilters: [],
   tabFilters: [],
   tabGroupFilters: [],
-  windowFilters: []
+  windowFilters: [],
+  timeFilters: []
 };
 
 describe('worker-data-manager', () => {

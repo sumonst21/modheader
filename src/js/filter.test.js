@@ -25,7 +25,8 @@ describe('filter', () => {
     resourceFilters: [],
     tabFilters: [],
     tabGroupFilters: [],
-    windowFilters: []
+    windowFilters: [],
+    timeFilters: [],
   };
 
   beforeEach(() => {

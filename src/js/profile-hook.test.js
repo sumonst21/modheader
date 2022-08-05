@@ -31,6 +31,7 @@ describe('profile', () => {
       tabFilters: [],
       tabGroupFilters: [],
       windowFilters: [],
+      timeFilters: [],
       headers: [
         {
           comment: '',
@@ -59,6 +60,7 @@ describe('profile', () => {
       tabFilters: [],
       tabGroupFilters: [],
       windowFilters: [],
+      timeFilters: [],
       headers: [
         {
           comment: '',
@@ -92,6 +94,7 @@ describe('profile', () => {
       tabFilters: [],
       tabGroupFilters: [],
       windowFilters: [],
+      timeFilters: [],
       headers: [
         {
           comment: '',
@@ -209,6 +212,7 @@ describe('profile', () => {
       tabFilters: [],
       tabGroupFilters: [],
       windowFilters: [],
+      timeFilters: [],
       urlFilters: [],
       excludeUrlFilters: [],
       resourceFilters: []
