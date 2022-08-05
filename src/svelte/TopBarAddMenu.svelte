@@ -1,9 +1,10 @@
 <script>
   import MenuSurface from '@smui/menu-surface';
-  import List, { Item } from '@smui/list';
+  import List, { Item, Separator } from '@smui/list';
   import IconButton from '@smui/icon-button';
+  import Button from '@smui/button';
   import { mdiPlus } from '@mdi/js';
-  import { dialog, identity, profile, LockIcon, MdiIcon } from '@modheader/core';
+  import { dialog, identity, profile, tabs, LockIcon, MdiIcon } from '@modheader/core';
   import { addHeader } from '../js/header.js';
   import { addUrlRedirect } from '../js/url-redirect.js';
   import {
@@ -101,6 +102,9 @@
         >
           Redirect URL
         </Item>
+        <Separator />
+        <div class="caption fst-italic mx-1 mt-2">Want more modifications?</div>
+        <Item on:SMUI:action={() => tabs.openUrl({ path: '/modresponse' })}>Try ModResponse</Item>
       </List>
       <div class="grid-border" />
       <List>
