@@ -10,6 +10,17 @@ function isEnabled(chromeLocal) {
   return !chromeLocal.isPaused;
 }
 
+function findAllMatchingKeys(src, map) {
+  if (src.regexEnabled) {
+    return Object.keys(map).filter((k) => new RegExp(src.name, 'g').test(k));
+  } else {
+    if (map.hasOwnProperty(src.name)) {
+      return [src.name];
+    }
+  }
+  return [];
+}
+
 export function modifyRequestUrls({ chromeLocal, activeProfiles, details }) {
   if (isEnabled(chromeLocal)) {
     let newUrl = details.url;
@@ -131,21 +142,31 @@ function modifySetCookie(url, currentProfile, source, dest) {
   }
   for (const cookie of source) {
     if (!cookie.value) {
-      if (cookieMap.hasOwnProperty(cookie.name)) {
-        if (cookie.retainExistingCookie) {
-          cookieMap[cookie.name] = {
-            ...cookie,
-            value: cookieMap[cookie.name].value
-          };
-        } else {
-          cookieMap[cookie.name].value = cookie.value;
+      const matchedKeys = findAllMatchingKeys(cookie, cookieMap);
+      if (matchedKeys.length > 0) {
+        for (const key of matchedKeys) {
+          if (cookie.retainExistingCookie) {
+            cookieMap[key] = {
+              ...cookie,
+              value: cookieMap[key].value
+            };
+          } else {
+            cookieMap[key].value = '';
+          }
         }
       }
     } else {
-      if (cookie.attributeOverride || !cookieMap.hasOwnProperty(cookie.name)) {
+      const matchedKeys = findAllMatchingKeys(cookie, cookieMap);
+      if (matchedKeys.length === 0 && !cookie.regexEnabled) {
         cookieMap[cookie.name] = cookie;
       } else {
-        cookieMap[cookie.name].value = cookie.value;
+        for (const key of matchedKeys) {
+          if (cookie.attributeOverride) {
+            cookieMap[key] = cookie;
+          } else {
+            cookieMap[key].value = cookie.value;
+          }
+        }
       }
     }
   }

@@ -74,6 +74,7 @@ export const MODIFIER_TYPES = {
     valueLabel: 'Value',
     fieldName: 'setCookieHeaders',
     customAutocompleteFieldName: 'setCookieHeadersAutocomplete',
+    supportRegexMode: true,
     advancedComponent: AdvancedCookie,
     addHandler: () =>
       updateProfile({

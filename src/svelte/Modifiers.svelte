@@ -1,12 +1,12 @@
 <script>
   import IconButton from '@smui/icon-button';
   import Checkbox from '@smui/checkbox';
-  import { mdiClose } from '@mdi/js';
+  import { mdiClose, mdiRegex } from '@mdi/js';
   import lodashClone from 'lodash/clone.js';
   import lodashDebounce from 'lodash/debounce.js';
   import { fly } from 'svelte/transition';
   import ModifiersMoreMenu from './ModifiersMoreMenu.svelte';
-  import { profile, utils, Autocomplete, MdiIcon } from '@modheader/core';
+  import { profile, toast, utils, Autocomplete, MdiIcon } from '@modheader/core';
   import HeaderMoreMenu from './HeaderMoreMenu.svelte';
   import { MODIFIER_TYPES } from '../js/modifier-handler.js';
 
@@ -142,6 +142,26 @@
         />
       {/if}
 
+      {#if modifierHandler.supportRegexMode}
+        <IconButton
+          dense
+          aria-label="Regex"
+          title={modifier.regexEnabled ? 'Regex matching enabled' : 'Regex matching disabled'}
+          class="small-icon-button data-table-cell flex-fixed-icon me-1 {modifier.regexEnabled
+            ? 'mdc-ripple-upgraded--background-focused mdc-ripple-upgraded--foreground-activation'
+            : ''}"
+          on:click={async () => {
+            modifier.regexEnabled = !modifier.regexEnabled;
+            if (modifier.regexEnabled) {
+              toast.showMessage('Regex name matching enabled');
+            } else {
+              toast.showMessage('Regex name matching disabled');
+            }
+          }}
+        >
+          <MdiIcon size="24" icon={mdiRegex} color="#666" />
+        </IconButton>
+      {/if}
       <IconButton
         dense
         aria-label="Delete"

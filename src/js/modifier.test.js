@@ -957,6 +957,42 @@ describe('modifier', () => {
       });
     });
 
+    test('Modify set cookie header - regex mode - Override value without changing attribute', () => {
+      const chromeLocal = {};
+      const activeProfiles = [
+        {
+          ...EMPTY_PROFILE,
+          setCookieHeaders: [
+            {
+              name: 'fo.*',
+              value: 'Test',
+              path: '/_/test',
+              regexEnabled: true
+            }
+          ]
+        }
+      ];
+      const details = {
+        url: 'https://modheader.com/',
+        responseHeaders: [
+          {
+            name: 'set-cookie',
+            value: 'foo=Original; Path=/'
+          }
+        ]
+      };
+      const actual = modifyResponseHeaders({ chromeLocal, activeProfiles, details });
+
+      expect(actual).toEqual({
+        responseHeaders: [
+          {
+            name: 'set-cookie',
+            value: 'foo=Test; Path=/'
+          }
+        ]
+      });
+    });
+
     test('Modify set cookie header - Override value and attribute', () => {
       const chromeLocal = {};
       const activeProfiles = [
@@ -967,6 +1003,44 @@ describe('modifier', () => {
               name: 'foo',
               value: 'Test',
               path: '/_/test',
+              httpOnly: true,
+              attributeOverride: true
+            }
+          ]
+        }
+      ];
+      const details = {
+        url: 'https://modheader.com/',
+        responseHeaders: [
+          {
+            name: 'set-cookie',
+            value: 'foo=Original; Path=/; Secure'
+          }
+        ]
+      };
+      const actual = modifyResponseHeaders({ chromeLocal, activeProfiles, details });
+
+      expect(actual).toEqual({
+        responseHeaders: [
+          {
+            name: 'set-cookie',
+            value: 'foo=Test; Path=/_/test; HttpOnly'
+          }
+        ]
+      });
+    });
+
+    test('Modify set cookie header - regex enabled - Override value and attribute', () => {
+      const chromeLocal = {};
+      const activeProfiles = [
+        {
+          ...EMPTY_PROFILE,
+          setCookieHeaders: [
+            {
+              name: 'fo.*',
+              value: 'Test',
+              path: '/_/test',
+              regexEnabled: true,
               httpOnly: true,
               attributeOverride: true
             }
@@ -1023,6 +1097,29 @@ describe('modifier', () => {
       });
     });
 
+    test('Modify set-cookie header - regex enabled - new header not added', () => {
+      const chromeLocal = {};
+      const activeProfiles = [
+        {
+          ...EMPTY_PROFILE,
+          setCookieHeaders: [
+            {
+              name: 'fo.*',
+              value: 'Test',
+              regexEnabled: true
+            }
+          ]
+        }
+      ];
+      const details = {
+        url: 'https://modheader.com/',
+        responseHeaders: []
+      };
+      const actual = modifyResponseHeaders({ chromeLocal, activeProfiles, details });
+
+      expect(actual).toEqual(undefined);
+    });
+
     test('Modify set cookie header - multiple cookies', () => {
       const chromeLocal = {};
       const activeProfiles = [
@@ -1073,6 +1170,59 @@ describe('modifier', () => {
       });
     });
 
+    test('Modify set cookie header - regex enabled - multiple cookies', () => {
+      const chromeLocal = {};
+      const activeProfiles = [
+        {
+          ...EMPTY_PROFILE,
+          setCookieHeaders: [
+            {
+              name: 'foo.*',
+              value: 'Test',
+              path: '/',
+              attributeOverride: true,
+              regexEnabled: true
+            }
+          ]
+        }
+      ];
+      const details = {
+        url: 'https://modheader.com/',
+        responseHeaders: [
+          {
+            name: 'set-cookie',
+            value: 'foo=Original'
+          },
+          {
+            name: 'set-cookie',
+            value: 'foo2=Original2'
+          },
+          {
+            name: 'set-cookie',
+            value: 'foo3=Original3'
+          }
+        ]
+      };
+      const actual = modifyResponseHeaders({ chromeLocal, activeProfiles, details });
+
+      expect(actual).toEqual({
+        responseHeaders: [
+          {
+            name: 'set-cookie',
+            value: 'foo=Test; Path=/'
+          },
+          {
+            name: 'set-cookie',
+            value: 'foo2=Test; Path=/'
+          },
+          {
+            name: 'set-cookie',
+            value: 'foo3=Test; Path=/'
+          }
+        ]
+      });
+    });
+
     test('Modify set cookie header - Remove cookie', () => {
       const chromeLocal = {};
       const activeProfiles = [
@@ -1082,6 +1232,41 @@ describe('modifier', () => {
             {
               name: 'foo',
               value: ''
+            }
+          ]
+        }
+      ];
+      const details = {
+        url: 'https://modheader.com/',
+        responseHeaders: [
+          {
+            name: 'set-cookie',
+            value: 'foo=Original; Path=/'
+          }
+        ]
+      };
+      const actual = modifyResponseHeaders({ chromeLocal, activeProfiles, details });
+
+      expect(actual).toEqual({
+        responseHeaders: [
+          {
+            name: 'set-cookie',
+            value: 'foo=; Path=/'
+          }
+        ]
+      });
+    });
+
+    test('Modify set cookie header - regex enabled - Remove cookie', () => {
+      const chromeLocal = {};
+      const activeProfiles = [
+        {
+          ...EMPTY_PROFILE,
+          setCookieHeaders: [
+            {
+              name: 'fo.*',
+              value: '',
+              regexEnabled: true,
             }
           ]
         }
@@ -1117,6 +1302,43 @@ describe('modifier', () => {
               name: 'foo',
               value: '',
               httpOnly: true,
+              retainExistingCookie: true
+            }
+          ]
+        }
+      ];
+      const details = {
+        url: 'https://modheader.com/',
+        responseHeaders: [
+          {
+            name: 'set-cookie',
+            value: 'foo=Original; Path=/'
+          }
+        ]
+      };
+      const actual = modifyResponseHeaders({ chromeLocal, activeProfiles, details });
+
+      expect(actual).toEqual({
+        responseHeaders: [
+          {
+            name: 'set-cookie',
+            value: 'foo=Original; HttpOnly'
+          }
+        ]
+      });
+    });
+
+    test('Modify set cookie header - regex enabled - Retain cookie, modify attributes', () => {
+      const chromeLocal = {};
+      const activeProfiles = [
+        {
+          ...EMPTY_PROFILE,
+          setCookieHeaders: [
+            {
+              name: 'fo.*',
+              value: '',
+              httpOnly: true,
+              regexEnabled: true,
               retainExistingCookie: true
             }
           ]
