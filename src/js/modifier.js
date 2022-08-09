@@ -87,7 +87,7 @@ function modifyCookie(url, currentProfile, source, dest) {
   const parsedCookie = cookie.parse(existingCookie ? existingCookie.value : '');
   for (const cookieHeader of source) {
     if (!cookieHeader.value) {
-      if (parsedCookie[cookieHeader.name] !== undefined && !cookieHeader.sendEmptyHeader) {
+      if (parsedCookie.hasOwnProperty(cookieHeader.name) && !cookieHeader.sendEmptyHeader) {
         delete parsedCookie[cookieHeader.name];
         continue;
       }
@@ -130,10 +130,23 @@ function modifySetCookie(url, currentProfile, source, dest) {
     }
   }
   for (const cookie of source) {
-    if (cookie.attributeOverride || !cookieMap[cookie.name]) {
-      cookieMap[cookie.name] = cookie;
+    if (!cookie.value) {
+      if (cookieMap.hasOwnProperty(cookie.name)) {
+        if (cookie.retainExistingCookie) {
+          cookieMap[cookie.name] = {
+            ...cookie,
+            value: cookieMap[cookie.name].value
+          };
+        } else {
+          cookieMap[cookie.name].value = cookie.value;
+        }
+      }
     } else {
-      cookieMap[cookie.name].value = cookie.value;
+      if (cookie.attributeOverride || !cookieMap.hasOwnProperty(cookie.name)) {
+        cookieMap[cookie.name] = cookie;
+      } else {
+        cookieMap[cookie.name].value = cookie.value;
+      }
     }
   }
   setCookieHeaderIndices.reverse();

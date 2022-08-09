@@ -1073,7 +1073,7 @@ describe('modifier', () => {
       });
     });
 
-    test('Modify set cookie header - Remove header', () => {
+    test('Modify set cookie header - Remove cookie', () => {
       const chromeLocal = {};
       const activeProfiles = [
         {
@@ -1102,6 +1102,42 @@ describe('modifier', () => {
           {
             name: 'set-cookie',
             value: 'foo=; Path=/'
+          }
+        ]
+      });
+    });
+
+    test('Modify set cookie header - Retain cookie, modify attributes', () => {
+      const chromeLocal = {};
+      const activeProfiles = [
+        {
+          ...EMPTY_PROFILE,
+          setCookieHeaders: [
+            {
+              name: 'foo',
+              value: '',
+              httpOnly: true,
+              retainExistingCookie: true
+            }
+          ]
+        }
+      ];
+      const details = {
+        url: 'https://modheader.com/',
+        responseHeaders: [
+          {
+            name: 'set-cookie',
+            value: 'foo=Original; Path=/'
+          }
+        ]
+      };
+      const actual = modifyResponseHeaders({ chromeLocal, activeProfiles, details });
+
+      expect(actual).toEqual({
+        responseHeaders: [
+          {
+            name: 'set-cookie',
+            value: 'foo=Original; HttpOnly'
           }
         ]
       });

@@ -99,86 +99,104 @@
   const UNCHECKED = '✗';
 </script>
 
-<div class="advanced-cookie-row">
-  <div>
-    {#if fields.find((f) => modifier[f.field] === undefined)}
-      <Chip
-        fieldName="cookie-attribute"
-        trailingAction="dropdown"
-        on:click={() => addAttributeMenu.setOpen(true)}
-      >
-        Add cookie attribute
-      </Chip>
-      <MenuSurface bind:this={addAttributeMenu} anchorCorner="BOTTOM_LEFT">
-        {#each fields.filter((f) => modifier[f.field] === undefined) as field}
-          <Button
-            variant="raised"
-            class="chip-button"
-            data-field={field.field}
-            on:click={() => {
-              modifier[field.field] = field.default;
-              addAttributeMenu.setOpen(false);
-              dispatchChange();
-            }}
-          >
-            {field.field}
-          </Button>
-        {/each}
-      </MenuSurface>
-    {/if}
-
-    <Chip
-      fieldName="attribute-override"
-      tooltip={modifier.attributeOverride
-        ? 'Cookie value and attributes will be completely overridden. Click to change behavior.'
-        : 'Cookie value will be overridden, but existing cookie attributes will not be changed. Click to change behavior.'}
-      on:click={() => {
-        modifier.attributeOverride = !modifier.attributeOverride;
-        dispatchChange();
-      }}
-    >
-      Override mode: {modifier.attributeOverride ? 'override attributes' : 'retain attributes'}
-    </Chip>
-  </div>
-
-  {#each fields.filter((f) => modifier[f.field] !== undefined) as field}
-    <span>
-      <Chip
-        fieldName={field.field}
-        trailingAction="close"
-        on:click={() => {
-          if (field.clickHandler) {
-            field.clickHandler(modifier);
-          } else {
-            showField = field.field;
-          }
-          dispatchChange();
-        }}
-        on:close={() => {
-          delete modifier[field.field];
-          dispatchChange();
-        }}
-      >
-        {field.field}: {field.type === 'boolean'
-          ? boolToUnicode(modifier[field.field])
-          : modifier[field.field]}
-      </Chip>
-      {#if field.component}
-        <svelte:component
-          this={field.component}
-          open={showField === field.field}
-          {modifier}
-          fieldName={field.field}
-          on:change={() => {
-            field.updateFieldHandler(modifier);
+{#if modifier.name}
+  <div class="advanced-cookie-row">
+    <div>
+      {#if !modifier.value}
+        <Chip
+          fieldName="value-remove"
+          tooltip={modifier.retainExistingCookie
+            ? 'Matching cookie value will remain unchanged. Only attributes will be added. Click to change behavior.'
+            : 'Matching cookie will be removed. Click to change behavior.'}
+          on:click={() => {
+            modifier.retainExistingCookie = !modifier.retainExistingCookie;
             dispatchChange();
           }}
-          on:close={() => (showField = undefined)}
-        />
+        >
+          Empty cookie: {modifier.retainExistingCookie
+            ? 'retain value, update attributes'
+            : 'remove'}
+        </Chip>
+      {:else}
+        <Chip
+          fieldName="attribute-override"
+          tooltip={modifier.attributeOverride
+            ? 'Cookie value and attributes will be completely overridden. Click to change behavior.'
+            : 'Cookie value will be overridden, but existing cookie attributes will not be changed. Click to change behavior.'}
+          on:click={() => {
+            modifier.attributeOverride = !modifier.attributeOverride;
+            dispatchChange();
+          }}
+        >
+          Override mode: {modifier.attributeOverride ? 'override attributes' : 'retain attributes'}
+        </Chip>
       {/if}
-    </span>
-  {/each}
-</div>
+      {#if (modifier.value || modifier.retainExistingCookie) && fields.find((f) => !modifier.hasOwnProperty(f.field))}
+        <Chip
+          fieldName="cookie-attribute"
+          trailingAction="dropdown"
+          on:click={() => addAttributeMenu.setOpen(true)}
+        >
+          Add cookie attribute
+        </Chip>
+        <MenuSurface bind:this={addAttributeMenu} anchorCorner="BOTTOM_LEFT">
+          {#each fields.filter((f) => !modifier.hasOwnProperty(f.field)) as field}
+            <Button
+              variant="raised"
+              class="chip-button"
+              data-field={field.field}
+              on:click={() => {
+                modifier[field.field] = field.default;
+                addAttributeMenu.setOpen(false);
+                dispatchChange();
+              }}
+            >
+              {field.field}
+            </Button>
+          {/each}
+        </MenuSurface>
+      {/if}
+    </div>
+
+    {#each fields.filter((f) => modifier.hasOwnProperty(f.field)) as field}
+      <span>
+        <Chip
+          fieldName={field.field}
+          trailingAction="close"
+          on:click={() => {
+            if (field.clickHandler) {
+              field.clickHandler(modifier);
+            } else {
+              showField = field.field;
+            }
+            dispatchChange();
+          }}
+          on:close={() => {
+            delete modifier[field.field];
+            dispatchChange();
+          }}
+        >
+          {field.field}: {field.type === 'boolean'
+            ? boolToUnicode(modifier[field.field])
+            : modifier[field.field]}
+        </Chip>
+        {#if field.component}
+          <svelte:component
+            this={field.component}
+            open={showField === field.field}
+            {modifier}
+            fieldName={field.field}
+            on:change={() => {
+              field.updateFieldHandler(modifier);
+              dispatchChange();
+            }}
+            on:close={() => (showField = undefined)}
+          />
+        {/if}
+      </span>
+    {/each}
+  </div>
+{/if}
 
 <style module>
   .advanced-cookie-row {
