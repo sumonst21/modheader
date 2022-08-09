@@ -1,12 +1,12 @@
 import { get } from 'svelte/store';
 import { ModifierType } from './modifier-type.js';
-import { KNOWN_REQUEST_HEADERS, KNOWN_RESPONSE_HEADERS } from './constants.js';
-import { profile } from '@modheader/core';
+import { knownHeaders, profile } from '@modheader/core';
 import { addHeader, addSetCookieHeader, removeHeader } from './header.js';
 import AdvancedCookie from '../svelte/AdvancedCookie.svelte';
 import AdvancedHeader from '../svelte/AdvancedHeader.svelte';
 import { addUrlRedirect, removeUrlRedirect } from './url-redirect.js';
 
+const { KNOWN_REQUEST_HEADERS, KNOWN_RESPONSE_HEADERS } = knownHeaders;
 const { selectedProfile, updateProfile } = profile;
 
 function getSelectedProfile() {
