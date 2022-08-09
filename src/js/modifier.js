@@ -97,13 +97,19 @@ function modifyCookie(url, currentProfile, source, dest) {
   const existingCookie = dest.find((header) => header.name.toLowerCase() === 'cookie');
   const parsedCookie = cookie.parse(existingCookie ? existingCookie.value : '');
   for (const cookieHeader of source) {
-    if (!cookieHeader.value) {
-      if (parsedCookie.hasOwnProperty(cookieHeader.name) && !cookieHeader.sendEmptyHeader) {
-        delete parsedCookie[cookieHeader.name];
-        continue;
-      }
+    const matchedKeys = findAllMatchingKeys(cookieHeader, parsedCookie);
+    if (matchedKeys.length === 0 && !cookieHeader.regexEnabled) {
+      parsedCookie[cookieHeader.name] = cookieHeader.value;
     }
-    parsedCookie[cookieHeader.name] = cookieHeader.value;
+    for (const key of matchedKeys) {
+      if (!cookieHeader.value) {
+        if (parsedCookie.hasOwnProperty(key) && !cookieHeader.sendEmptyHeader) {
+          delete parsedCookie[key];
+          continue;
+        }
+      }
+      parsedCookie[key] = cookieHeader.value;
+    }
   }
   const finalCookieHeader = Object.entries(parsedCookie)
     .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)

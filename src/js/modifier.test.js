@@ -717,6 +717,41 @@ describe('modifier', () => {
       });
     });
 
+    test('Modify cookie header - regex enabled - Override value', () => {
+      const chromeLocal = {};
+      const activeProfiles = [
+        {
+          ...EMPTY_PROFILE,
+          cookieHeaders: [
+            {
+              name: 'fo.*',
+              value: 'Test',
+              regexEnabled: true
+            }
+          ]
+        }
+      ];
+      const details = {
+        url: 'https://modheader.com/',
+        requestHeaders: [
+          {
+            name: 'cookie',
+            value: 'foo=Original'
+          }
+        ]
+      };
+      const actual = modifyRequestHeaders({ chromeLocal, activeProfiles, details });
+
+      expect(actual).toEqual({
+        requestHeaders: [
+          {
+            name: 'cookie',
+            value: 'foo=Test'
+          }
+        ]
+      });
+    });
+
     test('Modify cookie header - Override value previously created by request headers', () => {
       const chromeLocal = {};
       const activeProfiles = [
@@ -727,6 +762,37 @@ describe('modifier', () => {
             {
               name: 'foo',
               value: 'Test'
+            }
+          ]
+        }
+      ];
+      const details = {
+        url: 'https://modheader.com/',
+        requestHeaders: []
+      };
+      const actual = modifyRequestHeaders({ chromeLocal, activeProfiles, details });
+
+      expect(actual).toEqual({
+        requestHeaders: [
+          {
+            name: 'cookie',
+            value: 'foo=Test'
+          }
+        ]
+      });
+    });
+
+    test('Modify cookie header - regex enabled - Override value previously created by request headers', () => {
+      const chromeLocal = {};
+      const activeProfiles = [
+        {
+          ...EMPTY_PROFILE,
+          headers: [{ name: 'cookie', value: 'foo=Original' }],
+          cookieHeaders: [
+            {
+              name: 'fo.*',
+              value: 'Test',
+              regexEnabled: true
             }
           ]
         }
@@ -818,6 +884,41 @@ describe('modifier', () => {
       });
     });
 
+    test('Modify cookie header - regex enabled - multiple cookies', () => {
+      const chromeLocal = {};
+      const activeProfiles = [
+        {
+          ...EMPTY_PROFILE,
+          cookieHeaders: [
+            {
+              name: 'fo.*',
+              value: 'Test',
+              regexEnabled: true
+            }
+          ]
+        }
+      ];
+      const details = {
+        url: 'https://modheader.com/',
+        requestHeaders: [
+          {
+            name: 'cookie',
+            value: 'foo=Original; foo2=Original2; foo3=Original3'
+          },
+        ]
+      };
+      const actual = modifyRequestHeaders({ chromeLocal, activeProfiles, details });
+
+      expect(actual).toEqual({
+        requestHeaders: [
+          {
+            name: 'cookie',
+            value: 'foo=Test; foo2=Test; foo3=Test'
+          }
+        ]
+      });
+    });
+
     test('Modify cookie header - Remove header', () => {
       const chromeLocal = {};
       const activeProfiles = [
@@ -827,6 +928,36 @@ describe('modifier', () => {
             {
               name: 'foo',
               value: ''
+            }
+          ]
+        }
+      ];
+      const details = {
+        url: 'https://modheader.com/',
+        requestHeaders: [
+          {
+            name: 'cookie',
+            value: 'foo=Original'
+          }
+        ]
+      };
+      const actual = modifyRequestHeaders({ chromeLocal, activeProfiles, details });
+
+      expect(actual).toEqual({
+        requestHeaders: []
+      });
+    });
+
+    test('Modify cookie header - regex enabled - Remove header', () => {
+      const chromeLocal = {};
+      const activeProfiles = [
+        {
+          ...EMPTY_PROFILE,
+          cookieHeaders: [
+            {
+              name: 'fo.*',
+              value: '',
+              regexEnabled: true
             }
           ]
         }
@@ -1266,7 +1397,7 @@ describe('modifier', () => {
             {
               name: 'fo.*',
               value: '',
-              regexEnabled: true,
+              regexEnabled: true
             }
           ]
         }
